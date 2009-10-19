@@ -1,0 +1,27 @@
+! the contents of _findrange cannot be placed into _plot_0d.jnl directly
+! because ferret produces an error then
+
+! start with minval and maxval from base data set:
+LET minval = factor_A0($bin_start) * \
+  ($1)_A0($bin_start)[i=($plotlon),j=($plotlat),k=($plotlevel), \
+  t="($startday)":"($endday)"@MIN]
+LET maxval = factor_A0($bin_start) * \
+  ($1)_A0($bin_start)[i=($plotlon),j=($plotlat),k=($plotlevel), \
+  t="($startday)":"($endday)"@MAX]
+! loop through all data sets to see if there are extremes:
+REPEAT/range=($bin_start):($bin_end)/name=ax ( \
+  DEFINE SYMBOL ax = A0`ax` ; \ ! convert VARIABLE to SYMBOL
+  LET plotdata = factor_($ax) * \
+    ($1)_($ax)[i=($plotlon),j=($plotlat),k=($plotlevel), \
+    t="($startday)":"($endday)"] ; \
+  say ($1)_($ax) ranges from `plotdata[t=@MIN]` to `plotdata[t=@MAX]` ; \
+  IF `plotdata[t=@MIN] LT minval` THEN ; \
+    LET minval = factor_($ax) * \
+      ($1)_($ax)[i=($plotlon),j=($plotlat),k=($plotlevel), \
+      t="($startday)":"($endday)"@MIN] ; \
+  ENDIF ; \
+  IF `plotdata[t=@MAX] GT maxval` THEN ; \
+    LET maxval = factor_($ax) * \
+      ($1)_($ax)[i=($plotlon),j=($plotlat),k=($plotlevel), \
+      t="($startday)":"($endday)"@MAX] ; \
+  ENDIF )

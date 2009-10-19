@@ -1,0 +1,49 @@
+! -*- f90 -*- Time-stamp: <2009-01-12 18:12:46 sander>
+
+!*****************************************************************************
+!
+! coupling namelist for CAABA boxmodel
+!
+!*****************************************************************************
+
+&CAABA
+
+ USE_JVAL    = T
+ USE_MECCA   = T
+!USE_READJ   = T
+ USE_SAPPHO  = T
+ USE_SEMIDEP = T
+!USE_TRAJECT = T
+
+!temp   = 293.    ! temperature [K]
+!press  = 101325. ! pressure [Pa]
+!relhum = 0.81    ! relative humidity [1]
+!zmbl   = 1000.   ! height of the mbl [m]
+
+!startday    = 14.        ! 15th Jan
+!ext_runtime = '2 days'   ! in days; default: 8
+!ext_runtime = '40 days'  ! in days; default: 8
+
+! Choose a channel that contains J-values for photolysis reactions:
+!photrat_channel = 'jval'
+!photrat_channel = 'readj'
+ photrat_channel = 'sappho'
+
+! init_spec = initialize species from netcdf file:
+!init_spec = 'inputfile.nc'
+
+! init_j = initialize J-values from netcdf file:
+!init_j = '/home/sander/tmp/readj_input.nc'
+!init_j_index = 25
+
+!l_steady_state_stop = T    ! stop caaba when steady state is reached?
+
+!l_skipkpp = T    ! skip call to kpp chemistry integration
+
+! select reaction rates to be output to MECCA channel
+! (comma-separated list of equation IDs, no spaces, wildcards with "?*"):
+!printrates = 'G1000,J3*,G?110,H*,G*b,J1'
+
+/
+
+!*****************************************************************************

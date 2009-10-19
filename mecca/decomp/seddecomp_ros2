@@ -1,0 +1,179 @@
+#!/bin/sh
+#
+###################################################
+# change module messy_mecca_kpp.f90               #
+# script that modifies kpp to remove implicit     #
+# addressing for ROS2 with manual time stepping   #
+###################################################
+. ./locate_f90.sh
+echo $F90
+#
+if test "$1" = "" ; then
+   echo "USAGE: $0 <T/F>"
+   echo "NOTE: T - remove if-statements"
+   echo "      F - keep   if-statements"
+   exit 1
+fi
+REMOVE=$1
+#
+#############################################################################
+# GENERATE HEADER FOR DE-INDEXING PROGRAM
+#############################################################################
+#
+cp -f ../smcl/messy_mecca_kpp_jacobiansp.f90 tmp_file
+sed '{
+/END MODULE messy_mecca_kpp_JacobianSP/d
+s/MODULE messy_mecca_kpp_JacobianSP/PROGRAM decomp/g
+s/PUBLIC/IMPLICIT NONE/g
+s/SAVE//g
+}
+' tmp_file > tmp_decomp_1.f90
+#
+cp -f ../smcl/messy_mecca_kpp_parameters.f90 tmp_file
+grep 'NVAR' tmp_file >> tmp_decomp_1.f90
+#
+#############################################################################
+# KEEP PARTS OF THE CODE FOR DE-INDEXED MODULE messy_mecca_kpp_LinearAlgebra
+#############################################################################
+cp -f ../smcl/messy_mecca_kpp_linearalgebra.f90 tmp_file
+sed '{
+/SUBROUTINE KppDecomp( JVS, IER )/,//d
+}
+' tmp_file > tmp_decomp_1
+sed '{
+/MODULE messy_mecca_kpp_LinearAlgebra/,/END SUBROUTINE KppDecomp/d
+}
+' tmp_file > tmp_decomp_2
+echo "END MODULE messy_mecca_kpp_LinearAlgebra" >> tmp_decomp_2
+
+#############################################################################
+# KEEP PARTS OF THE CODE FOR DE-INDEXED MODULE messy_mecca_kpp_Integrator
+#############################################################################
+cp -f ../smcl/messy_mecca_kpp_integrator.f90 tmp_file
+sed '{
+/! optionally cut this out and replace it by directly addressed statements/,/! End of INTEGRATE function/d
+}
+' tmp_file > tmp_integr_1
+
+echo '    CALL KppDecomp (jvs, ising)' > tmp_integr_2
+sed '{
+/MODULE messy_mecca_kpp_Integrator/,/CALL KppDecomp (jvs, ising)/d
+}
+' tmp_file >> tmp_integr_2
+echo "END MODULE messy_mecca_kpp_Integrator" >> tmp_integr_2
+
+#############################################################################
+# GENERATE PROGRAM CODE FOR DE-INDEXING PROGRAM
+#############################################################################
+cat > tmp_decomp_2.f90 << EOF
+
+      INTEGER k, kk, j, jj, i
+
+      OPEN(unit=11,file='tmp_decomp.out')
+      OPEN(unit=12,file='tmp_integr.out')
+
+!
+!manipulate subroutine ros2 (messy_mecca_kpp_Integrator.f90)
+!
+     DO i=1,NVAR
+        WRITE(12,'(4x,a4,i6,a8,i6,a10)') &
+          'jvs(',LU_DIAG(i),') = jvs(',LU_DIAG(i),') + 1.0_dp'
+     END DO
+
+!
+!manipulate subroutine KppDecomp (messy_mecca_kpp_LinearAlgebra.f90)
+!
+      WRITE(11,'(a32)') 'SUBROUTINE KppDecomp( JVS, IER )'
+      WRITE(11,'(a67)') '! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+      WRITE(11,'(a32)') '!        Sparse LU factorization'
+      WRITE(11,'(a67)') '! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+      WRITE(11,*) ''
+      WRITE(11,'(2x,a31)') 'USE messy_mecca_kpp_Parameters'
+      WRITE(11,'(2x,a31)') 'USE messy_mecca_kpp_JacobianSP'
+      WRITE(11,*) ''
+      WRITE(11,'(6x,a15)') 'INTEGER  :: IER'
+      WRITE(11,'(6x,a45)') 'REAL(kind=dp) :: JVS(LU_NONZERO), W(NVAR), a'
+      WRITE(11,'(6x,a24)') 'INTEGER  :: k, kk, j, jj'
+      WRITE(11,*) ''
+      WRITE(11,'(6x,a7)') 'IER = 0'
+      WRITE(11,*) ''
+
+      DO k=1,NVAR
+EOF
+
+if test "$REMOVE" = "F" ; then
+cat >> tmp_decomp_2.f90 << EOF
+        WRITE(11,'(8x,a9,i6,a17)') &
+            'IF ( JVS(', LU_DIAG(k),' ) .EQ. 0. ) THEN'
+        WRITE(11,'(8x,a6,i6)') 'IER = ', k
+        WRITE(11,'(8x,a6)')    'RETURN'
+        WRITE(11,'(8x,a6)')    'END IF'
+EOF
+fi
+
+cat >> tmp_decomp_2.f90 << EOF
+        DO kk = LU_CROW(k), LU_CROW(k+1)-1
+              WRITE(11,'(6x,a2,i6,a9,i6,a1)') &
+                  'W(', LU_ICOL(kk),' ) = JVS(',kk,')'
+        END DO
+
+        DO kk = LU_CROW(k), LU_DIAG(k)-1
+            j = LU_ICOL(kk)
+            WRITE(11,'(6x,a7,i6,a8,i6,a2)') &
+                'a = -W(',j,') / JVS(', LU_DIAG(j),' )'
+            WRITE(11,'(6x,a2,i6,a6)') &
+                'W(',j,') = -a'
+
+            DO jj = LU_DIAG(j)+1, LU_CROW(j+1)-1
+               WRITE(11,'(6x,a2,i6,a7,i6,a11,i6,a1)') &
+                  'W(', LU_ICOL(jj),' ) = W(', LU_ICOL(jj),' ) + a*JVS(',jj,')'
+            END DO
+         END DO
+
+         if( LU_DIAG(k)-1 .GE. LU_CROW(k) ) THEN
+           ! removes unnecessary statements
+
+         DO kk = LU_CROW(k), LU_CROW(k+1)-1
+             WRITE(11,'(6x,a4,i6,a6,i6,a2)') &
+                'JVS(',kk,') = W(', LU_ICOL(kk),' )'
+         END DO
+
+         endif
+      END DO
+
+      WRITE(11,*) ''
+      WRITE(11,*) 'END SUBROUTINE KppDecomp'
+
+END PROGRAM decomp
+
+EOF
+
+cat tmp_decomp_1.f90 tmp_decomp_2.f90 > tmp_decomp.f90
+$F90 tmp_decomp.f90
+./a.out
+rm -f a.out
+
+### CREATE DE-INDEXED DECOMP
+cat tmp_decomp_1 tmp_decomp.out tmp_decomp_2 > tmp_decomp_final
+mv -f tmp_decomp_final ../smcl/messy_mecca_kpp_linearalgebra.f90
+
+cat tmp_integr_1 tmp_integr.out tmp_integr_2 > tmp_integr_final
+mv -f tmp_integr_final ../smcl/messy_mecca_kpp_integrator.f90
+
+### CLEAN UP
+rm -f tmp_file
+#
+rm -f tmp_decomp_1.f90
+rm -f tmp_decomp_2.f90
+rm -f tmp_decomp.f90
+rm -f tmp_decomp.o
+#
+rm -f tmp_decomp_1
+rm -f tmp_decomp_2
+rm -f tmp_decomp.out
+#
+rm -f tmp_integr.out
+rm -f tmp_integr_1
+rm -f tmp_integr_2
+
+exit

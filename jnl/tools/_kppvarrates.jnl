@@ -1,0 +1,80 @@
+LET/D H1000f_($ax) = 0 ; LET/D H1000b_($ax) = 0
+LET/D H1001f_($ax) = 0 ; LET/D H1001b_($ax) = 0
+LET/D H2100f_($ax) = 0 ; LET/D H2100b_($ax) = 0
+LET/D H2101f_($ax) = 0 ; LET/D H2101b_($ax) = 0
+LET/D H2102f_($ax) = 0 ; LET/D H2102b_($ax) = 0
+LET/D H3100f_($ax) = 0 ; LET/D H3100b_($ax) = 0
+LET/D H3101f_($ax) = 0 ; LET/D H3101b_($ax) = 0
+LET/D H3102f_($ax) = 0 ; LET/D H3102b_($ax) = 0
+LET/D H3200f_($ax) = 0 ; LET/D H3200b_($ax) = 0
+LET/D H3202f_($ax) = 0 ; LET/D H3202b_($ax) = 0
+LET/D H3203f_($ax) = 0 ; LET/D H3203b_($ax) = 0
+LET/D H3204f_($ax) = 0 ; LET/D H3204b_($ax) = 0
+LET/D H4100f_($ax) = 0 ; LET/D H4100b_($ax) = 0
+LET/D H4101f_($ax) = 0 ; LET/D H4101b_($ax) = 0
+LET/D H4102f_($ax) = 0 ; LET/D H4102b_($ax) = 0
+LET/D H4103f_($ax) = 0 ; LET/D H4103b_($ax) = 0
+LET/D H4104f_($ax) = 0 ; LET/D H4104b_($ax) = 0
+LET/D H4105f_($ax) = 0 ; LET/D H4105b_($ax) = 0
+LET/D H4200f_($ax) = 0 ; LET/D H4200b_($ax) = 0
+LET/D H4201f_($ax) = 0 ; LET/D H4201b_($ax) = 0
+LET/D H4202f_($ax) = 0 ; LET/D H4202b_($ax) = 0
+LET/D H4300f_($ax) = 0 ; LET/D H4300b_($ax) = 0
+LET/D H6000f_($ax) = 0 ; LET/D H6000b_($ax) = 0
+LET/D H6200f_($ax) = 0 ; LET/D H6200b_($ax) = 0
+LET/D H6201f_($ax) = 0 ; LET/D H6201b_($ax) = 0
+LET/D H7000f_($ax) = 0 ; LET/D H7000b_($ax) = 0
+LET/D H7200f_($ax) = 0 ; LET/D H7200b_($ax) = 0
+LET/D H7201f_($ax) = 0 ; LET/D H7201b_($ax) = 0
+LET/D H7600f_($ax) = 0 ; LET/D H7600b_($ax) = 0
+LET/D H8000f_($ax) = 0 ; LET/D H8000b_($ax) = 0
+LET/D H8100f_($ax) = 0 ; LET/D H8100b_($ax) = 0
+LET/D H8200f_($ax) = 0 ; LET/D H8200b_($ax) = 0
+LET/D H8600f_($ax) = 0 ; LET/D H8600b_($ax) = 0
+LET/D H8700f_($ax) = 0 ; LET/D H8700b_($ax) = 0
+LET/D H9100f_($ax) = 0 ; LET/D H9100b_($ax) = 0
+LET/D H9400f_($ax) = 0 ; LET/D H9400b_($ax) = 0
+
+LET/D H3201_($ax) = 0
+LET/D H6300_($ax) = 0
+LET/D H6301_($ax) = 0
+LET/D H6302_($ax) = 0
+LET/D H7300_($ax) = 0
+LET/D H7301_($ax) = 0
+LET/D H7302_($ax) = 0
+LET/D H7601_($ax) = 0
+LET/D H7602_($ax) = 0
+LET/D H8101_($ax) = 0
+LET/D H8102_($ax) = 0
+LET/D H8201_($ax) = 0
+LET/D H8202_($ax) = 0
+LET/D H8300_($ax) = 0
+LET/D H8301_($ax) = 0
+LET/D H9200_($ax) = 0
+LET/D H9401_($ax) = 0
+
+LET/D EQ20f_($ax) = 0 ; LET/D EQ20b_($ax) = 0
+LET/D EQ21f_($ax) = 0 ; LET/D EQ21b_($ax) = 0
+LET/D EQ30f_($ax) = 0 ; LET/D EQ30b_($ax) = 0
+LET/D EQ31f_($ax) = 0 ; LET/D EQ31b_($ax) = 0
+LET/D EQ32f_($ax) = 0 ; LET/D EQ32b_($ax) = 0
+LET/D EQ33f_($ax) = 0 ; LET/D EQ33b_($ax) = 0
+LET/D EQ40f_($ax) = 0 ; LET/D EQ40b_($ax) = 0
+LET/D EQ41f_($ax) = 0 ; LET/D EQ41b_($ax) = 0
+LET/D EQ42f_($ax) = 0 ; LET/D EQ42b_($ax) = 0
+LET/D EQ60f_($ax) = 0 ; LET/D EQ60b_($ax) = 0
+LET/D EQ61f_($ax) = 0 ; LET/D EQ61b_($ax) = 0
+LET/D EQ62f_($ax) = 0 ; LET/D EQ62b_($ax) = 0
+LET/D EQ70f_($ax) = 0 ; LET/D EQ70b_($ax) = 0
+LET/D EQ71f_($ax) = 0 ; LET/D EQ71b_($ax) = 0
+LET/D EQ72f_($ax) = 0 ; LET/D EQ72b_($ax) = 0
+LET/D EQ73f_($ax) = 0 ; LET/D EQ73b_($ax) = 0
+LET/D EQ74f_($ax) = 0 ; LET/D EQ74b_($ax) = 0
+LET/D EQ75f_($ax) = 0 ; LET/D EQ75b_($ax) = 0
+LET/D EQ80f_($ax) = 0 ; LET/D EQ80b_($ax) = 0
+LET/D EQ81f_($ax) = 0 ; LET/D EQ81b_($ax) = 0
+LET/D EQ82f_($ax) = 0 ; LET/D EQ82b_($ax) = 0
+LET/D EQ90f_($ax) = 0 ; LET/D EQ90b_($ax) = 0
+LET/D EQ91f_($ax) = 0 ; LET/D EQ91b_($ax) = 0
+LET/D EQ92f_($ax) = 0 ; LET/D EQ92b_($ax) = 0
+LET/D EQ93f_($ax) = 0 ; LET/D EQ93b_($ax) = 0

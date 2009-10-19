@@ -1,0 +1,35 @@
+!*******************************************************************************
+
+! define ($C2) as the path to the current model output:
+DEFINE SYMBOL C2 = `{spawn: "cd .. ; pwd"}`
+
+GO _define_sensi ($C2) "latest run"
+
+! show other runs as well, e.g.:
+!GO _define_sensi ($C2)/output/montecarlo/0001 "0001"
+!GO _define_sensi ($C2)/output/test "test"
+
+!*******************************************************************************
+
+! plot differences to base run:
+! DEFINE SYMBOL diffplot TRUE
+
+!*******************************************************************************
+
+! longitute
+! DEFINE SYMBOL plotlon   = 35 !32
+! ------------------------------------------------------------------------------
+! latitude
+! DEFINE SYMBOL plotlat   = 22 !22
+! ------------------------------------------------------------------------------
+! LEVEL
+! DEFINE SYMBOL plotlevel  =  1
+! DEFINE SYMBOL startlevel =  4
+! DEFINE SYMBOL endlevel   = 14
+! ------------------------------------------------------------------------------
+! time
+! DEFINE SYMBOL plotday   = 01-jan-1978 02:00
+! DEFINE SYMBOL startday  = 28-mar-2000 11:00
+! DEFINE SYMBOL endday    = 28-mar-2000 12:59
+
+!*******************************************************************************

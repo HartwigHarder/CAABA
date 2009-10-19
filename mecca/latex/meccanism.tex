@@ -1,0 +1,750 @@
+\documentclass[landscape]{article}
+
+\makeatletter
+\def\shownote#1{\expandafter\gdef\csname note#1\endcsname{}}%
+\def\note#1#2{\@ifundefined{note#1}{}{#1: #2}}%
+\def\showhenrynote#1{\expandafter\gdef\csname henrynote#1\endcsname{}}%
+\def\henrynote#1#2{\@ifundefined{henrynote#1}{}{\kpp{#1}: #2}}%
+\def\showalphanote#1{\expandafter\gdef\csname alphanote#1\endcsname{}}%
+\def\alphanote#1#2{\@ifundefined{alphanote#1}{}{\kpp{#1}: #2}}%
+\makeatother
+
+\def\myhline{\ifvmode\hline\fi}
+\def\aq{(aq)}
+
+\usepackage{multicol}
+\usepackage{longtable}
+\usepackage{natbib}
+\usepackage{chem}
+\usepackage{rotating} % loads graphics
+%\usepackage{color}
+
+\textwidth26cm
+\textheight16cm
+\topmargin-10mm
+\oddsidemargin-15mm
+\parindent0mm
+\parskip1.0ex plus0.5ex minus0.5ex
+
+\begin{document}
+
+\input{mecca_info.tex}
+
+\thispagestyle{empty}
+\begin{rotate}{-90}
+\begin{minipage}{15cm}
+\vspace{-30cm}
+\begin{center}
+  \LARGE {\bf The Chemical Mechanism of MECCA}\\[3mm]
+  \Large KPP version: {\kppversion}\\[2mm]
+  \Large MECCA version: {\meccaversion}\\[2mm]
+  \Large Date: \today.\\[2mm]
+  \Large Selected reactions:\\
+  ``\wanted''\\[2mm]
+  Number of aerosol phases: \apn\\[2mm]
+  Number of species in selected mechanism:\\
+  \begin{tabular}{lr}
+  Gas phase:     & \gasspc\\
+  Aqueous phase: & \aqspc\\
+  All species:   & \allspc\\
+  \end{tabular}\\[2mm]
+  Number of reactions in selected mechanism:\\
+  \begin{tabular}{lr}
+    Gas phase (Gnnn):       & \Geqns\\
+    Aqueous phase (Annn):   & \Aeqns\\
+    Henry (Hnnn):           & \Heqns\\
+    Photolysis (Jnnn):      & \Jeqns\\
+    Heterogeneous (HETnnn): & \HETeqns\\
+    Equilibria (EQnn):      & \EQeqns\\
+    Dummy (Dnn):            & \Deqns\\
+    All equations:          & \alleqns
+  \end{tabular}\\[30mm]
+  Further information can be found in the article ``Technical Note: The
+  new comprehensive atmospheric chemistry module MECCA'' by R.\ Sander
+  et al. (Atmos.\ Chem.\ Phys.\ {\bf 5}, 445-450, 2005), available at
+  \url{http://www.atmos-chem-phys.net/5/445}.
+\end{center}
+\end{minipage}
+\end{rotate}
+\newpage
+
+% define latex names of kpp species
+\input{mecca_spc.tex}
+
+\begin{longtable}{llp{9cm}p{7cm}p{5cm}}
+\caption{Gas phase reactions}\\
+\hline
+\# & labels & reaction & rate coefficient & reference\\
+\hline
+\endfirsthead
+\caption{Gas phase reactions (... continued)}\\
+\hline
+\# & labels & reaction & rate coefficient & reference\\
+\hline
+\endhead
+\hline
+\endfoot
+\input{mecca_eqn_g.tex}
+\end{longtable}
+
+\newpage\begin{multicols}{3}
+$^*$Notes:
+
+Rate coefficients for three-body reactions are defined via the function
+\code{k_3rd}($T$, $M$, $k_0^{300}$, $n$, $k_{\rm inf}^{300}$, $m$,
+$f_{\rm c}$). In the code, the temperature $T$ is called \code{temp} and
+the concentration of ``air molecules'' $M$ is called \code{cair}. Using
+the auxiliary variables $k_0(T)$, $k_{\rm inf}(T)$, and $k_{\rm ratio}$,
+\code{k_3rd} is defined as:
+\begin{eqnarray}
+  k_0(T)              & = & k_0^{300} \times \left( \frac{300
+                            \unit{K}}{T} \right)^n\\
+  k_{\rm inf}(T)      & = & k_{\rm inf}^{300} \times \left( \frac{300
+                            \unit{K}}{T} \right)^m\\
+  k_{\rm ratio}       & = & \frac{k_0(T) M}{k_{\rm inf}(T)}\\
+  \mbox{\code{k_3rd}} & = & \frac{k_0(T) M}{1+k_{\rm ratio}} \times f_{\rm
+                            c}^{\left( \frac{1}{1+(\log_{10}(k_{\rm
+                            ratio}))^2} \right)}
+\end{eqnarray}
+
+A similar function, called \code{k_3rd_iupac} here, is used by
+\citet{1745} for three-body reactions. It has the same function
+parameters as \code{k_3rd} and it is defined as:
+\begin{eqnarray}
+  k_0(T)                    & = & k_0^{300} \times \left( \frac{300
+                                  \unit{K}}{T} \right)^n\\
+  k_{\rm inf}(T)            & = & k_{\rm inf}^{300} \times \left( \frac{300
+                                  \unit{K}}{T} \right)^m\\
+  k_{\rm ratio}             & = & \frac{k_0(T) M}{k_{\rm inf}(T)}\\
+  N                         & = & 0.75 - 1.27 \times \log_{10}(f_{\rm c})\\
+  \mbox{\code{k_3rd_iupac}} & = & \frac{k_0(T) M}{1+k_{\rm ratio}} \times f_{\rm
+                                  c}^{\left( \frac{1}{1+(\log_{10}(k_{\rm
+                                  ratio})/N)^2} \right)}
+\end{eqnarray}
+
+\note{G1002}{The path leading to 2 \kpp{O3P} + \kpp{O2} results in a
+  null cycle regarding odd oxygen and is neglected.}
+
+\note{G2110}{The rate coefficient is: \code{k_HO2_HO2} =
+  \code{(1.5E-12*EXP(19./temp)+1.7E-33*EXP(1000./temp)*cair)*
+    (1.+1.4E-21*EXP(2200./temp)*C(ind_H2O))}. The value for the first
+  (pressure-independent) part is from \citet{1599}, the water term from
+  \citet{165}.}
+
+\note{G3109}{The rate coefficient is: \code{k_NO3_NO2} =
+  \code{k_3rd(temp,cair,2.E-30,4.4,1.4E-12,0.7,0.6)}.}
+
+\note{G3110}{The rate coefficient is defined as backward reaction
+  divided by equilibrium constant.}
+
+\note{G3203}{The rate coefficient is: \code{k_NO2_HO2} =
+  \code{k_3rd(temp,cair,1.8E-31,3.2,4.7E-12,1.4,0.6)}.}
+
+\note{G3206}{The rate coefficient is: \code{k_HNO3_OH} = \code{2.4E-14 *
+    EXP(460./temp) + 1./ ( 1./(6.5E-34 * EXP(1335./temp)*cair) +
+    1./(2.7E-17 * EXP(2199./temp)) )}}
+
+\note{G3207}{The rate coefficient is defined as backward reaction
+  divided by equilibrium constant.}
+
+\note{G4103}{\citet{1945} recommend a zero product yield for
+  \chem{HCHO}.}
+
+\note{G4107}{The rate coefficient is: \code{k_CH3OOH_OH} =
+  \code{3.8E-12*EXP(200./temp)}.}
+
+\note{G4109}{The same temperature dependence assumed as for
+  \kpp{CH3CHO}+\kpp{NO3}.}
+
+\note{G4201}{The product distribution is from \citet{1612} (see also
+  \citet{1624}).}
+
+\note{G4206}{The rate coefficient was calculated by von Kuhlmann (pers.\ 
+  comm.\ 2004) using self reactions of \chem{CH_3OO} and \chem{C_2H_5OO}
+  from \citet{1555} and geometric mean as suggested by \citet{471} and
+  \citet{1632}. The product distribution (branching=0.5/0.25/0.25) is
+  calculated by von Kuhlmann (pers.\ comm.\ 2004) based on \citet{597}
+  and \citet{1613}.}
+
+\note{G4207}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+
+\note{G4213}{The rate coefficient is: \code{k_PA_NO2} =
+  \code{k_3rd(temp,cair,8.5E-29,6.5,1.1E-11,1.,0.6)}.}
+
+\note{G4216}{The value \code{1.0E-11} is from \citet{1207}, the temperature
+  dependence from \citet{1632}.}
+
+\note{G4218}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+
+\note{G4219}{According to \citet{1614}, the same value as for
+  \kpp{CH3CHO}+\kpp{OH} can be assumed.}
+
+\note{G4220}{This is 50\% of the upper limit given by \citet{1555}, as
+  suggested by \citet{1612}.}
+
+\note{G4221}{The rate coefficient is: \code{k_PAN_M} =
+  \code{k_PA_NO2/9.E-29*EXP(-14000./temp)}, i.e.\ the rate coefficient
+  is defined as backward reaction divided by equilibrium constant.}
+
+\note{G4301}{The product distribution is for terminal olefin carbons
+  from \citet{1623}.}
+
+\note{G4304}{The rate coefficient is: \code{k_PrO2_HO2} =
+  \code{1.9E-13*EXP(1300./temp)}. Value for generic \chem{RO_2} +
+  \chem{HO_2} reaction from \citet{964} is used.}
+
+\note{G4305}{The rate coefficient is: \code{k_PrO2_NO} =
+  \code{2.7E-12*EXP(360./temp)}.}
+
+\note{G4306}{The rate coefficient is: \code{k_PrO2_CH3O2} =
+  \code{9.46E-14*EXP(431./temp)}. The product distribution is from
+  \citet{1612}.}
+
+\note{G4307}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+
+\note{G4309}{The products are from \citet{1612}.}
+
+\note{G4315}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+
+\note{G4319}{Same value as for \kpp{PAN} assumed.}
+
+\note{G4401}{Same value as for propyl group assumed (\code{k_PrO2_CH3O2}).}
+
+\note{G4402}{Same value as for propyl group assumed (\code{k_PrO2_HO2}).}
+
+\note{G4403}{Same value as for propyl group assumed (\code{k_PrO2_NO}).}
+
+\note{G4404}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+
+\note{G4409}{The factor 0.25 was recommended by Uli Poeschl (pers.\ 
+  comm.\ 2004).}
+
+\note{G4414}{Same value as for propyl group assumed (\code{k_PrO2_HO2}).}
+
+\note{G4415}{Same value as for propyl group assumed (\code{k_PrO2_NO}).}
+
+\note{G4416}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+
+\note{G4417}{Value for \chem{C_4H_9ONO_2} used here.}
+
+\note{G4503}{Same temperature dependence assumed as for other
+  \chem{RO_2}+\kpp{HO2} reactions.}
+
+\note{G4504}{Yield of 12~\% \chem{RONO_2} assumed as suggested in Table
+  2 of \citet{1631}.}
+
+\note{G6102}{The rate coefficient is: \code{k_ClO_ClO} =
+  \code{k_3rd_iupac(temp,cair,2.E-32,4.,1.E-11,0.,0.45)}.}
+
+\note{G6103}{The rate coefficient is defined as backward reaction
+  divided by equilibrium constant.}
+
+\note{G6204}{At low temperatures, there may be a minor reaction channel
+  leading to \kpp{O3}+\kpp{HCl}. See \citet{1626} for details. It is
+  neglected here.}
+
+\note{G6402}{The initial products are probably \chem{HCl} and
+  \chem{CH_2OOH} \citep{1759}. It is assumed that \chem{CH_2OOH}
+  dissociates into \chem{HCHO} and \chem{OH}.}
+
+\note{G6405}{Average of reactions with \chem{CH_3Br} and \chem{CH_3F}
+  from \citet{1945} (B.\ Steil, pers.\ comm.).}
+
+\note{G6407}{Rough extrapolation from reactions with \chem{CH_3CF_3},
+  \chem{CH_3CClF_2}, and \chem{CH_3CCl_2F} from \citet{1945}.}
+
+\note{G7302}{The rate coefficient is: \code{k_BrO_NO2} =
+  \code{k_3rd(temp,cair,5.2E-31,3.2,6.9E-12,2.9,0.6)}.}
+
+\note{G7303}{The rate coefficient is defined as backward reaction
+  \citep{1845} divided by equilibrium constant \citep{1054}.}
+
+\note{G7407}{It is assumed that the reaction liberates all \kpp{Br}
+  atoms. The fate of the carbon atom is currently not considered.}
+
+\note{G7408}{It is assumed that the reaction liberates all \kpp{Br}
+  atoms. The fate of the carbon atom is currently not considered.}
+
+\note{G7605}{Same value as for G7408: \kpp{CH2Br2}+\kpp{OH} assumed. It
+  is assumed that the reaction liberates all \kpp{Br} atoms but not
+  \kpp{Cl}. The fate of the carbon atom is currently not considered.}
+
+\note{G7606}{Same value as for G7408: \kpp{CH2Br2}+\kpp{OH} assumed. It
+  is assumed that the reaction liberates all \kpp{Br} atoms but not
+  \kpp{Cl}. The fate of the carbon atom is currently not considered.}
+
+\note{G7607}{It is assumed that the reaction liberates all \kpp{Br}
+  atoms but not \kpp{Cl}. The fate of the carbon atom is currently not
+  considered.}
+
+\note{G8102}{It is assumed that the reaction produces new particles.}
+
+\note{G8103}{The yield of 38~\unit{\%} \chem{OIO} is from \citet{1845}.
+  It is assumed here that the remaining 62~\unit{\%} produce 2 \chem{I}
+  + \chem{O_2}.}
+
+\note{G8300}{The rate coefficient is: \code{k_I_NO2} =
+  \code{k_3rd_iupac(temp,cair,3.E-31,1.,6.6E-11,0.,0.63)}.}
+
+\note{G8305}{The rate coefficient is defined as backward reaction
+  \citep{1845} divided by equilibrium constant \citep{1644}.}
+
+\note{G8306}{According to John Plane and John Crowley (pers.\ comm.\
+  2007), the rate coefficient of \code{1.1E15*EXP(-12060./temp)}
+  suggested by \citet{1845} is wrong.}
+
+\note{G8401}{The rate coefficient is from \citet{2079}, the yield of
+  \chem{I} atoms is a lower limit given on page 2170 of \citet{2089}.}
+
+\note{G8402}{The products are from \citet{2087}.}
+
+\note{G8701}{80\% \chem{Br} + \chem{OIO} production is from
+  \citet{1845}. The remaining channels are assumed to produce \chem{Br}
+  + \chem{I} + \chem{O_2}.}
+
+\note{G9400a}{Abstraction path. The assumed reaction sequence (omitting
+  \chem{H_2O} and \chem{O_2} as products) according to \citet{243} is:
+  \begin{eqnarray*}
+    \chem{DMS} + \chem{OH}         & \TO & \chem{CH_3SCH_2}\\
+    \chem{CH_3SCH_2} + \chem{O_2}  & \TO & \chem{CH_3SCH_2OO}\\
+    \chem{CH_3SCH_2OO} + \chem{NO} & \TO & \chem{CH_3SCH_2O} + \chem{NO_2}\\
+    \chem{CH_3SCH_2O}              & \TO & \chem{CH_3S} + \chem{HCHO}\\
+    \chem{CH_3S} + \chem{O_3}      & \TO & \chem{CH_3SO}\\
+    \chem{CH_3SO} + \chem{O_3}     & \TO & \chem{CH_3SO_2}\\
+    \hline                                                  
+    \chem{DMS}+\chem{OH}+\chem{NO}+2\chem{O_3} & \TO &
+    \chem{CH_3SO_2}+\chem{HCHO}+\chem{NO_2}
+  \end{eqnarray*}
+  Neglecting the effect on \chem{O_3} and \chem{NO_x}, the remaining
+  reaction is:
+  $$\chem{DMS} + \chem{OH} + \chem{O_3} \TO \chem{CH_3SO_2} + \chem{HCHO}$$}
+
+\note{G9400}{Addition path. The rate coefficient is: \code{k_DMS_OH} =
+  \code{1.0E-39*EXP(5820./temp)*C(ind_O2)/
+    (1.+5.0E-30*EXP(6280./temp)*C(ind_O2))}.}
+
+\note{G10201}{Upper limit.}
+
+\end{multicols}
+
+\clearpage
+
+\begin{longtable}{llp{10cm}p{6cm}p{4cm}}
+\caption{Photolysis reactions}\\
+\hline
+\# & labels & reaction & rate coefficient & reference\\
+\hline
+\endfirsthead
+\caption{Photolysis reactions (... continued)}\\
+\hline
+\# & labels & reaction & rate coefficient & reference\\
+\hline
+\endhead
+\hline
+\endfoot
+\input{mecca_eqn_j.tex}
+\input{mecca_eqn_ph.tex}
+\end{longtable}
+
+\begin{multicols}{3}
+$^*$Notes:
+
+J-values are calculated with an external module and then supplied to the
+MECCA chemistry
+
+\note{J6100}{\citet{1741} claim that the combination of absorption cross
+  sections from \citet{1746} and the \chem{Cl_2O_2} formation rate
+  coefficient by \citet{1555} can approximately reproduce the observed
+  \chem{Cl_2O_2}/\chem{ClO} ratios and ozone depletion. They give an
+  almost zenith-angle independent ratio of 1.4 for \citet{1746} to
+  \citet{1555} J-values. The IUPAC recommendation for the \chem{Cl_2O_2}
+  formation rate is about 5 to 15 \% less than the value by \citet{1555}
+  but more than 20 \% larger than the value by \citet{1284}. The
+  J-values by \citet{1746} are within the uncertainty range of the IUPAC
+  recommendation.}
+
+\note{J7301}{The quantum yields are from \citet{1555}.}
+
+\end{multicols}
+
+\clearpage
+
+\begin{longtable}{llrl}
+\caption{Henry's law coefficients}\\
+\hline
+substance & 
+$\rule[-2.5ex]{0ex}{2ex}\DS\frac{k_{\rm H}^{\ominus}}{\rm M/atm}$ &
+$\DS\frac{-\Delta_{\rm soln}H/R}{\rm K}$ &
+reference\\
+\hline 
+\endfirsthead
+\caption{Henry's law coefficients (... continued)}\\
+\hline
+substance & 
+$\rule[-2.5ex]{0ex}{2ex}\DS\frac{k_{\rm H}^{\ominus}}{\rm M/atm}$ &
+$\DS\frac{-\Delta_{\rm soln}H/R}{\rm K}$ &
+reference\\
+\hline 
+\endhead
+\hline
+\endfoot
+\input{mecca_henry.tex}
+\end{longtable}
+
+\begin{multicols}{3}
+$^*$Notes:
+
+The temperature dependence of the Henry constants is: $$K_{\rm H} =
+K_{\rm H}^{\ominus} \times \exp \DS\left( \frac{-\Delta_{\rm soln}H}{R}
+  \left( \frac{1}{T} - \frac{1}{T^{\ominus}} \right) \right)$$
+where $\Delta_{\rm soln}H$~= molar enthalpy of dissolution
+[\unit{J/mol}] and $R$~= 8.314 \unit{J/(mol~K)}.
+
+\henrynote{NO2}{The temperature dependence is from \citet{87}.}
+
+\henrynote{HNO3}{Calculated using the acidity constant from \citet{450}.}
+
+\henrynote{CH3O2}{This value was estimated by \citet{46}.}
+
+\henrynote{HBr}{Calculated using the acidity constant from \citet{194}.}
+
+\henrynote{HOBr}{This value was estimated by \citet{446}.}
+
+\henrynote{IO}{Assumed to be the same as $K_{\rm H}(\kpp{HOI})$.}
+
+\henrynote{HOI}{Lower limit.}
+
+\henrynote{ICl}{Calculated using thermodynamic data from \citet{489}.}
+
+\henrynote{IBr}{Calculated using thermodynamic data from \citet{489}.}
+
+\henrynote{H2SO4}{To account for the very high Henry's law coefficient
+  of \kpp{H2SO4}, a very high value was chosen arbitrarily.}
+
+\henrynote{DMSO}{Lower limit cited from another reference.}
+
+\henrynote{HgBr2}{Assumed to be the same as for \kpp{HgCl2}}
+
+\henrynote{ClHgBr}{Assumed to be the same as for \kpp{HgCl2}}
+
+\henrynote{BrHgOBr}{Assumed to be the same as for \kpp{HgCl2}}
+
+\henrynote{ClHgOBr}{Assumed to be the same as for \kpp{HgCl2}}
+
+\end{multicols}
+
+\clearpage
+
+\begin{longtable}{llrl}
+\caption{Accommodation coefficients}\\
+\hline
+substance & 
+$\alpha^{\ominus}$ &
+$\DS\frac{-\Delta_{\rm obs}H/R}{\rm K}$ &
+reference\\
+\hline 
+\endfirsthead
+\caption{Accommodation coefficients (... continued)}\\
+\hline
+substance & 
+$\alpha^{\ominus}$ &
+$\DS\frac{-\Delta_{\rm obs}H/R}{\rm K}$ &
+reference\\
+\hline 
+\endhead
+\hline
+\endfoot 
+\input{mecca_alpha.tex}
+\end{longtable}
+
+\begin{multicols}{3}
+$^*$Notes:
+
+The temperature dependence of the accommodation coefficients is given by
+\citep{155}:
+
+\begin{eqnarray*}
+  \frac{\alpha}{1-\alpha} & = & \exp \left( \frac{-\Delta_{\rm obs}G}{RT}
+  \right)\\
+  & = & \exp \left( \frac{-\Delta_{\rm obs}H}{RT} + \frac{\Delta_{\rm
+  obs}S}{R} \right)
+\end{eqnarray*}
+
+where $\Delta_{\rm obs}G$ is the Gibbs free energy barrier of the
+transition state toward solution \citep{155}, and $\Delta_{\rm obs}H$
+and $\Delta_{\rm obs}S$ are the corresponding enthalpy and entropy,
+respectively. The equation can be rearranged to:
+
+\begin{eqnarray*}
+  \ln\left( \frac{\alpha}{1-\alpha} \right) & = & 
+  \frac{-\Delta_{\rm obs}H}{R} \times \frac{1}{T} + \frac{-\Delta_{\rm
+  obs}S}{R}\\
+\end{eqnarray*}
+
+and further:
+
+\begin{eqnarray*}
+  \dd\ln\left( \frac{\alpha}{1-\alpha} \right) \left/ \dd\left(
+    \frac{1}{T} \right)\right. & = & \frac{-\Delta_{\rm obs}H}{R}
+\end{eqnarray*}
+
+If no data were available, a value of $\alpha$ = 0.01, $\alpha$ = 0.1,
+or $\alpha$ = 0.5, and a temperature dependence of $-\Delta_{\rm
+  obs}H/R$~= 2000~\unit{K} has been assumed.
+
+\alphanote{O2}{Estimate.}
+
+\alphanote{O3}{Value measured at 292 \unit{K}.}
+
+\alphanote{OH}{Value measured at 293 \unit{K}.}
+
+\alphanote{HO2}{Value for aqueous salts at 293 \unit{K}.}
+
+\alphanote{NH3}{Value measured at 295 \unit{K}.}
+
+\alphanote{NO}{Value measured between 193 and 243 \unit{K}.}
+
+\alphanote{NO2}{Value measured at 298 \unit{K}.}
+
+\alphanote{NO3}{Value is a lower limit, measured at 273 \unit{K}.}
+
+\alphanote{N2O5}{Value for sulfuric acid, measured between 195 and 300
+\unit{K}.}
+
+\alphanote{HONO}{Value measured between 247 and 297 \unit{K}.}
+
+\alphanote{HNO3}{Value measured at room temperature. \citet{930} say
+$\gamma>0.2$. Here $\alpha=0.5$ is used.}
+
+\alphanote{HNO4}{Value measured at 200 \unit{K} for water ice.}
+
+\alphanote{CH3O2}{Estimate.}
+
+\alphanote{HCHO}{Value measured between 260 and 270 \unit{K}.}
+
+\alphanote{CO2}{Estimate.}
+
+\alphanote{HCl}{Temperature dependence derived from published data at 2
+different temperatures}
+
+\alphanote{HOCl}{Assumed to be the same as $\alpha(\kpp{HOBr})$.}
+
+\alphanote{ClNO3}{Value measured at 274.5 \unit{K}.}
+
+\alphanote{HBr}{Temperature dependence derived from published data at 2
+different temperatures}
+
+\alphanote{HOBr}{Value measured at room temperature. \citet{930} say
+$\gamma>0.2$. Here $\alpha=0.5$ is used.}
+
+\alphanote{BrNO3}{Value measured at 273 \unit{K}.}
+
+\alphanote{BrCl}{Assumed to be the same as $\alpha(\kpp{Cl2})$.}
+
+\alphanote{I2}{Estimate.}
+
+\alphanote{IO}{Estimate.}
+
+\alphanote{OIO}{Estimate.}
+
+\alphanote{I2O2}{Estimate.}
+
+\alphanote{HI}{Temperature dependence derived from published data at 2
+different temperatures}
+
+\alphanote{HOI}{Assumed to be the same as $\alpha(\kpp{HOBr})$. See also
+  \citet{1565} and \citet{1572}.}
+
+\alphanote{HIO3}{Estimate.}
+
+\alphanote{INO2}{Estimate.}
+
+\alphanote{INO3}{Estimate.}
+
+\alphanote{ICl}{Estimate.}
+
+\alphanote{IBr}{Assumed to be the same as $\alpha(\kpp{ICl})$.}
+
+\alphanote{H2SO4}{Value measured at 303 \unit{K}.}
+
+\alphanote{Hg}{Estimate.}
+
+\alphanote{HgO}{Estimate.}
+
+\alphanote{HgCl2}{Estimate.}
+
+\alphanote{HgBr2}{Estimate.}
+
+\alphanote{ClHgBr}{Estimate.}
+
+\alphanote{BrHgOBr}{Estimate.}
+
+\alphanote{ClHgOBr}{Estimate.}
+
+\end{multicols}
+
+\clearpage
+
+\begin{longtable}{llp{8cm}p{5cm}p{55mm}}
+\caption{Henry's law equilibria}\\
+\hline
+\# & labels & reaction & rate coefficient & reference\\
+\hline
+\endhead
+\hline
+\endfoot
+\input{mecca_eqn_h.tex}
+\end{longtable}
+
+\begin{multicols}{3}
+$^*$Notes:
+
+The forward (\verb|k_exf|) and backward (\verb|k_exb|) rate coefficients
+are calculated in the file \verb|messy_mecca_aero.f90| using the
+accommodation coefficients in subroutine \verb|mecca_aero_alpha| and
+Henry's law constants in subroutine \verb|mecca_aero_henry|.
+
+$k_{\rm mt}$ = mass transfer coefficient
+
+$\rm lwc$ = liquid water content of aerosol mode
+
+H3201, H6300, H6301, H6302, H7300, H7301, H7302, H7601, H7602: For
+uptake of $X$ (= \chem{N_2O_5}, \chem{ClNO_3}, \chem{BrNO_3}) and
+subsequent reaction with \chem{H_2O}, \chem{Cl^-}, and \chem{Br^-}, we
+define $k_{\rm exf}(X) = k_{\rm mt}(X)\times lwc / ( [H_2O] + 5.0E2
+[Cl^-] + 3.0E5 [Br^-] )$.
+
+H6301, H6302, H7601: The total uptake is determined by $k_{\rm
+  mt}(\chem{ClNO_3})$. The relative rates are assumed to be the same as
+for \chem{N_2O_5} (H3201, H6300, H7300).
+
+H7301, H7302, H7602: The total uptake is determined by $k_{\rm
+  mt}(\chem{BrNO_3})$. The relative rates are assumed to be the same as
+for \chem{N_2O_5} (H3201, H6300, H7300).
+
+\end{multicols}
+
+\clearpage
+
+\begin{longtable}{llp{9cm}p{7cm}p{5cm}}
+\caption{Heterogeneous reactions}\\
+\hline
+\# & labels & reaction & rate coefficient & reference\\
+\hline
+\endfirsthead
+\caption{Heterogeneous reactions (... continued)}\\
+\hline
+\# & labels & reaction & rate coefficient & reference\\
+\hline
+\endhead
+\hline
+\endfoot
+\input{mecca_eqn_het.tex}
+\end{longtable}
+
+$^*$Notes:
+
+Heterogeneous reaction rates are calculated with an external module and
+then supplied to the MECCA chemistry (see \url{www.messy-interface.org}
+for details)
+
+\clearpage
+
+\def\aq{}
+\begin{longtable}{llp{7cm}p{3cm}p{25mm}p{6cm}}
+\caption{Acid-base and other eqilibria}\\
+\hline
+\# & labels & reaction & $K_0[M^{m-n}]$ & -$\Delta H / R [K]$ & reference\\
+\hline
+\endhead
+\hline
+\endfoot
+\input{mecca_eqn_eq.tex}
+\end{longtable}
+
+\begin{multicols}{2}
+$^*$Notes: 
+
+\note{EQ40}{For $pK_a$(\chem{CO_2}), see also \citet{1777}.}
+
+\note{EQ72}{For $pK_a$(\chem{HOBr}), see also \citet{1778}.}
+
+\note{EQ82}{Thermodynamic calculations on the \chem{IBr}/\chem{ICl}
+  equilibrium according to the data tables from \citet{489}:\\
+  \begin{tabular}{ccccccc}
+    \chem{ICl} & + & \chem{Br^-} & $\rightleftharpoons$ &
+    \chem{IBr} & + & \chem{Cl^-}\\
+    -17.1 & & -103.96 & = & -4.2 & & -131.228
+  \end{tabular}
+  $$\frac{\Delta G}{[\unit{kJ/mol}]} = -4.2 - 131.228 - (-17.1 - 103.96)
+  = -14.368$$
+  $$K = \frac{[\chem{IBr}] \times [\chem{Cl^-}]}{[\chem{ICl}] \times
+    [\chem{Br^-}]} = \exp\left(\frac{-\Delta G}{RT}\right) =
+  \exp\left(\frac{14368}{8.314\times 298}\right) = 330$$
+  This means we have equal amounts of \chem{IBr} and \chem{ICl} when the
+  [\chem{Cl^-}]/[\chem{Br^-}] ratio equals 330.}
+
+\end{multicols}
+
+\clearpage
+
+\def\aq{}
+\begin{longtable}{llp{8cm}p{3cm}p{25mm}p{5cm}}
+\caption{Aqueous phase reactions}\\
+\hline
+\# & labels & reaction & $k_0~[M^{1-n}s^{-1}]$ & $-E_a / R [K] $& reference\\
+\hline
+\endfirsthead
+\caption{Aqueous phase reactions (...continued)}\\
+\hline
+\# & labels & reaction & $k_0~[M^{1-n}s^{-1}]$ & $-E_a / R [K] $& reference\\
+\hline
+\endhead
+\hline
+\endfoot
+\input{mecca_eqn_a.tex}
+\end{longtable}
+
+\begin{multicols}{3}
+$^*$Notes:
+
+\note{A6102}{\citet{1008} found an upper limit of \code{6E9} and cite an
+  upper limit from another study of \code{2E9}. Here, we set the rate
+  coefficient to \code{1E9}.}
+
+\note{A6301}{There is also an earlier study by \citet{69} which found a
+  smaller rate coefficient but did not consider the back reaction.}
+
+\note{A7400}{Assumed to be the same as for \chem{Br_2^-} + \chem{H_2O_2}.}
+
+\note{A9105}{The rate coefficient for the sum of the paths (leading to
+  either \chem{HSO_5^-} or \chem{SO_4^{2-}}) is from \citet{75}, the
+  ratio 0.28/0.72 is from \citet{111}.}
+
+\note{A9106}{See also: \citep{75,1}. If this reaction produces a lot of
+  \chem{SO_4^-}, it will have an effect. However, we currently assume
+  only the stable \chem{S_2O_8^{2-}} as product. Since
+  \chem{S_2O_8^{2-}} is not treated explicitly in the mechanism, we use
+  \chem{SO_4^{2-}} as a proxy. Note that this destroys the mass
+  consistency for sulfur species.}
+
+\note{A9205}{D.\ Sedlak, pers.\ comm.\ (1993).}
+
+\note{A9208}{D.\ Sedlak, pers.\ comm.\ (1993).}
+
+\note{A9605}{assumed to be the same as for \chem{SO_3^{2-}} +
+  \chem{HOCl}.}
+
+\note{A9705}{assumed to be the same as for \chem{SO_3^{2-}} +
+  \chem{HOBr}.}
+
+\end{multicols}
+
+\clearpage
+
+\begin{multicols}{3}
+\bibliographystyle{egu} % bst file
+\bibliography{meccalit} % bib files
+\end{multicols}
+
+\end{document}

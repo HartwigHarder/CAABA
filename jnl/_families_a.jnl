@@ -1,0 +1,147 @@
+!-------------------------------------------------------------------------------
+
+say defining some families for ax = ($ax)
+
+! cations
+LET cations_($ax) = Nap_($ax)+NH4p_($ax)+Hp_($ax)
+SET VARIABLE/UNITS="`Clm_($ax), RETURN=unit`"         cations_($ax)
+SET VARIABLE/TITLE="cations (($ax))"                  cations_($ax)
+
+!anions
+LET anions_($ax) = O2m_($ax)+OHm_($ax)+NO2m_($ax)+NO3m_($ax)+NO4m_($ax)+CO3m_($ax)+HCOOm_($ax)+HCO3m_($ax)+CH3COOm_($ax)+Clm_($ax)+Cl2m_($ax)+ClOm_($ax)+ClOHm_($ax)+Brm_($ax)+Br2m_($ax)+BrOm_($ax)+BrOHm_($ax)+BrCl2m_($ax)+Br2Clm_($ax)+Im_($ax)+IO2m_($ax)+IO3m_($ax)+ICl2m_($ax)+IClBrm_($ax)+IBr2m_($ax)+SO3m_($ax)+2*SO3mm_($ax)+SO4m_($ax)+2*SO4mm_($ax)+SO5m_($ax)+HSO3m_($ax)+HSO4m_($ax)+HSO5m_($ax)+CH3SO3m_($ax)+CH2OHSO3m_($ax)
+
+SET VARIABLE/UNITS="`Clm_($ax), RETURN=unit`"         anions_($ax)
+SET VARIABLE/TITLE="anions (($ax))"                   anions_($ax)
+
+! HO2tot
+LET HO2tot_($ax) = HO2_($ax)+O2m_($ax)
+SET VARIABLE/UNITS="`HO2_($ax), RETURN=unit`"         HO2tot_($ax)
+SET VARIABLE/TITLE="HO_2+O_2^- (($ax))"               HO2tot_($ax)
+
+! NH3tot
+LET NH3tot_($ax) = NH3_($ax)+NH4p_($ax)
+SET VARIABLE/UNITS="`NH3_($ax),RETURN=unit`"          NH3tot_($ax)
+SET VARIABLE/TITLE="NH_3+NH_4^+ (($ax))"              NH3tot_($ax)
+
+! HONOtot
+LET HONOtot_($ax) = HONO_($ax)+NO2m_($ax)
+SET VARIABLE/UNITS="`HONO_($ax),RETURN=unit`"         HONOtot_($ax)
+SET VARIABLE/TITLE="HONO+NO_2^- (($ax))"              HONOtot_($ax)
+
+! HNO3tot
+LET HNO3tot_($ax) = HNO3_($ax)+NO3m_($ax)
+SET VARIABLE/UNITS="`HNO3_($ax),RETURN=unit`"         HNO3tot_($ax)
+SET VARIABLE/TITLE="HNO_3+NO_3^- (($ax))"             HNO3tot_($ax)
+
+! HNO4tot
+LET HNO4tot_($ax) = HNO4_($ax)+NO4m_($ax)
+SET VARIABLE/UNITS="`HNO4_($ax),RETURN=unit`"         HNO4tot_($ax)
+SET VARIABLE/TITLE="HNO_4+NO_4^- (($ax))"             HNO4tot_($ax)
+
+! HCOOHtot
+LET HCOOHtot_($ax) = HCOOH_($ax)+HCOOm_($ax)
+SET VARIABLE/UNITS="`HCOOH_($ax),RETURN=unit`"        HCOOHtot_($ax)
+SET VARIABLE/TITLE="HCOOH+HCOO^- (($ax))"             HCOOHtot_($ax)
+
+! CO2tot
+LET CO2tot_($ax) = CO2_($ax)+HCO3m_($ax)
+SET VARIABLE/UNITS="`CO2_($ax),RETURN=unit`"          CO2tot_($ax)
+SET VARIABLE/TITLE="CO_2+HCO_3^- (($ax))"             CO2tot_($ax)
+
+! Cltot
+LET Cltot_($ax) = HCl_($ax)+Clm_($ax)+Cl_($ax)+2*Cl2m_($ax)+HOCl_($ax)+ClOm_($ax)+ClOHm_($ax)+2*Cl2_($ax)+BrCl_($ax)+2*BrCl2m_($ax)+Br2Clm_($ax)+ICl_($ax)+2*ICl2m_($ax)+IClBrm_($ax)
+SET VARIABLE/UNITS="`HCl_($ax),RETURN=unit`"          Cltot_($ax)
+SET VARIABLE/TITLE="Cl_t_o_t (($ax))"                 Cltot_($ax)
+
+! HCltot
+LET HCltot_($ax) = HCl_($ax)+Clm_($ax)
+SET VARIABLE/UNITS="`HCl_($ax),RETURN=unit`"          HCltot_($ax)
+SET VARIABLE/TITLE="HCl+Cl^- (($ax))"                 HCltot_($ax)
+
+! Cl radical
+LET Clrad_($ax) = Cl_($ax)+Cl2m_($ax)
+SET VARIABLE/UNITS="`Cl_($ax),RETURN=unit`"           Clrad_($ax)
+SET VARIABLE/TITLE="Cl+Cl_2^- (($ax))"                Clrad_($ax)
+
+! HOCltot
+LET HOCltot_($ax) = HOCl_($ax)+ClOm_($ax)
+SET VARIABLE/UNITS="`HOCl_($ax),RETURN=unit`"         HOCltot_($ax)
+SET VARIABLE/TITLE="HOCl+ClO^- (($ax))"               HOCltot_($ax)
+
+! Brtot
+LET Brtot_($ax) = HBr_($ax)+Brm_($ax)+Br_($ax)+2*Br2m_($ax)+HOBr_($ax)+BrOm_($ax)+BrOHm_($ax)+2*Br2_($ax)+BrCl_($ax)+BrCl2m_($ax)+2*Br2Clm_($ax)+IBr_($ax)+IClBrm_($ax)+2*IBr2m_($ax)
+SET VARIABLE/UNITS="`HBr_($ax),RETURN=unit`"          Brtot_($ax)
+SET VARIABLE/TITLE="Br_t_o_t (($ax))"                 Brtot_($ax)
+
+! HBrtot
+LET HBrtot_($ax) = HBr_($ax)+Brm_($ax)
+SET VARIABLE/UNITS="`HBr_($ax),RETURN=unit`"          HBrtot_($ax)
+SET VARIABLE/TITLE="HBr+Br^- (($ax))"                 HBrtot_($ax)
+
+! Br radical
+LET Brrad_($ax) = Br_($ax)+Br2m_($ax)
+SET VARIABLE/UNITS="`Br_($ax),RETURN=unit`"           Brrad_($ax)
+SET VARIABLE/TITLE="Br+Br_2^- (($ax))"                Brrad_($ax)
+
+! HOBrtot
+LET HOBrtot_($ax) = HOBr_($ax)+BrOm_($ax)
+SET VARIABLE/UNITS="`HOBr_($ax),RETURN=unit`"         HOBrtot_($ax)
+SET VARIABLE/TITLE="HOBr+BrO^- (($ax))"               HOBrtot_($ax)
+
+! Itot
+LET Itot_($ax) = Im_($ax)+HOI_($ax)+2*I2_($ax)+IO_($ax)+IO2m_($ax)+IO3m_($ax)+ICl_($ax)+IBr_($ax)+ICl2m_($ax)+IClBrm_($ax)+IBr2m_($ax)
+SET VARIABLE/UNITS="`Im_($ax),RETURN=unit`"           Itot_($ax)
+SET VARIABLE/TITLE="I_t_o_t (($ax))"                  Itot_($ax)
+
+! SO2tot
+LET SO2tot_($ax) = SO2_($ax)+HSO3m_($ax)+SO3mm_($ax)
+SET VARIABLE/UNITS="`SO2_($ax),RETURN=unit`"          SO2tot_($ax)
+SET VARIABLE/TITLE="SO_2+HSO_3^-+SO_3^2^- (($ax))"    SO2tot_($ax)
+
+! H2SO4tot
+LET H2SO4tot_($ax) = H2SO4_($ax)+HSO4m_($ax)+SO4mm_($ax)
+SET VARIABLE/UNITS="`H2SO4_($ax),RETURN=unit`"        H2SO4tot_($ax)
+SET VARIABLE/TITLE="H_2SO_4+HSO_4^-+SO_4^2^- (($ax))" H2SO4tot_($ax)
+
+! pH
+LET pH_($ax) = 0-LOG(mpm2mpl_($ax)*Hp_($ax))
+!LET pH = pH_($ax)[d=2] +Hp_($ax)-Hp_($ax)
+SET VARIABLE/UNITS="1"                                pH_($ax)
+SET VARIABLE/TITLE="pH (($ax))"                       pH_($ax)
+
+!ion balance
+LET XpdXm_($ax) = cations_($ax) / anions_($ax)
+SET VARIABLE/UNITS="1"                                XpdXm_($ax)
+SET VARIABLE/TITLE="@srX^+/X^-"                     XpdXm_($ax)
+
+! Kw
+LET Kw_($ax) = mpm2mpl_($ax)^2 * Hp_($ax) * OHm_($ax)
+SET VARIABLE/UNITS="@sr(mol/L)^2"                   Kw_($ax)
+SET VARIABLE/TITLE="H^+*OH^- (($ax))"                 Kw_($ax)
+
+! lwc
+! qqq without adding and subtracting Hp, ferret produces the **ERROR: 
+! illegal USE of transformation: PLOTDATA[T=???@MIN,D=0] applied to point
+! MESSAGE/CONTINUE lwc2 ranges from `minval` to `maxval`
+! probably "+Hp-Hp" somehow connects lwc to dataset d=0 (?)
+LET xlwc_($ax)= ($lwc_($ax))[d=2] +Hp_($ax)-Hp_($ax)
+SET VARIABLE/UNITS="m^3/m^3" xlwc_($ax)
+SET VARIABLE/TITLE="lwc (($ax))" xlwc_($ax)
+
+! EF(Cl-) enrichment factor of chlorine
+! Cl/Na seawater ratio is from Table 1 in Sander et al. [1400]
+!LET EF_Clm_($ax) = (Clm_($ax)/Nap_($ax)) / 1.165
+LET EF_Clm_($ax) = IF (Nap_($ax) LE 0) THEN 0 ELSE (Clm_($ax)/Nap_($ax)) / (Clm_($ax)[l=1]/Nap_($ax)[l=1])
+SET VARIABLE/UNITS="" EF_Clm_($ax)
+SET VARIABLE/TITLE="EF(Cl^- (($ax)))"  EF_Clm_($ax)
+ 
+! EF(Br-) enrichment factor of bromine
+! Br/Na seawater ratio is from Table 1 in Sander et al. [1400]
+!LET EF_Brm_($ax)  = (Brm_($ax)/Nap_($ax)) / 0.00180
+LET EF_Brm_($ax)  = IF (Nap_($ax) LE 0) THEN 0 ELSE (Brm_($ax)/Nap_($ax)) / (Brm_($ax)[l=1]/Nap_($ax)[l=1])
+SET VARIABLE/UNITS="" EF_Brm_($ax)
+SET VARIABLE/TITLE="EF(Br^- (($ax)))"  EF_Brm_($ax)
+
+
+
+

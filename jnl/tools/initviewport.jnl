@@ -1,0 +1,20 @@
+LET viewport_columns = $1
+LET viewport_rows = $2
+REPEAT/i=1:`viewport_columns*viewport_rows`:1 (CANCEL viewport `i`)
+!GO portraitNxN `viewport_columns` `viewport_rows`
+!GO portraitNxN `viewport_columns` `viewport_rows` 0 0 `768/1024` ! screen
+GO portraitNxN `viewport_columns` `viewport_rows` 0 0 $4"`296/210`"
+LET currentviewport = 0
+LET currentpage = 1
+
+! header for each PLOT page?
+DEFINE SYMBOL pageheader = $3"noheader|header|noheader|smallheader"
+
+DEFINE SYMBOL tmp = `{spawn: "echo $HOME/tmp"}`
+
+SAY "directory for PLOT files is ($tmp)"
+
+SAY "deleting old ($tmp)/page*.plt files"
+sp "rm ($tmp)/page*.plt"
+
+SET MODE metafile:($tmp)/page1001.plt

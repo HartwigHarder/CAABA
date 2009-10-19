@@ -1,0 +1,22 @@
+! the contents of _findrange cannot be placed into _plot_0d.jnl directly
+! because ferret produces an error then
+
+! dsensi must be defined before calling this code:
+IF ($dsensi%TRUE|*>FALSE%) THEN 
+  SAY You must define the SYMBOL dsensi (probably in your main *.jnl file)
+  EXIT/PROMPT 
+ENDIF
+
+DEFINE SYMBOL dend   = `($dsensi)+($nsensi)-1`
+! start with minval and maxval from base data set:
+LET minval = plotdata[t=@MIN]
+LET maxval = plotdata[t=@MAX]
+! loop through other data sets to see if there are extremes:
+REPEAT/range=($dsensi):($dend)/name=dnum ( \
+  DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+  IF `plotdata[t=@MIN,d=($dnum)] LT minval` THEN ; \
+    LET minval = plotdata[t=@MIN,d=($dnum)] ; \
+  ENDIF ; \
+  IF `plotdata[t=@MAX,d=($dnum)] GT maxval` THEN ; \
+    LET maxval = plotdata[t=@MAX,d=($dnum)] ; \
+  ENDIF )

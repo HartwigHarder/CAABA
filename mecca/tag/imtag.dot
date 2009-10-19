@@ -1,0 +1,23 @@
+
+  splines=true;
+  overlap=false;
+  normalize=true;
+  // concentrate=true;
+  // ordering = out;
+
+  rankdir = LR;
+  ranksep = "1.0 equally";
+
+  size = "7,11"; 
+  // size = "40,80";
+  // ratio = fill;
+
+  //orientation = landscape;
+  margin = ".1";
+
+  // label: (each label line should be <= of 70 chars! - otherwise a postscript error is possible)
+  fontsize = 40; fontname=AgencyR; fontcolor=white;
+
+  node [fontname=AgencyR, fontsize=55, shape=ellipse, style="bold, filled"];
+  edge [fontname=AgencyR, fontsize=50, style=bold, arrowhead=normal, arrowsize=2];
+

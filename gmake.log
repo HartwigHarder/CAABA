@@ -1,0 +1,38 @@
+./sfmakedepend --file=depend.mk caaba.f90 caaba_io.f90 caaba_mem.f90 messy_cmn_photol_mem.f90 messy_jval_box.f90 messy_jval.f90 messy_main_blather.f90 messy_main_constants_mem.f90 messy_main_control_cb.f90 messy_main_rnd.f90 messy_main_rnd_lux.f90 messy_main_rnd_mtw.f90 messy_main_timer.f90 messy_main_tools.f90 messy_main_tools_kp4_compress.f90 messy_mecca_aero.f90 messy_mecca_box.f90 messy_mecca_dbl_box.f90 messy_mecca.f90 messy_mecca_khet.f90 messy_mecca_kpp.f90 messy_mecca_kpp_function.f90 messy_mecca_kpp_global.f90 messy_mecca_kpp_initialize.f90 messy_mecca_kpp_integrator.f90 messy_mecca_kpp_jacobian.f90 messy_mecca_kpp_jacobiansp.f90 messy_mecca_kpp_linearalgebra.f90 messy_mecca_kpp_monitor.f90 messy_mecca_kpp_parameters.f90 messy_mecca_kpp_precision.f90 messy_mecca_kpp_rates.f90 messy_mecca_kpp_util.f90 messy_mecca_tag_box.f90 messy_readj_box.f90 messy_readj.f90 messy_sappho_box.f90 messy_sappho.f90 messy_semidep_box.f90 messy_traject_box.f90
+... external module: netcdf
+./sfmakedepend --file=depend.mk caaba.f90 caaba_io.f90 caaba_mem.f90 messy_cmn_photol_mem.f90 messy_jval_box.f90 messy_jval.f90 messy_main_blather.f90 messy_main_constants_mem.f90 messy_main_control_cb.f90 messy_main_rnd.f90 messy_main_rnd_lux.f90 messy_main_rnd_mtw.f90 messy_main_timer.f90 messy_main_tools.f90 messy_main_tools_kp4_compress.f90 messy_mecca_aero.f90 messy_mecca_box.f90 messy_mecca_dbl_box.f90 messy_mecca.f90 messy_mecca_khet.f90 messy_mecca_kpp.f90 messy_mecca_kpp_function.f90 messy_mecca_kpp_global.f90 messy_mecca_kpp_initialize.f90 messy_mecca_kpp_integrator.f90 messy_mecca_kpp_jacobian.f90 messy_mecca_kpp_jacobiansp.f90 messy_mecca_kpp_linearalgebra.f90 messy_mecca_kpp_monitor.f90 messy_mecca_kpp_parameters.f90 messy_mecca_kpp_precision.f90 messy_mecca_kpp_rates.f90 messy_mecca_kpp_util.f90 messy_mecca_tag_box.f90 messy_readj_box.f90 messy_readj.f90 messy_sappho_box.f90 messy_sappho.f90 messy_semidep_box.f90 messy_traject_box.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_precision.f90
+... external module: netcdf
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_jacobiansp.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_monitor.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_parameters.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_global.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_function.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_jacobian.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_linearalgebra.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_initialize.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_rates.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_util.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp_integrator.f90
+In file messy_mecca_kpp_integrator.f90:689
+
+                Fcn0, dFdT )
+                      1
+Warning (158): INTENT(OUT) variable 'dfdt' at (1) is never set
+In file messy_mecca_kpp_integrator.f90:793
+
+  SUBROUTINE ros_Decomp( A, Pivot, ising )
+                                   1
+Warning (158): INTENT(OUT) variable 'ising' at (1) is never set
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_kpp.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_aero.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_dbl_box.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_tag_box.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_semidep_box.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_traject_box.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_box.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_mecca_khet.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c messy_main_control_cb.f90
+/soft/g95/v0.91/bin/g95 -DNETCDF  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full -I/soft/netcdf/v3.6.2_g95v091/include -c caaba.f90
+/soft/g95/v0.91/bin/g95  -cpp -O0 -g -fbounds-check -fimplicit-none -ftrace=full caaba.o caaba_io.o caaba_mem.o messy_cmn_photol_mem.o messy_jval_box.o messy_jval.o messy_main_blather.o messy_main_constants_mem.o messy_main_control_cb.o messy_main_rnd.o messy_main_rnd_lux.o messy_main_rnd_mtw.o messy_main_timer.o messy_main_tools.o messy_main_tools_kp4_compress.o messy_mecca_aero.o messy_mecca_box.o messy_mecca_dbl_box.o messy_mecca.o messy_mecca_khet.o messy_mecca_kpp.o messy_mecca_kpp_function.o messy_mecca_kpp_global.o messy_mecca_kpp_initialize.o messy_mecca_kpp_integrator.o messy_mecca_kpp_jacobian.o messy_mecca_kpp_jacobiansp.o messy_mecca_kpp_linearalgebra.o messy_mecca_kpp_monitor.o messy_mecca_kpp_parameters.o messy_mecca_kpp_precision.o messy_mecca_kpp_rates.o messy_mecca_kpp_util.o messy_mecca_tag_box.o messy_readj_box.o messy_readj.o messy_sappho_box.o messy_sappho.o messy_semidep_box.o messy_traject_box.o -L/soft/netcdf/v3.6.2_g95v091/lib -lnetcdf -o caaba.exe

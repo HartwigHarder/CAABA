@@ -1,0 +1,84 @@
+% mz_ak_20060518+
+% Ozone budget
+<G2107> & LossHO2        & HO2  + O3       = OH
+<G2104> & LossOH         & OH   + O3       = HO2
+<G2111> & LossO1D        & H2O  + O1D      = 2 OH 
+<G3201> & ProdHO2        & NO   + HO2      = NO2   + OH
+<G4104> & ProdMeO2       & CH3O2 + NO      = HCHO + NO2 + HO2
+<G4204> & ProdRO2        & EtO2  + NO      = CH3CHO + HO2 + NO2
+<G4212> & ProdRO2        & PA    + NO      = CH3O2 + NO2
+<G4305> & 0.96 ProdRO2   & PrO2  + NO      = .96 CH3COCH3 + .96 HO2 + .96 NO2 + .04 PrONO2 
+<G4309> & 0.98 ProdRO2   & C3H6O2 + NO     = .98 CH3CHO + .98 HCHO + .98 HO2 + .98 NO2 + .02 ONIT
+<G4313> & ProdRO2        & ACETO2  + NO    = NO2 + PA + HCHO
+<G4403> & ProdRO2        & C4H9O2  + NO    = .84 NO2 + .56 MEK + .56 HO2 + .28 EtO2 + .84 CH3CHO + .16 ONIT
+<G4408> & ProdRO2        & MVKO2   + NO    = NO2 + .25 PA + .25 ACETOL + .75 HCHO + .25 CO + .75 HO2 + .5 CH3COCHO
+<G4415> & 0.985 ProdRO2  & MEKO2   + NO    = .985 CH3CHO + .985 PA + .985 NO2 + .015 ONIT 
+<G4504> & 0.88 ProdRO2   & ISO2  + NO      = .88 NO2 + .88 MVK + .88 HCHO + .88 HO2 + .12 ISON
+% Br source diagnostic
+%% from hydrocarbons + OH
+<G7403> & Brcoh    & CH3Br   + OH     = H2O + Br      
+<G7403> & CH3Brcoh   & CH3Br   + OH     = H2O + Br      
+<G7403> & Brorg      & CH3Br   + OH     = H2O + Br      
+<G7407a> & CHBr3coh   & CHBr3   + OH     = H2O + 3 Br   
+<G7407a> & 3 Brcoh  & CHBr3   + OH     = H2O + 3 Br   
+<G7407a> & 3 Brorg  & CHBr3   + OH     = H2O + 3 Br   
+<G7408a> & CH2Br2coh  & CH2Br2  + OH     = H2O + 2 Br   
+<G7408a> & 2 Brcoh  & CH2Br2  + OH     = H2O + 2 Br   
+<G7408a> & 2 Brorg  & CH2Br2  + OH     = H2O + 2 Br   
+<G7606a> & CHClBr2coh & CHClBr2 + OH     = H2O + 2 Br   
+<G7606a> & 2 Brcoh  & CHClBr2 + OH     = H2O + 2 Br   
+<G7606a> & 2 Brorg  & CHClBr2 + OH     = H2O + 2 Br   
+<G7605a> & CHCl2Brcoh & CHCl2Br + OH     = H2O + Br    
+<G7605a> & Brcoh    & CHCl2Br + OH     = H2O + Br    
+<G7605a> & Brorg      & CHCl2Br + OH     = H2O + Br    
+<G7607a> & CH2ClBrcoh & CH2ClBr + OH     = H2O + Br    
+<G7607a> & Brcoh    & CH2ClBr + OH     = H2O + Br    
+<G7607a> & Brorg    & CH2ClBr + OH     = H2O + Br    
+%% from hydrocarbons
+<J7400a> & Brhcs          & CH3Br   + hv = Br + CH3O2
+<J7400a> & CH3Brhcs   & CH3Br   + hv = Br + CH3O2
+<J7400a> & Brorg          & CH3Br   + hv = Br + CH3O2
+<J7401a> & CH2Br2hcs  & CH2Br2  + hv = 2 Br {+ CH3O2>  
+<J7401a> & 2 Brhcs        & CH2Br2  + hv = 2 Br {+ CH3O2>  
+<J7401a> & 2 Brorg        & CH2Br2  + hv = 2 Br {+ CH3O2>  
+<J7402a> & CHBr3hcs   & CHBr3   + hv = 3 Br {+ CH3O2> 
+<J7402a> & 3 Brhcs        & CHBr3   + hv = 3 Br {+ CH3O2> 
+<J7402a> & 3 Brorg        & CHBr3   + hv = 3 Br {+ CH3O2> 
+<J7500> & Brhcs          & CF3Br   + hv = Br     
+<J7500> & Brorg          & CF3Br   + hv = Br     
+<J7500> & CF3Brhcs   & CF3Br   + hv = Br     
+<J7601> & Brhcs          & CF2ClBr + hv = Br + Cl 
+<J7601> & Brorg          & CF2ClBr + hv = Br + Cl 
+<J7601> & CF2ClBrhcs & CF2ClBr + hv = Br + Cl 
+<J7602a> & CH2ClBrhcs & CH2ClBr + hv = Br + Cl      
+<J7602a> & Brhcs          & CH2ClBr + hv = Br + Cl      
+<J7602a> & Brorg          & CH2ClBr + hv = Br + Cl      
+<J7603a> & CHCl2Brhcs & CHCl2Br + hv = Br + 2 Cl        
+<J7603a> & Brhcs          & CHCl2Br + hv = Br + 2 Cl        
+<J7603a> & Brorg          & CHCl2Br + hv = Br + 2 Cl        
+<J7604a> & CHClBr2hcs & CHClBr2 + hv = 2 Br + Cl       
+<J7604a> & 2 Brhcs        & CHClBr2 + hv = 2 Br + Cl       
+<J7604a> & 2 Brorg        & CHClBr2 + hv = 2 Br + Cl       
+<J6400> & Cldiag         & CH3Cl   + hv = Cl + CH3O2  
+<G6100> & Clozone        & Cl + O3      = ClO    
+%% released from seasalt
+<H7000b_a01> & 2 BrSSrel     & Br2_a01         = Br2      
+<H7000b_a01> & 2 Brsalt      & Br2_a01         = Br2      
+<H7200b_a01> & BrSSrel       & HBr_a01         = HBr         
+<H7200b_a01> & Brsalt        & HBr_a01         = HBr         
+<H7201b_a01> & BrSSrel       & HOBr_a01        = HOBr   
+<H7201b_a01> & Brsalt        & HOBr_a01        = HOBr   
+<H7300_a01>  & BrSSrel       & N2O5  + Brm_a01 = BrNO2   + NO3m_a01
+<H7300_a01>  & Brsalt        & N2O5  + Brm_a01 = BrNO2   + NO3m_a01
+<H7600b_a01> & BrSSrel       & BrCl_a01        = BrCl    
+<H7600b_a01> & Brsalt        & BrCl_a01        = BrCl    
+%% captured by seasalt (only possible for _a01 chemistry only!
+<H7000f_a01> & 2 BrSScap     & Br2            = Br2_a01    
+<H7200f_a01> & BrSScap       & HBr            = HBr_a01    
+<H7201f_a01> & BrSScap       & HOBr           = HOBr_a01      
+<H7301_a01>  & BrSScap       & BrNO3          = HOBr_a01 + HNO3_a01
+<H7302_a01>  & BrSScap       & BrNO3 + Brm_a01 = Br2_a01  + NO3m_a01
+<H7600f_a01> & BrSScap       & BrCl           = BrCl_a01 
+<H7602_a01>  & BrSScap       & BrNO3 + Clm_a01 = BrCl_a01 + NO3m_a01
+% mz_ak_20060518-
+

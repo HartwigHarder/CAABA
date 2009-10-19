@@ -1,0 +1,130 @@
+! ------------------------------------------------------------------------------
+
+! Before this GO script is called, the
+! VARIABLES "factor_($ax)" must already be defined.
+
+DEFINE SYMBOL data1 = ($1)_A0($bin_start)
+
+! test IF VARIABLE exists
+LET/D ($data1) = 0 ! default = dummy scalar value
+LET datasize = `($data1),RETURN=SIZE`
+IF `datasize EQ 1` THEN
+  IF ($undefinedinfo) THEN SAY ($data1) is undefined
+  EXIT
+ENDIF
+
+! this ugly test is necessary in case the unit is empty
+DEFINE SYMBOL emptytest = prefix`($data1), RETURN=unit`postfix
+IF ($unit%TRUE|fromdataset>TRUE|*>FALSE|%) THEN
+  IF ($emptytest%|prefix postfix>TRUE|*>FALSE|%) THEN
+    DEFINE SYMBOL plotunit = 1 ! 1 = dimensionless
+  ELSE
+    DEFINE SYMBOL plotunit = `($data1), RETURN=unit`
+  ENDIF
+ELSE
+  DEFINE SYMBOL plotunit = ($unit)
+ENDIF
+
+GO nextviewport
+
+! ------------------------------------------------------------------------------
+
+! DEFINE range of PLOT DATA
+! the contents of _findrange_sizebins cannot be placed here directly
+! because ferret produces an error then
+GO _findrange_sizebins $1
+
+IF ($rangeinfo) THEN SAY ($1)_A## ranges from `minval` to `maxval`
+! lowprecmin and lowprecmax are necessary because of ferret precision problems:
+DEFINE SYMBOL lowprecmin = `minval`
+DEFINE SYMBOL lowprecmax = `maxval`
+IF `($lowprecmin) EQ ($lowprecmax)` THEN
+  IF `(maxval EQ 0)` THEN LET maxval = 1
+  IF `(maxval LT 0)` THEN LET maxval = 0
+  IF `(maxval GT 0)` THEN LET minval = 0
+  IF ($rangeinfo) THEN SAY plotrange adjusted: `minval` to `maxval`
+ENDIF
+
+! calculate lg of PLOT range
+IF `(maxval EQ 0) AND (minval EQ 0)` THEN
+  LET lgrange = 0
+ELSE
+  LET lgrange = INT(LOG(maxval-minval))-1
+  IF `(maxval LT 0)` THEN LET lgrange = INT(LOG((-1)*minval))-1
+  IF `(minval GT 0)` THEN LET lgrange = INT(LOG(maxval))-1
+ENDIF
+
+! apply lgrange to PLOT and ytitle
+IF `(lgrange GT 2) OR (lgrange LT -2)` THEN
+  DEFINE SYMBOL scaledplotunit = *1E`lgrange` ($plotunit)
+  LET scalefactor = 1/10^lgrange
+ELSE
+  DEFINE SYMBOL scaledplotunit = ($plotunit)
+  LET scalefactor = 1
+ENDIF
+
+IF ($plotunit%|mol/mol>TRUE|mol/mol/day>TRUE|mol/m^3>TRUE|mol/m^3/day>TRUE|*>FALSE|%) THEN
+  ! scale to pmol/mol OR nmol/mol OR micromol/mol
+  ! or       pmol/m3  OR nmol/m3  OR micromol/m3
+  IF `(lgrange GE -12) AND (lgrange LT -9)` THEN
+    DEFINE SYMBOL scaledplotunit = p($plotunit)
+    LET scalefactor = 1e12
+  ENDIF
+  IF `(lgrange GE -9) AND (lgrange LT -6)` THEN
+    DEFINE SYMBOL scaledplotunit = n($plotunit)
+    LET scalefactor = 1e9
+  ENDIF
+  IF `(lgrange GE -6) AND (lgrange LT -3)` THEN
+    DEFINE SYMBOL scaledplotunit = @sgm@as($plotunit)
+    LET scalefactor = 1e6
+  ENDIF
+ENDIF
+
+! ------------------------------------------------------------------------------
+
+! DEFINE the PLOT TITLE
+IF ($2%FALSE|*>TRUE%)  THEN
+  ! USE second parameter as PLOT TITLE
+  DEFINE SYMBOL plottitle = $2
+ELSE
+  ! calculate PLOT TITLE from ($data1)
+  IF ($($data1)%FALSE|*>TRUE%) THEN
+    ! use definition from _kppvar*.jnl:
+    DEFINE SYMBOL plottitle = ($($data1))
+  ELSE
+    ! use title as found in longname of netCDF variable:
+    DEFINE SYMBOL plottitle = `($data1), RETURN=TITLE`
+  ENDIF
+  ! remove aerosol number and change "-->" to real arrow:
+  ! say ($plottitle)
+  DEFINE SYMBOL plottitle = `{spawn:"echo '($plottitle)' | sed 's| (A[0-9][0-9])||g' | sed 's|-->|@ma60@sr|g'"}`
+  ! say ($plottitle)
+  IF ($plotunit%|mol/l>TRUE|*>FALSE|%) THEN
+    ! add square brackets (math font 22 and 23) to denote concentrations
+    DEFINE SYMBOL plottitle = @ma22@sr($plottitle)@ma23@sr
+  ENDIF
+ENDIF
+
+! ------------------------------------------------------------------------------
+
+! loop through aerosol size bins:
+REPEAT/range=($bin_start):($bin_end)/name=ax ( \
+  DEFINE SYMBOL ax = A0`ax` ; \ ! convert VARIABLE to SYMBOL
+  LET alldata  = factor_($ax)*($1)_($ax) ; \
+  LET plotdata = alldata[i=($plotlon),j=($plotlat),k=($plotlevel), \
+  t="($startday)":"($endday)"] ; \
+  IF `($bin_start) EQ ax` THEN ; \
+    LET/UNITS="@as($scaledplotunit)" scaledplotdata = scalefactor*plotdata ; \
+    PLOT/SET/THICK=($thick%1%)/TITLE="@sr($plottitle)" \
+      /VLIMITS=`minval*scalefactor`:`maxval*scalefactor` scaledplotdata ; \
+    \ !qqq say VLIMITS=`minval*scalefactor`:`maxval*scalefactor`
+    GO ppl_mylayout ; \
+    PPL PLOT ; \
+  ELSE ; \
+    DEFINE SYMBOL dashnumber = `ax-($bin_start)` ; \
+    DEFINE SYMBOL colornumber = `ax-($bin_start)+1` ; \
+    PLOT/OVER/THICK=($thick%1%)/COLOR=($colornumber) \
+      /DASH=($dashtype($dashnumber))/nolabels scalefactor*plotdata ; \
+  ENDIF )
+
+! ------------------------------------------------------------------------------

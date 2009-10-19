@@ -1,0 +1,53 @@
+LET currentviewport = `currentviewport+1`
+IF `currentviewport GT viewport_columns * viewport_rows` THEN
+  IF ($nopause%FALSE|*>TRUE|%) THEN
+    ! nopause has been defined
+    SAY "finished page `currentpage`"
+  ELSE
+    ! nopause is undefined
+    pause/quiet "finished page `currentpage`, press <RETURN> to continue"
+  ENDIF
+  LET currentpage = `currentpage+1`
+  LET currentviewport = 1
+  CANCEL MODE metafile                     ! close previous plt file
+  SET MODE metafile:($tmp)/page`currentpage+1000`.plt  ! open next plt file
+  SET WINDOW/clear
+ENDIF
+SET viewport `currentviewport`
+
+! at the beginning of a new page, PLOT a header
+IF ($pageheader%|header>TRUE|smallheader>TRUE|*>FALSE|%) THEN
+  IF `currentviewport EQ 1` THEN
+    GO margins 0 0 0 0 !top bottom left right
+    PLOT/I=0:100/hlimits=0:100/vlimits=0:100/noaxis/nolabels 0 !empty PLOT
+    ! @P2 (pen2) prints in red: LABEL 50, 60, 0, 0, .2  @P2MY SIN PLOT
+    ! symbols in PPL syntax: LABEL ...  date: 'DATE' at 'TIME'
+    !LABEL xpos,ypos,center,angle,size text
+    LET topline    = 90
+    LET bottomline = 10
+    LET delta      = (topline-bottomline) / (3+($nsensi))
+    ! "0*i" is added because the expression must be f(i), i.e. a function of i
+    PLOT/hlimits=0:100/vlimits=0:100/noaxis/nolabels/I=0:15 topline-2*delta+0*i
+    REPEAT/range=1:($nsensi)/name=dnum ( \
+      DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+      PLOT/OVER/DASH=($dashtype($dnum))/nolabels/I=0:15 \
+        topline-(2+dnum)*delta+0*i )
+    ! @as prevents special meaning of _ and ^
+    !LABEL xpos,ypos,center,angle,size text
+    IF ($pageheader%|header>TRUE|*>FALSE|%) THEN
+      LABEL 50, `topline`,          0, 0, .25 "@as($pagetitle%???%)"
+      LABEL  0, `topline-delta`,   -1, 0, .18 "@asGO ($jnlfile%???%) ($argv% %)"
+    ENDIF
+    REPEAT/range=0:($nsensi)/name=dnum ( \
+      DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+      DEFINE SYMBOL currentline = `topline-(2+dnum)*delta` ; \
+      LABEL 15, ($currentline), -1, 0, .18 "@as ($run($dnum)_short)")
+    ! LABEL  0, 35, -1, 0, .18 @as lon=`x[gx=lon,i=($plotlon%1%)]`, lat=`y[gy=lat,j=($plotlat%1%)]`
+    ! LABEL  0, 25, -1, 0, .18 @as lev=($plotlevel%???%) OR JD=($plotday%???%)
+    IF ($pageheader%|header>TRUE|*>FALSE|%) THEN
+      LABEL 0, `bottomline`, -1, 0, .18 \
+        "@as($DATE) at ($TIME), page `currentpage`"
+    ENDIF
+    GO nextviewport
+  ENDIF
+ENDIF

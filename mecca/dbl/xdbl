@@ -1,0 +1,225 @@
+#! /bin/tcsh -f
+#
+# [Gromov, MPI-C Mainz, 2007-2008]
+#
+# script to double MECCA kinetic chemistry mechanism
+#
+# steps:
+# 1 choose desired configuration(s)
+# 2 double using imdouble
+# 3 link generated modules to the base module dir
+
+# --------------------------------------------------------------------------
+# VARIABLES
+# --------------------------------------------------------------------------
+
+# paths are relative
+set batchdir     = "../batch"          # batch files location
+set eqnfiledir   = ".."                # where equation file is located
+set f90box       = "../.."             # where f90-file links should go to
+#                                      # (BOX ONLY !!!)
+set xtagdir      = "../tag"            # tagging directory (shared files !)
+set fpc_call     = "fpc -l -viwnh -B " # pascal compiler call
+set do_recompile = "false"             # set to "true" to recompile the executable(s)
+
+# --------------------------------------------------------------------------
+# BATCH INFO TO BE READ HERE
+# --------------------------------------------------------------------------
+
+if ( "$1" != "" ) then
+  # type batchfile with or without extension .bat:
+  set batchfile = `basename $1 .bat`.bat
+  if ( -f ../batch/$batchfile ) then
+    echo "\nusing batchfile: $batchfile" # | tee -a ../$logfile
+    set batch
+    source ../batch/$batchfile
+  else
+    echo "ERROR: $batchfile does not exist"
+    exit 1
+  endif
+endif
+
+# --------------------------------------------------------------------------
+# BEGINNING, LINKING FILES, INITIALIZING CONFs
+# --------------------------------------------------------------------------
+
+echo ""
+echo "[ XDBL: script to double selected MECCA kinetic chemistry mechanism ]"
+echo "  (note: no aerosol-phase chemistry supported so far)"
+echo ""
+
+# linking mecca.eqn & mecca.spc to current folder
+ln -fs $eqnfiledir/mecca.eqn ./mecca.eqn
+ln -fs $eqnfiledir/mecca.spc ./mecca.spc
+
+# linking tracers definition file
+ln -fs $eqnfiledir/gas.tex ./gas.tex
+
+# cleaning setup with default "empty" configuration
+rm -fv *.cfg *.kie *.log
+
+# linking configuration files from tag
+set cfgfiles = ($xtagdir/*.cfg $xtagdir/*.kie)
+foreach cfgfile ($cfgfiles)
+  ln -fs $cfgfile .
+end
+
+# */
+
+# cleaning setup with default "empty" configuration
+rm -fv *.log
+rm -fv messy_mecca_dbl*.f90 messy_mecca_dbl*.inc
+rm -fv messy_mecca_dbl*.spc messy_mecca_dbl*.eqn
+rm -fv $f90box/messy_mecca_dbl*.f90 $f90box/messy_mecca_dbl*.inc
+cp -f  messy_mecca_dbl_box.f90-zero $f90box/messy_mecca_dbl_box.f90
+
+echo "configuration(s) setup initialized"
+echo ""
+
+# --------------------------------------------------------------------------
+# SELECTION OF DESIRED CONFIGURATION
+# --------------------------------------------------------------------------
+
+# default configuration
+set defcfg = "c"
+
+echo "please, choose the tagging configuration:"
+echo "c: isotopic carbon (IC)"
+echo "o: isotopic oxygen (IO)"
+# echo "i: isoprene fraction (FISOP)"
+echo "z: ozone fraction (O3F) /test/"
+# echo "[c/o/i/z, q=quit, default=$defcfg]"
+
+if (! ${?batch}) then
+  echo "[c/o/z, q=quit, default=$defcfg]"
+  set inputstring = "$<"
+else
+  echo "selected configuration from batch (tagcfg) is: $tagcfg"
+  echo ""
+  set inputstring = $tagcfg
+endif
+
+if ( "$inputstring" == "q" ) exit 1
+if ( "$inputstring" == "" ) set inputstring = $defcfg
+switch ("$inputstring")
+case "c":
+  set cfg = "IC"   
+  breaksw
+case "o": 
+  set cfg = "IO"
+  breaksw
+#case "i": 
+#  set cfg = "FISOP"
+#  breaksw
+case "z":
+  set cfg = "O3F"   
+  breaksw
+case "x":
+  set cfg = "X"
+  echo "oh, you know the secret option: eXtra = C+O in one bottle!"   
+  breaksw
+default:
+  echo "sorry, selected configuration is not in the list. exiting"
+  echo ""
+  exit 1
+#  set cfg = "$inputstring"
+  breaksw
+endsw
+
+echo "[ configuration: $cfg ]"
+echo ""
+
+# --------------------------------------------------------------------------
+# DOUBLING
+# --------------------------------------------------------------------------
+
+# ----- this interactive part is switched off so far
+#echo ""
+#echo "would you like to double selected mechanism? [y/n/x/q, x=explicit doubling, default=y]:"
+#echo "would you like to double selected mechanism? [y/n/q, default=y]:"
+#set inputstring = "$<"
+#if ( "$inputstring" == "q" ) exit 1
+#if ( "$inputstring" == "" ) set inputstring = "y"
+#switch ("$inputstring")
+#case "x":
+#  set do_dbl = "true"
+#  set do_expl = "true"
+#  breaksw
+#case "y":
+#  set do_dbl = "true"
+#  set do_expl = "false"
+#  breaksw
+#case "n":
+#  set do_dbl = "false"
+#  set do_expl = "false"
+#  breaksw
+#default:
+#  echo "unknown option. exiting"
+#  exit 1
+#  breaksw
+#endsw
+
+set do_dbl = "true"
+set do_expl = "false"
+
+if ("$do_dbl" == "true") then
+
+  # --------------------------------------------------------------------------
+  # run imdouble - doubling
+
+  if ("$do_recompile" == "true") then
+     rm ./imdouble
+     if ("$do_exp" == "true") then
+       $fpc_call -dDBL_EXPL imdouble -o imdouble-expl
+       # make a link to an explicit doubling executable
+       ln -fs imdouble-expl imdouble
+     else
+       $fpc_call imdouble -o imdouble-impl
+       # make a link to an implicit doubling executable
+       ln -fs imdouble-impl imdouble
+     endif
+  endif
+
+  echo ">>> doubling with imdouble >>>"
+  echo ""
+
+  set imdouble = "dbl_"$cfg
+
+  if ("$cfg" == "X") then
+    ./imdouble mecca.spc mecca.eqn tagIC.cfg tagIO.cfg > tag$cfg-imdouble.log
+    set exitstatus = "$status"
+  else
+    ./imdouble mecca.spc mecca.eqn tag$cfg.cfg > tag$cfg-imdouble.log
+    set exitstatus = "$status"
+  endif
+
+  cat tag$cfg-imdouble.log
+  echo "exit status from imdouble is: $exitstatus"
+  if ( "$exitstatus" != "0" ) then
+    echo "please, see the tag$cfg-imdouble.log file"
+    exit
+  endif
+
+  # applying changes to mecca.eqn & .spc
+  cat messy_mecca_dbl.eqn > $eqnfiledir/mecca.eqn
+  cat messy_mecca_dbl.spc > $eqnfiledir/mecca.spc
+  
+  # linking generated code to mecca-smcl directory
+  set dblfiles = (messy_mecca_dbl*.f90 messy_mecca_dbl*.inc)
+  foreach dblfile ($dblfiles)
+    if (-e $f90box/$dblfile) then
+       rm -f $f90box/$dblfile
+    endif
+    mv -f $dblfile $f90box/.
+    ln -s $f90box/$dblfile .
+  end
+
+  echo ""
+  echo "<<< done with doubling <<<"
+
+endif
+
+echo ""
+echo "all done --> returning"
+echo ""
+

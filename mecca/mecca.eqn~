@@ -1,0 +1,381 @@
+{This file was created automatically by xmecca, DO NOT EDIT!}
+#INLINE F90_GLOBAL
+  ! MECCA info from xmecca:
+  CHARACTER(LEN=*), PUBLIC, PARAMETER :: &
+    timestamp            = 'xmecca was run on 2009-07-22 at 18:37:49 by caaba', &
+    gas_spc_file         = '-rw------- 1 caaba caaba 12702 2009-06-24 19:33 gas.spc', &
+    aqueous_spc_file     = '-rw------- 1 caaba caaba 8371 2008-07-17 18:28 aqueous.spc', &
+    gas_eqn_file         = '-rw------- 1 caaba caaba 46514 2009-07-08 13:01 gas.eqn', &
+    aqueous_eqn_file     = '-rw------- 1 caaba caaba 55063 2009-01-30 16:33 aqueous.eqn', &
+    gas_spc_file_sum     = '35348    13', &
+    aqueous_spc_file_sum = '39581     9', &
+    gas_eqn_file_sum     = '22540    46', &
+    aqueous_eqn_file_sum = '54359    54', &
+    rplfile              = '', &
+    wanted               = 'Tr && G && !C && !S && !Cl && !Br && !I && !Hg', &
+    diagtracfile         = '', &
+    rxnrates             = 'n', &
+    tagdbl               = 'n'
+  LOGICAL, PARAMETER :: REQ_MCFCT = .FALSE.
+#ENDINLINE {above lines go to messy_mecca_kpp_global}
+#INLINE F90_GLOBAL
+  ! from xmecca for aerosol:
+  INTEGER, PARAMETER, PUBLIC :: APN = 1
+  ! from aerosol.awk:
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_O2_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_O3_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_OH_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HO2_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_H2O_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_H2O2_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NH3_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO2_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO3_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HONO_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HNO3_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HNO4_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_N2O5_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3OH_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCOOH_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCHO_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3O2_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3OOH_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CO2_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3COOH_a   = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_PAN_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_EtO2_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3CHO_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3COCH3_a  = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Cl_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Cl2_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCl_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HOCl_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Br_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Br2_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HBr_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HOBr_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrCl_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_I2_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IO_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HI_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HOI_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ICl_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IBr_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HIO3_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO2_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_H2SO4_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DMSO_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Hg_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgO_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgOH_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgOHOH_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgOHCl_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgCl2_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgBr2_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgSO3_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ClHgBr_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrHgOBr_a   = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ClHgOBr_a   = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_O2m_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_OHm_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Hp_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NH4p_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO2m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO3m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO4m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CO3m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCOOm_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCO3m_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3COOm_a   = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Clm_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Cl2m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ClOm_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ClOHm_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Brm_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Br2m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrOm_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrOHm_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrCl2m_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Br2Clm_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Im_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IO2m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IO3m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ICl2m_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IClBrm_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IBr2m_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO3m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO3mm_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO4m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO4mm_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO5m_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HSO3m_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HSO4m_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HSO5m_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3SO3m_a   = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH2OHSO3m_a = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Hgp_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Hgpp_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgOHp_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgClp_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgCl3m_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgCl4mm_a   = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgBrp_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgBr3m_a    = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgBr4mm_a   = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgSO32mm_a  = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_D1O_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_D2O_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DAHp_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DA_a        = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DAm_a       = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DGtAi_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DGtAs_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_PROD1_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_PROD2_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Nap_a       = 0
+#ENDINLINE {above lines go to messy_mecca_kpp_global}
+#INLINE F90_UTIL
+! from xmecca:
+SUBROUTINE initialize_indexarrays
+  USE messy_mecca_kpp_global     ! ind_XYZ_a(:) arrays
+  USE messy_mecca_kpp_parameters ! ind_XYZ_a## scalars
+  IMPLICIT NONE
+END SUBROUTINE initialize_indexarrays
+#ENDINLINE {above lines go to messy_mecca_kpp_util}
+{***** START: gas-phase chemistry from gas.eqn *****}
+#INLINE F90_GLOBAL
+  ! from gas.eqn:
+  REAL :: k_HO2_HO2, k_NO3_NO2, k_NO2_HO2, k_HNO3_OH, k_CH3OOH_OH, k_PA_NO2, &
+          k_PAN_M, k_PrO2_HO2, k_PrO2_NO, k_PrO2_CH3O2, k_ClO_ClO, k_BrO_NO2, &
+          k_I_NO2, k_DMS_OH
+  REAL :: k_O3s ! mz_pj_20080812
+  ! ALL PHASES:
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: cair    ! c(air) (wet) [mcl/cm^3]
+  REAL(dp) :: press   ! pressure [Pa] ! mz_pj_20080716
+  REAL(dp) :: mcfct(NREACT) ! Monte-Carlo factor
+!KPPPP_DIRECTIVE vector variable definition end
+  ! AEROSOL ONLY:
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: xaer(APN)
+  REAL(dp) :: cvfac(APN)    ! unit conversion factor
+  REAL(dp) :: lwc(APN)      ! liquid water content
+  REAL(dp) :: k_exf(APN,NSPEC) = 0.
+  REAL(dp) :: k_exb(APN,NSPEC) = 0.
+  REAL(dp) :: k_exf_N2O5(APN)  = 0.
+  REAL(dp) :: k_exf_ClNO3(APN) = 0.
+  REAL(dp) :: k_exf_BrNO3(APN) = 0.
+!KPPPP_DIRECTIVE vector variable definition end
+  INTEGER, PUBLIC  :: xnom7sulf = 1 ! = 1-xm7sulf
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: jx(IP_MAX) = 0.
+!KPPPP_DIRECTIVE vector variable definition end
+  ! iht_ = index of troposheric heterogeneous reactions 
+  INTEGER, PARAMETER, PUBLIC :: &
+    iht_N2O5      =  1, iht_HNO3      =  2, iht_Hg      =  3, &
+    iht_RGM       = 4
+  INTEGER, PARAMETER, PUBLIC :: IHT_MAX = 4
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: khet_Tr(IHT_MAX) = 0.
+!KPPPP_DIRECTIVE vector variable definition end
+  ! ihs_ = index of stratospheric heterogeneous reactions
+  ! (must be the same as in messy_msbm.f90!)
+  INTEGER, PARAMETER :: &
+    ihs_N2O5_H2O  =  1, ihs_HOCl_HCl  =  2, ihs_ClNO3_HCl =  3, &
+    ihs_ClNO3_H2O =  4, ihs_N2O5_HCl  =  5, ihs_ClNO3_HBr =  6, &
+    ihs_BrNO3_HCl =  7, ihs_HOCl_HBr  =  8, ihs_HOBr_HCl  =  9, &
+    ihs_HOBr_HBr  = 10, ihs_BrNO3_H2O = 11, ihs_Hg        = 12, &
+    ihs_RGM       = 13
+  INTEGER, PARAMETER, PUBLIC :: IHS_MAX = 13
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: khet_St(IHS_MAX) = 0.
+!KPPPP_DIRECTIVE vector variable definition end
+  ! Parameters included for acid-base equilibria calculation
+  ! used to enable the double use of the aqueous.eqn for liquid 
+  ! and aerosol phase.
+  REAL(dp), PARAMETER :: &
+    testfac_HO2   = 1.e5_dp, testfac_HONO   = 1.e5_dp, &
+    testfac_HNO3  = 1.e7_dp, testfac_HNO4   = 1.e5_dp, &
+    testfac_HCOOH = 1.e5_dp, testfac_SO2    = 1.e9_dp, &
+    testfac_HSO3m = 1.e9_dp, testfac_HSO4m  = 1.e7_dp, &
+    testfac_NH3   = 1.e7_dp, testfac_H2O    = 1.e9_dp, &
+    testfac_CO2   = 1.e5_dp, testfac_HCl    = 1.e2_dp, &
+    testfac_HBr   = 1.e6_dp,                           &
+    testfac_HOCl  = 1.e2_dp, testfac_HOBr   = 1.e2_dp, &
+    testfac_ICl   = 1.e2_dp, testfac_IBr    = 1.e2_dp, &
+    testfac_IClBr = 1.e2_dp, testfac_H2SO4  = 1.e7_dp
+#ENDINLINE {above lines go to messy_mecca_kpp_global}
+#INLINE F90_RCONST
+  USE messy_main_constants_mem ! atm2Pa, N_A, R_gas
+  USE messy_cmn_photol_mem     ! IP_MAX, ip_*, jname
+  ! end of USE statements
+  !
+  ! start of executable statements
+  ! define some rate constants here if the expressions are too long
+  ! for kpp or if they are used more than once
+  k_HO2_HO2    = (1.5E-12*EXP(19./temp)+1.7E-33*EXP(1000./temp)*cair)* &
+                 (1.+1.4E-21*EXP(2200./temp)*C(ind_H2O))
+  k_NO3_NO2    = k_3rd(temp,cair,2.0E-30,4.4,1.4E-12,0.7,0.6)
+  k_NO2_HO2    = k_3rd(temp,cair,2.0E-31,3.4,2.9E-12,1.1,0.6)
+  k_HNO3_OH    = 2.4E-14*EXP(460./temp) + 1./ &
+                 ( 1./(6.5E-34*EXP(1335./temp)*cair) + &
+                 1./(2.7E-17*EXP(2199./temp)) )
+  k_CH3OOH_OH  = 3.8E-12*EXP(200./temp)
+  k_PA_NO2     = k_3rd(temp,cair,9.7E-29,5.6,9.3E-12,1.5,0.6)
+  k_PAN_M      = k_PA_NO2/9.0E-29*EXP(-14000./temp)
+  k_PrO2_HO2   = 1.9E-13*EXP(1300./temp)
+  k_PrO2_NO    = 2.7E-12*EXP(360./temp)
+  k_PrO2_CH3O2 = 9.46E-14*EXP(431./temp)
+  k_ClO_ClO    = k_3rd_iupac(temp,cair,2.0E-32,4.0,1.0E-11,0.0,0.45)
+  ! JPL: k_ClO_ClO   = k_3rd(temp,cair,1.6E-32,4.5,2.0E-12,2.4,0.6)
+  k_BrO_NO2    = k_3rd_iupac(temp,cair,4.7E-31,3.1,1.8E-11,0.0,0.4)
+  ! JPL: k_BrO_NO2   = k_3rd(temp,cair,5.2E-31,3.2,6.9E-12,2.9,0.6)
+  k_I_NO2      = k_3rd_iupac(temp,cair,3.0E-31,1.0,6.6E-11,0.0,0.63)
+  ! for numerical reasons, the expression is multiplied by 1e30/1e30
+  k_DMS_OH     = 1.E-9*EXP(5820./temp)*C(ind_O2)/ &
+                 (1.E30+5.*EXP(6280./temp)*C(ind_O2))
+  ! mz_pj_20080812+
+  k_O3s = (1.7E-12*EXP(-940./temp)) * C(ind_OH) &  ! <G2104>
+        + (1.E-14*EXP(-490./temp)) * C(ind_HO2) &  ! <G2107>
+        + JX(ip_O1D) * 2.2E-10 * C(ind_H2O) &      ! 
+        / ( 3.2E-11*EXP(70./temp)*C(ind_O2)   &
+           + 1.8E-11*EXP(110./temp)*C(ind_N2) &
+           + 2.2E-10*C(ind_H2O) )
+  ! mz_pj_20080812-
+#ENDINLINE {above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}
+#INLINE F90_RATES
+  ELEMENTAL REAL(dp) FUNCTION k_SIV_H2O2 (k_298,tdep,cHp,temp)
+    ! special rate function for S(IV) + H2O2
+    REAL,     INTENT(IN) :: k_298 ! k at T = 298.15K
+    REAL,     INTENT(IN) :: tdep  ! temperature dependence
+    REAL(dp), INTENT(IN) :: cHp   ! c(H+)
+    REAL(dp), INTENT(IN) :: temp  ! temperature
+    INTRINSIC :: EXP
+    k_SIV_H2O2 = k_298 * EXP(tdep*(1._dp/temp-3.3540E-3_dp)) &
+      * cHp / (cHp+0.1_dp)
+  END FUNCTION k_SIV_H2O2
+  ELEMENTAL REAL(dp) FUNCTION k_3rd_iupac(temp,cair,k0_300K,n,kinf_300K,m,fc)
+    ! IUPAC three body reaction formula (www.iupac-kinetic.ch.cam.ac.uk)
+    INTRINSIC :: LOG10
+    REAL(dp), INTENT(IN) :: temp      ! temperature [K]
+    REAL(dp), INTENT(IN) :: cair      ! air concentration [molecules/cm3]
+    REAL,     INTENT(IN) :: k0_300K   ! low pressure limit at 300 K
+    REAL,     INTENT(IN) :: n         ! exponent for low pressure limit
+    REAL,     INTENT(IN) :: kinf_300K ! high pressure limit at 300 K
+    REAL,     INTENT(IN) :: m         ! exponent for high pressure limit
+    REAL,     INTENT(IN) :: fc        ! broadening factor (e.g. 0.45 or 0.6...)
+    REAL                 :: nu        ! N
+    REAL                 :: zt_help, k0_T, kinf_T, k_ratio
+    zt_help = 300._dp/temp
+    k0_T    = k0_300K   * zt_help**(n) * cair ! k_0   at current T
+    kinf_T  = kinf_300K * zt_help**(m)        ! k_inf at current T
+    k_ratio = k0_T/kinf_T
+    nu      = 0.75-1.27*LOG10(fc)
+    k_3rd_iupac = k0_T/(1._dp+k_ratio)* &
+      fc**(1._dp/(1._dp+(LOG10(k_ratio)/nu)**2))
+  END FUNCTION k_3rd_iupac
+  ELEMENTAL REAL(dp) FUNCTION k_limited (k3rd,cHp)
+    ! diffusion limitation caps 3rd order rate coefficients
+    REAL(dp), INTENT(IN) :: k3rd  ! 3rd order rate coefficient
+    REAL(dp), INTENT(IN) :: cHp   ! c(H+)
+    REAL(dp), PARAMETER  :: DiffLimit = 1E10 ! diffusion limitation [M-1s-1]
+    INTRINSIC :: EXP
+    k_limited = 1._dp / ( 1._dp/k3rd + cHp/DiffLimit)
+  END FUNCTION k_limited
+#ENDINLINE {above lines go into MODULE messy_mecca_kpp_Rates}
+#EQUATIONS
+{<G1nnn> ------------------------------- O -------------------------}
+<G1000>  O2   + O1D      = O3P + O2    : {%StTrG} 3.3E-11*EXP(55./temp); {&1945}
+<G1001>  O2   + O3P {+M} = O3          : {%StTrG} 6.E-34*((temp/300.)**(-2.4))*cair; {&1945}
+{<G2nnn> ------------------------------- H -------------------------}{@\myhline}
+<G2100>  H    + O2 {+M}  = HO2         : {%StTrG} k_3rd(temp,cair,4.4E-32,1.3,4.7E-11,0.2,0.6); {&1945}
+<G2104>  OH   + O3       = HO2 + O2    : {%StTrG} 1.7E-12*EXP(-940./temp); {&1945}
+<G2105>  OH   + H2       = H2O + H     : {%StTrG} 2.8E-12*EXP(-1800./temp); {&1945}
+<G2107>  HO2  + O3       = OH + 2 O2   : {%StTrG} 1.E-14*EXP(-490./temp); {&1945}
+<G2109>  HO2  + OH       = H2O + O2    : {%StTrG} 4.8E-11*EXP(250./temp); {&1945}
+<G2110>  HO2  + HO2      = H2O2 + O2   : {%StTrG} k_HO2_HO2; {&&1599, 165}
+<G2111>  H2O  + O1D      = 2 OH        : {%StTrG} 1.63E-10*EXP(60./temp); {&1945}
+<G2112>  H2O2 + OH       = H2O + HO2   : {%StTrG} 1.8E-12; {&1945}
+{<G3nnn> ------------------------------- N -------------------------}{@\myhline}
+<G3101>  N2   + O1D      = O3P + N2    : {%StTrG}  2.15E-11*EXP(110./temp); {&1945}
+<G3103>  NO   + O3       = NO2 + O2    : {%StTrGN} 3.E-12*EXP(-1500./temp); {&1945}
+<G3106>  NO2  + O3       = NO3 + O2    : {%StTrGN} 1.2E-13*EXP(-2450./temp); {&1945}
+<G3108>  NO3  + NO       = 2 NO2       : {%StTrGN} 1.5E-11*EXP(170./temp); {&1945}
+<G3109>  NO3  + NO2 {+M} = N2O5        : {%StTrGN} k_NO3_NO2; {&&1945}
+<G3110>  N2O5       {+M} = NO2 + NO3   : {%StTrGN} k_NO3_NO2/(2.7E-27*EXP(11000./temp)); {&&1945}
+<G3200>  NO   + OH {+M}  = HONO          : {%TrGN}   k_3rd(temp,cair,7.0E-31,2.6,3.6E-11,0.1,0.6); {&1945}
+<G3201>  NO   + HO2      = NO2   + OH    : {%StTrGN} 3.5E-12*EXP(250./temp); {&1945}
+<G3202>  NO2  + OH  {+M} = HNO3          : {%StTrGN} k_3rd(temp,cair,1.8E-30,3.0,2.8E-11,0.,0.6); {&1945}
+<G3203>  NO2  + HO2 {+M} = HNO4          : {%StTrGN} k_NO2_HO2; {&&1945}
+<G3204>  NO3  + HO2      = NO2 + OH + O2 : {%TrGN}   3.5E-12; {&1945}
+<G3205>  HONO + OH       = NO2 + H2O     : {%TrGN}   1.8E-11*EXP(-390./temp); {&1945}
+<G3206>  HNO3 + OH       = H2O   + NO3   : {%StTrGN} k_HNO3_OH; {&&1945}
+<G3207>  HNO4       {+M} = NO2   + HO2   : {%StTrGN} k_NO2_HO2/(2.1E-27*EXP(10900./temp)); {&&1945}
+<G3208>  HNO4 + OH       = NO2   + H2O   : {%StTrGN} 1.3E-12*EXP(380./temp); {&1945}
+<G3209>  NH3   + OH      = NH2 + H2O     : {%TrGN}   1.7E-12*EXP(-710./temp); {&2415}
+<G3210>  NH2   + O3      = NH2O + O2     : {%TrGN}   4.3E-12*EXP(-930./temp); {&2415}
+<G3211>  NH2   + HO2     = NH2O + OH     : {%TrGN}   4.8E-07*EXP(-628./temp)*temp**(-1.32); {&2415}
+<G3212>  NH2   + HO2     = HNO + H2O     : {%TrGN}   9.4E-09*EXP(-356./temp)*temp**(-1.12); {&2415}
+<G3213>  NH2   + NO      = HO2 + OH + N2 : {%TrGN}   1.92E-12*((temp/298.)**(-1.5)); {&2415}
+<G3214>  NH2   + NO      = N2 + H2O      : {%TrGN}   1.41E-11*((temp/298.)**(-1.5)); {&2415}
+<G3215>  NH2   + NO2     = N2O + H2O     : {%TrGN}   1.2E-11*((temp/298.)**(-2.0)); {&2415}
+<G3216>  NH2   + NO2     = NH2O + NO     : {%TrGN}   0.8E-11*((temp/298.)**(-2.0)); {&2415}
+<G3217>  NH2O  + O3      = NH2 + O2      : {%TrGN}   1.2E-14; {&2415}
+<G3218>  NH2O            = NHOH          : {%TrGN}   1.3E+3; {&2415}
+<G3219>  HNO   + OH      = NO + H2O      : {%TrGN}   8.0E-11*EXP(-500./temp); {&2415}
+<G3220>  HNO   + NHOH    = NH2OH + NO    : {%TrGN}   1.66E-12*EXP(-1500./temp); {&2415}
+<G3221>  HNO   + NO2     = HONO + NO     : {%TrGN}   1.0E-12*EXP(-1000./temp); {&2415}
+<G3222>  NHOH  + OH      = HNO + H2O     : {%TrGN}   1.66E-12; {&2415}
+<G3223>  NH2OH + OH      = NHOH + H2O    : {%TrGN}   4.13E-11*EXP(-2138./temp); {&2415}
+<G3224>  HNO   + O2      = HO2 + NO      : {%TrGN}   3.65E-14*EXP(-4600./temp); {&2415}
+{<G4nnn> ------------------------------- C -------------------------}{@\myhline}
+<G4101>  CH4     + OH {+O2}= CH3O2 + H2O      : {%StTrG}  1.85E-20*EXP(2.82*log(temp)-987./temp); {&&1627}
+<G4102>  CH3OH   + OH      = HCHO + HO2        : {%TrG}    2.9E-12*EXP(-345./temp); {&1945}
+<G4103>  CH3O2   + HO2     = CH3OOH + O2       : {%StTrG}  4.1E-13*EXP(750./temp); {&&1945}
+<G4104>  CH3O2   + NO      = HCHO + NO2 + HO2  : {%StTrGN} 2.8E-12*EXP(300./temp); {&1945}
+<G4105>  CH3O2   + NO3     = HCHO + HO2 + NO2  : {%TrGN}   1.3E-12; {&1207}
+<G4106a> CH3O2   + CH3O2   = 2 HCHO + 2 HO2    : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+1./26.2*EXP(1130./temp)); {&1945}
+<G4106b> CH3O2   + CH3O2   = HCHO + CH3OH + O2 : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+26.2*EXP(-1130./temp)); {&1945}
+<G4107>  CH3OOH  + OH      = .7 CH3O2 + .3 HCHO + .3 OH + H2O : {%StTrG} k_CH3OOH_OH; {&&1945}
+<G4108>  HCHO    + OH      = CO + H2O + HO2    : {%StTrG}  9.52E-18*EXP(2.03*log(temp)+636./temp); {&1634}
+<G4109>  HCHO    + NO3     = HNO3 + CO + HO2   : {%TrGN}   3.4E-13*EXP(-1900./temp); {&&1945}
+<G4110>  CO      + OH      = H + CO2           : {%StTrG}  1.57E-13 + cair*3.54E-33; {&1628}
+<G4111>  HCOOH   + OH      = HO2               : {%TrG}    4.0E-13; {&1945}
+{<G5nnn> ------------------------------- F -------------------------}
+{<G6nnn> ------------------------------- Cl ------------------------}{@\myhline}
+{<G7nnn> ------------------------------- Br ------------------------}{@\myhline}
+{<G8nnn> ------------------------------- I -------------------------}{@\myhline}
+{<G9nnn> ------------------------------- S -------------------------}{@\myhline}
+{<G10nnn> ------------------------------- Hg ------------------------}{@\myhline}
+{<J1nnn> ------------------------------- O -------------------------}
+<J1000>  O2      + hv = O3P + O3P  : {%StTrGJ} jx(ip_O2); {&&}
+<J1001a> O3      + hv = O1D        : {%StTrGJ} jx(ip_O1D); {&&}
+<J1001b> O3      + hv = O3P        : {%StTrGJ} jx(ip_O3P); {&&}
+{<J2nnn> ------------------------------- H -------------------------}{@\myhline}
+<J2101>  H2O2    + hv = 2 OH       : {%StTrGJ} jx(ip_H2O2); {&&}
+{<J3nnn> ------------------------------- N -------------------------}{@\myhline}
+<J3101>  NO2     + hv = NO + O3P   : {%StTrGNJ} jx(ip_NO2); {&&}
+<J3103a> NO3     + hv = NO2 + O3P  : {%StTrGNJ} jx(ip_NO2O); {&&}
+<J3103b> NO3     + hv = NO         : {%StTrGNJ} jx(ip_NOO2); {&&}
+<J3104a> N2O5    + hv = NO2 + NO3  : {%StTrGNJ} jx(ip_N2O5); {&&}
+<J3200>  HONO    + hv = NO + OH    : {%TrGJ}    jx(ip_HONO); {&&}
+<J3201>  HNO3    + hv = NO2 + OH   : {%StTrGNJ} jx(ip_HNO3); {&&}
+<J3202>  HNO4    + hv = .667 NO2 + .667 HO2 + .333 NO3 + .333 OH : {%StTrGNJ} jx(ip_HNO4); {&&}
+{<J4nnn> ------------------------------- C -------------------------}{@\myhline}
+<J4100>  CH3OOH  + hv = HCHO + OH + HO2            : {%StTrGJ} jx(ip_CH3OOH); {&&}
+<J4101a> HCHO    + hv = H2 + CO                    : {%StTrGJ} jx(ip_COH2); {&&}
+<J4101b> HCHO    + hv = H + CO + HO2               : {%StTrGJ} jx(ip_CHOH); {&&}
+{<J5nnn> ------------------------------- F -------------------------}
+{<J6nnn> ------------------------------- Cl ------------------------}{@\myhline}
+{<J7nnn> ------------------------------- Br ------------------------}{@\myhline}
+{<J8nnn> ------------------------------- I -------------------------}{@\myhline}
+{<J9nnn> ------------------------------- S -------------------------}
+{<HETnnn> ------------------------------ HET ------------------------}
+{***** END:   gas-phase chemistry from gas.eqn *****}
+#INLINE F90_GLOBAL
+  ! from xmecca:
+  LOGICAL, PARAMETER :: REQ_HET     = .FALSE.
+  LOGICAL, PARAMETER :: REQ_PHOTRAT = .TRUE.
+  LOGICAL, PARAMETER :: REQ_AEROSOL = .FALSE.
+#ENDINLINE {above lines go to messy_mecca_kpp_global}

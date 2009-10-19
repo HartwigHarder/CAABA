@@ -1,0 +1,95 @@
+! -*- f90 -*-
+
+!*****************************************************************************
+! control namelist for JVAL
+!*****************************************************************************
+
+&CTRL
+!!# FOR SOLAR CYCLE
+! SYNTAX:
+!   method, interpolation on(1)/off(0), const, i1, i2, i3
+!   'constant',       , 170.0,
+!   'stationary',     ,      , month, year
+!   'transient',   0/1,      , offset (in months) to climate model date
+!   'cyclic',      0/1,      , start-year, 1st data year, reset after ?? months
+!
+! NOTE:
+!   - time_control must be 'constant' (default) unless you have the data file
+!     (see c_solc_data) available
+ time_control = 'constant'  , 0, 170.0,           0,    0,  0
+!time_control = 'stationary', 0,   0.0,          10, 1995,  0
+!time_control = 'transient',  1,   0.0,           0,    0,  0
+!time_control = 'cyclic'    , 1,   0.0, $START_YEAR, 2000, 60
+!
+!# data file
+!# NOTE: The data file must either contain
+!!#       - the F10.7cm in sfu (adjusted to 1 AU !!!), or
+!!#       - phi_la,SR_toa_flux,flux(7),f0(7) (adjusted to 1 AU !!!)
+!
+c_solc_data  = "$INPUTDIR_MESSY/jval/misc/F10.7_1AU_1948_2085.txt"
+!c_solc_data  = "$INPUTDIR_MESSY/jval/misc/solar_data_1AU_1950_2006.txt"
+!
+! quantum yield for CH3COCH3:
+!qy_ch3coch3 = 1 ! Gierzack & ECHAM5 (old IUPAC) (default)
+!qy_ch3coch3 = 2 ! BLITZ 2004
+!qy_ch3coch3 = 3 ! IUPAC
+/
+
+!*****************************************************************************
+! coupling namelist for JVAL
+!*****************************************************************************
+
+&CPL
+!l_skip_lg = T,             ! skip Lagrangian calculation?
+l_force = T,                ! calculate all species (not only for tracers)
+!l_heating = T,             ! calculate UV heating rates by O2 and O3 ?
+!jval_O3 = 'tracer_gp', 'O3',
+!jval_O3 = 'ECHAM5', 'relo3',   ! ONLY FOR isw_rad4all = 1 in rad4all.nml
+jval_O3 = 'rad4all', 'O3_pre', ! ONLY FOR isw_rad4all = 2 in rad4all.nml
+/
+
+!*****************************************************************************
+! regridder
+!*****************************************************************************
+
+&RGTEVENTS
+RG_TRIG(1) = 1,'months','first',0,  'A', 1, 1, 12, $START_MONTH, 'O3_H',
+/
+
+&regrid
+!outfile  =         "ncrg_${HRES}_halo3_hall12.nc",
+infile    = "$INPUTDIR_MESSY/jval/halo3_hall12.nc",
+i_latm    = "LAT",          ! name of latitude axis in input file
+i_latr    = -90.0,90.0,     ! range of latitude axis in input file
+i_lonm    = "XHELP"         ! name of longitude axis in input file
+i_lonr    = 0., 360.,       ! range of longitude axis in input file
+i_timem   = "THELP",        ! name of time axis in input file
+i_hyai    = "PRESSedges",   ! name of hybrid A coefficients in input file
+i_hyam    = "PRESS",        ! name of hybrid A coefficients in input file
+i_hyar    = 0.005, 1013.25, ! extends pressure range from input file
+i_p0      = "100. Pa",      ! necessary for hPa to Pa conversion
+pressure  = T,              ! vert. regridding in press. coordinates
+var       = "O3_H",         ! name of input variable
+/
+
+!*****************************************************************************
+
+! how to confirm that JVAL and PHOTO still produce binary identical results:
+!
+! - e messy/util/xmessy_echam5
+!   NML_ECHAM=ECHAM5302_te.nml
+!   USE_JVAL=.TRUE.
+!   USE_PHOTO=.TRUE.
+! - e messy/echam5/nml/DEFAULT/channel.nml
+!   switch on complete output for jval_gp and photo channels
+! - e messy/echam5/nml/DEFAULT/jval.nml
+!      time_control = 'constant', , 170.0,
+!      l_force = T
+!      l_heating = T
+! - e messy/echam5/nml/DEFAULT/photo.nml
+!      rsol = 0.5,
+!      l_force = T
+!      l_heating = T
+! - ncdiff  test_____197801.0120_photo.nc test_____197801.0120_jval_gp.nc
+
+!*****************************************************************************

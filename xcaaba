@@ -1,0 +1,260 @@
+#! /bin/tcsh -f
+# Time-stamp: <2009-06-18 13:50:51 sander>
+# xcaaba = eXecute CAABA
+
+################################################################################
+
+# define hline string
+set hline = "---------------------------------------"
+set hline = "$hline$hline"
+
+# what is the current operating system?
+set system = "`uname`"
+if ( "$HOST" =~ hydra.* ) set system = hydra
+# now system = hydra, Linux, or OSF1
+
+# default is not to start xmecca:
+unset xmecca
+
+################################################################################
+
+if ( "$1" == "" ) then
+  echo "\nYou can create a new chemical mechanism with xmecca."
+  echo "This is necessary, e.g. if:"
+  echo "a) you have changed any of the *.eqn, *.spc, or *.kpp files"
+  echo "b) you want to select a different subset of the reaction mechanism"
+  echo "c) you want to choose a different numerical integrator"
+  echo "Start xmecca? [y/n/q, default=n]"
+  set inputstring = "$<"
+  if ( "$inputstring" == "q" ) exit
+  if ( "$inputstring" == "y" ) then
+    set xmecca
+  endif
+else
+  set xmecca
+endif
+
+if (! ${?xmecca}) then
+  # check that kpp-generated f90 files are newer than kpp files:
+  # get time (seconds since the epoch) of kpp files:
+  @ gaseqntime = -M mecca/gas.eqn
+  @ gasspctime = -M mecca/gas.spc
+  @ aqueouseqntime = -M mecca/aqueous.eqn
+  @ aqueousspctime = -M mecca/aqueous.spc
+  @ kpptime    = -M mecca/messy_mecca_kpp.kpp
+  @ f90time    = -M messy_mecca_kpp.f90
+  unset xmeccayes
+  if ($gaseqntime>$f90time) then
+    echo "WARNING: gas.eqn is newer than kpp-generated f90 files"
+    set xmeccayes
+  endif
+  if ($gasspctime>$f90time) then
+    echo "WARNING: gas.spc is newer than kpp-generated f90 files"
+    set xmeccayes
+  endif
+  if ($aqueouseqntime>$f90time) then
+    echo "WARNING: aqueous.eqn is newer than kpp-generated f90 files"
+    set xmeccayes
+  endif
+  if ($aqueousspctime>$f90time) then
+    echo "WARNING: aqueous.spc is newer than kpp-generated f90 files"
+    set xmeccayes
+  endif
+  if ($kpptime>$f90time) then
+    echo "WARNING: messy_mecca_kpp.kpp is newer than kpp-generated f90 files"
+    set xmeccayes
+  endif
+  if (${?xmeccayes}) then
+    echo "It is strongly suggested to create new f90 files via xmecca."
+    echo "Start xmecca? [y/n/q, default=y]"
+    set inputstring = "$<"
+    if ( "$inputstring" == "q" ) exit
+    if ( "$inputstring" != "n" ) then
+      set xmecca
+    endif
+  endif
+endif
+
+if (${?xmecca}) then
+  echo "\nstarting xmecca."
+  (cd mecca ; ./xmecca $1)
+  set exitstatus = "$status"
+  if ( $exitstatus == '0' ) then
+    echo "\nxmecca has finished successfully"
+  else
+    echo "\nERROR: exit status from 'xmecca' is: $exitstatus"
+    exit 1
+  endif
+  echo "\n$hline"
+endif
+
+################################################################################
+
+set s_string = "Start from scratch"
+set c_string = "Compile"
+set r_string = "Run existing executable"
+
+echo "\nChoose an option [default=c]:"
+echo "s = $s_string"
+echo "c = $c_string"
+if (! ${?xmecca}) then
+echo "r = $r_string"
+endif
+echo "h = Help"
+echo "q = Quit"
+set inputstring = "$<"
+if ( "$inputstring" == "q" ) exit
+switch ("$inputstring")
+case "r":
+  if (${?xmecca}) then
+    echo "ERROR: You must choose option c"
+    echo "       after creating a new chemical mechanism with xmecca"
+    exit
+  else
+    set option = "r"
+    echo "You have chosen: r = $r_string"
+  endif
+  breaksw
+case "h":
+  echo ""
+  echo "s = $s_string."
+  echo "    This will first remove existing object files (*.o and"
+  echo "    *.mod) with 'gmake clean' and then compile the code."
+  echo "c = $c_string."
+  echo "    Compile recently changed files with 'gmake'."
+  echo "r = $r_string."
+  echo "    Run already existing executable."
+  exit
+case "s":
+    set option = "s"
+    echo "You have chosen: s = $s_string"
+  breaksw
+default:
+  set option = "c"
+  echo "You have chosen: c = $c_string"
+  breaksw
+endsw
+echo "\n$hline"
+
+################################################################################
+
+if ( "$option" == "s" ) then
+
+  echo "gmake clean"
+  gmake clean
+
+endif
+
+################################################################################
+
+if (( "$option" == "c" ) || ( "$option" == "s" )) then
+
+  echo "gmake (writing output to gmake.log)"
+  # the option "-j" allows simultaneous jobs:
+  gmake -j |& tee gmake.log
+  set exitstatus = "$status"
+  echo "exit status from 'gmake' is: $exitstatus"
+  if ( $exitstatus != '0' ) exit
+  echo "\n$hline"
+
+endif
+
+################################################################################
+
+# check if MECCA code was prepared for Monte-Carlo simulations:
+set test = `grep -i "REQ_MCFCT *= *\.TRUE\." messy_mecca_kpp*.f90`
+if ( "$test" != "" ) then
+  ./montecarlo/montecarlo.tcsh
+  exit
+endif
+
+################################################################################
+
+echo "\nRun CAABA boxmodel with MECCA chemistry?"
+echo "y = Yes (default)"
+echo "n = No"
+echo "m = Multirun (multiple runs, under construction, do not use yet...)"
+echo "q = Quit"
+
+set inputstring = "$<"
+if ( "$inputstring" == "q" ) exit
+
+if ( "$inputstring" == "m" ) then
+  ./multirun/multirun.tcsh
+  exit
+endif
+
+if ( "$inputstring" != "n" ) then
+
+  echo "$hline"
+  echo "\nThe active contents of caaba.nml is:"
+  sed -ne '/^&CAABA[ ]*$/,/^\//p' caaba.nml | grep -v "^!" | grep -v '^ *$'
+  echo "\nThe active contents of mecca.nml is:"
+  sed -ne '/^&CTRL/,/^\//p' mecca.nml | grep -v "^!" | grep -v '^ *$'
+  echo "\n$hline"
+  echo "\nBefore you continue, ensure that the namelist is consistent"
+  echo "with the selected chemistry mechanism\!"
+  echo "Continue? [y/n/q, default=y]"
+  set inputstring = "$<"
+  if ( "$inputstring" == "q" ) exit
+  if ( "$inputstring" == "n" ) exit
+
+  echo "Starting CAABA. Please wait...\n"
+  if ( "$HOST" =~ grand ) then
+    # on grand, the queueing system must be used:
+    set qsub_tmp = `qsub /soft/bin/qexec.tcsh ./caaba.exe`
+    set jobnum = $qsub_tmp[3]
+    echo "CAABA is now in the queueing system with jobnumber $jobnum ..."
+    set done = no
+    while ($done == no)
+      set test = `qstat | grep $jobnum`
+      if ( "$test" != "" ) then
+        sleep 20s
+      else
+        set done = yes
+      endif
+    end
+    mv -f qexec.tcsh.$jobnum.log caaba.log
+  else
+    # unbuffer needs expect, see :http://expect.nist.gov/
+    if ( ( -e `which unbuffer` ) && ( -e `which expect` ) ) then
+      unbuffer \time -p ./caaba.exe |& tee caaba.log
+    else
+      \time -p ./caaba.exe |& tee caaba.log
+    endif
+  endif
+  echo "Log output is now available in ./caaba.log"
+endif
+
+################################################################################
+
+set defaultoutputdir = "output/`date +'%Y-%m-%d-%H:%M:%S'`"
+echo "\nSave the model code and output in output/ directory?\n[y/n/q, default=y]"
+set inputstring = "$<"
+switch ("$inputstring")
+case "":
+case "y":
+  set outputdir = "$defaultoutputdir"
+  breaksw
+case "n":
+  unset outputdir
+  breaksw
+case "q":
+  exit
+default:
+  set outputdir = "output/$inputstring"
+  breaksw
+endsw
+if ($?outputdir) then
+  echo "Creating zip file of caaba model code. Please wait..."
+  mkdir $outputdir
+  gmake zip >> caaba.log
+  mv `basename $PWD`.zip $outputdir
+  cp -p caaba.log *.nc *.dat $outputdir
+  echo "The model output is now in ${outputdir}:"
+  ls -la $outputdir
+endif
+
+################################################################################
+
+exit

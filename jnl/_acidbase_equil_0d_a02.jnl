@@ -1,0 +1,11 @@
+LET qcs = faccs * $1[k=($plotlevel)] * $2[k=($plotlevel)] / $3[k=($plotlevel)]
+LET kequil   = $4*EXP($5*(1/temp[d=1,k=($plotlevel)]-1/298.15))
+
+LET quot=qcs/kequil
+SET VARIABLE/TITLE="$3" quot
+
+GO nextviewport
+!PLOT/SET qcs/kequil
+PLOT/SET quot[l=`starttimestep`:999999, i=($plotlon), j=($plotlat)]
+GO ppl_mylayout
+PPL PLOT

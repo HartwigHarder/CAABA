@@ -1,0 +1,1 @@
+LET currentviewport = `viewport_columns * viewport_rows`

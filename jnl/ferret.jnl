@@ -1,0 +1,9 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v6.08  
+ ! Linux(g77) 2.4.21-32 - 11/13/07
+ ! 22-Jul-09 18:38     
+
+GO "$HOME/.ferret"
+go xxxg.jnl
+ sp gv xxxg.ps &
+q

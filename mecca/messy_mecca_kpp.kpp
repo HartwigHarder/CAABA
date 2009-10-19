@@ -1,0 +1,35 @@
+// define chemical species
+#INCLUDE mecca.spc
+
+// select which species are fixed
+// (SETFIX H2O_a* is done in mecca.spc via xmecca)
+#SETFIX CO2; O2; N2;
+// keep these fixed for Learjet measurement suite:
+//#SETFIX H2; CO2; O2; N2; NO; CH4; CO; H2O2; CH3OOH; NO; O3;
+
+// define chemical equations
+#INCLUDE mecca.eqn
+
+// select programming language
+#LANGUAGE Fortran90
+
+// choose an integrator and define substeps
+#INCLUDE integr.kpp
+
+// set indices of unused species to ind_*=0
+#DUMMYINDEX ON
+
+// do not create Stoichiom files
+#STOICMAT OFF
+
+// do not create Hessian files
+#HESSIAN OFF
+
+// do not create Mex files
+#MEX OFF
+
+// equation tags
+#EQNTAGS ON
+
+// show kpp-options in output
+#WRITE_OPT

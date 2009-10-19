@@ -1,0 +1,225 @@
+\CANCEL MODE verify ! like "unset echo" under unix
+CANCEL DATA/ALL
+CANCEL VARIABLE/ALL
+CANCEL SYMBOL/ALL
+
+! example usage:
+! go sizebins 0d mpl 1 7
+
+! TODO:
+! bugfix for ax>9 (2 digits)
+
+! argument checking
+DEFINE SYMBOL dim         = $1"0d|0d|1d|2d"
+DEFINE SYMBOL unitacronym = $2"mpm|mpm|mpl|mpm3|"
+DEFINE SYMBOL bin_start   = $3"1|1|2|3|4|5|6|7|8|"
+DEFINE SYMBOL bin_end     = $4"7|1|2|3|4|5|6|7|8|"
+DEFINE SYMBOL jnlfile     = sizebins
+DEFINE SYMBOL argv        = ($dim) ($unitacronym) ($bin_start) ($bin_end)
+
+! set makepdf to TRUE only for 1-page plots:
+!DEFINE SYMBOL makepdf = TRUE
+
+go setmodelrun
+go initialize
+USE "($run0)/caaba_messy.nc"      ! d=1 press,temp
+USE "($run0)/caaba_mecca_aero.nc" ! d=2 lwc
+USE "($run0)/caaba_mecca.nc"
+
+DEFINE SYMBOL dsensi = 3 !data set number of first sensi (try `,RETURN=dsetnum`)
+DEFINE SYMBOL run0_short = A0($bin_start) ($run0_short)
+DEFINE SYMBOL nsensi = `($bin_end)-($bin_start)`
+IF `($nsensi) GT 0` THEN ! for PLOT/OVER
+  REPEAT/range=1:($nsensi)/name=dnum ( \
+    DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+    DEFINE SYMBOL run($dnum)_short = A0`($dnum)+($bin_start)` )
+ENDIF
+
+GO initviewport 2 4 header
+
+DEFINE SYMBOL pagetitle = aqueous phase
+
+REPEAT/range=($bin_start):($bin_end)/name=ax ( \
+  DEFINE SYMBOL ax = A0`ax` ; \ ! convert VARIABLE to SYMBOL
+  \ ! define name of LWC variable:
+  DEFINE SYMBOL lwc_($ax) = lwc_($ax) ; \
+  GO _kppvara ; \ ! DEFINE kpp variables
+  \ ! mpm2mpl_($ax) = mol/mol to mol/L
+  LET mpm2mpl_($ax) = 1.e-3*press[d=1]/(8.314409*temp[d=1]*lwc_($ax)[d=2]) ; \
+  SAY ($ax): At t=t_0, 1 nmol/mol equals `1e-9 *mpm2mpl_($ax)[l=1]` mol/l    ; \
+  SAY ($ax): At t=t_0, 1 pmol/mol equals `1e-12*mpm2mpl_($ax)[l=1]` mol/l    ; \
+  SAY ($ax): At t=t_0, 1 mol/l    equals `1e12 /mpm2mpl_($ax)[l=1]` pmol/mol )
+
+! mpm2mpm3 = mol/mol to mol/m3
+LET mpm2mpm3 = press[d=1]/(8.314409*temp[d=1])
+SAY At t=t_0, 1 nmol/mol equals `mpm2mpm3[l=1]` nmol/m3(air)
+SAY At t=t_0, 1 pmol/mol equals `mpm2mpm3[l=1]` pmol/m3(air)
+
+! DEFINE factor for conversion to selected unit
+IF ($unitacronym%|mpm>TRUE|*>FALSE|%) THEN
+  ! leave DATA as it is [mol/mol]
+  REPEAT/range=($bin_start):($bin_end)/name=ax ( \
+    DEFINE SYMBOL ax = A0`ax` ; \ ! convert VARIABLE to SYMBOL
+    LET conv_($ax) = 1 ; \
+    LET factor_($ax) = conv_($ax) )
+  DEFINE SYMBOL unit = fromdataset
+ENDIF
+IF ($unitacronym%|mpl>TRUE|*>FALSE|%) THEN
+  ! convert DATA to [mol/l]
+  REPEAT/range=($bin_start):($bin_end)/name=ax ( \
+    DEFINE SYMBOL ax = A0`ax` ; \ ! convert VARIABLE to SYMBOL
+    LET conv_($ax) = mpm2mpl_($ax) ; \
+    LET factor_($ax) = conv_($ax) )
+  DEFINE SYMBOL unit = mol/l
+ENDIF
+IF ($unitacronym%|mpm3>TRUE|*>FALSE|%) THEN
+  ! convert DATA to [mol/m3]
+  REPEAT/range=($bin_start):($bin_end)/name=ax ( \
+    DEFINE SYMBOL ax = A0`ax` ; \ ! convert VARIABLE to SYMBOL
+    LET conv_($ax) = mpm2mpm3 ; \
+    LET factor_($ax) = conv_($ax) )
+  DEFINE SYMBOL unit = mol/m^3
+ENDIF
+SAY unit = [($unit)]
+
+! SET verbosity (higher values of v produce more plots)
+LET v = 1
+
+!-------------------------------------------------------------------------------
+
+! DEFINE some families
+
+REPEAT/range=($bin_start):($bin_end)/name=ax ( \
+  DEFINE SYMBOL ax = A0`ax` ; \ ! convert VARIABLE to SYMBOL
+  go _families_a ($ax) )
+
+!-------------------------------------------------------------------------------
+
+DEFINE SYMBOL saveunit = ($unit)
+DEFINE SYMBOL unit = fromdataset
+REPEAT/range=($bin_start):($bin_end)/name=ax ( \
+  DEFINE SYMBOL ax = A0`ax` ; \ ! convert VARIABLE to SYMBOL
+  LET factor_($ax) = 1 )
+
+IF `v GE 1` THEN GO _plot_sizebins pH
+IF `v GE 1` THEN GO _plot_sizebins XpdXm
+IF `v GE 1` THEN GO _plot_sizebins xlwc
+IF `v GE 1` THEN GO _plot_sizebins Kw
+
+!enrichment factors (doesn't work if Na=0)
+! IF `v GE 1` THEN GO _plot_sizebins EF_Clm
+! IF `v GE 1` THEN GO _plot_sizebins EF_Brm
+
+DEFINE SYMBOL unit = ($saveunit)
+REPEAT/range=($bin_start):($bin_end)/name=ax ( \
+  DEFINE SYMBOL ax = A0`ax` ; \ ! convert VARIABLE to SYMBOL
+  LET factor_($ax) = conv_($ax) )
+
+!-------------------------------------------------------------------------------
+
+IF `v GE 1` THEN GO _plot_sizebins cations
+IF `v GE 1` THEN GO _plot_sizebins anions
+
+!Na+
+IF `v GE 1` THEN GO _plot_sizebins Nap
+
+! O, H
+IF `v GE 1` THEN GO _plot_sizebins Hp
+IF `v GE 1` THEN GO _plot_sizebins OHm
+IF `v GE 3` THEN GO _plot_sizebins O2
+IF `v GE 2` THEN GO _plot_sizebins O3
+IF `v GE 2` THEN GO _plot_sizebins OH
+IF `v GE 2` THEN GO _plot_sizebins HO2tot
+IF `v GE 3` THEN GO _plot_sizebins HO2
+IF `v GE 3` THEN GO _plot_sizebins O2m
+IF `v GE 2` THEN GO _plot_sizebins H2O
+IF `v GE 1` THEN GO _plot_sizebins H2O2
+! N
+IF `v GE 1` THEN GO _plot_sizebins NH3tot
+IF `v GE 3` THEN GO _plot_sizebins NH3
+IF `v GE 3` THEN GO _plot_sizebins NH4p
+IF `v GE 2` THEN GO _plot_sizebins NO2
+IF `v GE 2` THEN GO _plot_sizebins NO3
+IF `v GE 2` THEN GO _plot_sizebins HONOtot
+IF `v GE 3` THEN GO _plot_sizebins HONO
+IF `v GE 3` THEN GO _plot_sizebins NO2m
+IF `v GE 1` THEN GO _plot_sizebins HNO3tot
+IF `v GE 3` THEN GO _plot_sizebins HNO3
+IF `v GE 3` THEN GO _plot_sizebins NO3m
+IF `v GE 2` THEN GO _plot_sizebins HNO4tot
+IF `v GE 3` THEN GO _plot_sizebins HNO4
+IF `v GE 3` THEN GO _plot_sizebins NO4m
+! C
+IF `v GE 2` THEN GO _plot_sizebins CH3OH
+IF `v GE 2` THEN GO _plot_sizebins CH3OO
+IF `v GE 2` THEN GO _plot_sizebins CH3OOH
+IF `v GE 2` THEN GO _plot_sizebins HCHO
+IF `v GE 2` THEN GO _plot_sizebins HCOOHtot
+IF `v GE 3` THEN GO _plot_sizebins HCOOH
+IF `v GE 3` THEN GO _plot_sizebins HCOOm
+IF `v GE 2` THEN GO _plot_sizebins CO3m
+IF `v GE 1` THEN GO _plot_sizebins CO2tot
+IF `v GE 3` THEN GO _plot_sizebins CO2
+IF `v GE 3` THEN GO _plot_sizebins HCO3m
+! Cl
+IF `v GE 2` THEN GO _plot_sizebins Cltot
+IF `v GE 1` THEN GO _plot_sizebins HCltot
+IF `v GE 3` THEN GO _plot_sizebins HCl
+IF `v GE 3` THEN GO _plot_sizebins Clm
+IF `v GE 2` THEN GO _plot_sizebins Clrad
+IF `v GE 3` THEN GO _plot_sizebins Cl
+IF `v GE 3` THEN GO _plot_sizebins Cl2m
+IF `v GE 2` THEN GO _plot_sizebins HOCltot
+IF `v GE 3` THEN GO _plot_sizebins HOCl
+IF `v GE 3` THEN GO _plot_sizebins ClOm
+IF `v GE 2` THEN GO _plot_sizebins ClOHm
+IF `v GE 2` THEN GO _plot_sizebins Cl2
+! Br
+IF `v GE 1` THEN GO _plot_sizebins Brtot
+IF `v GE 1` THEN GO _plot_sizebins HBrtot
+IF `v GE 3` THEN GO _plot_sizebins HBr
+IF `v GE 3` THEN GO _plot_sizebins Brm
+IF `v GE 2` THEN GO _plot_sizebins Brrad
+IF `v GE 3` THEN GO _plot_sizebins Br
+IF `v GE 3` THEN GO _plot_sizebins Br2m
+IF `v GE 2` THEN GO _plot_sizebins HOBrtot
+IF `v GE 3` THEN GO _plot_sizebins HOBr
+IF `v GE 3` THEN GO _plot_sizebins BrOm
+IF `v GE 2` THEN GO _plot_sizebins BrOHm
+IF `v GE 2` THEN GO _plot_sizebins Br2
+IF `v GE 2` THEN GO _plot_sizebins BrCl
+IF `v GE 2` THEN GO _plot_sizebins BrCl2m
+IF `v GE 2` THEN GO _plot_sizebins Br2Clm
+! I
+IF `v GE 1` THEN GO _plot_sizebins Itot
+IF `v GE 2` THEN GO _plot_sizebins Im
+IF `v GE 2` THEN GO _plot_sizebins HOI
+IF `v GE 2` THEN GO _plot_sizebins I2
+IF `v GE 2` THEN GO _plot_sizebins IO
+IF `v GE 2` THEN GO _plot_sizebins IO2m
+IF `v GE 2` THEN GO _plot_sizebins IO3m
+IF `v GE 2` THEN GO _plot_sizebins ICl
+IF `v GE 2` THEN GO _plot_sizebins IBr
+IF `v GE 2` THEN GO _plot_sizebins ICl2m
+IF `v GE 2` THEN GO _plot_sizebins IClBrm
+IF `v GE 2` THEN GO _plot_sizebins IBr2m
+! S
+IF `v GE 2` THEN GO _plot_sizebins CH3SO3m
+IF `v GE 2` THEN GO _plot_sizebins DMSO
+IF `v GE 1` THEN GO _plot_sizebins SO2tot
+IF `v GE 3` THEN GO _plot_sizebins SO2
+IF `v GE 3` THEN GO _plot_sizebins HSO3m
+IF `v GE 3` THEN GO _plot_sizebins SO3mm
+IF `v GE 1` THEN GO _plot_sizebins H2SO4tot
+IF `v GE 3` THEN GO _plot_sizebins H2SO4
+IF `v GE 3` THEN GO _plot_sizebins HSO4m
+IF `v GE 3` THEN GO _plot_sizebins SO4mm
+IF `v GE 2` THEN GO _plot_sizebins HSO5m
+IF `v GE 2` THEN GO _plot_sizebins SO3m
+IF `v GE 2` THEN GO _plot_sizebins SO4m
+IF `v GE 2` THEN GO _plot_sizebins SO5m
+IF `v GE 2` THEN GO _plot_sizebins CH2OHSO3m
+
+GO exitviewport
+
+EXIT

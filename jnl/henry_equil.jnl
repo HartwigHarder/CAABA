@@ -1,0 +1,93 @@
+\CANCEL MODE verify ! like "unset echo" under unix
+CANCEL DATA/ALL
+CANCEL VARIABLE/ALL
+CANCEL SYMBOL/ALL
+
+! argument checking
+DEFINE SYMBOL dim         = $1"0d|0d|1d|2d"
+DEFINE SYMBOL unitacronym = $2"mpm|mpm|mpl|"
+DEFINE SYMBOL ax          = $3"A02|as|cs|A01|A02|A03|A04|A05|A06|A07|A08|"
+DEFINE SYMBOL jnlfile     = henry_equil
+DEFINE SYMBOL argv        = ($dim) ($unitacronym) ($ax)
+SAY aerosol MODE = ($ax)
+
+! set makepdf to TRUE only for 1-page plots:
+!DEFINE SYMBOL makepdf = TRUE
+
+go setmodelrun
+go initialize
+USE "($run0)/caaba_messy.nc"      ! d=1 press,temp
+USE "($run0)/caaba_mecca_aero.nc" ! d=2 lwc
+! sensi first
+DEFINE SYMBOL dsensi = 3 !data set number of first sensi (try `,RETURN=dsetnum`)
+IF `($nsensi) GT 0` THEN ! for PLOT/OVER
+  REPEAT/range=1:($nsensi)/name=dnum ( \
+    DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+    USE "($run($dnum))/caaba_mecca.nc" )
+ENDIF
+! base last because it must be the current data set
+USE "($run0)/caaba_mecca.nc"
+
+!IF USE metafile the filename ends with .mc
+! SET DATA "($run0)_physc.mc"   ! d=1 press,tm1,tte,dt
+! SET DATA "($run0)_mbl.mc"     ! d=2 lwc
+! SET DATA "($run0)_tracer.mc"  ! d=3 tracer
+
+GO initviewport 3 6 header
+
+DEFINE SYMBOL pagetitle = Henry equilibria
+GO _kppvarg ! DEFINE kpp variables
+GO _kppvara ! DEFINE kpp variables
+
+! SET verbosity (higher values of v produce more plots)
+LET v = 2
+
+!-------------------------------------------------------------------------------
+
+LET starttimestep = 2
+
+LET fac = 1.e-3*press[d=1,k=($plotlevel)]/(8.314409 * temp[d=1,k=($plotlevel)]*lwc_($ax)[d=2,k=($plotlevel)])
+
+!-------------------------------------------------------------------------------
+
+IF `v GE 2` THEN GO _henry_equil_($dim) O2       O2_($ax)       1.3e-3  1500
+IF `v GE 1` THEN GO _henry_equil_($dim) O3       O3_($ax)       1.2e-2  2560
+IF `v GE 2` THEN GO _henry_equil_($dim) OH       OH_($ax)       30.     4300
+IF `v GE 2` THEN GO _henry_equil_($dim) HO2      HO2_($ax)      3.9e3   5900
+IF `v GE 1` THEN GO _henry_equil_($dim) H2O2     H2O2_($ax)     1.e5    6338
+IF `v GE 2` THEN GO _henry_equil_($dim) NO       NO_($ax)       1.9e-3  1480
+IF `v GE 2` THEN GO _henry_equil_($dim) NO2      NO2_($ax)      6.4e-3  2500
+IF `v GE 2` THEN GO _henry_equil_($dim) NO3      NO3_($ax)      2.      2000
+IF `v GE 1` THEN GO _henry_equil_($dim) NH3      NH3_($ax)      58.0    4085
+IF `v GE 2` THEN GO _henry_equil_($dim) HONO     HONO_($ax)     4.9e1   4780
+IF `v GE 1` THEN GO _henry_equil_($dim) HNO3     HNO3_($ax)     1.66e5  8694
+IF `v GE 2` THEN GO _henry_equil_($dim) HNO4     HNO4_($ax)     1.2e4   6900
+IF `v GE 1` THEN GO _henry_equil_($dim) CO2      CO2_($ax)      3.1e-2  2423
+IF `v GE 2` THEN GO _henry_equil_($dim) HCHO     HCHO_($ax)     7.0E3   6425
+IF `v GE 2` THEN GO _henry_equil_($dim) CH3O2    CH3O2_($ax)    6.      5600
+IF `v GE 2` THEN GO _henry_equil_($dim) HCOOH    HCOOH_($ax)    3.7e3   5700
+IF `v GE 2` THEN GO _henry_equil_($dim) CH3OOH   CH3OOH_($ax)   300.    5322
+IF `v GE 2` THEN GO _henry_equil_($dim) CH3OH    CH3OH_($ax)    2.20e2  5390
+IF `v GE 2` THEN GO _henry_equil_($dim) CH3COOH  CH3COOH_($ax)  5.50e3  5894
+IF `v GE 2` THEN GO _henry_equil_($dim) CH3CHO   CH3CHO_($ax)   1.14e1  6254
+IF `v GE 2` THEN GO _henry_equil_($dim) PAN      PAN_($ax)      5.0        0
+IF `v GE 2` THEN GO _henry_equil_($dim) CH3COCH3 CH3COCH3_($ax) 3.52e1  3800
+IF `v GE 1` THEN GO _henry_equil_($dim) Cl2      Cl2_($ax)      9.1e-2  2500
+IF `v GE 1` THEN GO _henry_equil_($dim) HCl      HCl_($ax)      1.18    9001
+IF `v GE 1` THEN GO _henry_equil_($dim) HOCl     HOCl_($ax)     6.7e2   5862
+IF `v GE 1` THEN GO _henry_equil_($dim) Br2      Br2_($ax)      7.6e-1  4094
+IF `v GE 1` THEN GO _henry_equil_($dim) HBr      HBr_($ax)      1.3    10239
+IF `v GE 1` THEN GO _henry_equil_($dim) HOBr     HOBr_($ax)     93.     5862
+IF `v GE 1` THEN GO _henry_equil_($dim) BrCl     BrCl_($ax)     9.4e-1  5600
+IF `v GE 1` THEN GO _henry_equil_($dim) I2       I2_($ax)       3.      4431
+IF `v GE 1` THEN GO _henry_equil_($dim) IO       IO_($ax)       4.5e2   5862
+IF `v GE 1` THEN GO _henry_equil_($dim) HOI      HOI_($ax)      4.5e2   5862
+IF `v GE 1` THEN GO _henry_equil_($dim) ICl      ICl_($ax)      1.1e2   5600
+IF `v GE 1` THEN GO _henry_equil_($dim) IBr      IBr_($ax)      2.4e1   5600
+IF `v GE 1` THEN GO _henry_equil_($dim) SO2      SO2_($ax)      1.2     3120
+IF `v GE 2` THEN GO _henry_equil_($dim) DMSO     DMSO_($ax)     5.e4    6425
+IF `v GE 2` THEN GO _henry_equil_($dim) H2SO4    H2SO4_($ax)    1.e+11     0
+
+GO exitviewport
+
+EXIT

@@ -1,0 +1,3 @@
+202 - stack overflow error: increase stack size with {$M } directive
+access violation: usually can be solved increasing max_... consts, also check if range checking is ON
+segmentation fault: usually caused by too big data segment: try to decrease max_... consts

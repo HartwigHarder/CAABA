@@ -1,0 +1,51 @@
+! -*- f90 -*- Time-stamp: <2008-08-15 16:49:39 sander>
+
+!*****************************************************************************
+!
+! coupling namelist for CAABA boxmodel
+!
+!*****************************************************************************
+
+&CAABA
+
+!USE_JVAL    = T
+ USE_MECCA   = T
+!USE_READJ   = T
+ USE_SAPPHO  = T
+ USE_SEMIDEP = T
+!USE_TRAJECT = T
+
+ temp    =    240.   ! temperature [K]
+!press   = 101325.   ! pressure [Pa]
+ relhum  =      0.8  ! relative humidity [1]
+ zmbl    =    500.   ! height of boundary layer [m]
+
+! Choose a channel that contains J-values for photolysis reactions:
+!photrat_channel = 'jval'
+!photrat_channel = 'readj'
+ photrat_channel = 'sappho'
+
+! frost flower model run?
+ l_ff       = T
+ Ca_precip  = 0.3
+
+ ext_runtime = '10 days'
+!l_skipkpp = T    ! skip call to kpp chemistry integration
+
+! select reaction rates to be output to MECCA channel
+! (comma-separated list of equation IDs, no spaces, wildcards with "?*"):
+!printrates = 'G1000,J3*,G?110,H*,G*b,J1'
+
+!-----------------------------------------------------------------------------
+
+! choose location:
+! Arctic:
+ degree_lat = 82.
+ startday   = 90.
+! Antarctic:
+!degree_lat = -82.
+!startday   = 272.
+
+/
+
+!*****************************************************************************

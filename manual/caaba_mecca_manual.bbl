@@ -1,0 +1,36 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{{\tt #1}}
+\providecommand{\urlprefix}{}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+
+\bibitem[{J\"ockel et~al.(2005)J\"ockel, Sander, Kerkweg, Tost, and
+  Lelieveld}]{1664}
+J\"ockel, P., Sander, R., Kerkweg, A., Tost, H., and Lelieveld, J.: Technical
+  Note: The Modular Earth Submodel System (MESSy) -- a new approach towards
+  Earth System Modeling, Atmos. Chem. Phys., 5, 433--444, 2005.
+
+\bibitem[{J\"ockel et~al.(2006)J\"ockel, Tost, Pozzer, Br\"uhl, Buchholz,
+  Ganzeveld, Hoor, Kerkweg, Lawrence, Sander, Steil, Stiller, Tanarhte,
+  Taraborrelli, van Aardenne, and Lelieveld}]{1851}
+J\"ockel, P., Tost, H., Pozzer, A., Br\"uhl, C., Buchholz, J., Ganzeveld, L.,
+  Hoor, P., Kerkweg, A., Lawrence, M.~G., Sander, R., Steil, B., Stiller, G.,
+  Tanarhte, M., Taraborrelli, D., van Aardenne, J., and Lelieveld, J.: The
+  atmospheric chemistry general circulation model ECHAM5/MESSy1: consistent
+  simulation of ozone from the surface to the mesosphere, Atmos. Chem. Phys.,
+  6, 5067--5104, 2006.
+
+\bibitem[{Sander et~al.(2005)Sander, Kerkweg, J\"ockel, and Lelieveld}]{1666}
+Sander, R., Kerkweg, A., J\"ockel, P., and Lelieveld, J.: Technical Note: The
+  new comprehensive atmospheric chemistry module MECCA, Atmos. Chem. Phys., 5,
+  445--450, 2005.
+
+\bibitem[{Sandu and Sander(2006)}]{1665}
+Sandu, A. and Sander, R.: Technical Note: Simulating chemical systems in
+  Fortran90 and Matlab with the Kinetic PreProcessor KPP-2.1, Atmos. Chem.
+  Phys., 6, 187--195, 2006.
+
+\end{thebibliography}

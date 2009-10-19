@@ -1,0 +1,44 @@
+// -*- kpp -*- kpp mode for emacs
+
+// Authors: Astrid Kerkweg and Rolf Sander (2008)
+
+#REPLACE <G7407>  
+<a> CHBr3   + OH = H2O + 3 Br {+CH3O2} : {%StTrGBr} 1.35E-12*EXP(-600./temp); {&&1945}
+#ENDREPLACE
+#REPLACE <G7408>  
+<a> CH2Br2  + OH = H2O + 2 Br {+CH3O2} : {%StTrGBr} 2.0E-12*EXP(-840./temp);  {&&1945}
+#ENDREPLACE
+#REPLACE <G7605>  
+<a> CHCl2Br + OH = H2O + Br   {+CH3O2} : {%StTrGBr} 2.0E-12*EXP(-840./temp);  {&&}
+#ENDREPLACE
+#REPLACE <G7606>  
+<a> CHClBr2 + OH = H2O + 2 Br {+CH3O2} : {%StTrGBr} 2.0E-12*EXP(-840./temp);  {&&}
+#ENDREPLACE
+#REPLACE <G7607>  
+<a> CH2ClBr + OH = H2O + Br   {+CH3O2} : {%StTrGBr} 2.4E-12*EXP(-920./temp);  {&&1945}
+#ENDREPLACE
+
+#REPLACE <J7400>  
+<a> CH3Br   + hv = Br + CH3O2        : {%StTrGBrJ}   jx(ip_CH3Br); {&&}
+#ENDREPLACE
+#REPLACE <J7401>  
+<a> CH2Br2  + hv = 2 Br      {+CH3O2} : {%StTrGBrJ}   jx(ip_CH2Br2);  {&&}
+#ENDREPLACE
+#REPLACE <J7402>  
+<a> CHBr3   + hv = 3 Br      {+CH3O2} : {%StTrGBrJ}   jx(ip_CHBr3);   {&&}
+#ENDREPLACE
+#REPLACE <J7602>  
+<a> CH2ClBr + hv = Br + Cl   {+CH3O2} : {%StTrGClBrJ} jx(ip_CH2ClBr); {&&}
+#ENDREPLACE
+#REPLACE <J7603>  
+<a> CHCl2Br + hv = Br + 2 Cl {+CH3O2} : {%StTrGClBrJ} jx(ip_CHCl2Br); {&&}
+#ENDREPLACE
+#REPLACE <J7604>  
+<a> CHClBr2 + hv = 2 Br + Cl {+CH3O2} : {%StTrGClBrJ} jx(ip_CHClBr2); {&&}
+#ENDREPLACE
+#REPLACE <HET201>  
+<a> N2O5        = 2 NO3m_a01 + 2 Hp_a01 : {%StTrHetN}  (1._dp-xaer(01))* khet_Tr(iht_N2O5);      {&&}
+#ENDREPLACE
+#REPLACE <HET202>  
+<a> HNO3        = NO3m_a01 + Hp_a01 : {%StTrHetN}     (1._dp-xaer(01))* khet_Tr(iht_HNO3);      {&&}
+#ENDREPLACE

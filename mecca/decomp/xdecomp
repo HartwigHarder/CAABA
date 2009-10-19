@@ -1,0 +1,65 @@
+#! /bin/tcsh -f
+
+if ($# == 0) then
+   echo "USAGE: $0 <solver>"
+exit 1
+endif
+
+set integr = $1
+
+echo "remove if-statements in subroutine decomp ? [y/n/q, default=y]"
+echo "NOTES: - those are expensive"
+echo "       - those are nearly useless"
+echo "       - those are even dangerous in case of #cpu > 1"
+
+set inputstringif = "$<"
+if ($inputstringif == "") then
+   set inputstringif = "y"               # default
+endif
+
+switch ("$inputstringif")
+
+case "q"
+     exit
+     breaksw
+
+case "n"
+     set REMOVE = "F"
+     breaksw
+
+case "y"
+     set REMOVE = "T"
+     breaksw
+
+default:
+     echo "ERROR: OPTION NOT RECOGNIZED"
+     exit 1
+     breaksw
+
+endsw
+
+  # select correct script for the chosen integrator
+  switch ("$integr")
+
+   case "ros2_manual.f90":
+
+    echo "./seddecomp_ros2 "$REMOVE
+    ./seddecomp_ros2 $REMOVE
+    breaksw
+
+   case "rosenbrock":
+   case "rosenbrock_mz": 
+
+    echo "./seddecomp_ros.auto "$REMOVE
+    ./seddecomp_ros-auto $REMOVE
+    breaksw
+
+  default:
+
+    echo "ERROR: removal of indirect indexing not possible"
+    echo "       or not yet implemented for "$integr
+    breaksw
+
+  endsw
+
+exit

@@ -1,0 +1,134 @@
+#! /bin/tcsh -f
+# Time-stamp: <2009-02-07 23:35:57 sander>
+# create a self-consistent zip file of a new caaba version
+
+if ( "$1" == "" ) then
+  echo ""
+  echo "Info (before making a new version):"
+  set current_version = `grep -i "modver *=" messy_mecca.f90 | sed "s|.*'\(.*\)'.*|\1|g"`
+  echo "- update version number in messy_mecca.f90 (modver = '$current_version')"
+  echo "- LaTeX:"
+  echo "  switch on citetags in xmecca"
+  echo "  cd mecca ; xmecca latex"
+  echo "- Enter standard settings:"
+  echo "  Makefile:        COMPILER = g95"
+  echo "                   OUTPUT = ASCII or NETCDF?"
+  echo "                   F90FLAGS = fast or with checks?"
+  echo "  mecca.nml:       mecca_aero = 'AUTO'"
+  echo "  xmecca:          cd mecca ; xmecca mbl"
+  echo '  setmodelrun.jnl: DEFINE SYMBOL C2 = `{spawn: "cd .. ; pwd"}`'
+  echo "                   GO _define_sensi ... latest run (no other plots)"
+  echo "- add all changes and current date to CHANGELOG"
+  echo "Usage:"
+  echo "  ncv nn"
+  echo "  (nn = version number)"
+  echo "Examples:"
+  echo "  snapshot with current date:        ncv `date +'%Y%m%d'`"
+  echo "  proper version number, e.g.:       ncv $current_version"
+  echo ""
+  exit
+endif
+
+if (! -e mecca/smcl/messy_mecca_kpp_parameters.f90) then
+  echo "\nPlease run xmecca with KPP (not KP4) before executing ncv\!"
+  exit 1
+endif
+
+if (! -e sfmakedepend) then
+  echo "\nThe perl script sfmakedepend does not exist. Please run"
+  echo "configure to create it from sfmakedepend.pl.in:"
+  echo "  ( cd ../../.. ; ./configure ; cd - )\n"
+  exit 1
+endif
+
+set basedir = `basename $PWD`
+set dirname = ${basedir}_$1
+set oridir  = $HOME/messy/mecca/ori
+
+if ( -d $oridir) then
+  set zipfile = $oridir/$dirname.zip
+else
+  cd ..
+  set zipfile = $PWD/$dirname.zip
+  cd -
+endif
+
+if ( -e $zipfile) then
+  echo "\nzip file exists:"
+  ls -la $zipfile
+  echo "Please choose another version number\!"
+  exit 1
+endif
+
+echo "\nCreating zip file"
+echo "$zipfile"
+echo "Continue? [y/n/q, default=y]"
+set inputstring = $<
+if ( $inputstring == 'q' ) exit
+if ( $inputstring == 'n' ) exit
+
+set MECCA_VERSION = `grep -i "modver *=" messy_mecca.f90 | sed "s|.*'\(.*\)'.*|\1|g"`
+set infofile = "manual/mecca_info.tex"
+set dontedit = "this file was created automatically by ncv, do not edit"
+echo "% $dontedit"                          > $infofile
+echo "\\def\\meccaversion{$MECCA_VERSION}" >> $infofile
+echo "Update MECCA Manual? [y/n/q, default=n]"
+set inputstring = $<
+if ( $inputstring == 'q' ) exit
+if ( $inputstring == 'y' ) then
+  cd manual
+  pdflatex caaba_mecca_manual.tex
+  bibtex caaba_mecca_manual.aux
+  pdflatex caaba_mecca_manual.tex
+  pdflatex caaba_mecca_manual.tex
+  cd -
+endif
+
+cd ..
+# temporarily rename the caaba directory to include the version:
+mv $basedir $dirname
+
+# zip options:
+# -o make zipfile as old as latest entry
+# -r recurse into directories
+# -x '...' exclude files
+zip -or $zipfile $dirname \
+  -x '*~' -x '*.mod' -x '*.exe' -x '*.o' -x '*.a' -x '*.nc' \
+  -x '*.log' -x '*.old' -x '*.zip' -x '*.tar' -x '*/tmp/*' \
+  -x '*.ps' -x '*.dat' -x '*/Makefile.m' -x $dirname/'output/?*' \
+  -x $dirname/'temporaryfile*' -x '*_e5.inc'
+
+# Symbolic links are now included as the whole files in the zip archive.
+# However, some links are internal links (i.e. between directories that
+# are both included in the zip file). They must be stored as links. This
+# is done by overwriting them in the zip file:
+
+# zip options:
+# -y store symbolic links as the link instead of the referenced file:
+zip -oy $zipfile \
+$dirname/caaba.nml \
+$dirname/mecca/dbl/imcom.inc \
+$dirname/messy_mecca_kpp.f90 \
+$dirname/messy_mecca_kpp_function.f90 \
+$dirname/messy_mecca_kpp_global.f90 \
+$dirname/messy_mecca_kpp_initialize.f90 \
+$dirname/messy_mecca_kpp_integrator.f90 \
+$dirname/messy_mecca_kpp_jacobian.f90 \
+$dirname/messy_mecca_kpp_jacobiansp.f90 \
+$dirname/messy_mecca_kpp_linearalgebra.f90 \
+$dirname/messy_mecca_kpp_monitor.f90 \
+$dirname/messy_mecca_kpp_parameters.f90 \
+$dirname/messy_mecca_kpp_precision.f90 \
+$dirname/messy_mecca_kpp_rates.f90 \
+$dirname/messy_mecca_kpp_util.f90 \
+$dirname/messy_mecca.f90 \
+$dirname/messy_mecca_aero.f90 \
+$dirname/messy_mecca_khet.f90
+
+# rename the caaba directory back to its original name:
+mv $dirname $basedir
+
+echo "\nThe zipfile has been created:"
+ls -la $zipfile
+
+exit

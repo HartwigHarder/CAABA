@@ -1,0 +1,235 @@
+\CANCEL MODE verify ! like "unset echo" under unix
+CANCEL DATA/ALL
+CANCEL VARIABLE/ALL
+CANCEL SYMBOL/ALL
+
+! argument checking
+DEFINE SYMBOL dim         = $1"0d|0d|1d|2d"
+DEFINE SYMBOL unitacronym = $2"mpm|mpm|mpl|mpm3"
+DEFINE SYMBOL ax          = $3"A02|as|cs|A01|A02|A03|A04|A05|A06|A07|A08|"
+DEFINE SYMBOL jnlfile     = xxxa
+DEFINE SYMBOL argv        = ($dim) ($unitacronym) ($ax)
+
+! define name of LWC variable:
+IF ($ax%|as>TRUE|cs>TRUE|*>FALSE|%) THEN
+  SAY aerosol mode = ($ax)     (old name syntax)
+  DEFINE SYMBOL lwc_($ax) = lwc($ax)_3d
+ELSE
+  SAY aerosol mode = ($ax)     (new name syntax since MECCA-2.2)
+  DEFINE SYMBOL lwc_($ax) = lwc_($ax)
+ENDIF
+
+! set makepdf to TRUE only for 1-page plots:
+!DEFINE SYMBOL makepdf = TRUE
+
+go setmodelrun
+go initialize
+USE "($run0)/caaba_messy.nc"      ! d=1 press,temp
+USE "($run0)/caaba_mecca_aero.nc" ! d=2 lwc
+! sensi first
+DEFINE SYMBOL dsensi = 3 !data set number of first sensi (try `,RETURN=dsetnum`)
+IF `($nsensi) GT 0` THEN ! for PLOT/OVER
+  REPEAT/range=1:($nsensi)/name=dnum ( \
+    DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+    USE "($run($dnum))/caaba_mecca.nc" )
+ENDIF
+! base last because it must be the current data set
+USE "($run0)/caaba_mecca.nc"
+DEFINE SYMBOL dbase = `($nsensi)+3`
+say base run = data set number ($dbase)
+
+GO initviewport 3 7 header
+IF ($dim%|2d>TRUE|*>FALSE|%) THEN
+ GO initviewport 2 4 header
+ENDIF
+
+DEFINE SYMBOL pagetitle = aqueous phase
+GO _kppvara ! DEFINE kpp variables
+! mpm2mpl_($ax) = mol/mol to mol/L
+LET mpm2mpl_($ax) = 1.e-3*press[d=1]/(8.314409*temp[d=1]*($lwc_($ax))[d=2])
+SAY At t=t_start, 1 nmol/mol equals `1e-9 *mpm2mpl_($ax)[l=1]` mol/l
+SAY At t=t_start, 1 pmol/mol equals `1e-12*mpm2mpl_($ax)[l=1]` mol/l
+SAY At t=t_start, 1 mol/l    equals `1e12 /mpm2mpl_($ax)[l=1]` pmol/mol
+! mpm2mpm3 = mol/mol to mol/m3
+LET mpm2mpm3 = press[d=1]/(8.314409*temp[d=1])
+SAY At t=t_start, 1 nmol/mol equals `mpm2mpm3[l=1]` nmol/m3(air)
+SAY At t=t_start, 1 pmol/mol equals `mpm2mpm3[l=1]` pmol/m3(air)
+
+! DEFINE factor for conversion to selected unit
+IF ($unitacronym%|mpm>TRUE|*>FALSE|%) THEN
+  ! leave DATA as it is [mol/mol]
+  LET conv = 1
+  DEFINE SYMBOL unit = fromdataset
+ENDIF
+IF ($unitacronym%|mpl>TRUE|*>FALSE|%) THEN
+  ! convert DATA to [mol/l]
+  LET conv = mpm2mpl_($ax)
+  DEFINE SYMBOL unit = mol/l
+ENDIF
+IF ($unitacronym%|mpm3>TRUE|*>FALSE|%) THEN
+  ! convert DATA to [mol/m3]
+  LET conv = mpm2mpm3
+  DEFINE SYMBOL unit = mol/m^3
+ENDIF
+SAY unit = [($unit)]
+LET factor = conv
+
+! SET verbosity (higher values of v produce more plots)
+LET v = 1
+
+GO _families_a ($ax) ! DEFINE some families
+
+!-------------------------------------------------------------------------------
+
+DEFINE SYMBOL saveunit = ($unit)
+DEFINE SYMBOL unit = fromdataset
+LET factor = 1
+
+IF `v GE 1` THEN GO _plot_($dim) pH_($ax)
+IF `v GE 1` THEN GO _plot_($dim) XpdXm_($ax)
+IF `v GE 1` THEN GO _plot_($dim) xlwc_($ax)
+IF `v GE 1` THEN GO _plot_($dim) Kw_($ax)
+
+DEFINE SYMBOL unit = ($saveunit)
+LET factor = conv
+
+IF `v GE 1` THEN GO _plot_($dim) cations_($ax)
+IF `v GE 1` THEN GO _plot_($dim) anions_($ax)
+
+!Na+
+IF `v GE 2` THEN GO _plot_($dim) Nap_($ax)
+
+! O, H
+IF `v GE 1` THEN GO _plot_($dim) Hp_($ax)
+IF `v GE 1` THEN GO _plot_($dim) OHm_($ax)
+IF `v GE 3` THEN GO _plot_($dim) O2_($ax)
+IF `v GE 2` THEN GO _plot_($dim) O3_($ax)
+IF `v GE 2` THEN GO _plot_($dim) OH_($ax)
+IF `v GE 2` THEN GO _plot_($dim) HO2tot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HO2_($ax)
+IF `v GE 3` THEN GO _plot_($dim) O2m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) H2O_($ax)
+IF `v GE 1` THEN GO _plot_($dim) H2O2_($ax)
+! N
+IF `v GE 1` THEN GO _plot_($dim) NH3tot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) NH3_($ax)
+IF `v GE 3` THEN GO _plot_($dim) NH4p_($ax)
+IF `v GE 2` THEN GO _plot_($dim) NO2_($ax)
+IF `v GE 2` THEN GO _plot_($dim) NO3_($ax)
+IF `v GE 2` THEN GO _plot_($dim) HONOtot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HONO_($ax)
+IF `v GE 3` THEN GO _plot_($dim) NO2m_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HNO3tot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HNO3_($ax)
+IF `v GE 3` THEN GO _plot_($dim) NO3m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) HNO4tot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HNO4_($ax)
+IF `v GE 3` THEN GO _plot_($dim) NO4m_($ax)
+! C
+IF `v GE 2` THEN GO _plot_($dim) CH3OH_($ax)
+IF `v GE 2` THEN GO _plot_($dim) CH3OO_($ax)
+IF `v GE 2` THEN GO _plot_($dim) CH3OOH_($ax)
+IF `v GE 2` THEN GO _plot_($dim) HCHO_($ax)
+IF `v GE 2` THEN GO _plot_($dim) HCOOHtot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HCOOH_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HCOOm_($ax)
+IF `v GE 2` THEN GO _plot_($dim) CO3m_($ax)
+IF `v GE 1` THEN GO _plot_($dim) CO2tot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) CO2_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HCO3m_($ax)
+! Cl
+IF `v GE 2` THEN GO _plot_($dim) Cltot_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HCltot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HCl_($ax)
+IF `v GE 3` THEN GO _plot_($dim) Clm_($ax)
+IF `v GE 2` THEN GO _plot_($dim) Clrad_($ax)
+IF `v GE 3` THEN GO _plot_($dim) Cl_($ax)
+IF `v GE 3` THEN GO _plot_($dim) Cl2m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) HOCltot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HOCl_($ax)
+IF `v GE 3` THEN GO _plot_($dim) ClOm_($ax)
+IF `v GE 2` THEN GO _plot_($dim) ClOHm_($ax)
+IF `v GE 2` THEN GO _plot_($dim) Cl2_($ax)
+! Br
+IF `v GE 1` THEN GO _plot_($dim) Brtot_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HBrtot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HBr_($ax)
+IF `v GE 3` THEN GO _plot_($dim) Brm_($ax)
+IF `v GE 2` THEN GO _plot_($dim) Brrad_($ax)
+IF `v GE 3` THEN GO _plot_($dim) Br_($ax)
+IF `v GE 3` THEN GO _plot_($dim) Br2m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) HOBrtot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HOBr_($ax)
+IF `v GE 3` THEN GO _plot_($dim) BrOm_($ax)
+IF `v GE 2` THEN GO _plot_($dim) BrOHm_($ax)
+IF `v GE 2` THEN GO _plot_($dim) Br2_($ax)
+IF `v GE 2` THEN GO _plot_($dim) BrCl_($ax)
+IF `v GE 2` THEN GO _plot_($dim) BrCl2m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) Br2Clm_($ax)
+! I
+IF `v GE 1` THEN GO _plot_($dim) Itot_($ax)
+IF `v GE 2` THEN GO _plot_($dim) Im_($ax)
+IF `v GE 2` THEN GO _plot_($dim) HOI_($ax)
+IF `v GE 2` THEN GO _plot_($dim) I2_($ax)
+IF `v GE 2` THEN GO _plot_($dim) IO_($ax)
+IF `v GE 2` THEN GO _plot_($dim) IO2m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) IO3m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) ICl_($ax)
+IF `v GE 2` THEN GO _plot_($dim) IBr_($ax)
+IF `v GE 2` THEN GO _plot_($dim) ICl2m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) IClBrm_($ax)
+IF `v GE 2` THEN GO _plot_($dim) IBr2m_($ax)
+! S
+IF `v GE 2` THEN GO _plot_($dim) CH3SO3m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) DMSO_($ax)
+IF `v GE 1` THEN GO _plot_($dim) SO2tot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) SO2_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HSO3m_($ax)
+IF `v GE 3` THEN GO _plot_($dim) SO3mm_($ax)
+IF `v GE 1` THEN GO _plot_($dim) H2SO4tot_($ax)
+IF `v GE 3` THEN GO _plot_($dim) H2SO4_($ax)
+IF `v GE 3` THEN GO _plot_($dim) HSO4m_($ax)
+IF `v GE 3` THEN GO _plot_($dim) SO4mm_($ax)
+IF `v GE 2` THEN GO _plot_($dim) HSO5m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) SO3m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) SO4m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) SO5m_($ax)
+IF `v GE 2` THEN GO _plot_($dim) CH2OHSO3m_($ax)
+
+! Hg
+IF `v GE 1` THEN GO _plot_($dim) Hg_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgO_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgOH_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgOHOH_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgOHCl_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgCl2_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgBr2_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgSO3_($ax)
+IF `v GE 1` THEN GO _plot_($dim) ClHgBr_($ax)
+IF `v GE 1` THEN GO _plot_($dim) BrHgOBr_($ax)
+IF `v GE 1` THEN GO _plot_($dim) ClHgOBr_($ax)
+IF `v GE 1` THEN GO _plot_($dim) Hgp_($ax)
+IF `v GE 1` THEN GO _plot_($dim) Hgpp_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgOHp_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgClp_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgCl3m_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgCl4mm_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgBrp_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgBr3m_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgBr4mm_($ax)
+IF `v GE 1` THEN GO _plot_($dim) HgSO32mm_($ax)
+
+!enrichment factors (only for _cs or _A02)
+IF ($ax%|cs>TRUE|A02>TRUE|*>FALSE|%) THEN
+  DEFINE SYMBOL saveunit = ($unit)
+  DEFINE SYMBOL unit = fromdataset
+  LET factor = 1
+  IF `v GE 1` THEN GO _plot_($dim) EF_Clm_($ax)
+  IF `v GE 1` THEN GO _plot_($dim) EF_Brm_($ax)
+  DEFINE SYMBOL unit = ($saveunit)
+  LET factor = conv
+ENDIF
+
+GO exitviewport
+
+EXIT

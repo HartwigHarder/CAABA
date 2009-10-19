@@ -1,0 +1,156 @@
+#!/usr/bin/perl -w
+
+# This program analyses the reactions present in $eqnfile, assessing
+# the conservation of the chemical elements as given in $spcfile.
+# Reactions found to be non-conserving are written to standard output
+# along with a report of the elemental imbalance in each case
+
+# Author:
+#   Tim Butler, March 2008
+#   (minor changes by Rolf Sander, March 2008)
+
+# EXAMPLE USAGE:
+#   ./check_conservation.pl
+#   ./check_conservation.pl myfile.spc myfile.eqn > output.log
+
+$eqnfile = "gas.eqn";
+$spcfile = "gas.spc";
+#  mz_rs_20080313+
+$spcfile = "$ARGV[0]" if $#ARGV>-1;
+$eqnfile = "$ARGV[1]" if $#ARGV>0;
+print "spcfile = $spcfile\n";
+print "eqnfile = $eqnfile\n\n";
+#  mz_rs_20080313-
+
+$elements = &get_elements_spc($spcfile);
+
+unless (defined $elements->{H2O}) {
+	$elements->{H2O}{H} = 2;
+	$elements->{H2O}{O} = 1;
+}
+
+open FILE, $eqnfile or die $!;
+foreach my $line (<FILE>) {
+	next if $line =~ /IGNORE/;
+	my ($number, $reactants, $products, $labels, $rate, $extra) = $line =~ m/
+			^\s* <(.*?)>        # reaction number
+			(.*?) = (.*?)       # reactants = products
+			: \s+ ({.*?}) \s+   # reaction labels
+			(.*?);              # rate expression terminated by ";"
+			(.*?)$              # everything else
+		/x;
+	next unless defined $number
+		and defined $reactants
+		and defined $products
+		and defined $labels
+		and defined $rate;
+	undef $extra;
+	$reactants =~ s/{.*?}//g;
+	$products =~ s/{.*?}//g;
+	$reactants =~ s/^\s*(.*?)\s*$/$1/;
+	$products =~ s/^\s*(.*?)\s*$/$1/;
+	my @reactants = split /\s*\+\s*/, $reactants;
+	my @products = split /\s*\+\s*/, $products;
+	my $balance = &compare(&sum(@reactants), &sum(@products));
+	# Here you can manipulate or check %$balance to control the output
+	#delete $balance->{O} if defined $balance->{O};
+	my $result = &stringify($balance);
+	print "$line\t$result\n\n" unless $result eq "";
+}
+close FILE;
+
+sub compare {
+	my ($lhs, $rhs) = @_;
+	my %result;
+	$result{$_} += $rhs->{$_} foreach keys %$rhs;
+	$result{$_} -= $lhs->{$_} foreach keys %$lhs;
+	return \%result;
+}
+
+sub stringify {
+	my $thing = $_[0];
+	my $string = "";
+	foreach my $element (keys %{ $thing }) {
+		my $effect = $thing->{$element};
+		next if abs($effect) < 1E-15; # mz_rs_20080313
+		$effect = "+$effect" unless $effect < 0;
+		$string .= "$effect $element; ";
+	}
+	$string =~ s/\s$//;
+	return $string;
+}
+
+sub sum {
+	my (@chunks) = @_;
+	my %tally;
+	foreach my $chunk (@chunks) {
+		my ($fraction, $species) = &_get_fraction($chunk);
+		next if $species eq 'hv';
+		die "Don't know anything about $species"
+			unless exists $elements->{$species};
+		foreach my $element (keys %{ $elements->{$species} }) {
+			$tally{$element} += $fraction * $elements->{$species}{$element};
+		}
+	}
+	return \%tally;
+}
+
+sub get_elements_spc {
+	my $file = $_[0];
+	open FILE, $file or die $!;
+	my %elements;
+	foreach my $line (<FILE>) {
+		#  mz_rs_20080628+
+		# allow spaces at the start of a line in spc file:
+		# my ($species, $elements) = $line =~ /^(\S+)\s*=\s*(.*)\s*;/;
+		my ($species, $elements) = $line =~ /^\s*(\S+)\s*=\s*(.*)\s*;/;
+		#  mz_rs_20080628-
+		next unless defined $species and defined $elements;
+		my @elements = split /\+/, $elements;
+		foreach my $chunk (@elements) {
+			my ($count, $element) = $chunk =~ /\s*(\d*)\s*([A-Za-z]+)\s*/;
+			$count = 1 if $count eq "";
+			$elements{$species}{$element} += $count;
+		}
+	}
+	close FILE;
+	return \%elements;
+}
+
+sub get_elements_tracdef {
+	my $file = $_[0];
+	open FILE, $file or die $!;
+	my %elements;
+	foreach my $line (<FILE>) {
+		next if $line =~ /^%/;
+		next unless $line =~ /AIR/;
+		my @fields = split /&/, $line;
+		next unless @fields == 24;
+		my $species = $fields[0];
+		$species =~ s/[' ]//g;
+		my $wtstring = $fields[6];
+		$wtstring =~ s/^\s*(.*?)\s*$/$1/;
+		next unless $wtstring =~ /^M/;
+		my @elements = split /\+/, $wtstring;
+		#print "$species: @elements\n";
+		foreach my $element_count (@elements) {
+			my ($element, $count) = split /\*/, $element_count;
+			$element =~ s/^M//;
+			$count = 1 unless defined $count;
+			$count =~ s/\.//;
+			#print "\t$element -> $count\n";
+			$elements{$species}{$element} += $count;
+		}
+	}
+	close FILE;
+	return \%elements;
+}
+
+sub _get_fraction {
+	my $string = shift;
+	my ($fraction, $species);
+	unless (($fraction, $species) = $string =~ /^([.\d]+)\s*(.*)/) {
+		($fraction, $species) = (1, $string);
+	}
+	return ($fraction, $species);
+}

@@ -1,0 +1,241 @@
+! -*- f90 -*- Time-stamp: <2009-01-12 17:27:33 sander>
+
+&CTRL_KPP
+! icntrl(3) = solver-specific method:
+! values for rosenbrock:
+!icntrl(3) = 1 ! ros2: L-stable method, 2 stages, order 2
+ icntrl(3) = 2 ! ros3: L-stable method, 3 stages, order 3 (recommended)
+!icntrl(3) = 3 ! ros4: L-stable method, 4 stages, order 4
+!icntrl(3) = 4 ! rodas3: stiffly-stable method, 4 stages, order 3
+!icntrl(3) = 5 ! rodas4: stiffly-stable method, 6 stages, order 4
+
+!icntrl(4) = 5000, ! max. number of kpp-substeps
+!
+!### t_steps(:) = 0.0      => automatic time stepping (DEFAULT)
+!### SUM(t_steps(:)) = 1.0 => fixed time stepping
+!t_steps = 50*0.0,
+!t_steps = 0.0005,  0.0015,  0.005,  0.02,  0.06,  0.1,  0.15,  0.1875,  0.23775,  0.23775, 40*0.0,
+/
+
+&CTRL
+! Do not change the default mecca_aero='AUTO' except for debugging and testing!
+!mecca_aero = ['ON'/'OFF'/'AUTO'] ! if AUTO (default) then l_aero = REQ_AEROSOL
+!l_force_khet = T ! switch on khet subsubmodel even if REQ_HET=F
+!l_kpp_debug  = T ! switch on kpp debugging
+
+! tagging and doubling (under construction, ask Sergey):
+!l_tag = T        ! execute tagging code
+!l_dbl = T        ! execute doubling code
+
+! Monte-Carlo factor seed:
+ mcfct_seed = 1086686980
+
+/
+
+!*****************************************************************************
+! coupling namelist for MECCA
+!*****************************************************************************
+
+&CPL
+! NOTE: If photolysis reactions are considered MECCA requires a submodel that
+!       calculates photolysis rate coeff., e.g., JVAL. 
+! Choose a channel that contains J-values for photolysis reactions:
+photrat_channel_gp  = 'jval_gp'
+!photrat_channel_lg  = 'jval_lg'
+l_gp = T   ! GRIDPOINT
+!l_lg = T   ! LAGRANGE
+!l_skipkpp_gp = T    ! skip call to kpp chemistry integration (GRIDPOINT)
+!l_skipkpp_lg = T    ! skip call to kpp chemistry integration (LAGRANGIAN)
+/
+
+!*****************************************************************************
+! control namelist for MECCA_KHET subsubmodel
+!*****************************************************************************
+
+&CTRL_KHET
+! NOTE: CTRL_KHET is not used in connection with CAABA
+l_troposphere  = T
+!l_stratosphere = T
+/
+
+!*****************************************************************************
+! coupling namelist for MECCA_KHET subsubmodel
+!*****************************************************************************
+
+&CPL_KHET
+
+! channel object for aerosol surface climatology:
+aerosurf_clim = 'offlem', 'aerosurf_clim_A_CLIM'
+
+! aerosol submodel and modes:
+!asm(3) = 'm7',   '2,3,4'
+!asm(4) = 'made', '  41,  62, 13,14,5, 37, 49' !qqq only for testing
+! aerosol chemistry coupling (submodel to calculate rate coefficients):
+! (0 = aerosol surface climatology)
+asm_cpl = 0
+
+! stratosphere
+strat_channel = 'msbm'
+
+/
+
+!*****************************************************************************
+! coupling namelist for MECCA_AERO subsubmodel
+!*****************************************************************************
+
+! hard-coded-12
+
+&CPL_AERO
+!       If running the subsubmodel MECCA-AERO (l_aero=.true.) ONLEM, M7 and
+!       TROPOP must be available.
+!       If heterogeneous reactions are in the selected mechanism, either
+!       PSC or HETCHEM are required.
+aerosol_module      = 'modal',  ! 'modal' (e.g. m7), 'bin' (e.g. cam)
+                                !  or 'constant' or '' (= none)
+aerosol_channel = 'm7'
+
+! cpl to aerosol chemistry i.e sulfate, halogen chem.
+ lcpl_aerophase(1)   = T
+ lcpl_aerophase(2)   = T
+ lcpl_aerophase(3)   = T
+! lcpl_aerophase(4)   = T
+! lcpl_aerophase(5)   = T
+! lcpl_aerophase(6)   = T
+! lcpl_aerophase(7)   = T
+! lcpl_aerophase(8)   = T
+! lcpl_aerophase(9)   = T
+! lcpl_aerophase(10)  = T
+! lcpl_aerophase(11)  = T
+! lcpl_aerophase(12)  = T
+! 1. define aerosol tracer
+! 1.1 sulfate aerosol for coupling
+! 1.2    number tracer:
+
+! tracer name
+! M7:
+number_main(01) = 'N'
+number_main(02) = 'N'
+number_main(03) = 'N'
+!number_main(04) = 'N'
+
+! tracer subname
+! M7:
+number_sub(01)  = 'ks '
+number_sub(02)  = 'as '
+number_sub(03)  = 'cs '
+!number_sub(01)  = 'cs '
+!number_sub(01)  = 'ns '
+!number_sub(02)  = 'ks '
+!number_sub(03)  = 'as '
+!number_sub(04)  = 'cs '
+
+! 2.     define aerosol channels:
+! 2.1    radii of aerosol particle
+! 2.1.1  name of channel containing radii
+! name of radii channel object
+aerosol_wetradius = 'wetradius'
+aerosol_dryradius = 'dryradius'
+! 2.2    standard deviation sigma of aerosol modes
+! 2.2.1  name of channel object containing sigma
+sigma    = 'sigma'
+! 2.2.2  indices for sigma
+! M7:
+modenumber(1)  = 2
+modenumber(2)  = 3
+modenumber(3)  = 4
+!modenumber(1)  = 3
+!modenumber(1)  = 4
+!!$modenumber(1)  = 1
+!!$modenumber(2)  = 2
+!!$modenumber(3)  = 3
+!!$modenumber(4)  = 4
+
+! 3. define highest level for aero chemistry
+height_channel = 'tropop'
+height_index  = 'tp_i_wmo'
+
+! 4.     couple seasalt emissions
+l_calc_emis = T    ! calculate Cl-, Br-, I- IO3- and HCO3- from sea salt mass emission flux ?
+!l_netflux   = T    ! calculate emissions of new ions from net flux
+                   ! (emission - dry deposition)
+! 4.1    name of channel containing seasalt emission
+!emis_channel   = 'cam_sfflux'
+emis_channel   = 'onlem'
+!emis_channel   = 'em_diag' ! emissions from emdep
+! 4.1.2  name of channel object  containing seasalt emission: accumulation mode
+! M7:
+!
+emis_ss(1)  ='mss_as_lsce'
+emis_ss(2)  ='mss_as_lsce'
+emis_ss(3)  ='mss_cs_lsce'
+!emis_ss(1)  ='mss_as_lsce'
+!emis_ss(2)  ='mss_as_lsce'
+!emis_ss(3)  ='mss_cs_lsce'
+!emis_ss(4)  ='mss_cs_lsce'
+!emis_ss(1)  ='mss_as_monahan'
+!emis_ss(2)  ='mss_cs_monahan'
+
+! 4.1.4 channel objects needed if l_netflux = true
+! 4.1.4.1 Name of channel object containing number emissions
+str_Nss_emis(1) = 'nss_cs_lsce'
+
+!str_Nss_emis(1) = 'nss_as_lsce'
+!str_Nss_emis(2) = 'nss_cs_lsce'
+!...
+!str_Nss_emis(12) = 'nss_cs_lsce'
+! 4.2    name of channel containing seasalt dry deposition
+ddep_channel   = 'drydep_gp'
+
+! 4.2.1    name of channel object containing seasalt dry deposition
+! M7:
+ddep_ss(1)  ='ddepflux_SS_cs'
+
+!ddep_ss(1)  ='ddepflux_SS_as'
+!ddep_ss(1)  ='ddepflux_SS_as'
+!ddep_ss(2)  ='ddepflux_SS_as'
+!ddep_ss(3)  ='ddepflux_SS_cs'
+!ddep_ss(4)  ='ddepflux_SS_cs'
+
+! 4.4 CHANNEL OBJECTS IF L_NETFLUX = TRUE
+! 4.4.1 number deposition
+str_Nss_ddep(1) = 'ddepflux_N_cs'
+
+!str_Nss_ddep(1) = 'ddepflux_N_cs'
+!str_Nss_ddep(2) = 'ddepflux_N_as'
+!...
+! str_Nss_ddep(12) = ''s
+! 4.4.2 Chloride deposition
+str_Clm_ddep(1) = 'ddepflux_Clm_a01'
+
+!str_Clm_ddep(1) = 'ddepflux_Clm_as'
+!str_Clm_ddep(2) = 'ddepflux_Clm_cs'
+!...
+!str_Clm_ddep(12) = 'ddepflux_Clm_cs'
+
+! 4.4.3 Bromide deposition
+str_Brm_ddep(3) = 'ddepflux_Brm_cs'
+str_Brm_ddep(2) = 'ddepflux_Brm_as'
+!!$s!!$! 4.4.4 HCO3m deposition
+str_HCO3m_ddep(3) = 'ddepflux_HCO3m_cs'
+str_HCO3m_ddep(2) = 'ddepflux_HCO3m_as'
+! 4.4.5 Im deposition
+str_Im_ddep(1) = 'ddepflux_Im_a01'
+
+!str_Im_ddep(1) = 'ddepflux_Im_as'
+!str_Im_ddep(2) = 'ddepflux_Im_cs'
+!...
+!str_Im_ddep(12) = 'ddepflux_Im_as'
+
+! 4.4.6 IO3m deposition
+str_IO3m_ddep(1) = 'ddepflux_IO3m_a01'
+
+!str_IO3m_ddep(1) = 'ddepflux_IO3m_as'
+!str_IO3m_ddep(2) = 'ddepflux_IO3m_cs'
+!...
+!str_IO3m_ddep(12) = 'ddepflux_IO3m_as'
+
+! 4.5    put emissions in tendency or xtems ?
+l_tendency    = F
+/
+
+!*****************************************************************************

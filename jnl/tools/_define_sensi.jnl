@@ -1,0 +1,8 @@
+! if nsensi is undefined, set it to zero:
+IF ($nsensi%TRUE|*>FALSE%) THEN DEFINE SYMBOL nsensi = 0
+! define name for this sensitivity run:
+DEFINE SYMBOL run($nsensi) = $1
+! define short name for this sensitivity run:
+DEFINE SYMBOL run($nsensi)_short = $2
+! increment nsensi:
+DEFINE SYMBOL nsensi = `($nsensi)+1`

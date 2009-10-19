@@ -1,0 +1,14 @@
+!qqq DEFINE SYMBOL nopause = TRUE
+GO xxxg.jnl
+GO xxxa.jnl 0d mpl cs
+GO rates.jnl 0d mpm cs
+!GO xxxa.jnl 0d mpl as
+!GO rates.jnl 0d mpm as
+!GO henry_equil.jnl 0d mpm as
+!GO henry_equil.jnl 0d mpm cs
+
+SAY "postd xxxg.ps ; postd xxxa_cs.ps ; postd rates_cs.ps"
+!SAY postd xxxa_as.ps
+!SAY postd rates_as.ps
+!SAY postd henry_equil_as.ps
+!SAY postd henry_equil_cs.ps

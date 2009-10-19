@@ -1,0 +1,36 @@
+CANCEL MODE metafile
+CANCEL SYMBOL pagetitle
+
+IF ($ax%FALSE|*>TRUE|%) THEN
+  ! add aerosol type to file name
+  DEFINE SYMBOL outfile = ($jnlfile%ferret%)_($ax)
+ELSE
+  ! ax is undefined
+  DEFINE SYMBOL outfile = ($jnlfile%ferret%)
+ENDIF
+
+SAY "creating ps file ($outfile).ps"
+sp "double_line_widths ($tmp)/page*.plt"
+sp "gksm2ps -p portrait -l cps -R -o ($tmp)/ferret-raw.ps ($tmp)/page*.plt"
+sp "ps2ps ($tmp)/ferret-raw.ps ($outfile).ps"
+SAY "to view ps file, type: sp gv ($outfile).ps &"
+
+!DEFINE SYMBOL makepdf = TRUE
+IF ($makepdf%FALSE|TRUE|*>FALSE|%) THEN ! only if makepdf is defined and TRUE
+  ! the following conversions to eps and pdf are only useful for 1-page plots:
+  SAY "converting ps file to eps"
+  ! portrait:
+  sp "ps2eps -f ($outfile).ps"
+  ! landscape:
+  ! sp "ps2eps -f --rotate=- ($outfile).ps"
+  ! rename the preliminary eps file:
+  sp "\mv -f ($outfile).eps ($tmp)/($outfile)-raw.eps"
+  ! create eps file with correct bounding box:
+  sp "eps2eps ($tmp)/($outfile)-raw.eps ($tmp)/($outfile).eps"
+  SAY "converting eps file to pdf"
+  sp "epstopdf ($tmp)/($outfile).eps"
+  sp "mv ($tmp)/($outfile).pdf ."
+  SAY "to view pdf file, type: sp kpdf ($outfile).pdf &"
+ENDIF
+
+EXIT

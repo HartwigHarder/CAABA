@@ -1,0 +1,1067 @@
+#! /bin/tcsh -f
+# Time-stamp: <2009-07-08 13:39:03 sander>
+# Authors:
+# Rolf Sander,     Max-Planck-Institute, Mainz, Germany, 2003-2009
+# Astrid Kerkweg,  Max-Planck-Institute, Mainz, Germany, 2005-2007
+# Patrick Joeckel, Max-Planck-Institute, Mainz, Germany, 2007
+
+##############################################################################
+#set echo verbose
+echo "\nxmecca = eXecute KPP on equations from mecca mechanism"
+echo "         For more information, read:"
+echo "         www.mpch-mainz.mpg.de/~sander/messy/mecca/"
+
+# input files
+set gasspcfile     = "gas.spc"
+set aqueousspcfile = "aqueous.spc"
+set gaseqnfile     = "gas.eqn"
+set aqueouseqnfile = "aqueous.eqn"
+set cloudeqnfile   = "cloud.eqn"
+set gastexfile     = "gas.tex"
+set aqueoustexfile = "aqueous.tex"
+set diaglist       = "diagtrac.tex"
+
+# input for KPP (selected reactions only):
+set spcfile  = "mecca.spc"
+set eqnfile  = "mecca.eqn"
+
+# some temporary files:
+set awkfile1   = "tmp_1.awk"
+set awkfile2   = "tmp_2.awk"
+set eqnfile0   = "tmp_0.eqn"
+set eqnfile1   = "tmp_1.eqn"
+set eqnfile2   = "tmp_2.eqn"
+set eqnfile3   = "tmp_3.eqn"
+set eqnfile4   = "tmp_4.eqn"
+set eqnfile5   = "tmp_5.eqn"
+set eqnfile6   = "tmp_6.eqn"
+set f90file1   = "tmp_1.f90"
+set f90file2   = "tmp_2.f90"
+set f90file3   = "tmp_3.f90"
+set headerfile = "tmp_header"
+set paramfile  = "tmp_param"
+set spcfile5   = "tmp_5.spc"
+set texfile1   = "tmp_1.tex"
+set texfile2   = "tmp_2.tex"
+set texfile3   = "tmp_3.tex"
+set texfile4   = "tmp_4.tex"
+
+# ferret jnl files:
+set jnlfile1 = "../jnl/_rxnrates.jnl"
+set jnlfile2 = "../jnl/_rxnrates_scaled.jnl"
+
+# define header line
+set date = `date +"%Y-%m-%d"`
+set time = `date +"%H:%M:%S"`
+set dontedit  = "This file was created automatically by xmecca, DO NOT EDIT\!"
+set timestamp = "xmecca was run on $date at $time by $user"
+
+# logfile
+set logfile = "$PWD/xmecca.log"
+echo "$dontedit\n$timestamp" > $logfile
+
+##############################################################################
+
+if ( "$1" != "" ) then
+  # type batchfile with or without extension .bat:
+  set batchfile = `basename $1 .bat`.bat
+  if ( -f batch/$batchfile ) then
+    echo "\nUsing batchfile: $batchfile" | tee -a $logfile
+    set batch
+    source batch/$batchfile
+  else
+    echo "ERROR: $batchfile does not exist"
+    exit 1
+  endif
+endif
+
+##############################################################################
+
+if ( -d ../../../echam5 ) then
+  echo "\nThe directory ../../echam5 has been found and it is now assumed that"
+  echo "MECCA is part of an ECHAM5/MESSy system. xmecca will also create the"
+  echo "files necessary for running global MECCA chemistry with ECHAM5/MESSy."
+  set e5m
+endif
+
+##############################################################################
+
+if ${?apn} then
+  echo "\nFrom ${batchfile}: apn = $apn" | tee -a $logfile
+else
+  echo "\nHow many aerosol phases? [0...99, default=0]"
+  set apn="$<"
+endif
+
+if ( "$apn" == "" ) set apn=0
+if ($apn<0) then
+  echo "ERROR: Number of phases is negative."
+  exit 1
+endif
+if ($apn>99) then
+  echo "ERROR: Number of aerosol phases is to large"
+  exit 1
+endif
+echo "Selected number of aerosol phases = $apn" | tee -a $logfile
+
+if ( "$apn" == "0" ) then
+  set apn_or_1 = 1
+else
+  set apn_or_1 = $apn
+endif
+
+##############################################################################
+
+# create complete *.spc file by combining gas and aqueous file
+echo "{$dontedit}"   > $spcfile
+echo "{$timestamp}" >> $spcfile
+
+# gas phase
+echo "{***** START: gas-phase species from $gasspcfile *****}" >> $spcfile
+echo "Gas-phase species from:       $gasspcfile"
+cat $gasspcfile >> $spcfile
+echo "{***** END:   gas-phase species from $gasspcfile *****}" >> $spcfile
+
+# aqueous phase
+echo "Aerosol species from:         $aqueousspcfile"
+set counter=0
+while ($counter<$apn_or_1)
+  @ counter=$counter + 1
+  echo "{**** START: aerosol species (phase $counter) from $aqueousspcfile ****}" >> $spcfile
+  set aerophasename = `printf "%2.2d" $counter`
+  echo -n "$aerophasename "
+  sed -e 's|##|'$aerophasename'|g' $aqueousspcfile >> $spcfile
+  echo "{**** END:   aerosol species (phase $counter) from $aqueousspcfile ****}" >> $spcfile
+end
+echo ""
+# set H2O fixed:
+echo "\n{SETFIX H2O_a* is done via xmecca}" >> $spcfile
+set counter=0
+while ($counter<$apn)
+  @ counter=$counter + 1
+  set aerophasename = `printf "%2.2d" $counter`
+  echo "#SETFIX H2O_a$aerophasename;" >> $spcfile
+end
+
+##############################################################################
+
+cp $gaseqnfile $eqnfile0
+
+if ${?rplfile} then
+  echo "\nFrom ${batchfile}: rplfile = $rplfile" | tee -a $logfile
+else
+  echo "\nModify gas.eqn with a replacement file? [q/number, default=0]"
+  echo "0) no replacements"
+  set inn = "0"
+  cd rpl
+  set allfiles = *.rpl
+  cd -
+  set allfiles = `echo $allfiles | sed 's|\.rpl||g'` # delete suffix .rpl
+  foreach i ($allfiles) # list all possibilities
+    @ inn=$inn + 1
+    echo "$inn) $allfiles[$inn]"
+  end
+  set inputstring = "$<"
+  if ( "$inputstring" == "q" ) exit 1
+  if(($inputstring <= $#allfiles) && ($inputstring >= 1)) then
+    set rplfile = $allfiles[$inputstring]
+  else
+    set rplfile =
+  endif
+endif
+if ("$rplfile" == "") then
+  echo "No replacements with any *.rpl files" | tee -a $logfile
+else
+  set fullrplfile = rpl/$rplfile.rpl
+  if ( -f $fullrplfile) then
+    echo "You selected the replacement file: $rplfile" | tee -a $logfile
+    # for strange reasons, gawk only works properly if LC_COLLATE = C
+    setenv LC_COLLATE C
+    gawk -f replace.awk -v infile=$gaseqnfile -v outfile=$eqnfile0 $fullrplfile
+    if (! ${?batch}) then
+      echo "Continue? [y/n/q, default=y]"
+      set inputstring = "$<"
+      if ( "$inputstring" == "n" ) exit 1
+      if ( "$inputstring" == "q" ) exit 1
+    endif
+  else
+    echo "ERROR: Replacement file $fullrplfile does not exist"
+    exit 1
+  endif
+endif
+
+##############################################################################
+
+echo "\nRunning aerosol.awk. Please wait..."
+# for strange reasons, gawk only works properly if LC_COLLATE = C
+setenv LC_COLLATE C
+gawk -f aerosol.awk -v apn=$apn_or_1 -v declfile=$f90file1 \
+  -v initfile=$f90file2 $spcfile
+# declfile = file with declarations of ind_*_a arrays
+# initfile = file with initializations of ind_*_a arrays
+
+# print aqueous definitions at beginning of equation file:
+echo "#INLINE F90_GLOBAL"                                      > "$eqnfile1"
+echo "  ! from xmecca for aerosol:"                           >> "$eqnfile1"
+echo "  INTEGER, PARAMETER, PUBLIC :: APN = $apn_or_1"        >> "$eqnfile1"
+cat $f90file1                                                 >> "$eqnfile1"
+echo "#ENDINLINE {above lines go to messy_mecca_kpp_global}"  >> "$eqnfile1"
+
+echo "#INLINE F90_UTIL"                                       >> "$eqnfile1"
+echo "! from xmecca:"                                         >> "$eqnfile1"
+echo "SUBROUTINE initialize_indexarrays"                      >> "$eqnfile1"
+echo "  USE messy_mecca_kpp_global     ! ind_XYZ_a(:) arrays" >> "$eqnfile1"
+echo "  USE messy_mecca_kpp_parameters ! ind_XYZ_a## scalars" >> "$eqnfile1"
+echo "  IMPLICIT NONE"                                        >> "$eqnfile1"
+if ($apn>0) cat $f90file2                                     >> "$eqnfile1"
+echo "END SUBROUTINE initialize_indexarrays"                  >> "$eqnfile1"
+echo "#ENDINLINE {above lines go to messy_mecca_kpp_util}"    >> "$eqnfile1"
+
+##############################################################################
+
+# create complete *.eqn file by combining gas and aqueous file
+
+# gas phase
+echo "Gas-phase reactions from:     $gaseqnfile"
+echo "{***** START: gas-phase chemistry from $gaseqnfile *****}" >> $eqnfile1
+# eqnfile0 is either identical to gaseqnfile or has been modified with gas.rpl:
+cat $eqnfile0 >> $eqnfile1
+echo "{***** END:   gas-phase chemistry from $gaseqnfile *****}" >> $eqnfile1
+
+# aqueous phase
+if ($apn>0) then
+  echo "Aqueous-phase reactions from: $aqueouseqnfile"
+  set counter=0
+  while ($counter<$apn)
+    @ counter=$counter + 1
+    echo "{**** START: aerosol chemistry (phase $counter) from $aqueouseqnfile ****}" >> $eqnfile1
+    set aerophasename = `printf "%2.2d" $counter`
+    echo -n "$aerophasename "
+    sed -e 's|##|'$aerophasename'|g' $aqueouseqnfile >> $eqnfile1
+    echo "{**** END:   aerosol chemistry (phase $counter) from $aqueouseqnfile ****}" >> $eqnfile1
+    end
+  echo ""
+else
+  echo "No aqueous-phase reactions"
+endif
+
+##############################################################################
+
+# deleting comments starting with // and empty lines:
+grep -v "^//" $eqnfile1 | grep -Ev '^ *$' > $eqnfile2
+
+##############################################################################
+
+# select specific reactions:
+if ${?wanted} then
+  echo "\nFrom ${batchfile}: wanted = $wanted" | tee -a $logfile
+else
+  # the symbol for NOT must be escaped in a string as "\!"
+  set wanted01 = "((Tr && (G || Het) && \!Cl && \!Br && \!I) || St) && \!Hg"
+  set wanted02 = "St && \!Cl && \!Br && \!I && \!Hg"
+  set wanted03 = "St && \!Het && \!Hg"
+  set wanted04 = "Tr && G && \!C && \!I && \!Hg"
+  set wanted05 = "Tr && G && \!C && \!Hg"
+  set wanted06 = "Tr && G && \!C && \!S && \!Cl && \!Br && \!I && \!Hg"
+  set wanted07 = "Tr && G && \!S && \!Cl && \!Br && \!I && \!Hg"
+  set wanted08 = "Tr && G && \!Cl && \!Br && \!I && \!Hg"
+  set wanted09 = "Tr && G && \!C && \!Br && \!I && \!Hg"
+  set wanted10 = "Tr && (G || (Aa && Mbl)) && \!Hg"
+  set wanted11 = "Tr && (G || Aa) && \!C && \!Hg"
+  set wanted12 = "Tr && (G || Aa) && \!C && \!I && \!Hg"
+  set wanted13 = "Tr && (G || Aa) && \!C && \!Cl && \!Br && \!I && \!Hg"
+  set wanted14 = "\!Ara"
+  set wanted15 = "Tr && (G || Aa) && \!I && \!Hg"
+  set wanted16 = "Tr && (G || (Aa && Mbl)) && \!C && \!I && \!Hg"
+  set wanted17 = "Tr && (G || (Aa && Mbl)) && \!I && \!Hg"
+  set wanted18 = "((Tr && G && \!Cl && \!Br && \!I) || (St && \!Het)) && \!Hg"
+  set wanted19 = "Tr && (G || Aa) && \!Hg"
+  set wanted20 = "((Tr && (G || (Aa && Mbl)) && \!I) || St) && \!Hg"
+  set wanted21 = "Tr && (G || Aa) && \!I"
+
+  echo ""
+  echo " 1) EVAL:                                 ($wanted01)"
+  echo " 2) Stratosphere, no halogens:            ($wanted02)"
+  echo " 3) Stratosphere, no het. reactions:      ($wanted03)"
+  echo " 4) Troposphere, Gas, no NMHC, no I:      ($wanted04)"
+  echo " 5) Troposphere, Gas, no NMHC:            ($wanted05)"
+  echo " 6) Troposphere, Minimum chemistry:       ($wanted06)"
+  echo " 7) Troposphere, Gas, no S, no halogens:  ($wanted07)"
+  echo " 8) Troposphere, Gas, no halogens:        ($wanted08)"
+  echo " 9) Troposphere, Gas, no NMHC,Br,I:       ($wanted09)"
+  echo "10) Minimum MBL chemistry:                ($wanted10)"
+  echo "11) Gas + Aerosol, no NMHC:               ($wanted11)"
+  echo "12) Gas + Aerosol, no NMHC, no I:         ($wanted12)"
+  echo "13) Gas + Aerosol, no NMHC, no halogens:  ($wanted13)"
+  echo "14) almost all reactions:                 ($wanted14)"
+  echo "15) frost flower scheme:                  ($wanted15)"
+  echo "16) Minimum MBL chemistry, no NMHC, no I: ($wanted16)"
+  echo "17) Minimum MBL chemistry, no I:          ($wanted17)"
+  echo "18) Sample Box-Trajectory Mechanism:      ($wanted18)"
+  echo "19) Full MBL chemistry:                   ($wanted19)"
+  echo "20) MBL chemistry + Stratosphere:         ($wanted20)"
+  echo "21) frost flower scheme with Hg:          ($wanted21)"
+
+  set default  = "$wanted01"
+  echo "Choose a selection number or type a boolean expression [q=quit, default=1]"
+  set inputstring = "$<"
+  if ( "$inputstring" == "q" ) exit 1
+  switch ("$inputstring")
+  case "1":
+    set wanted = "$wanted01"
+    breaksw
+  case "2":
+    set wanted = "$wanted02"
+    breaksw
+  case "3":
+    set wanted = "$wanted03"
+    breaksw
+  case "4":
+    set wanted = "$wanted04"
+    breaksw
+  case "5":
+    set wanted = "$wanted05"
+    breaksw
+  case "6":
+    set wanted = "$wanted06"
+    breaksw
+  case "7":
+    set wanted = "$wanted07"
+    breaksw
+  case "8":
+    set wanted = "$wanted08"
+    breaksw
+  case "9":
+    set wanted = "$wanted09"
+    breaksw
+  case "10":
+    set wanted = "$wanted10"
+    breaksw
+  case "11":
+    set wanted = "$wanted11"
+    breaksw
+  case "12":
+    set wanted = "$wanted12"
+    breaksw
+  case "13":
+    set wanted = "$wanted13"
+    breaksw
+  case "14":
+    set wanted = "$wanted14"
+    breaksw
+  case "15":
+    set wanted = "$wanted15"
+    breaksw
+  case "16":
+    set wanted = "$wanted16"
+    breaksw
+  case "17":
+    set wanted = "$wanted17"
+    breaksw
+  case "18":
+    set wanted = "$wanted18"
+    breaksw
+  case "19":
+    set wanted = "$wanted19"
+    breaksw
+  case "20":
+    set wanted = "$wanted20"
+    breaksw
+  case "21":
+    set wanted = "$wanted21"
+    breaksw
+  default:
+    if ( "$inputstring" == "" ) then
+      set wanted = "$default"
+    else
+      set wanted = "$inputstring"
+    endif
+    breaksw
+  endsw
+endif
+
+# create awk script
+cat > $awkfile1 << EOF
+# ----------------------------------------------------------------------------
+
+BEGIN {
+REQ_HET     = ".FALSE."
+REQ_PHOTRAT = ".FALSE."
+REQ_AEROSOL = ".FALSE."
+}
+
+# ----------------------------------------------------------------------------
+
+# locate returns 1 (=true) if the label is found and 0 (=false) if not
+# (a label is a component of the marker)
+function locate(label)
+  {return (match(\$0,"{%[A-Za-z0-9]*" label "(}|[^a-z][A-Za-z0-9]*})") != 0)}
+
+# ----------------------------------------------------------------------------
+
+{
+# is there a {%...} marker in the current line?
+marker = match(\$0,"{%[A-Za-z0-9]*}")
+# is current line a comment?
+#comment = match(\$0,"^//")
+#reaction = match(\$0,"=.+:.+;") && !comment
+# is current line a reaction?
+reaction = match(\$0,"=.+:.+;")
+# altitude:
+Tr = locate("Tr")
+St = locate("St")
+# phase:
+Aa   = locate("Aa")
+Ara  = locate("Ara")
+G    = locate("G")
+Het  = locate("Het")
+# elements:
+C  = locate("C")
+N  = locate("N")
+F  = locate("F")
+S  = locate("S")
+Cl = locate("Cl")
+Br = locate("Br")
+I  = locate("I")
+Hg = locate("Hg")
+# other:
+J  = locate("J")
+Mbl= locate("Mbl")
+Sc = locate("Sc")
+Scm= locate("Scm")
+
+# info for logfile:
+printf("\n%s\n",\$0) >> "$logfile"
+printf("marker:   %d\n",marker) >> "$logfile"
+printf("elements: C=%d N=%d F=%d S=%d Cl=%d Br=%d I=%d Hg=%d\n",C,N,F,S,Cl,Br,I,Hg) >> "$logfile"
+printf("phase:    Aa=%d G=%d Ara=%d\n",Aa,G,Ara) >> "$logfile"
+printf("other:    Tr=%d St=%d J=%d Het=%d Mbl=%d Sc=%d Scm=%d\n",Tr,St,J,Het,Mbl,Sc,Scm) >> "$logfile"
+printf("wanted:   %d\n",($wanted)) >> "$logfile"
+
+# select current line?
+if (!marker || ($wanted)) {print >> "$eqnfile"}
+
+# set requirements:
+if (Het && ($wanted)) {REQ_HET=".TRUE."}
+if (J   && ($wanted)) {REQ_PHOTRAT=".TRUE."}
+if (Aa  && ($wanted)) {REQ_AEROSOL=".TRUE."}
+
+# print warnings, if necessary:
+if (!Tr && !St && reaction)
+  {print "WARNING! No height range (Tr,St) specified for:"; print}
+if (!G && !Aa && !Ara && !Het && reaction)
+  {print "WARNING! No phase (G,Aa##,Ara,Het) specified for:"; print}
+if (G+Aa+Ara+Het>1)
+  {print "WARNING! Specify only one phase (G,Aa##,Ara,Het) for:"; print}
+
+}
+
+# ----------------------------------------------------------------------------
+
+END {
+print  ""                                >> "$logfile"
+printf "REQ_HET     = %s\n", REQ_HET     >> "$logfile"
+printf "REQ_PHOTRAT = %s\n", REQ_PHOTRAT >> "$logfile"
+printf "REQ_AEROSOL = %s\n", REQ_AEROSOL >> "$logfile"
+print  "#INLINE F90_GLOBAL"                                      >> "$eqnfile"
+print  "  ! from xmecca:"                                        >> "$eqnfile"
+printf "  LOGICAL, PARAMETER :: REQ_HET     = %s\n", REQ_HET     >> "$eqnfile"
+printf "  LOGICAL, PARAMETER :: REQ_PHOTRAT = %s\n", REQ_PHOTRAT >> "$eqnfile"
+printf "  LOGICAL, PARAMETER :: REQ_AEROSOL = %s\n", REQ_AEROSOL >> "$eqnfile"
+print  "#ENDINLINE {above lines go to messy_mecca_kpp_global}"   >> "$eqnfile"
+}
+
+# ----------------------------------------------------------------------------
+EOF
+
+##############################################################################
+
+echo "\nYou selected the reactions: ($wanted)" | tee -a $logfile
+echo "(later, you will find your selection in messy_mecca_kpp_global.f90)" | tee -a $logfile
+echo "Running gawk script to select reactions. Please wait..."
+# remove old $eqnfile:
+if ( -f $eqnfile ) mv -f $eqnfile $eqnfile~
+# for strange reasons, gawk only works properly if LC_COLLATE = C
+setenv LC_COLLATE C
+# select some reactions from $eqnfile2 and put them into $eqnfile:
+gawk -f $awkfile1 $eqnfile2
+
+##############################################################################
+
+# add Monte-Carlo factor to all reactions:
+if ${?mcfct} then
+  echo "\nFrom ${batchfile}: mcfct = $mcfct" | tee -a $logfile
+else
+  echo "\nAdd Monte-Carlo factor to all rate coefficients? [y/n/q, default=n]"
+  set mcfct = "$<"
+endif
+if ( "$mcfct" == "q" ) exit 1
+if ( "$mcfct" == "y" ) then
+  cp $eqnfile $eqnfile6
+  # for strange reasons, gawk only works properly if LC_COLLATE = C
+  setenv LC_COLLATE C
+  gawk -f mcfct.awk $eqnfile6 >! $eqnfile
+  set REQ_MCFCT = ".TRUE."
+else
+  set REQ_MCFCT = ".FALSE."
+endif
+
+##############################################################################
+
+# add diagnostic tracers to $eqnfile
+echo -n "" >! $texfile3
+
+if ${?diagtracfile} then
+  echo "\nFrom ${batchfile}: diagtracfile = $diagtracfile" | tee -a $logfile
+else
+  set inn=0
+  cd diagtrac
+  set allfiles = *.tex
+  cd -
+  set allfiles = `echo $allfiles | sed 's|\.tex||g'` # delete suffix .tex
+  echo "\nAdd diagnostic tracers to gas.eqn? [q/0/?, default=0]"
+  echo "0) no diagnostic tracers"
+  foreach i ($allfiles) # list all possibilities
+    @ inn=$inn + 1
+    echo "$inn) $allfiles[$inn]"
+  end
+  set inputstring = "$<"
+  if ( "$inputstring" == "q" ) exit 1
+  if (($inputstring <= $#allfiles) && ($inputstring >= 1)) then
+     set diagtracfile = $allfiles[$inputstring]
+  else
+    set diagtracfile =
+  endif
+endif
+
+if ("$diagtracfile" == "") then
+  echo "No diagtracfile selected" | tee -a $logfile
+else
+  echo "you selected $diagtracfile"
+  # for strange reasons, gawk only works properly if LC_COLLATE = C
+  setenv LC_COLLATE C
+  sed 's|%.*||g' diagtrac/$diagtracfile.tex | sed '/^$/d' >&! $texfile2
+  set eqnlist  = `awk -F '&' '{print $1}' $texfile2 | sed 's| ||g'`
+  set traclist = `awk -F '&' '{print $2}' $texfile2 | sed 's| |_SPACE_|g'`
+  if (${#eqnlist} >= 1) then
+    echo -n "" >! $spcfile5
+    cp -f $eqnfile $eqnfile3
+    @ count = 1
+    while ($count <= ${#eqnlist})
+      set eqnnr = $eqnlist[${count}]
+      set dtrac = `echo $traclist[${count}] | sed 's|_SPACE_| |g'`
+      echo "adding $dtrac as product to equation $eqnnr"
+      # add diagnostic tracer to spcfile:
+      # (if $dtrac starts with a factor, then $dtrac[${#dtrac}] only
+      # contains the last item, i.e. the name of the diagnostic tracer)
+      set dtrac_tex = `echo "$dtrac[${#dtrac}]" | sed 's|_|\\_|g' `
+      echo "$dtrac[${#dtrac}] = IGNORE ; {@${dtrac_tex}}" >> $spcfile5
+      # add diagnostic tracer to "tracdef.tex":
+      echo "'$dtrac[${#dtrac}]' & & AIR & & & OFF & OFF & OFF & & OFF & & OFF & & & & & 1. & & & & & & & \\" >> $texfile3
+      # add diagnostic tracers to eqnfile:
+      awk -F '>' '{if ($1">" == "'$eqnnr'") \
+                      {a=$0; \
+                       sub("=","= '"$dtrac"' + ",a); \
+                       print a} \
+                   else print}' $eqnfile3 >! $eqnfile4
+      mv -f $eqnfile4 $eqnfile3
+      @ count++
+    end
+  endif
+  cp -f $eqnfile3 $eqnfile
+
+  # add diagnostic tracers to spc file:
+  echo "{--- diagnostic tracers from $diagtracfile.tex, added via xmecca ---}" >> $spcfile
+  echo "#DEFVAR" >> $spcfile
+  sort $spcfile5 | uniq >> $spcfile
+
+  if (! ${?batch}) then
+    echo "Continue? [y/n/q, default=y]"
+    set inputstring = "$<"
+    if ( "$inputstring" == "n" ) exit 1
+    if ( "$inputstring" == "q" ) exit 1
+    echo ""
+  endif
+endif
+
+##############################################################################
+
+# add product to all reactions for calculation of accumulated reaction rates:
+if ${?rxnrates} then
+  echo "\nFrom ${batchfile}: rxnrates = $rxnrates" | tee -a $logfile
+else
+  echo "\nCalculate accumulated reaction rates of all equations? [y/n/q, default=n]"
+  set rxnrates = "$<"
+endif
+if ( "$rxnrates" == "q" ) exit 1
+if ( "$rxnrates" == "y" ) then
+  echo "#DEFVAR" >> $spcfile
+  cp -f $eqnfile $eqnfile4
+  awk '{if ($1 ~ /^</) {nr=$1; gsub("<","RR",nr); gsub(">","",nr);\
+       sub("=","= "nr" + ",$0); \
+       print nr" = IGNORE ; {@"nr"} {diagnostic tracer}" > "'$spcfile5'"; \
+       print "_QUOTE_"nr"_QUOTE_ & & AIR & & & OFF & OFF & OFF & & OFF & & OFF & & & & & 1. & & & & & & & \\\\" > "'$texfile4'"} \
+       print }' $eqnfile4 > $eqnfile5
+  cp -f $eqnfile5 $eqnfile
+  echo "{**** START: accumulated reaction rates ****}" >> $spcfile
+  cat $spcfile5 >> $spcfile
+  echo "{**** END: accumulated reaction rates ****}" >> $spcfile
+  echo "pseudo-KPP species RR* have been added for accumulated reaction rates"
+  # create jnl files for reaction rates:
+  # for strange reasons, gawk only works properly if LC_COLLATE = C
+  setenv LC_COLLATE C
+  gawk -f rxnrates.awk -v jnlfile1=$jnlfile1 -v jnlfile2=$jnlfile2 $eqnfile
+else
+  if (-f $jnlfile1) rm $jnlfile1
+  if (-f $jnlfile2) rm $jnlfile2
+endif
+
+##############################################################################
+
+if ${?tagdbl} then
+  echo "\nFrom ${batchfile}: tagdbl = $tagdbl" | tee -a $logfile
+else
+  echo "\nTagging, doubling, both, or none? [t/d/b/n/q, default=n]"
+  echo "(under construction, please just press Return)"
+  set tagdbl = "$<"
+endif
+if ( "$tagdbl" == "q" ) exit 1
+if ( ( "$tagdbl" == "d" ) || ( "$tagdbl" == "b" ) ) then
+  cd dbl
+  if (${?batch}) then
+     ./xdbl $batchfile
+  else
+     ./xdbl
+  endif
+  cd -
+else
+  rm -f dbl/messy_mecca_dbl*.f90 dbl/messy_mecca_dbl*.inc
+  rm -f ../messy_mecca_dbl*.f90  ../messy_mecca_dbl*.inc
+  cp -f dbl/messy_mecca_dbl_box.f90-zero ../messy_mecca_dbl_box.f90
+endif
+if ( ( "$tagdbl" == "t" ) || ( "$tagdbl" == "b" ) ) then
+  cd tag
+  if (${?batch}) then
+    ./xtag $batchfile
+  else
+    ./xtag
+  endif
+  cd -
+else
+  rm -f smcl/messy_mecca_tag*.f90 smcl/messy_mecca_tag*.inc
+  rm -f tag/messy_mecca_tag*.f90  tag/messy_mecca_tag*.inc
+  rm -f ../messy_mecca_tag*.f90   ../messy_mecca_tag*.inc
+  cp -f tag/messy_mecca_tag_box.f90-zero ../messy_mecca_tag_box.f90
+endif
+
+##############################################################################
+
+# write header:
+mv -f $eqnfile $eqnfile4
+echo "{$dontedit}"                                              > $eqnfile
+echo "#INLINE F90_GLOBAL"                                      >> $eqnfile
+echo "  ! MECCA info from xmecca:"                             >> $eqnfile
+echo "  CHARACTER(LEN=*), PUBLIC, PARAMETER :: &"              >> $eqnfile
+echo "    timestamp            = '$timestamp', &"              >> $eqnfile
+echo "    gas_spc_file         = '`ls -l $gasspcfile`', &"     >> $eqnfile
+echo "    aqueous_spc_file     = '`ls -l $aqueousspcfile`', &" >> $eqnfile
+echo "    gas_eqn_file         = '`ls -l $gaseqnfile`', &"     >> $eqnfile
+echo "    aqueous_eqn_file     = '`ls -l $aqueouseqnfile`', &" >> $eqnfile
+echo "    gas_spc_file_sum     = '`sum $gasspcfile`', &"       >> $eqnfile
+echo "    aqueous_spc_file_sum = '`sum $aqueousspcfile`', &"   >> $eqnfile
+echo "    gas_eqn_file_sum     = '`sum $gaseqnfile`', &"       >> $eqnfile
+echo "    aqueous_eqn_file_sum = '`sum $aqueouseqnfile`', &"   >> $eqnfile
+echo "    rplfile              = '$rplfile', &"                >> $eqnfile
+echo "    wanted               = '$wanted', &"                 >> $eqnfile
+echo "    diagtracfile         = '$diagtracfile', &"           >> $eqnfile
+echo "    rxnrates             = '$rxnrates', &"               >> $eqnfile
+echo "    tagdbl               = '$tagdbl'"                    >> $eqnfile
+echo "  LOGICAL, PARAMETER :: REQ_MCFCT = $REQ_MCFCT"          >> $eqnfile
+echo "#ENDINLINE {above lines go to messy_mecca_kpp_global}"   >> $eqnfile
+cat $eqnfile4                                                  >> $eqnfile
+
+##############################################################################
+
+# define path to KPP (via pwd command to resolve symbolic links):
+setenv KPP_HOME "`cd kpp;pwd`"
+
+set KPP_VERSION = `grep KPP_VERSION $KPP_HOME/src/gdata.h | sed 's|.*"\(.*\)".*|\1|g'`
+echo "\nPlease verify that the KPP version is 2.2.1_rs*"
+echo "KPP_HOME    = $KPP_HOME"
+echo "KPP version = $KPP_VERSION"
+
+if ${?kppoption} then
+  echo "\nFrom ${batchfile}: kppoption = $kppoption" | tee -a $logfile
+  if ( "$kppoption" == "q" ) exit 1
+else
+  echo "\nRun KPP?"
+  echo "y = Yes, run KPP (default)"
+  if (${?e5m}) then
+    echo "4 = run KPP via KP4"
+  endif
+  echo "q = Quit"
+  set inputstring = "$<"
+  if ( "$inputstring" == "q" ) exit 1
+  set kppoption = "k"
+  if ( "$inputstring" == "4" ) then
+    if (${?e5m}) then
+      set kppoption = "4"
+    else
+      echo "KP4 is not available."
+      exit 1
+    endif
+  endif
+endif
+
+echo "removing all KPP-generated files from previous xmecca run"
+rm -f smcl/messy_mecca_kpp*.f90* # f90* includes f90-ori
+
+# ----------------------------------------------------------------------------
+
+if ( "$kppoption" == "k" ) then
+
+  # --------------------------------------------------------------------------
+
+  if ${?integr} then
+    echo "\nFrom ${batchfile}: integr = $integr" | tee -a $logfile
+  else
+    set defaultintegr = "rosenbrock_posdef"
+    echo "\nNumerical integrator:" >> $logfile
+    cd $KPP_HOME/int
+    echo "Available KPP integrators:"
+    set inn      = "0"
+    set allfiles = *.f90
+    set allfiles = `echo $allfiles | sed 's|\.f90||g'` # delete suffix .f90
+    foreach i ($allfiles) # list all possibilities
+      @ inn=$inn + 1
+      echo "$inn) $allfiles[$inn]"
+    end
+    echo "The Rosenbrock integrators with automatic time-step control are"
+    echo "strongly recommended for their ability to cope with stiff sets of"
+    echo "differential equations. If you choose another integrator, do so at"
+    echo "your own risk\!"
+    echo "Choose an integrator [q=quit, default=$defaultintegr]:"
+    set inputstring = "$<"
+    if ( "$inputstring" == "q" ) exit 1
+    if (($inputstring <= $#allfiles) && ($inputstring >= 1)) then
+      set integr = "$allfiles[$inputstring]"
+      echo "You selected: $inputstring) $integr" | tee -a $logfile
+    else
+      set integr = "$defaultintegr"
+      echo "Default selection: $integr" | tee -a $logfile
+    endif
+    cd -
+  endif
+  echo "#INTEGRATOR $integr" >! integr.kpp
+
+  # --------------------------------------------------------------------------
+
+  echo "#INLINE F90_GLOBAL"                                    >> integr.kpp
+  echo "  ! KPP info from xmecca:"                             >> integr.kpp
+  echo "  CHARACTER(LEN=*), PUBLIC, PARAMETER :: &"            >> integr.kpp
+  echo "    mecca_spc_file     = '`ls -l $spcfile`', &"        >> integr.kpp
+  echo "    mecca_eqn_file     = '`ls -l $eqnfile`', &"        >> integr.kpp
+  echo "    mecca_spc_file_sum = '`sum $spcfile`', &"          >> integr.kpp
+  echo "    mecca_eqn_file_sum = '`sum $eqnfile`', &"          >> integr.kpp
+  echo "    kppoption          = '$kppoption', &"              >> integr.kpp
+  echo "    KPP_HOME           = '$KPP_HOME', &"               >> integr.kpp
+  echo "    KPP_version        = '$KPP_VERSION', &"            >> integr.kpp
+  echo "    integr             = '$integr'"                    >> integr.kpp
+  echo "#ENDINLINE {above lines go to messy_mecca_kpp_global}" >> integr.kpp
+
+  # --------------------------------------------------------------------------
+
+  echo "\nRunning KPP. Please wait..."
+  $KPP_HOME/bin/kpp messy_mecca_kpp.kpp | tee -a $logfile
+  set exitstatus = "$status"
+  echo "exit status from KPP is: $exitstatus"
+  if ( "$exitstatus" != "0" ) exit 1
+
+  # --------------------------------------------------------------------------
+
+  # add USE messy_cmn_photol_mem:
+  mv messy_mecca_kpp_Global.f90 tmp_messy_mecca_kpp_Global_f90
+  sed 's|\(USE messy_mecca_kpp_Parameters\)|USE messy_cmn_photol_mem ! IP_MAX, ip_*, jname\n  \1|' tmp_messy_mecca_kpp_Global_f90 > messy_mecca_kpp_Global.f90
+
+  # --------------------------------------------------------------------------
+
+  echo "\ncreating mecca core files in smcl/"
+
+  # produce a copy of the parameter file because it will be needed later:
+  cp messy_mecca_kpp_Parameters.f90 $paramfile
+
+  # move the KPP-generated *.f90 files (except for _Model) into the smcl/
+  # directory and change the file names to lowercase:
+  set kppparts = ("Function" "Global" "Initialize" "Integrator" "Jacobian" "JacobianSP" "LinearAlgebra" "Monitor" "Parameters" "Precision" "Rates" "Util")
+  foreach kpppart ($kppparts)
+    set kppfile = "messy_mecca_kpp_$kpppart.f90"
+    set smclfile = smcl/`echo "$kppfile" | tr '[A-Z]' '[a-z]'`
+    echo "creating $smclfile"
+    mv $kppfile $smclfile
+  end
+
+  # KPP/KP4 compatibility file:
+  cp template_messy_mecca_kpp.f90 smcl/messy_mecca_kpp.f90
+
+  # --------------------------------------------------------------------------
+
+  # mz_pj_20070823+
+  if (${?e5m}) then
+    if ${?decomp} then
+      echo "\nFrom ${batchfile}: decomp = $decomp" | tee -a $logfile
+    else
+      echo "\nRemove indirect indexing with decomp? [y/n/q, default=n]"
+      set decomp = "$<"
+    endif
+    if ( "$decomp" == "q" ) exit 1
+    if ( "$decomp" == "y" ) then
+      cp -f smcl/messy_mecca_kpp_linearalgebra.f90 smcl/messy_mecca_kpp_linearalgebra.f90-ori
+      cp -f smcl/messy_mecca_kpp_integrator.f90 smcl/messy_mecca_kpp_integrator.f90-ori
+      (cd decomp ; ./xdecomp $integr)
+    endif
+  endif
+  # mz_pj_20070823-
+
+  # --------------------------------------------------------------------------
+
+endif # (if kppoption = k)
+
+# ----------------------------------------------------------------------------
+
+if ( "$kppoption" == "4" ) then
+  echo "running KPP via KP4 (kppoption=4)" | tee -a $logfile
+  cd ../../../tools/kp4
+  if (${?batch}) then
+     ./bin/kp4.tcsh mecca $batchfile $logfile
+  else
+     ./bin/kp4.tcsh mecca
+  endif
+  if ( "$status" != "0" )  exit 1
+  cd -
+  # add USE messy_cmn_photol_mem:
+  mv messy_mecca_kpp.f90 tmp_messy_mecca_kpp_f90
+  sed 's|\(USE messy_mecca_kpp_Parameters\)|USE messy_cmn_photol_mem ! IP_MAX, ip_*, jname\n  \1|' tmp_messy_mecca_kpp_f90 > messy_mecca_kpp.f90
+endif
+
+##############################################################################
+
+if (${?e5m}) then
+
+  # create a tracer definition ("tracdef") file by combining gas.tex and
+  # aqueous.tex for all selected aerosol phases:
+  cat $gastexfile > $texfile1
+  set counter=0
+  while ($counter<$apn)
+    @ counter=$counter + 1
+    set aerophasename = `printf "%2.2d" $counter`
+    echo -n "$aerophasename "
+    sed -e "s|##|$aerophasename|g" $aqueoustexfile >> $texfile1
+  end
+  echo ""
+  if ("$diagtracfile" != "") then
+    # add diagnostic tracers:
+    echo "% diagnostic tracers from $diagtracfile.tex, added via xmecca:" >> $texfile1
+    sort $texfile3 | uniq >> $texfile1
+  endif
+  if ( "$rxnrates" == "y" ) then
+    # accumulated reaction rates:
+    echo "% START: accumulated reaction rates" >> $texfile1
+    sed -e "s|_QUOTE_|'|g" $texfile4 >> $texfile1
+    echo "% END: accumulated reaction rates" >> $texfile1
+  endif
+
+  # tracdef.awk extracts all KPP_XXX from $paramfile and inserts these
+  # species into messy_mecca_idt_e5.inc. For all KPP_XXX that are not zero
+  # it also inserts the species into messy_mecca_c2mr_e5.inc,
+  # messy_mecca_mr2c_e5.inc, and messy_mecca_trac_e5.inc, using the tracer
+  # info in $texfile1.
+
+  # for strange reasons, gawk only works properly if LC_COLLATE = C
+  setenv LC_COLLATE C
+  gawk -f tracdef.awk -v tracdef=$texfile1 $paramfile
+
+endif
+
+##############################################################################
+
+# update links to all KPP-generated f90 files in mecca/smcl/ directory:
+
+# for caaba box model:
+cd ..
+# remove all kpp files, since it is unclear how many are present (kpp or kp4)
+rm -f messy_mecca_kpp*.f90
+rm -f messy_mecca.f90
+rm -f messy_mecca_aero.f90
+rm -f messy_mecca_khet.f90
+#set kppfiles = (`find mecca/smcl -name "messy_mecca_kpp*.f90" -print`)
+set kppfiles = (mecca/smcl/*.f90)
+foreach kppfile ($kppfiles)
+  ln -s $kppfile .
+end
+set MECCA_VERSION = `grep -i "modver *=" messy_mecca.f90 | sed "s|.*'\(.*\)'.*|\1|g"`
+cd -
+
+# for ECHAM5/MESSy:
+if (${?e5m}) then
+  cd ../../../smcl
+  rm -f messy_mecca_kpp*.f90
+  set kppfiles = (../mbm/caaba/mecca/smcl/messy_mecca_kpp*.f90)
+  # (`find ../mbm/caaba/mecca/smcl -name "messy_mecca_kpp*.f90" -print`)
+  foreach kppfile ($kppfiles)
+    ln -s $kppfile .
+  end
+  cd -
+endif
+
+##############################################################################
+
+# count number of selected species:
+set all_spc = `grep -iE ":: ind_.* = [1-9]+"             $paramfile | wc -l`
+set aq_spc  = `grep -iE ":: ind_.*_a[0-9][0-9] = [1-9]+" $paramfile | wc -l`
+@ gas_spc = $all_spc - $aq_spc
+echo "\nNumber of species in selected mechanism:" | tee -a $logfile
+echo "gas phase:          $gas_spc"               | tee -a $logfile
+echo "aqueous phase:      $aq_spc"                | tee -a $logfile
+echo "all species:        $all_spc"               | tee -a $logfile
+
+# count number of selected reactions:
+set all_eqns = `grep "=.*:.*;"            $eqnfile | wc -l`
+set G_eqns   = `grep "<G[0-9].*=.*:.*;"   $eqnfile | wc -l`
+set A_eqns   = `grep "<A[0-9].*=.*:.*;"   $eqnfile | wc -l`
+set H_eqns   = `grep "<H[0-9].*=.*:.*;"   $eqnfile | wc -l`
+set J_eqns   = `grep "<J[0-9].*=.*:.*;"   $eqnfile | wc -l`
+set PH_eqns  = `grep "<PH[0-9].*=.*:.*;"  $eqnfile | wc -l`
+set HET_eqns = `grep "<HET[0-9].*=.*:.*;" $eqnfile | wc -l`
+set EQ_eqns  = `grep "<EQ[0-9].*=.*:.*;"  $eqnfile | wc -l`
+set D_eqns   = `grep "<D[0-9].*=.*:.*;"   $eqnfile | wc -l`
+# sum over these reaction types:
+@ sum = $G_eqns + $A_eqns + $H_eqns + $J_eqns + $PH_eqns + $HET_eqns + $EQ_eqns + $D_eqns
+echo "\nNumber of reactions in selected mechanism:" | tee -a $logfile
+echo "gas phase      G:   $G_eqns"                  | tee -a $logfile
+echo "aqueous phase  A:   $A_eqns"                  | tee -a $logfile
+echo "Henry          H:   $H_eqns"                  | tee -a $logfile
+echo "photolysis     J:   $J_eqns"                  | tee -a $logfile
+echo "aq. photolysis PH:  $PH_eqns"                 | tee -a $logfile
+echo "heterogeneous  HET: $HET_eqns"                | tee -a $logfile
+echo "equilibria     EQ:  $EQ_eqns"                 | tee -a $logfile
+echo "dummy          D:   $D_eqns"                  | tee -a $logfile
+echo "all equations:      $all_eqns"                | tee -a $logfile
+if ( "$sum" != "$all_eqns" ) then
+  echo "sum of the above:   $sum"                   | tee -a $logfile
+  echo "WARNING: sum is not equal to all equations" | tee -a $logfile
+endif
+
+##############################################################################
+
+if ${?latex} then
+  echo "\nFrom ${batchfile}: latex = $latex" | tee -a $logfile
+else
+  echo "\nCreate LaTeX listing of selected mechanism? [y/n/q, default=n]"
+  set latex = "$<"
+endif
+if ( "$latex" == "q" ) exit 1
+if ( "$latex" == "y" ) then
+  cd latex
+  set infofile = mecca_info.tex
+  echo "% $dontedit"                                  > $infofile
+  echo "% $timestamp"                                >> $infofile
+  echo "\\def\\meccaversion{\\code{$MECCA_VERSION}}" >> $infofile
+  echo "\\def\\kppversion{\\code{$KPP_VERSION}}"     >> $infofile
+  echo "\\def\\wanted{\\code{$wanted}}"              >> $infofile
+  echo "\\def\\apn{$apn}"                            >> $infofile
+  echo "\\def\\gasspc{$gas_spc}"                     >> $infofile
+  echo "\\def\\aqspc{$aq_spc}"                       >> $infofile
+  echo "\\def\\allspc{$all_spc}"                     >> $infofile
+  echo "\\def\\Geqns{$G_eqns}"                       >> $infofile
+  echo "\\def\\Aeqns{$A_eqns}"                       >> $infofile
+  echo "\\def\\Heqns{$H_eqns}"                       >> $infofile
+  echo "\\def\\Jeqns{$J_eqns}"                       >> $infofile
+  echo "\\def\\HETeqns{$HET_eqns}"                   >> $infofile
+  echo "\\def\\EQeqns{$EQ_eqns}"                     >> $infofile
+  echo "\\def\\Deqns{$D_eqns}"                       >> $infofile
+  echo "\\def\\alleqns{$all_eqns}"                   >> $infofile
+  # for strange reasons, gawk only works properly if LC_COLLATE = C
+  setenv LC_COLLATE C
+  gawk -f spc2tex.awk   ../$spcfile
+  gawk -f eqn2tex.awk   ../$eqnfile
+  gawk -f henry2tex.awk -v paramfile=$paramfile ../smcl/messy_mecca_aero.f90
+  gawk -f alpha2tex.awk -v paramfile=$paramfile ../smcl/messy_mecca_aero.f90
+  if (! ${?batch}) then
+    echo "\nContinue? [y/n/q, default=y]"
+    set inputstring = "$<"
+    if ( "$inputstring" == "n" ) exit 1
+    if ( "$inputstring" == "q" ) exit 1
+  endif
+  pdflatex meccanism.tex
+  # extract the references that are really used
+  # (activate only when all reactions were selected):
+  #citetags meccanism.aux | citefind - ~/tex/bib/literat.bib > meccalit.bib
+  bibtex meccanism
+  pdflatex meccanism.tex
+  pdflatex meccanism.tex
+  if ( -e `which kpdf` ) then
+    kpdf meccanism.pdf &
+  else
+    acroread meccanism.pdf &
+  endif
+  set tmpfiles = "mecca_*.tex meccanism.aux meccanism.bbl meccanism.blg meccanism.log"
+  if ${?deltmptex} then
+    echo "\nFrom ${batchfile}: deltmptex = $deltmptex" | tee -a $logfile
+  else
+    echo "Do you want to delete the temporary LaTeX files"
+    ls -1 $tmpfiles
+    echo "[y/n/q, default=y]?"
+    set deltmptex = "$<"
+  endif
+  if ( "$deltmptex" == "q" ) exit 1
+  if ( "$deltmptex" != "n" ) then
+    echo "Deleting the temporary LaTeX files:" | tee -a $logfile
+    ls -1 $tmpfiles | tee -a $logfile
+    if (${?TRASH}) then
+      # move to trash directory:
+      mv -f $tmpfiles $TRASH
+    else
+      # or delete:
+      rm $tmpfiles
+    endif
+  endif
+  cd -
+endif
+
+##############################################################################
+
+# $spcfile and $eqnfile removed from list of tmpfiles
+set tmpfiles = "tmp_*"
+if (-f messy_mecca_kpp_Model.f90) then
+  set tmpfiles = "$tmpfiles messy_mecca_kpp_Model.f90"
+endif
+if (-f messy_mecca_kpp.map) then
+  set tmpfiles = "$tmpfiles messy_mecca_kpp.map"
+endif
+if (-f Makefile_messy_mecca_kpp) then
+  set tmpfiles = "$tmpfiles Makefile_messy_mecca_kpp"
+endif
+if ${?deltmp} then
+  echo "\nFrom ${batchfile}: deltmp = $deltmp" | tee -a $logfile
+else
+  echo "\nDo you want to delete the temporary xmecca files"
+  ls -1 $tmpfiles
+  echo "[y/n/q, default=y]?"
+  set deltmp = "$<"
+endif
+if ( "$deltmp" == "q" ) exit 1
+if ( "$deltmp" != "n" ) then
+  echo "Deleting the temporary xmecca files:" | tee -a $logfile
+  ls -1 $tmpfiles | tee -a $logfile
+  if (${?TRASH}) then
+    # move to trash directory:
+    mv -f $tmpfiles $TRASH
+  else
+    # or delete:
+    rm -f $tmpfiles
+  endif
+endif
+
+##############################################################################
+
+exit

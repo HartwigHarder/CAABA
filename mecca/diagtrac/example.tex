@@ -1,0 +1,16 @@
+% Author: Hella Riede !mz_hr_20080322+
+% list diagnostic tracers to be added to RIGHT side of reactions
+% - a reaction number can be listed twice for two different diagnostic tracers
+% - a comment may contain curly braces {} without problems
+% - choice of diagtrac file appears in xmecca after choice of replacement
+%   file and of mechanism
+%
+% NOTE: For 3D model, add additional diagnostic tracers also to:
+%       - gas.tex
+%       - channel.nml
+%
+% FORMAT:
+% rcn number & diagnostic tracer added to right side & comment (optional)
+% example: for PO3 (production of ozone) and LO2 (loss O2)
+<G1001>  & PO3  & O2   + O3P {+M} = O3
+<G1001>  & LO2  & O2   + O3P {+M} = O3

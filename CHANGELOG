@@ -1,0 +1,876 @@
+********************************************************************************
+**                               CAABA history                                **
+**                  Time-stamp: <2009-07-08 13:40:52 sander>                  **
+********************************************************************************
+
+Previous versions are available as zip files at:
+~/messy/mecca/ori/caaba_<VERSION>.zip
+
+new versions are created with: ncv <VERSION>
+
+********************************************************************************
+
+The next version will be:
+caaba_2.5k (09)
+
+********************************************************************************
+
+caaba_2.5j (08 Jul 09)
+
+CHANGES by Rolf Sander:
+- obsolete, static file jnl/rates.jnl deleted
+- new awk script rxnrates.awk creates 2 ferret jnl files to plot
+  reaction rates
+- messy_mecca_box: x0_default renamed to x0_mbl
+
+********************************************************************************
+
+caaba_2.5i (08 May 09)
+
+CHANGES by Rolf Sander:
+- using the same value for caaba_version as for MECCA version
+- mecca/diagtrac/find_species: a new script that creates a diagtrac.tex
+  file for a selected species
+- xcaaba:
+  - check if kpp files (spc, eqn, kpp) are newer that kpp-generated f90
+    files.
+  - gmake with option "-j" allows simultaneous jobs (faster compilation)
+  - "unbuffer" and "expect" for model output
+- gas.eqn:
+  <G6412> C2H6 + Cl = CH3O2 + HCl
+
+********************************************************************************
+
+caaba_2.5h (29 Jan 09)
+
+CHANGES by Patrick Joeckel:
+- Makefile: g95 option "-pg" changed to "-g"
+
+CHANGES by Sergey Gromov:
+- major update of tag and dbl
+
+********************************************************************************
+
+caaba_2.5g (29 Jan 09)
+
+CHANGES by Rolf Sander:
+- starting (cosmetic) changes in messy_jval.f90
+- paragraph (§) sign removed from xmecca to avoid potential interference
+  of diagtrac and rxnrates with {§...} in eqn file for Monte-Carlo
+- random generator from main_rnd implemented
+- improved Monte-Carlo simulations:
+  - netcdf files are merged with ncpdq, ncclamp, and ncrcat
+  - mecca.nml: mcfct_seed added
+  - batch/*.bat: definition of mcfct
+  - REQ_MC introduced
+  - mcfactor.awk renamed to mcfct.awk
+- memory leaks fixed:
+  - caaba.f90:
+    DEALLOCATE(field)
+  - messy_mecca_box.f90:
+    DEALLOCATE(c0_HCO3m, c0_Clm, c0_Brm, c0_Im, c0_IO3m, c0_SO4mm, c0_HSO4m)
+    DEALLOCATE(xaer, radius, lwc, csalt, c0_NH4p, c0_Nap, exchng)
+********************************************************************************
+
+caaba_2.5f (6 Dec 08)
+
+CHANGES by Hartwig Harder:
+- multirun.tcsh updated
+
+CHANGES by Rolf Sander:
+- messy_cmn_photol_mem.f90: common declarations for photolysis submodels
+  (JVAL, SAPPHO, READJ, ...) and MECCA
+- messy/tools/kp4/templates/module_header: "USE messy_cmn_photol_mem" added
+- Monte-Carlo simulations:
+  - xmecca, mcfactor.awk: add mcfactor to mecca.eqn
+  - messy_mecca_box.f90, messy_mecca.f90, template_messy_mecca_kpp.f90,
+    mecca.nml: mcfactor_seed, l_mcfactor, define_mcfactor,
+    fill_mcfactor, and mcfactor added
+
+********************************************************************************
+
+caaba_2.5e (13 Oct 08)
+
+CHANGES by Rolf Sander:
+- messy_mecca_box.f90: SUBROUTINE check_range does not check reaction
+  rates anymore: IF (SPC_NAMES(jt)(1:2) == "RR") CYCLE
+- xmecca: diagtrac adds diagnostic tracers automatically as species to
+  mecca.spc
+- gas.spc: diagnostic tracers deleted
+- diagtrac/halogen_budget.tex: only add one diagnostic tracer per line
+
+********************************************************************************
+
+caaba_2.5d (15 Aug 08)
+
+CHANGES by Rolf Sander:
+- temp, press, relhum, and zmbl can now be read via the namelist
+- names of netcdf input files in namelists must be complete now, i.e.
+  with the suffix '.nc'
+- xmecca, batch/*.bat:
+  - diagtracall renamed to rxnrates
+  - pseudo-KPP species renamed from DT* to RR*
+  - bugfix: "#DEFVAR" added to $spcfile in rxnrates block
+- main.mk: distclean now also deletes temporary LaTeX files (aux, blg,...)
+- READJ: new submodel that reads J values from netcdf file
+
+CHANGES by Patrick Joeckel:
+  - MECCA (gas.eqn): reaction rate <G10100> Hg + O3 changed from
+                     8.43E-17*EXP(-1407./temp) to 3.0E-20 according to
+                     Ref2394
+  - MECCA (gas.eqn): O3s, LO3s, k_O3s diagnostic completed
+
+CHANGES by Astrid Kerkweg:
+  - messy_main_control_cb.f90, messy_traject_box.f90: TOOLS->TIMER shifts
+
+********************************************************************************
+
+caaba_2.5c (17 Jul 08)
+
+CHANGES by Sergey Gromov:
+- second attempt of introducing tagging and doubling
+- KPP:
+  - kpp/src/code_f90.c: size increase from 15 to 32 for long equation tags
+  - kpp/src/gdata.h:    size increase from 12 to 32 for MAX_EQNTAG
+
+********************************************************************************
+
+caaba_2.5b (16 Jul 08)
+
+CHANGES by Sergey Gromov:
+- first attempt of introducing tagging and doubling
+
+********************************************************************************
+
+caaba_2.5 (11 Jul 08)
+
+CHANGES by Rolf Sander:
+- check_conservation.pl: allow white space at beginning of *.spc files
+- ncv: *_e5.inc files are excluded
+- namelist files moved into nml/ directory. caaba.nml is linked to nml/default/
+- messy_main_blather.f90: new file with print utilities
+- Makefile: entries for new netcdf libraries, compatible with g95
+  version 0.91
+
+********************************************************************************
+
+caaba_2.4d (12 Jun 08)
+
+CHANGES by Hella Riede:
+- jval_clev instead of nlev
+- external variable names can be given in namelist
+  (default: LON, LAT, PRESS, TEMP, RELHUM)
+  Error if both vrelhum and vspechum specified in namelist,
+  determines if external variable is interpreted as spechum or relhum
+- percent_done moved to caaba_mem so that accessible to traject module
+- caaba_messy only written out when USE_TRAJECT is false, if TRAJECT is used,
+  all physical data is written to caaba_traject.nc; this was necessary because
+  in caaba_init when caaba_messy is opened the trajectory information is not
+  available yet (only after messy_init which comes AFTER caaba_init) so that
+  the time axis for caaba_messy is wrong
+- FLAGGED_BAD used to write "undefined" to netcdf, e.g., 
+  sza and j-values (pressure levels not defined in jval yet) for 1st output
+- now several diagtrac.tex as choice in xmecca, collected in directory
+  mecca/diagtrac
+
+********************************************************************************
+
+caaba_2.4c (9 Jun 08)
+
+CHANGES by Rolf Sander:
+- messy_main_mbmio renamed to caaba_io
+- xmecca: keepeqn removed (not necessary anymore, batch files are easier)
+- xcaaba: use qexec on grand
+- ncv does not use zipcaaba anymore
+- zipcaaba renamed to zipcaaba.tcsh
+- main.mk: gmake zip starts zipcaaba.tcsh
+- Hg chemistry from Zhouqing Xie added:
+  - gas.spc, aqueous.spc: new species
+  - gas.eqn, aqueous.eqn: new reactions
+  - xmecca, batch/*.bat: most "wanted*" definitions exclude the new Hg reactions
+  - latex/meccanism.tex: notes about some kH values
+  - messy_mecca_aero.f90: calculation of vmean, alpha, and zhenry
+  - messy_mecca_box.f90: initial Hg value
+  - *.jnl: new species and reactions added
+- reactions from aero.rpl integrated into gas.eqn (but not for stratosphere)
+
+********************************************************************************
+
+caaba_2.4b (29 May 08)
+
+CHANGES by Rolf Sander:
+- CAABA can now be compiled and run with "OUTPUT = ASCII" in Makefile.
+  This is useful to install CAABA on a machine without the netcdf
+  library. However, subroutines that read from nc files cannot be used
+  in that case, of course.
+- messy_main_output renamed to messy_main_mbmio and moved to
+  messy/smcl/. The corresponding netcdf and ascii code is contained in
+  the include files messy_main_mbmio_ascii.inc and
+  messy_main_mbmio_netcdf.inc.
+- open_input_file moved from messy_traject_box.f90 to messy_main_mbmio
+- close_output_file renamed to close_file because it is also used for
+  input files
+- messy_semidep_box.f90: different emissions are put into individual
+  subsubroutines (emission_default, emission_oomph, ...)
+- ncv split into ncv and zipcaaba
+- xcaaba: model source code (*.f90, *.inc, *.spc, *.eqn) is also copied
+  to output/ after the model run
+- xmecca-generated infos are now available as f90 strings in
+  messy_mecca_kpp(_global).f90. This works partially also for kp4,
+  however, the integrator (integr) is not shown.
+- xcaaba lists only the active lines of namelists before running caaba
+- template to allow model stop at steady state:
+  - FUNCTION steady_state_reached()
+  - namelist variable l_steady_state_stop
+- messy_mecca_box.f90:
+  - arrays for aerosol properties (xaer, lwc, csalt, exchng, radius,
+    c0_NH4p, c0_Nap, c0_HCO3m, c0_Clm, c0_Brm, c0_Im, c0_IO3m, c0_SO4mm,
+    c0_HSO4m) are now ALLOCATABLE to avoid compiler problems in
+    SUBROUTINE define_aerosol
+  - different initializations in x0 are put into individual subsubroutines
+    (x0_default, x0_oomph, ...)
+  - definition of sea water composition improved
+  - print more info at start of model run (x0, aerosol chemistry)
+- caaba.f90:
+  - print more info at start of model run (p, T, rh, ...)
+- aero.rpl:
+  - bug fix (CHBr3+OH)
+  - new reaction numbers (there was an overlap with existing reactions)
+- gas.eqn: CH3Br is now also photolyzed in troposphere
+
+********************************************************************************
+
+caaba_2.4 (18 Feb 08)
+
+CHANGES by Rolf Sander:
+- manual/mecca_manual.tex: updated
+- messy_mecca.f90, mecca.nml: new entry "mecca_aero=['ON'/'OFF'/'AUTO']"
+  replaces l_aero in mecca namelist
+- switch between ascii and netcdf with cpp directive "#ifdef NETCDF":
+  - changes in caaba.f90, main.mk, Mainkfile*
+  - mo_netcdf renamed to messy_main_output.f90
+- a new (and currently dummy) file: messy_main_input.f90
+- xmecca:
+  - if a command line parameter $1 exists, xmecca uses the shell
+    variable definitions from batch/$1.bat (instead of interactive mode)
+  - header of mecca.eqn now shows infos (e.g. $apn, $rplfile and $wanted)
+  - header of kpp-generated *.f90 files shows several infos
+- xcaaba:
+  - command line parameter $1 is passed to xmecca
+  - at the end, model results (*.nc caaba.log) can be saved to output/
+- ferret:
+  - changes in ferret scripts are now listed here (older changes can be
+    found in ~/ferret/ori/CHANGELOG)
+  - initviewport.jnl, nextviewport.jnl: new option smallheader
+  - initialize.jnl checks that the symbols dsensi and nsensi are already
+    defined
+  - _families_a.jnl: definition for EFBr and EFCl for cases where Na=0
+  - _findrange_sizebins.jnl: plotdata cannot not be redefined inside
+    loop. This would also redefine minval and maxval.
+
+CHANGES by Astrid Kerkweg:
+- replace.awk: bug fix
+
+********************************************************************************
+
+caaba_2.3e (12 Dec 07)
+
+CHANGES by Astrid Kerkweg:
+- MECCA:
+  - bromocarbons moved to aero.rpl
+  - diagtrac.tex, gas.spc, tracdef.tex: new species
+  - template_messy_mecca_kpp.f90: new SUBROUTINE error_output (for debugging)
+  - messy_mecca.f90: rtol, atol modified
+
+CHANGES by Hella Riede:
+- messy_traject_box: unit of relhum is now empty (range is 0 - 1) or kg/kg
+  if 'relhum' contains specific humidity, also adjusted in description
+  in caaba.nml
+- no l_spechum logical in caaba.nml anymore, automatic switch between relhum
+  and spechum inside code
+- model_start now also in caaba_mem to avoid several times conversion
+  from seconds to days and back (e.g., percent_done)
+- traject_init has to run before mecca_init so cair is right for chem spec init
+
+CHANGES by Rolf Sander:
+- rosenbrock_posdef.f90 adapted for kpp-2.2.1_rs: IERR_NAMES instead of
+  IERR_NAME
+- xmecca: gv without "-seascape" because this option is incompatible
+  with the new gv 3.6.1 where is should be "--orientation=seascape"
+- ncv:
+  - do not exclude *.jnl files
+  - optionally update manual
+- main.mk: extended output with "gmake list"
+
+CHANGES by Patrick Joeckel:
+- JVAL: fhuv_3d, fhuvdna_3d
+
+********************************************************************************
+
+caaba_2.3d (26 Nov 07)
+
+CHANGES by Rolf Sander:
+- meccanism.tex shows MECCA version (modver from messy_mecca.f90)
+- eqn2tex.awk, meccanism.tex: aqueous-phase photolysis reaction PHnnnn added
+- The kpp directory is now a symbolic link inside mecca/, pointing to
+  "../../../tools/kpp". After "ncv", it is a real directory.
+- xmecca: ignore KP4 option when KP4 is not available
+- jnl/ directory with ferret scripts moved into caaba/ directory.
+- manual/ directory moved into caaba/ directory.
+
+********************************************************************************
+
+caaba_2.3c (12 Sep 07)
+
+NOTE: This version needs kpp-2.2.1_rs
+
+NOTE: This version combines the new caaba box model from caaba_2.3b with
+      the vectorized code from mecca_2.2e
+
+CHANGES by Rolf Sander:
+- new directory structure:
+  - mecca is now a subdirectory of caaba, not vice versa
+  - changed files: xmecca, xcaaba, ncv
+- JVAL added as a new submodel to CAABA
+- Makefile: if host = bromine, then staticlink
+- C(:) is now an allocatable array to avoid
+  "USE messy_mecca_kpp, ONLY: NSPEC" in a mem file
+- variable "latitu" deleted. Now degree_lat and rad_lat are used
+- l_skipkpp implemented in caaba namelist
+- standardized names of output files (caaba_<submodel>[_<extraname>].nc)
+  produced by CAABA: caaba_messy.nc, caaba_mecca.nc,
+  caaba_mecca_rates.nc, caaba_mecca_aero.nc, caaba_sappho.nc, caaba_jval.nc,
+  caaba_traject.nc
+
+CHANGES by Hella Riede:
+- external runtime is now given with variable 'ext_runtime', which is a STRING;
+  it is given as a numer and a time unit, such as ext_runtime = '6060 seconds'
+  or ext_runtime = '8 days'
+- new namelist variables: l_injectNOx, t_NOxon, t_NOxoff
+
+********************************************************************************
+
+caaba_2.3b (27 Aug 07)
+
+NOTE: This version needs kpp-2.2.2_rs_20070430
+
+CHANGES by Rolf Sander:
+- caaba/messy_mecca_box.f90: print aerosol properties
+- ncv: small changes
+- xmecca:
+  - selection of numerical integrator moved to other place
+  - variable e5m is set if the directory ../../echam5 can be found. It
+    is then assumed that MECCA is part of an ECHAM5/MESSy system. xmecca
+    will then also create the files necessary for running global MECCA
+    chemistry with ECHAM5/MESSy.
+  - new mechanism wanted19 = "Full MBL chemistry" = "Tr && (G || Aa)" added
+- messy_mecca_box.f90: print aerosol properties in SUBROUTINE define_aerosol
+- new bibliography file latex/meccalit.bib for BibTeX which contains
+  only the necessary references
+
+********************************************************************************
+
+caaba_2.3 (2 May 07)
+
+CHANGES by Hella Riede:
+- xmecca: new mechanism wanted18 included
+- several bugs in trajectory mode removed
+
+CHANGES by Rolf Sander:
+- subdirectory boxmodel/ renamed to caaba/. This also required changes in
+  ncv, xmecca, xcaaba, latex/henry2tex.awk and latex/alpha2tex.awk.
+- messy_main_control_box.f90 renamed to messy_main_control_cb.f90 to
+  indicate that it belongs to the BMIL, unlike the messy_*_box.f90 files
+  from the SMIL.
+- messy_mecca_aero.f90: alpha(HO2)=0.5 from ref1864
+- xmecca: parameter "e5m" to activate echam/messy specific parts
+  (otherwise xmecca does only box-model stuff)
+- messy_mecca_box.f90: new subroutine print_k replaces functionality of
+  the (now deleted) file messy_mecca_box.f90-info
+- messy_main_tools.f90: _dp added to constants in FUNCTION psat
+- aqueous.eqn:
+  - iodine scheme updated according to Pechtl et al. (ref2077)
+  - diffusion limitation caps rate coefficients at 1E10 M-1s-1
+- gas.spc: formulas for MEKO2 and MEKOOH corrected
+- gas.eqn:
+  - new function k_limited for aqueous-phase diffusion limitation
+  - rate coefficients updated to JPL2006 and IUPAC (ref1945, ref1759 and
+    ref1845)
+  - update of iodine reactions acording to suggestions from Terry Dillon
+    and John Crowley:
+    <G8103> IO    + IO  = new products (only in sensitivity studies)
+    <G8300> I     + NO2 = new k (small change)
+    <G8301> I     + NO3 = new k
+    <G8303> IO    + NO2 = new k (small change)
+    <G8308> IO    + NO3 = new reaction
+    <G8401> CH3O2 + IO  = new reaction
+    <G9800> DMS   + IO  = new k (old ref was wrong)
+
+********************************************************************************
+
+caaba_2.2e (27 Mar 07)
+
+NOTE: CAABA is currently a side branch of the MECCA development.
+
+CHANGES by Rolf Sander and Hella Riede:
+- Code completely restructured. The box model is now called CAABA, and
+  it has the independent MESSy submodels MECCA, SAPPHO, SEMIDEP, and
+  TRAJECT.
+- New files:
+  caaba.f90:                  the main base model (BML) file
+  caaba.nml:                  new namelist CAABA replaces CPL_BOX
+  caaba_mem.f90:              declaration of USE_* and other variables
+  messy_main_control_box.f90: base model interface layer (BMIL)
+  messy_sappho_box.f90:       photolysis rate coefficients (SMIL)
+  messy_semidep_box.f90:      simplified emission and deposition (SMIL)
+  messy_traject_box.f90:      trajectories (SMIL)
+- xbox renamed to xcaaba
+- nmv renamed to ncv; zipmecca deleted
+
+CHANGES by Hella Riede:
+- var RELHUM in external netCDF trajectory input can be interpreted as specific
+  humidity [mg/kg] instead of relative humidity via variable l_spechum in
+  CAABA namelist
+- time string right in output, output unit of time as input unit
+
+CHANGES by Rolf Sander:
+- messy_mecca_box.f90: adjustment for operator splitting added to
+  aerosol_exchng: factor*(1-factor)
+- CASE (8) added to define_aerosol for Polarstern modeling
+- different methods (1...5) for sdirk added to integr/sdirk*.kpp
+
+********************************************************************************
+
+mecca_2.2e (16 Jul 07)
+
+CHANGES by Rolf Sander:
+- The box model was made compatible with both KPP and KP4:
+  - xmecca:
+    - the user can choose between KPP and KP4
+    - all MECCA SMCL files will be in mecca/smcl/
+    - links point to all SMCL files (both from the boxmodel and E5M)
+    - a file integr.kpp is created instead of a link to a file in integr/
+  - integr/ directory deleted
+  - the real files messy_mecca.f90, messy_mecca_aero.f90, and
+    messy_mecca_khet.f90 are now all in the directory
+    messy/box/mecca/smcl/. From there, they are linked into messy/smcl/
+    and messy/box/mecca/boxmodel/.
+  - use_blas.awk: deleted
+  - nmv: updated to new structure
+  - messy_mecca_box.f90:
+    - many changes to make it compatible with both KPP and KP4
+    - adjustment for operator splitting in aerosol_exchng:
+      factor = factor / (1.-factor)
+  - gas.eqn: xaer(APN) changed from INTEGER to REAL(dp)
+  - messy_mecca_aero.f90: REAL(xaer(zkc),dp) changed to xaer(zkc)
+  - template_messy_mecca_kpp.f90: new file that "connects" the
+    KPP-generated files to the KP4-compatible USE commands in the SMIL.
+
+********************************************************************************
+
+mecca_2.2d (26 Sep 06)
+
+CHANGES by Rolf Sander:
+- new trajectory features merged into messy_mecca_box.f90
+
+CHANGES by Hella Riede:
+- messy_mecca_traject_box.f90: read input from netcdf file
+  (TIME, PRESS, TEMP, RELHUM, LAT, LON)
+- be aware that date of the time origin is not yet read correctly put into
+  output netcdf the file and output only in seconds (correctly though!)
+- time_step control via CPL_BOX namelist
+
+********************************************************************************
+
+mecca_2.2c (23 Sep 06)
+
+CHANGES by Rolf Sander:
+- new namelist entries in CPL_BOX (l_ff, Ca_precip, degree_lat,
+  startday, runtime) can be used to set up a frostflower run
+- messy_mecca_box.f90-frostflower and messy_mecca_box.f90-mbl deleted
+- new feature of replacement files:
+  - new files: example-gas.rpl, replace.awk and substitute.awk
+  - xmecca calls replace.awk if gas.rpl exists
+
+********************************************************************************
+
+mecca_2.2b (9 Sep 06)
+
+CHANGES by Rolf Sander:
+- messy_mecca_box.f90-frostflower:
+  - subroutines define_aerosol and aerosol_exchng adjusted to flexible
+    number of aerosol bins APN. Model results are now (within the
+    numerical noise) identical to ff-200-newsyntax/ (see 2.2b-lsode/ and
+    2.2b-ros3/ in ~/messy/mecca/frostflower/model)
+- messy_mecca_box.f90-*: bugfix in calculation of c(ind_H2O_a(jb)):
+  factor 1000 because M_H2O is in g/mol and not kg/mol
+- nml-check moved from xmecca to xbox
+
+********************************************************************************
+
+mecca_2.2 (6 Mar 06)
+
+CHANGES by Rolf Sander:
+- box model now sent to Mike Long
+- first tests with 5 and 10 aerosol phases
+- LaTeX:
+  - info about number of species and equations added to meccanism.tex
+    via mecca_info.tex
+  - alpha2tex.awk extracts accommodation coefficients from
+    messy_mecca_mbl.f90 for meccanism.tex
+  - alpha2tex.awk and henry2tex.awk write to LaTeX file only for
+    selected species
+- aerosol.awk: new script that creates declarations and initializations
+  of ind_XYZ_a(:) arrays
+- made several aerosol-size dependent files more flexible to allow
+  between 0 and 12 aerosol phases
+- current MECCA needs big KPP with:
+  - scan.h: MAX_INLINE = 100000
+- bugfix for box model with 0 aerosol phases
+- gas.eqn: marker "APN+++" removed. Now awk script defines APN via F90_GLOBAL
+- lhet renamed to l_het
+- messy_mecca_mbl.f90: activated new subroutine mecca_mbl_henry which is
+  now read by awk script to obtain values for LaTeX table
+- messy_mecca_box.f90-*:
+  - SUBROUTINE define_aerosol improved
+  - flexible open_nc_file for lwc
+- xmecca:
+  - several changes to create aerosol data only for selected phases (apn)
+  - SETFIX H2O_a* is done in mecca.spc via xmecca
+  - aqueous-phase arrays xaer, cvfac, lwc, k_ex* are created by xmecca,
+    not gas.eqn (only if apn>0)
+  - all temporary files renamed to "tmp_*" so that they will be removed
+    with gmake distclean
+
+CHANGES by ASTRID Kerkweg:
+- xmecca, messy_mecca_kpp.kpp, aqueous.eqn, aqueous.spc
+  - enlarged for up to 12 aerosol phases
+  - APN introduced (aerosol phase number)
+- current MECCA needs big KPP with:
+  - gdata.h: MAX_EQN = 3500 and MAX_SPECIES = 3500
+
+********************************************************************************
+
+mecca_2.1 (5 Feb 06)
+
+CHANGES by Rolf Sander:
+- box model now uses RHO_H2O, M_H2O, and OneDay from messy_main_constants_mem
+- products for J(BrNO3) are 0.29 (Br+NO3) + 0.71 (BrO+NO2)
+- henry2tex.awk extracts Henry's law coefficients from
+  messy_mecca_mbl.f90 for meccanism.tex
+- messy_mecca_mbl.f90: new values for KH(Cl2) and KH(Br2) from ref1038
+- gas.eqn and elsewhere:
+  - label {%Psc} renamed to {%Het}
+  - product CO2 removed from G4215b (bug fix, found by A. Stickler)
+- aqueous.eqn:
+  - temperature dependencies for halogen reactions A6204, A7202, EQ73,
+    EQ74, EQ75, and EQ76 added
+  - EQ60: exact values from ref125 entered
+  - EQ70: values from ref1546
+  - reaction A7600 renamed to EQ76f and back reaction added
+  - fudge factors for equilibria of Br2Cl-, BrCl2-, Br2-, and Cl2- removed
+    (testfac_BrCl2, testfac_Br2Cl, testfac_Br2Clm, testfac_Br2m, testfac_Cl2m)
+- xmecca and messy_mecca_e5.f90:
+  - REQ_PHOTO renamed to REQ_JVAL
+  - REQ_PSC renamed to REQ_HET
+- xmecca:
+  - more output to logfile xmecca.log
+  - print info about number of species in selected mechanism
+
+********************************************************************************
+
+mecca_2.0 (29 Nov 05)
+
+CHANGES by Rolf Sander:
+- xmecca:
+  - number of predefined reaction mechanisms reduced
+  - "1 = all reactions" is not the default anymore
+- messy_mecca_box.f90: renamed tstart and tend (from
+  messy_mecca_kpp_global.f90) to model_start and model_end
+
+CHANGES by Astrid Kerkweg:
+- j_* replaced by JX(ip_*)
+- calculation of hrates removed
+- tracdef.tex, tracdef.awk updated
+- MBL:
+   - LOGICAL :: lhet(2) added
+   - sulfur coupling
+   - CTRL namelist removed
+
+CHANGES by Rolf Sander:
+- UPGRADE TO KPP-2.0 (MANY CHANGES IN THE SYNTAX OF THE FILES):
+  - new links:
+    messy_mecca_kpp_function.f90         
+    messy_mecca_kpp_global.f90           
+    messy_mecca_kpp_integrator.f90       
+    messy_mecca_kpp_jacobian.f90         
+    messy_mecca_kpp_jacobiansparsity.f90 
+    messy_mecca_kpp_linearalgebra.f90    
+    messy_mecca_kpp_monitor.f90          
+    messy_mecca_kpp_parameters.f90       
+    messy_mecca_kpp_precision.f90        
+    messy_mecca_kpp_rates.f90            
+    messy_mecca_kpp_util.f90             
+  - mecca.nml: new entry ros_method in CTRL namelist to choose a
+    particular Rosenbrock method
+  - zipmecca: put integr.k as a link into archive, not as a file
+- bugfix in boxmodel/messy_mecca_func.f90 (bug found by CB):
+  k0_T    = k0_300K   * zt_help**(n) * cair ! k_0   at current T
+  kinf_T  = kinf_300K * zt_help**(m)        ! k_inf at current T
+- bugfix in gas.eqn (bug found by CB):
+  k_HNO3_OH    = 2.4E-14*EXP(460./temp) + 1./ &
+                 ( 1./(6.5E-34*EXP(1335./temp)*cair) + &
+                 1./(2.7E-17*EXP(2199./temp)) )
+
+********************************************************************************
+
+mecca_0.9.13 (7 Dec 04)
+
+CHANGES by Astrid Kerkweg and Rolf Sander:
+- lhrate deleted in CPL namelist
+- messy_mecca_mbl.f90: xaer added for all k_ex* in mecca_mbl_calc_k_ex
+
+CHANGES by Rolf Sander:
+- listing of variables which are transferred between interface and core
+  layers
+- modules messy_mecca_base and messy_mecca_mbl_base removed. Functions
+  are now in messy_mecca_func. Variables are in gas.eqn in a F95_DECL
+  block which will be copied by kpp to messy_mecca_kpp_g_mem.f90
+- aqueous.eqn: replaced 5* "xaer*ykmt*lwc" by "k_exf", which was already
+  defined
+- aqueous.eqn, messy_mecca_mbl_base.f90: k_SIV_H2O2 gets c(H+) in [mol/l]
+  instead of mode as input parameter
+- aqueous.eqn, messy_mecca_mbl.f90, messy_mecca_mbl_base.f90: function
+  fhet included into mecca_mbl_calc_k_ex
+- messy_mecca_e5.f90: comments for ros3-diag deleted
+- renamed species ClNO2 -> ClNO3 also in mecca box model
+- sphum moved from messy_mecca_mem_e5.f90 to messy_mecca_e5.f90
+- gas.eqn: product (O3P, not O3) corrected:
+  {#J7100}  BrO     + hv = Br + O3P : {%TrGBrJ}     J_BrO; {&&}
+  {#J8100}  IO      + hv = I + O3P  : {%TrGIJ}      J_IO; {&&
+
+********************************************************************************
+
+mecca_0.9.12 (22 Nov 04)
+
+CHANGES by Rolf Sander:
+- products corrected for G3107: NO2 + N = N2O + O (error found by MECCA
+  ACPD referee)
+- update of box model: main.mk, Makefile, mo_netcdf.f90*: compiling and
+  running without "r8"
+- cleanup of e5/core interface: mr2c and c2mr get conversion factor as
+  a parameter
+- sphum moved from messy_mecca_base.f90 to messy_mecca_mem_e5 (not
+  used in core file)
+- some species renamed for consistency with JVAL:
+  PAH      -> PAA    (changed in JVAL)
+  ClONO2   -> ClNO3  (changed in JVAL)
+  CFC11    -> CFCl3  (changed in JVAL)
+  CFC12    -> CF2Cl2 (changed in JVAL)
+  ALD  -> CH3CHO     (changed in MECCA)
+  ACET -> CH3COCH3   (changed in MECCA)
+  MGLO -> CH3COCHO   (changed in MECCA)
+- ions renamed:
+  SO32m -> SO3mm     (changed in MECCA)
+  SO42m -> SO4mm     (changed in MECCA)
+
+********************************************************************************
+
+mecca_0.9.11 (5 Oct 04) (new version number starts with "0.9")
+
+THIS VERSION IS PART OF MESSY 0.9!
+
+CHANGES by Rolf Sander:
+- ascii output is possible as an alternative to netcdf (e.g. if netcdf
+  library is not available)
+- zipmecca script creates archive with all files for a standalone mecca
+  distribution
+- cloud.spc and cloud.eqn deleted
+- aqueous.eqn: AH and EX combined to H
+- iodine chemistry updated (still under construction)
+
+********************************************************************************
+
+mecca_10 (8 Feb 04)
+
+CHANGES by Rolf Sander:
+- xmecca: the automatically produced files are all left in mecca/. The
+  box model and ECHAM5 reach them via symbolic links.
+- Arrhenius function farr2 renamed to k_arr
+- gas.eqn:
+  - k_HO2_HO2, k_NO3_NO2, k_BrNO3, k_DMS_OH defined as variables, not
+    functions
+  - elemental function K_3rd used
+- aerosol.eqn: temperature dependence in k_arr as REAL, not INTEGER
+- xmecca now uses kpp version v1.1-f90-alpha9 and is not compatible with
+  older versions of kpp anymore. The main new features of kpp alpha9 are
+  the usage of "IMPLICIT NONE" everywhere and the change from "DOUBLE
+  PRECISION" to "REAL(dp)" which will improve the forcheck tests. All
+  mecca subroutines receive the value of dp via "USE mo_mz_mecca_gdata".
+- moved "INTEGER :: jk, jp, jrow" and corresponding USE statements from
+  mo_mz_mecca_kpp_mem.f90 to mo_mz_mecca_mem_e5.f90 because of messy structure
+- mo_mz_mecca_kpp_mem.f90, mo_mz_mecca_mbl_kpp_mem.f90: functions
+  restructured, unused functions deleted
+
+********************************************************************************
+
+mecca_09 (28 Jan 03)
+
+CHANGES by Rolf Sander:
+- eqn2tex.awk and spc2tex.awk create latex code from mecca.eqn and
+  mecca.spc
+- contents of literat2.bib moved to literat.bib
+- aerosol.spc, gas.spc: LaTeX names added like {@O_3}
+- boxmodel:
+  - dependencies for Makefile are now created via makedepf90
+  - successfull test with intel compiler
+- integr/ros3.k: STEPMIN and STEPMAX defined here
+- gas.eqn:
+  - several reactions updated
+  - references added with {&826} etc.
+  - echam-specific commands "USE mo_mz_psc_kpp_mem" and "USE
+    mo_mz_photo" removed. References to stream elements like
+    "RJ_O3P_3d(jp,jk,jrow)" were replaced by "RJ_O3P". Also for khet*.
+  - psc reaction numbers renamed H -> PSC
+
+CHANGES by Astrid Kerkweg:
+- aerosol.eqn: references added with {&826} etc.
+
+********************************************************************************
+
+mecca_08 (7 Oct 03)
+
+CHANGES by Rolf Sander:
+- xkpp renamed to xmecca
+- gas.eqn:
+  - redundant Ht labels deleted (use Psc instead)
+  - #1000 H+O2 also for troposphere
+  - new rate constants (supplied by RvK) for these reactions:
+    OH     + O3  = HO2                                           
+    HO2    + O3  = OH                                            
+    CH4    + O1D = .75 CH3O2 + .75 OH + .25 HCHO + .4 H + .05 H2 
+    CH4    + OH  = CH3O2 + H2O                                   
+    CH3OH  + OH  = HCHO + HO2                                    
+    CH3O2  + HO2 = CH3OOH                                        
+    CH3O2  + HO2 = HCHO + H2O + O2                               
+    HCHO   + OH  = CO + H2O + HO2                                
+    C2H6   + OH  = EtO2 + H2O                                    
+    C3H8   + OH  = .82 PrO2 + .18 EtO2 + H2O                     
+    ACET   + OH  = ACETO2 + H2O                                  
+    ACETO2 + NO  = NO2 + PA + HCHO                               
+    MPAN   + OH  = ACETOL + NO2                                  
+    C4H10  + OH  = C4H9O2 + H2O                                  
+    ISO2   + HO2 = ISOOH                                         
+    ISO2   + NO  = .88 NO2 + .88 MVK + .88 HCHO + .88 HO2 + .12 ISON
+- modstr_mecca and modver_mecca are now defined in gas.eqn with
+  #INLINE F95_DECL ... #ENDINLINE
+  and copied to mo_mz_mecca_gdata.f90 by kpp.
+- definition of substeps moved from include/substeps.f90 to gdata module
+- xkpp:
+  - also works for scav_cloud
+  - xkpp: calls decomp/xdecomp if the user wants to remove indirect
+    indexing (preliminary). All scripts and temporary files from BS are
+    now in decomp/ subdirectory. xdecomp calls seddecomp_ros*
+  - xkpp: default integrator = ros3
+  - xkpp: bug fixed (confusion between sulfur "S" and stratospheric "St"
+    reactions)
+
+CHANGES by Benedikt Steil:
+- Several scripts decomp/seddecomp_ros* to remove indirect indexing
+  (preliminary).
+
+CHANGES by Astrid Kerkweg:
+- label Mbl included in xkpp and aerosol.eqn file
+
+********************************************************************************
+
+mecca_07 (4 Jul 03)
+
+- mecca.spc divided into gas.spc and aerosol.spc
+
+- all species defined as VARIABLES
+
+- some species changed to FIXED in mecca.k
+
+- constants changed from 1d0 to 1E0 etc.
+
+********************************************************************************
+
+mecca_06 (23 Jun 03)
+
+CHANGES by Rolf Sander:
+- driver.f90 is now a dummy file. The contents of it has been moved to
+  mo_mz_mecca_e5.f90.
+- new awk script tracdef.awk extracts all KPP_XXX from
+  mo_mz_kpp_gdata.f90 and inserts these species into mz_idt.f90. For all
+  KPP_XXX that are not zero it also inserts the species into
+  mz_conc2mr.f90, mz_mr2conc.f90, and mz_trac.f90, using the tracer info
+  in tracdef.tex. xkpp starts tracdef.awk and then moves the new files
+  to the include/ directory.
+- aerosol.eqn: temp is now a parameter of farr2()
+- gas.eqn:
+  - Khet() is now a 4-d array
+  - new filenames for USE statements: e.g. mo_mz_mecca_kpp_mem
+- xkpp: radau5 added; using kpp version v1.1-f90-devel now
+
+********************************************************************************
+
+mecca_05 (22 May 03)
+
+CHANGES by Rolf Sander:
+- halogen and aerosol chemistry added (gas.eqn and aerosol.eqn)
+- xkpp: 
+  - some info about the selection etc. added to beginning of mo_mz_kpp.f90
+  - mecca.eqn is added to mo_mz_kpp.f90
+- using kpp version v1.1-f90-alpha6 now
+- mecca-all.eqn renamed to gas.eqn
+
+********************************************************************************
+
+mecca_04 (23 Dec 02)
+
+CHANGES by Rolf Sander:
+- this version was used for echam5.1.04_mz03
+- kpp now gets information about rate constants from kpp_interface
+- additional submodels only need to add one line to #INLINE F95_RCONST, e.g.:
+  USE mo_mz_modstr_kpp_interface
+
+********************************************************************************
+
+mecca_03 (25 Nov 02)
+
+CHANGES by Rolf Sander:
+- this version was used for echam5.1.04_mz02i
+- new shell script xkpp that selects wanted reactions and runs kpp
+- correct labels {%...} added to mecca-all.eqn
+- gas-phase reaction N2O5 + H2O deactivated
+- CH3O replaced  with HCHO + HO2
+- products O2, N2, and CO2 deleted because they are fixed species
+- heterogeneous chemistry from smeili
+- reaction numbers (not yet for halogen reactions)
+- updated rate constant for N2+O1D and for CO+OH
+
+********************************************************************************
+
+mecca_02 (12 Nov 02)
+
+CHANGES by Rolf Sander:
+- upgrade to kpp version 1.1-f90-alpha5:
+  - indices kpp_* for array C() are defined (independent of NVARST etc.)
+  - unused kpp dummy species get a value of kpp_* = 0
+  - i_* should not be used anymore
+- rate constants updated with mecca-all-psc.eqn from smeili (original
+  psc eqn files are also included in mecca_02.zip)
+
+********************************************************************************
+
+mecca_01 (4 Nov 02)
+
+CHANGES by Rolf Sander:
+- produces exactly the files mo_mz_kpp*.f90 as they are included in
+  echam5.1.04_mz02
+- needs kpp version 1.1-f90-alpha
+
+********************************************************************************
+**                           end of CHANGELOG                                 **
+********************************************************************************

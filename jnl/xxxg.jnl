@@ -1,0 +1,259 @@
+\CANCEL MODE verify ! like "unset echo" under unix
+CANCEL DATA/ALL
+CANCEL VARIABLE/ALL
+CANCEL SYMBOL/ALL
+
+! argument checking
+DEFINE SYMBOL dim         = $1"0d|0d|1d|2d"
+DEFINE SYMBOL unitacronym = $2"mpm|mpm|mpc|pa|"
+DEFINE SYMBOL jnlfile     = xxxg
+DEFINE SYMBOL argv        = ($dim) ($unitacronym)
+
+! set makepdf to TRUE only for 1-page plots:
+!DEFINE SYMBOL makepdf = TRUE
+
+go setmodelrun
+go initialize
+USE "($run0)/caaba_messy.nc"     ! d=1 press,temp
+! sensi first
+DEFINE SYMBOL dsensi = 2 !data set number of first sensi (try `,RETURN=dsetnum`)
+IF `($nsensi) GT 0` THEN ! for PLOT/OVER
+  REPEAT/range=1:($nsensi)/name=dnum ( \
+    DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+    USE "($run($dnum))/caaba_mecca.nc" )
+ENDIF
+! base last because it must be the current data set
+!USE "($run0)_tracer_gp.nc"
+USE "($run0)/caaba_mecca.nc"
+DEFINE SYMBOL dbase = `($nsensi)+2`
+say base run = data set number ($dbase)
+
+!GO initviewport 1 3 noheader
+!GO initviewport 3 7 header
+GO initviewport 3 7 smallheader
+DEFINE SYMBOL pagetitle = gas phase
+GO _kppvarg ! DEFINE kpp variables
+
+! DEFINE factor for conversion to selected unit
+IF ($unitacronym%|mpm>TRUE|*>FALSE|%) THEN
+  ! leave DATA as it is [mol/mol]
+  LET conv = 1
+  DEFINE SYMBOL unit = fromdataset
+ENDIF
+IF ($unitacronym%|mpc>TRUE|*>FALSE|%) THEN
+  ! convert DATA to [molecules/cm3]
+  LET conv = 6.022e23*1.e-6*press[d=1]/(8.314409*temp[d=1])
+  DEFINE SYMBOL unit = mcl/cc
+ENDIF
+IF ($unitacronym%|pa>TRUE|*>FALSE|%) THEN
+  ! convert DATA to partial pressure [Pa]
+  LET conv = press[d=1]
+  DEFINE SYMBOL unit = Pa
+ENDIF
+SAY unit = [($unit)]
+LET factor = conv
+
+! SET verbosity (higher values of v produce more plots)
+LET v = 1
+
+!-------------------------------------------------------------------------------
+
+! DEFINE some families
+
+! NOx
+LET NOx = NO+NO2
+SET VARIABLE/TITLE="NO_x"/UNITS="mol/mol" NOx
+
+! NOy
+LET NOy = NO+NO2+NO3+2*N2O5+HONO+HNO3+HNO4+PAN+ClNO2+BrNO2+ClNO3+BrNO3
+SET VARIABLE/TITLE="NO_y"/UNITS="mol/mol" NOy
+
+! Clx = total reactive chlorine (excludes HCl)
+LET Clx = Cl+ClO+HOCl+2*Cl2O2+ClNO2+ClNO3+2*Cl2+OClO+BrCl+ICl
+SET VARIABLE/TITLE="Cl_x"/UNITS="mol/mol" Clx
+
+! Brx = total reactive bromine (excludes HBr)
+LET Brx = Br+BrO+HOBr+BrNO2+BrNO3+2*Br2+BrCl+IBr
+SET VARIABLE/TITLE="Br_x"/UNITS="mol/mol" Brx
+! if IBr is undefind, ferret produces the message:
+! *** NOTE: Ambiguous coordinates on X axis: BR+BRO+HOBR+...
+
+! Ix = total reactive iodine (excludes HI)
+LET Ix = Iod+IO+HOI+2*I2O2+HIO3+INO2+INO3+2*I2+ICl+IBr+OIO
+SET VARIABLE/TITLE="I_x"/UNITS="mol/mol" Ix
+
+! RGM
+LET RGM = HgO+HgCl+HgCl2+HgBr+HgBr2+ClHgOBr+ClHgBr
+SET VARIABLE/TITLE="RGM"/UNITS="mol/mol" RGM
+
+! ! Cl/ClO ratio
+! LET ClClO = Cl / ClO
+! SET VARIABLE/UNITS="1"      ClClO
+! SET VARIABLE/TITLE="Cl/ClO" ClClO
+! ! Cl/(HO2*ClO) ratio
+! LET ClClOHO2 = MIN( 1e9, Cl / (HO2*ClO))
+! SET VARIABLE/UNITS="1"            ClClOHO2
+! SET VARIABLE/TITLE="Cl/(HO2*ClO)" ClClOHO2
+
+!-------------------------------------------------------------------------------
+
+DEFINE SYMBOL saveunit = ($unit)
+DEFINE SYMBOL unit = fromdataset
+LET factor = 1
+
+! IF `v GE 1` THEN GO _plot_($dim) ClClO
+! IF `v GE 1` THEN GO _plot_($dim) ClClOHO2
+
+DEFINE SYMBOL unit = ($saveunit)
+LET factor = conv
+
+!-------------------------------------------------------------------------------
+
+! O
+IF `v GE 2` THEN GO _plot_($dim) O1D
+IF `v GE 4` THEN GO _plot_($dim) O3P
+IF `v GE 3` THEN GO _plot_($dim) O2
+IF `v GE 1` THEN GO _plot_($dim) O3
+! H
+IF `v GE 3` THEN GO _plot_($dim) H
+IF `v GE 2` THEN GO _plot_($dim) H2
+IF `v GE 1` THEN GO _plot_($dim) OH
+IF `v GE 1` THEN GO _plot_($dim) HO2
+IF `v GE 2` THEN GO _plot_($dim) H2O
+IF `v GE 1` THEN GO _plot_($dim) H2O2
+! N
+IF `v GE 1` THEN GO _plot_($dim) NOx
+IF `v GE 1` THEN GO _plot_($dim) NOy
+IF `v GE 3` THEN GO _plot_($dim) N
+IF `v GE 3` THEN GO _plot_($dim) N2
+IF `v GE 2` THEN GO _plot_($dim) NH3
+IF `v GE 2` THEN GO _plot_($dim) N2O
+IF `v GE 1` THEN GO _plot_($dim) NO
+IF `v GE 1` THEN GO _plot_($dim) NO2
+IF `v GE 1` THEN GO _plot_($dim) NO3
+IF `v GE 1` THEN GO _plot_($dim) N2O5
+IF `v GE 1` THEN GO _plot_($dim) HONO
+IF `v GE 1` THEN GO _plot_($dim) HNO3
+IF `v GE 2` THEN GO _plot_($dim) HNO4
+! 1C
+IF `v GE 3` THEN GO _plot_($dim) CH4
+IF `v GE 2` THEN GO _plot_($dim) CH3OH
+IF `v GE 2` THEN GO _plot_($dim) CH3O2
+IF `v GE 2` THEN GO _plot_($dim) CH3OOH
+IF `v GE 1` THEN GO _plot_($dim) HCHO
+IF `v GE 2` THEN GO _plot_($dim) CO
+IF `v GE 2` THEN GO _plot_($dim) HCOOH
+IF `v GE 3` THEN GO _plot_($dim) CO2
+! 2C
+IF `v GE 1` THEN GO _plot_($dim) C2H6
+IF `v GE 1` THEN GO _plot_($dim) C2H4
+IF `v GE 1` THEN GO _plot_($dim) C2H2
+IF `v GE 2` THEN GO _plot_($dim) EtO2
+IF `v GE 2` THEN GO _plot_($dim) EtOOH
+IF `v GE 1` THEN GO _plot_($dim) CH3CHO
+IF `v GE 2` THEN GO _plot_($dim) CH3COOH
+IF `v GE 2` THEN GO _plot_($dim) PA
+IF `v GE 2` THEN GO _plot_($dim) PAA
+IF `v GE 2` THEN GO _plot_($dim) NACA
+IF `v GE 2` THEN GO _plot_($dim) PAN
+! 3C
+IF `v GE 2` THEN GO _plot_($dim) C3H8
+IF `v GE 2` THEN GO _plot_($dim) C3H6
+IF `v GE 2` THEN GO _plot_($dim) PrO2
+IF `v GE 2` THEN GO _plot_($dim) PrOOH
+IF `v GE 2` THEN GO _plot_($dim) C3H6O2
+IF `v GE 2` THEN GO _plot_($dim) C3H6OOH
+IF `v GE 2` THEN GO _plot_($dim) CH3COCH3
+IF `v GE 2` THEN GO _plot_($dim) ACETO2
+IF `v GE 2` THEN GO _plot_($dim) ACETP
+IF `v GE 2` THEN GO _plot_($dim) ACETOL
+IF `v GE 2` THEN GO _plot_($dim) CH3COCHO
+IF `v GE 2` THEN GO _plot_($dim) MPAN
+IF `v GE 2` THEN GO _plot_($dim) PrONO2
+! 4C
+IF `v GE 2` THEN GO _plot_($dim) C4H10
+IF `v GE 2` THEN GO _plot_($dim) C4H9O2
+IF `v GE 2` THEN GO _plot_($dim) C4H9OOH
+IF `v GE 2` THEN GO _plot_($dim) MVK
+IF `v GE 2` THEN GO _plot_($dim) MVKO2
+IF `v GE 2` THEN GO _plot_($dim) MVKOOH
+IF `v GE 2` THEN GO _plot_($dim) MEK
+IF `v GE 2` THEN GO _plot_($dim) MEKO2
+IF `v GE 2` THEN GO _plot_($dim) MEKOOH
+IF `v GE 2` THEN GO _plot_($dim) MeCOCO
+IF `v GE 2` THEN GO _plot_($dim) ONIT
+! 5C
+IF `v GE 2` THEN GO _plot_($dim) ISOP
+IF `v GE 2` THEN GO _plot_($dim) ISO2
+IF `v GE 2` THEN GO _plot_($dim) ISOOH
+IF `v GE 2` THEN GO _plot_($dim) ISON
+! Cl
+IF `v GE 1` THEN GO _plot_($dim) Clx
+IF `v GE 1` THEN GO _plot_($dim) Cl
+IF `v GE 1` THEN GO _plot_($dim) Cl2
+IF `v GE 1` THEN GO _plot_($dim) ClO
+IF `v GE 2` THEN GO _plot_($dim) OClO
+IF `v GE 2` THEN GO _plot_($dim) Cl2O2
+IF `v GE 1` THEN GO _plot_($dim) HCl
+IF `v GE 1` THEN GO _plot_($dim) HOCl
+IF `v GE 2` THEN GO _plot_($dim) ClNO2
+IF `v GE 1` THEN GO _plot_($dim) ClNO3
+IF `v GE 2` THEN GO _plot_($dim) CCl4
+IF `v GE 2` THEN GO _plot_($dim) CH3Cl
+IF `v GE 2` THEN GO _plot_($dim) CH3CCl3
+IF `v GE 2` THEN GO _plot_($dim) CF2Cl2
+IF `v GE 2` THEN GO _plot_($dim) CFCl3
+! Br
+IF `v GE 1` THEN GO _plot_($dim) Brx
+IF `v GE 1` THEN GO _plot_($dim) Br
+IF `v GE 1` THEN GO _plot_($dim) Br2
+IF `v GE 1` THEN GO _plot_($dim) BrO
+IF `v GE 1` THEN GO _plot_($dim) HBr
+IF `v GE 1` THEN GO _plot_($dim) HOBr
+IF `v GE 2` THEN GO _plot_($dim) BrNO2
+IF `v GE 1` THEN GO _plot_($dim) BrNO3
+IF `v GE 1` THEN GO _plot_($dim) BrCl
+! I
+IF `v GE 1` THEN GO _plot_($dim) Ix
+! let iod = 'I' ! must be renamed because i is also longitude
+! IF `v GE 1` THEN GO _plot_($dim) iod     ! = I
+IF `v GE 1` THEN GO _plot_($dim) I2
+IF `v GE 1` THEN GO _plot_($dim) IO
+IF `v GE 1` THEN GO _plot_($dim) OIO
+IF `v GE 1` THEN GO _plot_($dim) I2O2
+IF `v GE 1` THEN GO _plot_($dim) HI
+IF `v GE 1` THEN GO _plot_($dim) HOI
+IF `v GE 1` THEN GO _plot_($dim) HIO3
+IF `v GE 2` THEN GO _plot_($dim) INO2
+IF `v GE 1` THEN GO _plot_($dim) INO3
+IF `v GE 2` THEN GO _plot_($dim) CH3I
+IF `v GE 2` THEN GO _plot_($dim) CH2I2
+IF `v GE 2` THEN GO _plot_($dim) C3H7I
+IF `v GE 1` THEN GO _plot_($dim) ICl
+IF `v GE 2` THEN GO _plot_($dim) CH2ClI
+IF `v GE 1` THEN GO _plot_($dim) IBr
+IF `v GE 1` THEN GO _plot_($dim) IPART
+! S
+IF `v GE 1` THEN GO _plot_($dim) SO2
+IF `v GE 1` THEN GO _plot_($dim) H2SO4
+IF `v GE 2` THEN GO _plot_($dim) CH3SO3H
+IF `v GE 1` THEN GO _plot_($dim) DMS
+IF `v GE 1` THEN GO _plot_($dim) DMSO
+IF `v GE 2` THEN GO _plot_($dim) CH3SO2
+IF `v GE 2` THEN GO _plot_($dim) CH3SO3
+
+! Hg
+IF `v GE 1` THEN GO _plot_($dim) Hg
+IF `v GE 1` THEN GO _plot_($dim) RGM
+IF `v GE 1` THEN GO _plot_($dim) HgO
+IF `v GE 1` THEN GO _plot_($dim) HgCl
+IF `v GE 1` THEN GO _plot_($dim) HgCl2
+IF `v GE 1` THEN GO _plot_($dim) HgBr
+IF `v GE 1` THEN GO _plot_($dim) HgBr2
+IF `v GE 1` THEN Go _plot_($dim) ClHgBr
+IF `v GE 1` THEN Go _plot_($dim) BrHgOBr
+IF `v GE 1` THEN Go _plot_($dim) ClHgOBr
+
+GO exitviewport
+
+EXIT

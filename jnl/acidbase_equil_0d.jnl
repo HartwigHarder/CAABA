@@ -1,0 +1,138 @@
+\CANCEL MODE verify ! like "unset echo" under unix
+CANCEL DATA/ALL
+CANCEL VARIABLE/ALL
+CANCEL SYMBOL/ALL
+
+DEFINE SYMBOL jnlfile     = acidbase_equil_0d
+
+! set makepdf to TRUE only for 1-page plots:
+!DEFINE SYMBOL makepdf = TRUE
+
+go setmodelrun
+go initialize
+USE "($run0)/caaba_messy.nc"     ! d=1 press,temp
+USE "($run0)/caaba_mecca_aero.nc" ! d=2 lwc
+! sensi first
+DEFINE SYMBOL dsensi = 3 !data set number of first sensi (try `,RETURN=dsetnum`)
+IF `($nsensi) GT 0` THEN ! for PLOT/OVER
+  REPEAT/range=1:($nsensi)/name=dnum ( \
+    DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+    USE "($run($dnum))/caaba_mecca.nc" )
+ENDIF
+! base last because it must be the current data set
+USE "($run0)/caaba_mecca.nc"
+
+DEFINE SYMBOL pagetitle = acid/base equilibria
+
+! SET verbosity (higher values of v produce more plots)
+! v=1 equals mbl mini chemistry
+LET v = 1
+! iodine chemistry existent? 0 = NO, 1 = yes
+LET xiod = 0
+! SET modes:  xmod = 2 => both modes ;  xmod = 3 => only accum. modes
+!             xmod = 1 => coarse MODE only
+LET xmod = 2
+
+LET starttimestep = 2
+LET facas = 1.e-3*press[d=1,k=($plotlevel)]/(8.314409 * temp[d=1,k=($plotlevel)]*lwc_a01[d=2,k=($plotlevel)])
+LET faccs = 1.e-3*press[d=1,k=($plotlevel)]/(8.314409 * temp[d=1,k=($plotlevel)]*lwc_a02[d=2,k=($plotlevel)])
+
+GO initviewport 4 6 header
+
+!-------------------------------------------------------------------------------
+IF  `xmod GE 2` THEN
+
+LET kequilh20   = 1e-14*EXP(-6716*(1/ temp[d=1,k=($plotlevel)]-1/298.15))
+LET phasdata = facas*OHm_a01[k=($plotlevel)]*facas*Hp_a01[k=($plotlevel)]/kequilh20
+GO nextviewport
+
+PLOT/SET/TITLE="lwc (as)" lwc_a01[d=2,k=($plotlevel),l=`starttimestep`:999999, i=($plotlon), j=($plotlat)]
+GO ppl_mylayout
+PPL PLOT
+GO nextviewport
+PLOT/SET/TITLE="H2O (as)" phasdata[l=`starttimestep`:999999, i=($plotlon), j=($plotlat)]
+GO ppl_mylayout
+PPL PLOT
+
+GO _acidbase_equil_0d_a01  Hp_a01      O2m_a01     HO2_a01   1.6e-5        0
+GO _acidbase_equil_0d_a01  Hp_a01      NH3_a01     NH4p_a01  5.87647e-10  -2391
+GO _acidbase_equil_0d_a01  Hp_a01      NO2m_a01    HONO_a01  5.1e-4        -1260
+GO _acidbase_equil_0d_a01  Hp_a01      NO3m_a01    HNO3_a01  1.54e1        8700
+GO _acidbase_equil_0d_a01  Hp_a01      NO4m_a01    HNO4_a01  1.e-5         0
+GO _acidbase_equil_0d_a01  Hp_a01      HCOOm_a01   HCOOH_a01 1.8E-4        0
+GO _acidbase_equil_0d_a01  Hp_a01      HCO3m_a01   CO2_a01   4.3e-7        -913
+GO _acidbase_equil_0d_a01  Hp_a01      Clm_a01     HCl_a01   1.7e6         6896
+GO _acidbase_equil_0d_a01  Cl_a01      Clm_a01     Cl2m_a01  5.2E-6        0
+GO _acidbase_equil_0d_a01  Hp_a01      ClOm_a01    HOCl_a01   3.2e-8       0
+GO _acidbase_equil_0d_a01  Hp_a01      Brm_a01     HBr_a01   1.e9          0
+GO _acidbase_equil_0d_a01  Br_a01      Brm_a01     Br2m_a01  2.54E-6       -2256
+GO _acidbase_equil_0d_a01  Hp_a01      BrOm_a01    HOBr_a01  2.3e-9        -3091
+GO _acidbase_equil2_0d_a01 Br2Clm_a01  Br2_a01     Clm_a01   1.3           0
+GO _acidbase_equil2_0d_a01 Br2Clm_a01  BrCl_a01    Brm_a01   1.8e4         7457
+GO _acidbase_equil2_0d_a01 BrCl2m_a01  BrCl_a01    Clm_a01   3.84615       1143
+IF `xiod EQ 1` THEN
+GO _acidbase_equil2_0d_a01 ICl2m_a01   ICl_a01     Clm_a01   76.92         0
+GO _acidbase_equil2_0d_a01 IBr2m_a01   IBr_a01     Brm_a01   285.71        0
+GO _acidbase_equil2_0d_a01 IClBrm_a01  ICl_a01     Brm_a01   17857         0
+GO _acidbase_equil2_0d_a01 IClBrm_a01  IBr_a01     Clm_a01   1.3           0
+ENDIF
+GO _acidbase_equil_0d_a01  Hp_a01      HSO3m_a01   SO2_a01   1.7e-2        2090
+GO _acidbase_equil_0d_a01  Hp_a01      SO3mm_a01   HSO3m_a01 6.E-8         1120
+GO _acidbase_equil_0d_a01  Hp_a01      HSO4m_a01   H2SO4_a01 1.e3          0
+GO _acidbase_equil_0d_a01  Hp_a01      SO4mm_a01   HSO4m_a01 1.02E-2       2720
+
+ENDIF
+! !-------------------------------------------------------------------------------
+
+IF `xmod EQ 2` THEN GO newpage
+
+!-------------------------------------------------------------------------------
+
+IF  `xmod  le 2` THEN
+LET kequilh20   = 1e-14*EXP(-6716*(1/ temp[d=1,k=($plotlevel)]-1/298.15))
+LET phcsdata = faccs*OHm_a02[k=($plotlevel)]*faccs*Hp_a02[k=($plotlevel)]/kequilh20
+GO nextviewport
+
+PLOT/SET/TITLE="lwc (cs)" lwccs_3d[d=2,k=($plotlevel),l=`starttimestep`:999999, i=($plotlon), j=($plotlat)]
+GO ppl_mylayout
+PPL PLOT
+GO nextviewport
+PLOT/SET/TITLE="H2O (cs)" phcsdata[l=`starttimestep`:999999, i=($plotlon), j=($plotlat)]
+GO ppl_mylayout
+PPL PLOT
+
+GO _acidbase_equil_0d_a02  Hp_a02      O2m_a02     HO2_a02   1.6e-5        0
+GO _acidbase_equil_0d_a02  Hp_a02      NH3_a02     NH4p_a02  5.87647e-10  -2391
+GO _acidbase_equil_0d_a02  Hp_a02      NO2m_a02    HONO_a02  5.1e-4        -1260
+GO _acidbase_equil_0d_a02  Hp_a02      NO3m_a02    HNO3_a02  1.54e1        8700
+GO _acidbase_equil_0d_a02  Hp_a02      NO4m_a02    HNO4_a02  1.e-5         0
+GO _acidbase_equil_0d_a02  Hp_a02      HCOOm_a02   HCOOH_a02 1.8E-4        0
+GO _acidbase_equil_0d_a02  Hp_a02      HCO3m_a02   CO2_a02   4.3e-7        -913
+GO _acidbase_equil_0d_a02  Hp_a02      Clm_a02     HCl_a02   1.7e6         6896
+GO _acidbase_equil_0d_a02  Cl_a02      Clm_a02     Cl2m_a02  5.2E-6        0
+GO _acidbase_equil_0d_a02  Hp_a02      ClOm_a02    HOCl_a02   3.2e-8       0
+GO _acidbase_equil_0d_a02  Hp_a02      Brm_a02     HBr_a02   1.e9          0
+GO _acidbase_equil_0d_a02  Br_a02      Brm_a02     Br2m_a02  2.54E-6       -2256
+GO _acidbase_equil_0d_a02  Hp_a02      BrOm_a02    HOBr_a02  2.3e-9        -3091
+GO _acidbase_equil2_0d_a02 Br2Clm_a02  Br2_a02     Clm_a02   1.3           0
+GO _acidbase_equil2_0d_a02 Br2Clm_a02  BrCl_a02    Brm_a02   1.8e4         7457
+GO _acidbase_equil2_0d_a02 BrCl2m_a02  BrCl_a02    Clm_a02   3.84615       1143
+IF `xiod EQ 1` THEN
+GO _acidbase_equil2_0d_a02 ICl2m_a02   ICl_a02     Clm_a02   76.92         0
+GO _acidbase_equil2_0d_a02 IBr2m_a02   IBr_a02     Brm_a02   285.71        0
+GO _acidbase_equil2_0d_a02 IClBrm_a02  ICl_a02     Brm_a02   17857         0
+GO _acidbase_equil2_0d_a02 IClBrm_a02  IBr_a02     Clm_a02   1.3           0
+ENDIF
+GO _acidbase_equil_0d_a02  Hp_a02      HSO3m_a02   SO2_a02   1.7e-2        2090
+GO _acidbase_equil_0d_a02  Hp_a02      SO3mm_a02   HSO3m_a02 6.E-8         1120
+GO _acidbase_equil_0d_a02  Hp_a02      HSO4m_a02   H2SO4_a02 1.e3          0
+GO _acidbase_equil_0d_a02  Hp_a02      SO4mm_a02   HSO4m_a02 1.02E-2       2720
+
+ENDIF
+
+!-------------------------------------------------------------------------------
+
+GO exitviewport
+
+
+EXIT

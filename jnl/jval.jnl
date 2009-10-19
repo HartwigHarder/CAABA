@@ -1,0 +1,112 @@
+\CANCEL MODE verify ! like "unset echo" under unix
+CANCEL DATA/ALL
+CANCEL VARIABLE/ALL
+CANCEL SYMBOL/ALL
+
+! argument checking
+DEFINE SYMBOL dim         = $1"0d|0d|1d|2d"
+DEFINE SYMBOL jnlfile     = jval
+DEFINE SYMBOL argv        = ($dim)
+
+! set makepdf to TRUE only for 1-page plots:
+!DEFINE SYMBOL makepdf = TRUE
+
+go setmodelrun
+go initialize
+! sensi first
+DEFINE SYMBOL dsensi = 1 !data set number of first sensi (try `,RETURN=dsetnum`)
+IF `($nsensi) GT 0` THEN ! for PLOT/OVER
+  REPEAT/range=1:($nsensi)/name=dnum ( \
+    DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+    USE "($run($dnum))/caaba_jval.nc" )
+ENDIF
+! base last because it must be the current data set
+USE "($run0)/caaba_jval.nc"
+
+GO initviewport 3 6 header
+IF ($dim%|2d>TRUE|*>FALSE|%) THEN
+ GO initviewport 2 4 header
+ENDIF
+
+DEFINE SYMBOL pagetitle = J-values
+LET conv = 1  ! leave DATA as it is [1/s]
+DEFINE SYMBOL unit = fromdataset
+SAY unit = [($unit)]
+LET factor = conv
+
+! SET verbosity (higher values of v produce more plots)
+LET v = 2
+
+!-------------------------------------------------------------------------------
+
+IF `v GE 3` THEN GO _plot_($dim) DayReal
+IF `v GE 3` THEN GO _plot_($dim) SoDecli
+IF `v GE 3` THEN GO _plot_($dim) SINPSI
+IF `v GE 3` THEN GO _plot_($dim) PHOTON
+
+IF `v GE 3` THEN GO _plot_($dim) J_O2       ! J1000
+IF `v GE 1` THEN GO _plot_($dim) J_O1D      ! J1001a
+IF `v GE 1` THEN GO _plot_($dim) J_O3P      ! J1001b
+
+IF `v GE 3` THEN GO _plot_($dim) J_H2O      ! J2100
+IF `v GE 1` THEN GO _plot_($dim) J_H2O2     ! J2101
+
+IF `v GE 3` THEN GO _plot_($dim) J_N2O      ! J3100
+IF `v GE 1` THEN GO _plot_($dim) J_NO2      ! J3101
+IF `v GE 3` THEN GO _plot_($dim) J_NO       ! J3102
+IF `v GE 1` THEN GO _plot_($dim) J_NO2O     ! J3103a
+IF `v GE 1` THEN GO _plot_($dim) J_NOO2     ! J3103b
+IF `v GE 1` THEN GO _plot_($dim) J_N2O5     ! J3104
+IF `v GE 2` THEN GO _plot_($dim) J_HONO     ! J3200
+IF `v GE 1` THEN GO _plot_($dim) J_HNO3     ! J3201
+IF `v GE 2` THEN GO _plot_($dim) J_HNO4     ! J3202
+
+IF `v GE 1` THEN GO _plot_($dim) J_CH3OOH   ! J4100,J4200,J4300,J4304,J4400,J4402,J4404,J4500
+IF `v GE 1` THEN GO _plot_($dim) J_COH2     ! J4101a
+IF `v GE 1` THEN GO _plot_($dim) J_CHOH     ! J4101b,J4203,J4302,J4403
+IF `v GE 3` THEN GO _plot_($dim) J_CO2      ! J4102
+IF `v GE 2` THEN GO _plot_($dim) J_CH3CHO   ! J4201
+IF `v GE 2` THEN GO _plot_($dim) J_PAA      ! J4202
+IF `v GE 1` THEN GO _plot_($dim) J_PAN      ! J4204,J4305,J4306,J4406,J4501
+IF `v GE 3` THEN GO _plot_($dim) J_CH3COCH3 ! J4301
+IF `v GE 3` THEN GO _plot_($dim) J_CH3COCHO ! J4303,J4401,J4405
+
+IF `v GE 1` THEN GO _plot_($dim) J_Cl2      ! J6000
+IF `v GE 2` THEN GO _plot_($dim) J_Cl2O2    ! J6100,J8101
+IF `v GE 2` THEN GO _plot_($dim) J_OClO     ! J6101
+IF `v GE 3` THEN GO _plot_($dim) J_HCl      ! J6200
+IF `v GE 1` THEN GO _plot_($dim) J_HOCl     ! J6201
+IF `v GE 1` THEN GO _plot_($dim) J_ClNO2    ! J6300
+IF `v GE 1` THEN GO _plot_($dim) J_ClNO3    ! J6301
+IF `v GE 2` THEN GO _plot_($dim) J_CH3Cl    ! J6400
+IF `v GE 2` THEN GO _plot_($dim) J_CCl4     ! J6401
+IF `v GE 2` THEN GO _plot_($dim) J_CH3CCl3  ! J6402
+IF `v GE 3` THEN GO _plot_($dim) J_CFCl3    ! J6500
+IF `v GE 3` THEN GO _plot_($dim) J_CF2Cl2   ! J6501
+
+IF `v GE 1` THEN GO _plot_($dim) J_Br2      ! J7000
+IF `v GE 1` THEN GO _plot_($dim) J_BrO      ! J7100
+IF `v GE 1` THEN GO _plot_($dim) J_HOBr     ! J7200
+IF `v GE 1` THEN GO _plot_($dim) J_BrNO2    ! J7300
+IF `v GE 1` THEN GO _plot_($dim) J_BrNO3    ! J7301
+IF `v GE 3` THEN GO _plot_($dim) J_CH3Br    ! J7400
+IF `v GE 3` THEN GO _plot_($dim) J_CF3Br    ! J7500
+IF `v GE 1` THEN GO _plot_($dim) J_BrCl     ! J7600
+IF `v GE 3` THEN GO _plot_($dim) J_CF2ClBr  ! J7601
+
+IF `v GE 1` THEN GO _plot_($dim) J_I2       ! J8000
+IF `v GE 1` THEN GO _plot_($dim) J_IO       ! J8100
+IF `v GE 1` THEN GO _plot_($dim) J_HOI      ! J8200
+IF `v GE 1` THEN GO _plot_($dim) J_INO2     ! J8300
+IF `v GE 1` THEN GO _plot_($dim) J_INO3     ! J8301
+IF `v GE 1` THEN GO _plot_($dim) J_CH2I2    ! J8400
+IF `v GE 1` THEN GO _plot_($dim) J_CH3I     ! J8401
+IF `v GE 1` THEN GO _plot_($dim) J_C3H7I    ! J8402
+IF `v GE 1` THEN GO _plot_($dim) J_CH2ClI   ! J8403
+IF `v GE 1` THEN GO _plot_($dim) J_ICl      ! J8600
+IF `v GE 1` THEN GO _plot_($dim) J_IBr      ! J8700
+
+GO exitviewport
+
+EXIT
+

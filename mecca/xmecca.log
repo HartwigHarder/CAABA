@@ -1,0 +1,4617 @@
+This file was created automatically by xmecca, DO NOT EDIT!
+xmecca was run on 2009-07-24 at 09:53:58 by caaba
+Selected number of aerosol phases = 0
+No replacements with any *.rpl files
+
+You selected the reactions: (((Tr && (G || Het) && !Cl && !Br && !I) || St) && !Hg)
+(later, you will find your selection in messy_mecca_kpp_global.f90)
+
+#INLINE F90_GLOBAL
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! from xmecca for aerosol:
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PARAMETER, PUBLIC :: APN = 1
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! from aerosol.awk:
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_O2_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_O3_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_OH_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HO2_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_H2O_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_H2O2_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NH3_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO2_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO3_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HONO_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HNO3_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HNO4_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_N2O5_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3OH_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCOOH_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCHO_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3O2_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3OOH_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CO2_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3COOH_a   = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_PAN_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_EtO2_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3CHO_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3COCH3_a  = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Cl_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Cl2_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCl_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HOCl_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Br_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Br2_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HBr_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HOBr_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrCl_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_I2_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IO_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HI_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HOI_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ICl_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IBr_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HIO3_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO2_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_H2SO4_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DMSO_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Hg_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgO_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgOH_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgOHOH_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgOHCl_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgCl2_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgBr2_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgSO3_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ClHgBr_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrHgOBr_a   = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ClHgOBr_a   = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_O2m_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_OHm_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Hp_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NH4p_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO2m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO3m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_NO4m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CO3m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCOOm_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HCO3m_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3COOm_a   = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Clm_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Cl2m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ClOm_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ClOHm_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Brm_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Br2m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrOm_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrOHm_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_BrCl2m_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Br2Clm_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Im_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IO2m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IO3m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_ICl2m_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IClBrm_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_IBr2m_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO3m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO3mm_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO4m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO4mm_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO5m_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HSO3m_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HSO4m_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HSO5m_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3SO3m_a   = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH2OHSO3m_a = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Hgp_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Hgpp_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgOHp_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgClp_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgCl3m_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgCl4mm_a   = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgBrp_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgBr3m_a    = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgBr4mm_a   = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgSO32mm_a  = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_D1O_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_D2O_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DAHp_a      = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DA_a        = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DAm_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DGtAi_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DGtAs_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_PROD1_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_PROD2_a     = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_Nap_a       = 0
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#ENDINLINE {above lines go to messy_mecca_kpp_global}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#INLINE F90_UTIL
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+! from xmecca:
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+SUBROUTINE initialize_indexarrays
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  USE messy_mecca_kpp_global     ! ind_XYZ_a(:) arrays
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  USE messy_mecca_kpp_parameters ! ind_XYZ_a## scalars
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  IMPLICIT NONE
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+END SUBROUTINE initialize_indexarrays
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#ENDINLINE {above lines go to messy_mecca_kpp_util}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{***** START: gas-phase chemistry from gas.eqn *****}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#INLINE F90_GLOBAL
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! from gas.eqn:
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL :: k_HO2_HO2, k_NO3_NO2, k_NO2_HO2, k_HNO3_OH, k_CH3OOH_OH, k_PA_NO2, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+          k_PAN_M, k_PrO2_HO2, k_PrO2_NO, k_PrO2_CH3O2, k_ClO_ClO, k_BrO_NO2, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+          k_I_NO2, k_DMS_OH
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL :: k_O3s ! mz_pj_20080812
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! ALL PHASES:
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition start
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: cair    ! c(air) (wet) [mcl/cm^3]
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: press   ! pressure [Pa] ! mz_pj_20080716
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: mcfct(NREACT) ! Monte-Carlo factor
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition end
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! AEROSOL ONLY:
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition start
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: xaer(APN)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: cvfac(APN)    ! unit conversion factor
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: lwc(APN)      ! liquid water content
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: k_exf(APN,NSPEC) = 0.
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: k_exb(APN,NSPEC) = 0.
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: k_exf_N2O5(APN)  = 0.
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: k_exf_ClNO3(APN) = 0.
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: k_exf_BrNO3(APN) = 0.
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition end
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PUBLIC  :: xnom7sulf = 1 ! = 1-xm7sulf
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition start
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: jx(IP_MAX) = 0.
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition end
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! iht_ = index of troposheric heterogeneous reactions 
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PARAMETER, PUBLIC :: &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    iht_N2O5      =  1, iht_HNO3      =  2, iht_Hg      =  3, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    iht_RGM       = 4
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PARAMETER, PUBLIC :: IHT_MAX = 4
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition start
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: khet_Tr(IHT_MAX) = 0.
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition end
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! ihs_ = index of stratospheric heterogeneous reactions
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! (must be the same as in messy_msbm.f90!)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PARAMETER :: &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    ihs_N2O5_H2O  =  1, ihs_HOCl_HCl  =  2, ihs_ClNO3_HCl =  3, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    ihs_ClNO3_H2O =  4, ihs_N2O5_HCl  =  5, ihs_ClNO3_HBr =  6, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    ihs_BrNO3_HCl =  7, ihs_HOCl_HBr  =  8, ihs_HOBr_HCl  =  9, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    ihs_HOBr_HBr  = 10, ihs_BrNO3_H2O = 11, ihs_Hg        = 12, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    ihs_RGM       = 13
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  INTEGER, PARAMETER, PUBLIC :: IHS_MAX = 13
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition start
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp) :: khet_St(IHS_MAX) = 0.
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+!KPPPP_DIRECTIVE vector variable definition end
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! Parameters included for acid-base equilibria calculation
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! used to enable the double use of the aqueous.eqn for liquid 
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! and aerosol phase.
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  REAL(dp), PARAMETER :: &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_HO2   = 1.e5_dp, testfac_HONO   = 1.e5_dp, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_HNO3  = 1.e7_dp, testfac_HNO4   = 1.e5_dp, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_HCOOH = 1.e5_dp, testfac_SO2    = 1.e9_dp, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_HSO3m = 1.e9_dp, testfac_HSO4m  = 1.e7_dp, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_NH3   = 1.e7_dp, testfac_H2O    = 1.e9_dp, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_CO2   = 1.e5_dp, testfac_HCl    = 1.e2_dp, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_HBr   = 1.e6_dp,                           &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_HOCl  = 1.e2_dp, testfac_HOBr   = 1.e2_dp, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_ICl   = 1.e2_dp, testfac_IBr    = 1.e2_dp, &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    testfac_IClBr = 1.e2_dp, testfac_H2SO4  = 1.e7_dp
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#ENDINLINE {above lines go to messy_mecca_kpp_global}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#INLINE F90_RCONST
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  USE messy_main_constants_mem ! atm2Pa, N_A, R_gas
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  USE messy_cmn_photol_mem     ! IP_MAX, ip_*, jname
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! end of USE statements
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  !
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! start of executable statements
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! define some rate constants here if the expressions are too long
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! for kpp or if they are used more than once
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_HO2_HO2    = (1.5E-12*EXP(19./temp)+1.7E-33*EXP(1000./temp)*cair)* &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+                 (1.+1.4E-21*EXP(2200./temp)*C(ind_H2O))
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_NO3_NO2    = k_3rd(temp,cair,2.0E-30,4.4,1.4E-12,0.7,0.6)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_NO2_HO2    = k_3rd(temp,cair,2.0E-31,3.4,2.9E-12,1.1,0.6)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_HNO3_OH    = 2.4E-14*EXP(460./temp) + 1./ &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+                 ( 1./(6.5E-34*EXP(1335./temp)*cair) + &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+                 1./(2.7E-17*EXP(2199./temp)) )
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_CH3OOH_OH  = 3.8E-12*EXP(200./temp)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_PA_NO2     = k_3rd(temp,cair,9.7E-29,5.6,9.3E-12,1.5,0.6)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_PAN_M      = k_PA_NO2/9.0E-29*EXP(-14000./temp)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_PrO2_HO2   = 1.9E-13*EXP(1300./temp)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_PrO2_NO    = 2.7E-12*EXP(360./temp)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_PrO2_CH3O2 = 9.46E-14*EXP(431./temp)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_ClO_ClO    = k_3rd_iupac(temp,cair,2.0E-32,4.0,1.0E-11,0.0,0.45)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! JPL: k_ClO_ClO   = k_3rd(temp,cair,1.6E-32,4.5,2.0E-12,2.4,0.6)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_BrO_NO2    = k_3rd_iupac(temp,cair,4.7E-31,3.1,1.8E-11,0.0,0.4)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! JPL: k_BrO_NO2   = k_3rd(temp,cair,5.2E-31,3.2,6.9E-12,2.9,0.6)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_I_NO2      = k_3rd_iupac(temp,cair,3.0E-31,1.0,6.6E-11,0.0,0.63)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! for numerical reasons, the expression is multiplied by 1e30/1e30
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_DMS_OH     = 1.E-9*EXP(5820./temp)*C(ind_O2)/ &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+                 (1.E30+5.*EXP(6280./temp)*C(ind_O2))
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! mz_pj_20080812+
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  k_O3s = (1.7E-12*EXP(-940./temp)) * C(ind_OH) &  ! <G2104>
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+        + (1.E-14*EXP(-490./temp)) * C(ind_HO2) &  ! <G2107>
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+        + JX(ip_O1D) * 2.2E-10 * C(ind_H2O) &      ! 
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+        / ( 3.2E-11*EXP(70./temp)*C(ind_O2)   &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+           + 1.8E-11*EXP(110./temp)*C(ind_N2) &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+           + 2.2E-10*C(ind_H2O) )
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ! mz_pj_20080812-
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#ENDINLINE {above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#INLINE F90_RATES
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ELEMENTAL REAL(dp) FUNCTION k_SIV_H2O2 (k_298,tdep,cHp,temp)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    ! special rate function for S(IV) + H2O2
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL,     INTENT(IN) :: k_298 ! k at T = 298.15K
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL,     INTENT(IN) :: tdep  ! temperature dependence
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL(dp), INTENT(IN) :: cHp   ! c(H+)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL(dp), INTENT(IN) :: temp  ! temperature
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    INTRINSIC :: EXP
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    k_SIV_H2O2 = k_298 * EXP(tdep*(1._dp/temp-3.3540E-3_dp)) &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+      * cHp / (cHp+0.1_dp)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  END FUNCTION k_SIV_H2O2
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ELEMENTAL REAL(dp) FUNCTION k_3rd_iupac(temp,cair,k0_300K,n,kinf_300K,m,fc)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    ! IUPAC three body reaction formula (www.iupac-kinetic.ch.cam.ac.uk)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    INTRINSIC :: LOG10
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL(dp), INTENT(IN) :: temp      ! temperature [K]
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL(dp), INTENT(IN) :: cair      ! air concentration [molecules/cm3]
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL,     INTENT(IN) :: k0_300K   ! low pressure limit at 300 K
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL,     INTENT(IN) :: n         ! exponent for low pressure limit
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL,     INTENT(IN) :: kinf_300K ! high pressure limit at 300 K
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL,     INTENT(IN) :: m         ! exponent for high pressure limit
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL,     INTENT(IN) :: fc        ! broadening factor (e.g. 0.45 or 0.6...)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL                 :: nu        ! N
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL                 :: zt_help, k0_T, kinf_T, k_ratio
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    zt_help = 300._dp/temp
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    k0_T    = k0_300K   * zt_help**(n) * cair ! k_0   at current T
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    kinf_T  = kinf_300K * zt_help**(m)        ! k_inf at current T
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    k_ratio = k0_T/kinf_T
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    nu      = 0.75-1.27*LOG10(fc)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    k_3rd_iupac = k0_T/(1._dp+k_ratio)* &
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+      fc**(1._dp/(1._dp+(LOG10(k_ratio)/nu)**2))
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  END FUNCTION k_3rd_iupac
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  ELEMENTAL REAL(dp) FUNCTION k_limited (k3rd,cHp)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    ! diffusion limitation caps 3rd order rate coefficients
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL(dp), INTENT(IN) :: k3rd  ! 3rd order rate coefficient
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL(dp), INTENT(IN) :: cHp   ! c(H+)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    REAL(dp), PARAMETER  :: DiffLimit = 1E10 ! diffusion limitation [M-1s-1]
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    INTRINSIC :: EXP
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+    k_limited = 1._dp / ( 1._dp/k3rd + cHp/DiffLimit)
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+  END FUNCTION k_limited
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#ENDINLINE {above lines go into MODULE messy_mecca_kpp_Rates}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+#EQUATIONS
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<G1nnn> ------------------------------- O -------------------------}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G1000>  O2   + O1D      = O3P + O2    : {%StTrG} 3.3E-11*EXP(55./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G1001>  O2   + O3P {+M} = O3          : {%StTrG} 6.E-34*((temp/300.)**(-2.4))*cair; {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G1002>  O3   + O1D      = 2 O2        : {%StG}   1.2E-10; {&&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G1003>  O3   + O3P      = 2 O2        : {%StG}   8.E-12*EXP(-2060./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<G2nnn> ------------------------------- H -------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G2100>  H    + O2 {+M}  = HO2         : {%StTrG} k_3rd(temp,cair,4.4E-32,1.3,4.7E-11,0.2,0.6); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2101>  H    + O3       = OH + O2     : {%StG}   1.4E-10*EXP(-470./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2102>  H2   + O1D      = H + OH      : {%StG}   1.1E-10; {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2103>  OH   + O3P      = H + O2      : {%StG}   2.2E-11*EXP(120./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2104>  OH   + O3       = HO2 + O2    : {%StTrG} 1.7E-12*EXP(-940./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2105>  OH   + H2       = H2O + H     : {%StTrG} 2.8E-12*EXP(-1800./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2106>  HO2  + O3P      = OH + O2     : {%StG}   3.E-11*EXP(200./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2107>  HO2  + O3       = OH + 2 O2   : {%StTrG} 1.E-14*EXP(-490./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2108a> HO2  + H        = 2 OH        : {%StG}   7.2E-11; {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2108b> HO2  + H        = H2 + O2     : {%StG}   6.9E-12; {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2108c> HO2  + H        = O3P + H2O   : {%StG}   1.6E-12; {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2109>  HO2  + OH       = H2O + O2    : {%StTrG} 4.8E-11*EXP(250./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2110>  HO2  + HO2      = H2O2 + O2   : {%StTrG} k_HO2_HO2; {&&1599, 165}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2111>  H2O  + O1D      = 2 OH        : {%StTrG} 1.63E-10*EXP(60./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G2112>  H2O2 + OH       = H2O + HO2   : {%StTrG} 1.8E-12; {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<G3nnn> ------------------------------- N -------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G3100>  N    + O2       = NO + O3P    : {%StGN}   1.5E-11*EXP(-3600./temp); {&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3101>  N2   + O1D      = O3P + N2    : {%StTrG}  2.15E-11*EXP(110./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3102a> N2O  + O1D      = 2 NO        : {%StGN}   6.7E-11*EXP(20./temp); {&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3102b> N2O  + O1D      = N2 + O2     : {%StGN}   4.7E-11*EXP(20./temp); {&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3103>  NO   + O3       = NO2 + O2    : {%StTrGN} 3.E-12*EXP(-1500./temp); {&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3104>  NO   + N        = O3P + N2    : {%StGN}   2.1E-11*EXP(100./temp); {&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3105>  NO2  + O3P      = NO + O2     : {%StGN}   5.1E-12*EXP(210./temp); {&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3106>  NO2  + O3       = NO3 + O2    : {%StTrGN} 1.2E-13*EXP(-2450./temp); {&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3107>  NO2  + N        = N2O + O3P   : {%StGN}   5.8E-12*EXP(220./temp); {&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3108>  NO3  + NO       = 2 NO2       : {%StTrGN} 1.5E-11*EXP(170./temp); {&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3109>  NO3  + NO2 {+M} = N2O5        : {%StTrGN} k_NO3_NO2; {&&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3110>  N2O5       {+M} = NO2 + NO3   : {%StTrGN} k_NO3_NO2/(2.7E-27*EXP(11000./temp)); {&&1945}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3200>  NO   + OH {+M}  = HONO          : {%TrGN}   k_3rd(temp,cair,7.0E-31,2.6,3.6E-11,0.1,0.6); {&1945}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3201>  NO   + HO2      = NO2   + OH    : {%StTrGN} 3.5E-12*EXP(250./temp); {&1945}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3202>  NO2  + OH  {+M} = HNO3          : {%StTrGN} k_3rd(temp,cair,1.8E-30,3.0,2.8E-11,0.,0.6); {&1945}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3203>  NO2  + HO2 {+M} = HNO4          : {%StTrGN} k_NO2_HO2; {&&1945}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3204>  NO3  + HO2      = NO2 + OH + O2 : {%TrGN}   3.5E-12; {&1945}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3205>  HONO + OH       = NO2 + H2O     : {%TrGN}   1.8E-11*EXP(-390./temp); {&1945}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3206>  HNO3 + OH       = H2O   + NO3   : {%StTrGN} k_HNO3_OH; {&&1945}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3207>  HNO4       {+M} = NO2   + HO2   : {%StTrGN} k_NO2_HO2/(2.1E-27*EXP(10900./temp)); {&&1945}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3208>  HNO4 + OH       = NO2   + H2O   : {%StTrGN} 1.3E-12*EXP(380./temp); {&1945}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3209>  NH3   + OH      = NH2 + H2O     : {%TrGN}   1.7E-12*EXP(-710./temp); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3210>  NH2   + O3      = NH2O + O2     : {%TrGN}   4.3E-12*EXP(-930./temp); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3211>  NH2   + HO2     = NH2O + OH     : {%TrGN}   4.8E-07*EXP(-628./temp)*temp**(-1.32); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3212>  NH2   + HO2     = HNO + H2O     : {%TrGN}   9.4E-09*EXP(-356./temp)*temp**(-1.12); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3213>  NH2   + NO      = HO2 + OH + N2 : {%TrGN}   1.92E-12*((temp/298.)**(-1.5)); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3214>  NH2   + NO      = N2 + H2O      : {%TrGN}   1.41E-11*((temp/298.)**(-1.5)); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3215>  NH2   + NO2     = N2O + H2O     : {%TrGN}   1.2E-11*((temp/298.)**(-2.0)); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3216>  NH2   + NO2     = NH2O + NO     : {%TrGN}   0.8E-11*((temp/298.)**(-2.0)); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3217>  NH2O  + O3      = NH2 + O2      : {%TrGN}   1.2E-14; {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3218>  NH2O            = NHOH          : {%TrGN}   1.3E+3; {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3219>  HNO   + OH      = NO + H2O      : {%TrGN}   8.0E-11*EXP(-500./temp); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3220>  HNO   + NHOH    = NH2OH + NO    : {%TrGN}   1.66E-12*EXP(-1500./temp); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3221>  HNO   + NO2     = HONO + NO     : {%TrGN}   1.0E-12*EXP(-1000./temp); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3222>  NHOH  + OH      = HNO + H2O     : {%TrGN}   1.66E-12; {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3223>  NH2OH + OH      = NHOH + H2O    : {%TrGN}   4.13E-11*EXP(-2138./temp); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G3224>  HNO   + O2      = HO2 + NO      : {%TrGN}   3.65E-14*EXP(-4600./temp); {&2415}
+marker:   44
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<G4nnn> ------------------------------- C -------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G4100>  CH4     + O1D     = .75 CH3O2 + .75 OH + .25 HCHO + .4 H + .05 H2 : {%StG}    1.5E-10; {&1945}
+marker:   78
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4101>  CH4     + OH {+O2}= CH3O2 + H2O      : {%StTrG}  1.85E-20*EXP(2.82*log(temp)-987./temp); {&&1627}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4102>  CH3OH   + OH      = HCHO + HO2        : {%TrG}    2.9E-12*EXP(-345./temp); {&1945}
+marker:   50
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4103>  CH3O2   + HO2     = CH3OOH + O2       : {%StTrG}  4.1E-13*EXP(750./temp); {&&1945}
+marker:   50
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4104>  CH3O2   + NO      = HCHO + NO2 + HO2  : {%StTrGN} 2.8E-12*EXP(300./temp); {&1945}
+marker:   50
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4105>  CH3O2   + NO3     = HCHO + HO2 + NO2  : {%TrGN}   1.3E-12; {&1207}
+marker:   50
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4106a> CH3O2   + CH3O2   = 2 HCHO + 2 HO2    : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+1./26.2*EXP(1130./temp)); {&1945}
+marker:   50
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4106b> CH3O2   + CH3O2   = HCHO + CH3OH + O2 : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+26.2*EXP(-1130./temp)); {&1945}
+marker:   50
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4107>  CH3OOH  + OH      = .7 CH3O2 + .3 HCHO + .3 OH + H2O : {%StTrG} k_CH3OOH_OH; {&&1945}
+marker:   65
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4108>  HCHO    + OH      = CO + H2O + HO2    : {%StTrG}  9.52E-18*EXP(2.03*log(temp)+636./temp); {&1634}
+marker:   50
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4109>  HCHO    + NO3     = HNO3 + CO + HO2   : {%TrGN}   3.4E-13*EXP(-1900./temp); {&&1945}
+marker:   50
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4110>  CO      + OH      = H + CO2           : {%StTrG}  1.57E-13 + cair*3.54E-33; {&1628}
+marker:   50
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4111>  HCOOH   + OH      = HO2               : {%TrG}    4.0E-13; {&1945}
+marker:   50
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4200>  C2H6    + OH      = EtO2 + H2O         : {%TrGC}   1.49E-17*temp*temp*EXP(-499./temp); {&1627}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4201>  C2H4    + O3      = HCHO + .22 HO2 + .12 OH + .23 CO + .54 HCOOH + .1 H2 : {%TrGC} 1.2E-14*EXP(-2630./temp); {&&1945}
+marker:   85
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4202>  C2H4    + OH {+M} = .6666667 C3H6O2    : {%TrGC}   k_3rd(temp,cair,1.0E-28,4.5,8.8E-12,0.85,0.6); {&1945}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4203>  EtO2    + HO2     = EtOOH              : {%TrGC}   7.5E-13*EXP(700./temp); {&1945}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4204>  EtO2    + NO      = CH3CHO + HO2 + NO2 : {%TrGNC}  2.6E-12*EXP(365./temp); {&1945}
+marker:   51
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4205>  EtO2    + NO3     = CH3CHO + HO2 + NO2 : {%TrGNC}  2.3E-12; {&1207}
+marker:   51
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4206>  EtO2    + CH3O2   = .75 HCHO + HO2 + .75 CH3CHO + .25 CH3OH {+.25EtOH} : {%TrGC} 1.6E-13*EXP(195./temp); {&&}
+marker:   83
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4207>  EtOOH   + OH      = .3 EtO2 + .7 CH3CHO + .7 OH      : {%TrGC} k_CH3OOH_OH; {&&}
+marker:   65
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4208>  CH3CHO  + OH      = PA + H2O           : {%TrGC}   4.4E-12*EXP(365./temp); {&1759}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4209>  CH3CHO  + NO3     = PA + HNO3          : {%TrGNC}  1.4E-12*EXP(-1900./temp); {&1945}
+marker:   51
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4210>  CH3COOH + OH {+O2}= CH3O2 + CO2 +H2O   : {%TrGC}   4.2E-14*EXP(855./temp); {&1759}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4211a> PA      + HO2     = PAA                : {%TrGC}   4.3E-13*EXP(1040./temp)/(1.+1./37.*EXP(660./temp)); {&1613}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4211b> PA      + HO2     = CH3COOH + O3       : {%TrGC}   4.3E-13*EXP(1040./temp)/(1.+37.*EXP(-660./temp)); {&1613}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4212>  PA      + NO      = CH3O2 + NO2        : {%TrGNC}  8.1E-12*EXP(270./temp); {&1613}
+marker:   51
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4213>  PA      + NO2     = PAN                : {%TrGNC}  k_PA_NO2; {&1945}
+marker:   51
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4214>  PA      + NO3     = CH3O2 + NO2        : {%TrGNC}  4.E-12; {&1617}
+marker:   51
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4215a> PA      + CH3O2   = HCHO + HO2 + CH3O2 + CO2      : {%TrGC} 0.9*2.E-12*EXP(500./temp); {&1945}
+marker:   62
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4215b> PA      + CH3O2   = CH3COOH + HCHO                : {%TrGC} 0.1*2.E-12*EXP(500./temp); {&1945}
+marker:   62
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4216>  PA      + EtO2    = .82 CH3O2 + CH3CHO + .82 HO2 + .18 CH3COOH : {%TrGC} 4.9E-12*EXP(211./temp); {&&1207, 1632}
+marker:   75
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4217>  PA      + PA      = 2 CH3O2 + 2 CO2 + O2          : {%TrGC} 2.5E-12*EXP(500./temp); {&1613}
+marker:   62
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4218>  PAA     + OH      = PA                 : {%TrGC}   k_CH3OOH_OH; {&&}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4219>  NACA    + OH      = NO2 + HCHO + CO    : {%TrGNC}  5.6E-12*EXP(270./temp); {&&}
+marker:   51
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4220>  PAN     + OH      = HCHO + NO2         : {%TrGNC}  2.E-14; {&&}
+marker:   51
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4221>  PAN     {+M}      = PA + NO2           : {%TrGNC}  k_PAN_M; {&&1945}
+marker:   51
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4222>  C2H2    + OH      = CH3O2              : {%TrGC} k_3rd(temp,cair,5.5e-30,0.0,8.3e-13,-2.,0.6); {&1945}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4300>  C3H8    + OH      = .82 PrO2 + .18 EtO2 + H2O     : {%TrGC} 1.65E-17*temp*temp*EXP(-87./temp); {&1627}
+marker:   62
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4301>  C3H6    + O3      = .57 HCHO + .47 CH3CHO + .33 OH + .26 HO2 + .07 CH3O2 + .06 EtO2 + .23 PA + .04 CH3COCHO + .06 CH4 + .31 CO + .22 HCOOH + .03 CH3OH                  : {%TrGC} 6.5E-15*EXP(-1900./temp); {&&1945}
+marker:   180
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4302>  C3H6    + OH {+M} = C3H6O2            : {%TrGC}   k_3rd(temp,cair,8.E-27,3.5,3.E-11,0.,0.5); {&1207}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4303>  C3H6    + NO3     = ONIT              : {%TrGNC}  4.6E-13*EXP(-1155./temp); {&1207}
+marker:   50
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4304>  PrO2    + HO2     = PrOOH             : {%TrGC}   k_PrO2_HO2; {&&964}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4305>  PrO2    + NO      = .96 CH3COCH3 + .96 HO2 + .96 NO2 + .04 PrONO2                  : {%TrGNC} k_PrO2_NO; {&&1207}
+marker:   95
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4306>  PrO2    + CH3O2   = CH3COCH3 + .8 HCHO + .8 HO2 + .2 CH3OH                  : {%TrGC} k_PrO2_CH3O2; {&1632}
+marker:   88
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4307>  PrOOH   + OH      = .3 PrO2 + .7 CH3COCH3 + .7 OH  : {%TrGC} k_CH3OOH_OH; {&&}
+marker:   63
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4308>  C3H6O2  + HO2     = C3H6OOH           : {%TrGC}   6.5E-13*EXP(650./temp); {&803}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4309>  C3H6O2  + NO      = .98 CH3CHO + .98 HCHO + .98 HO2 + .98 NO2 + .02 ONIT                  : {%TrGNC} 4.2E-12*EXP(180./temp); {&&803}
+marker:   102
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4310>  C3H6OOH + OH      = .5 C3H6O2 + .5 ACETOL + .5 OH + H2O                  : {%TrGC} 3.8E-12*EXP(200./temp); {&803}
+marker:   85
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4311>  CH3COCH3 + OH     = ACETO2 + H2O      : {%TrGC}   1.33E-13+3.82E-11*EXP(-2000./temp); {&1945}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4312>  ACETO2  + HO2     = ACETP             : {%TrGC}   8.6E-13*EXP(700./temp); {&1613}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4313>  ACETO2  + NO      = NO2 + PA + HCHO   : {%TrGNC}  2.9E-12*EXP(300./temp); {&1945}
+marker:   50
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4314>  ACETO2  + CH3O2   = .5 CH3COCHO + .5 CH3OH + .3 PA + .8 HCHO + .3 HO2 + .2 ACETOL                  : {%TrGC} 7.5E-13*EXP(500./temp); {&1613}
+marker:   111
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4315>  ACETP   + OH      = .3 ACETO2 + .7 CH3COCHO + .7 OH   : {%TrGC} k_CH3OOH_OH; {&&}
+marker:   66
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4316>  ACETOL  + OH      = CH3COCHO + HO2    : {%TrGC}   2.15E-12*EXP(305./temp); {&2156}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4317>  CH3COCHO + OH     = PA + CO           : {%TrGC}   8.4E-13*EXP(830./temp); {&1616}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4318>  MPAN    + OH      = ACETOL + NO2      : {%TrGNC}  3.2E-11; {&1629}
+marker:   50
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4319>  MPAN    {+M}      = MVKO2 + NO2       : {%TrGNC}  k_PAN_M; {&&}
+marker:   50
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4320>  PrONO2  + OH      = CH3COCH3 + NO2    : {%TrGNC}  6.2E-13*EXP(-230./temp); {&1207}
+marker:   50
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4400>  C4H10   + OH      = C4H9O2 + H2O      : {%TrGC}   1.81E-17*temp*temp*EXP(114./temp); {&1627}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4401>  C4H9O2  + CH3O2   = .88 MEK + .68 HCHO + 1.23 HO2 + .12 CH3CHO + .12 EtO2 + .18 CH3OH                  : {%TrGC} k_PrO2_CH3O2; {&&}
+marker:   115
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4402>  C4H9O2  + HO2     = C4H9OOH           : {%TrGC}   k_PrO2_HO2; {&&}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4403>  C4H9O2  + NO      = .84 NO2 + .56 MEK + .56 HO2 + .28 EtO2 + .84 CH3CHO + .16 ONIT : {%TrGNC} k_PrO2_NO; {&&}
+marker:   95
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4404>  C4H9OOH + OH      = .15 C4H9O2 + .85 MEK + .85 OH + .85 H2O                  : {%TrGC} k_CH3OOH_OH; {&&}
+marker:   89
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4405>  MVK     + O3      = .45 HCOOH + .9 CH3COCHO + .1 PA + .19 OH + .22 CO + .32 HO2                  : {%TrGC} .5*(1.36E-15*EXP(-2112./temp)+7.51E-16*EXP(-1521./temp)); {&1614}
+marker:   109
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4406>  MVK     + OH      = MVKO2             : {%TrGC}   .5*(4.1E-12*EXP(452./temp)+1.9E-11*EXP(175./temp)); {&1614}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4407>  MVKO2   + HO2     = MVKOOH            : {%TrGC}   1.82E-13*EXP(1300./temp); {&1614}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4408>  MVKO2   + NO      = NO2 + .25 PA + .25 ACETOL + .75 HCHO + .25 CO + .75 HO2 + .5 CH3COCHO : {%TrGNC} 2.54E-12*EXP(360./temp); {&1614}
+marker:   102
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4409>  MVKO2   + NO2     = MPAN              : {%TrGNC}  .25*k_3rd(temp,cair,9.7E-29,5.6,9.3E-12,1.5,0.6); {&&1614}
+marker:   50
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4410>  MVKO2   + CH3O2   = .5 CH3COCHO + .375 ACETOL + .125 PA + 1.125 HCHO + .875 HO2 + .125 CO + .25 CH3OH                  : {%TrGC} 2.E-12; {&1612}
+marker:   131
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4411>  MVKO2   + MVKO2   = ACETOL + CH3COCHO + .5 CO + .5 HCHO + HO2                  : {%TrGC} 2.E-12; {&1614}
+marker:   91
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4412>  MVKOOH  + OH      = MVKO2             : {%TrGC}   3.E-11; {&1614}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4413>  MEK     + OH      = MEKO2             : {%TrGC}   1.3E-12*EXP(-25./temp); {&1207}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4414>  MEKO2   + HO2     = MEKOOH            : {%TrGC}   k_PrO2_HO2; {&&}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4415>  MEKO2   + NO      = .985 CH3CHO + .985 PA + .985 NO2 + .015 ONIT                  : {%TrGNC} k_PrO2_NO; {&&}
+marker:   94
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4416>  MEKOOH  + OH      = .8 MeCOCO + .8 OH + .2 MEKO2  : {%TrGC} k_CH3OOH_OH; {&&}
+marker:   62
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4417>  ONIT    + OH      = MEK + NO2 + H2O   : {%TrGNC}  1.7E-12; {&&1207}
+marker:   50
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4500>  ISOP  + O3        = .28 HCOOH + .65 MVK + .1 MVKO2  + .1 PA + .14 CO + .58 HCHO + .09 H2O2 + .08 CH3O2 + .25 OH + .25 HO2                  : {%TrGC} 7.86E-15*EXP(-1913./temp); {&1614}
+marker:   151
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4501>  ISOP  + OH        = ISO2              : {%TrGC}   2.54E-11*EXP(410./temp); {&1614}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4502>  ISOP  + NO3       = ISON              : {%TrGNC}  3.03E-12*EXP(-446./temp); {&1614}
+marker:   50
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4503>  ISO2  + HO2       = ISOOH             : {%TrGC}   2.22E-13*EXP(1300./temp); {&&1630}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4504>  ISO2  + NO        = .88 NO2 + .88 MVK + .88 HCHO + .88 HO2 + .12 ISON                  : {%TrGNC} 2.54E-12*EXP(360./temp); {&&1614}
+marker:   99
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4505>  ISO2  + CH3O2     = .5 MVK + 1.25 HCHO + HO2 + .25 CH3COCHO + .25 ACETOL + .25 CH3OH                  : {%TrGC} 2.E-12; {&1612}
+marker:   114
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4506>  ISO2  + ISO2      = 2 MVK + HCHO + HO2 : {%TrGC}  2.E-12; {&1614}
+marker:   51
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4507>  ISOOH + OH        = MVK + OH          : {%TrGC}   1.E-10; {&1614}
+marker:   50
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G4508>  ISON  + OH        = ACETOL + NACA     : {%TrGNC}  1.3E-11; {&1614}
+marker:   50
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<G5nnn> ------------------------------- F -------------------------}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<G6nnn> ------------------------------- Cl ------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G6100>  Cl + O3         = ClO + O2    : {%StTrGCl}       2.8E-11*EXP(-250./temp); {&1845} {§0.06}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6101>  ClO + O3P       = Cl + O2     : {%StGCl}         2.5E-11*EXP(110./temp); {&1845} {§0.6}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6102a> ClO + ClO       = Cl2 + O2    : {%StTrGCl}       1.0E-12*EXP(-1590./temp); {&1845}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6102b> ClO + ClO       = 2 Cl + O2   : {%StTrGCl}       3.0E-11*EXP(-2450./temp); {&1845}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6102c> ClO + ClO       = Cl + OClO   : {%StTrGCl}       3.5E-13*EXP(-1370./temp); {&1845}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6102d> ClO + ClO {+M}  = Cl2O2       : {%StTrGCl}       k_ClO_ClO; {&1845}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6103>  Cl2O2 {+M}      = ClO + ClO   : {%StTrGCl}       k_ClO_ClO/(9.3E-28*EXP(8835./temp)); {&&1845, 1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6200>  Cl + H2         = HCl + H     : {%StGCl}         3.9E-11*EXP(-2310./temp); {&1845}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6201a> Cl + HO2        = HCl + O2    : {%StGCl}         4.4E-11-7.5E-11*EXP(-620./temp); {&1845}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6201b> Cl + HO2        = ClO + OH    : {%StGCl}         7.5E-11*EXP(-620./temp); {&1845}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6202>  Cl + H2O2       = HCl + HO2   : {%StTrGCl}       1.1E-11*EXP(-980./temp); {&1845}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6203>  ClO + OH        = .94 Cl + .94 HO2 + .06 HCl + .06 O2 : {%StGCl} 7.3E-12*EXP(300./temp); {&1845}
+marker:   66
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6204>  ClO + HO2       = HOCl        : {%StTrGCl}       2.2E-12*EXP(340./temp); {&1845} {§0.2}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6205>  HCl + OH        = Cl  + H2O   : {%StTrGCl}       1.7E-12*EXP(-230./temp); {&1845}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6206>  HOCl+ OH        = ClO + H2O   : {%StGCl}         3.0E-12*EXP(-500./temp); {&1945}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6300>  ClO   + NO       = NO2 + Cl   : {%StTrGNCl}      6.2E-12*EXP(295./temp); {&1845}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6301>  ClO   + NO2 {+M} = ClNO3      : {%StTrGNCl}      k_3rd_iupac(temp,cair,1.6E-31,3.4,7.E-11,0.,0.4); {&1845}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6302>  ClNO3            = ClO + NO2  : {%TrGCl}         6.918E-7*exp(-10909./temp)*cair; {&1059}
+marker:   42
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G6303>  ClNO3 + O3P      = ClO + NO3  : {%StGNCl}        4.5E-12*EXP(-900./temp); {&1845}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6304>  ClNO3 + Cl       = Cl2 + NO3  : {%StTrGNCl}      6.2E-12*EXP(145./temp); {&1845}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6400>  Cl      + CH4    = HCl + CH3O2       : {%StTrGCl}       6.6E-12*EXP(-1240./temp); {&1759}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6401>  Cl      + HCHO   = HCl + CO + HO2    : {%StTrGCl}       8.1E-11*EXP(-34./temp); {&1759}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6402>  Cl      + CH3OOH = HCHO + HCl + OH   : {%StTrGCl}       5.9E-11; {&&1759}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6403>  ClO     + CH3O2  = HO2 + Cl + HCHO   : {%StTrGCl}       3.3E-12*EXP(-115./temp); {&1945}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6404>  CCl4    + O1D    = ClO + 3 Cl {+...} : {%StGCl}         3.3E-10; {&1945}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6405>  CH3Cl   + O1D    = OH + Cl {+...}    : {%StGCl}         1.65E-10; {&&}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6406>  CH3Cl   + OH     = H2O + Cl {+...}   : {%StGCl}         2.4E-12*EXP(-1250./temp); {&1945}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6407>  CH3CCl3 + O1D    = OH + 3 Cl {+...}  : {%StGCCl}        3.E-10; {&&}
+marker:   49
+elements: C=1 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6408>  CH3CCl3 + OH     = H2O + 3 Cl {+...} : {%StTrGCCl}      1.64E-12*EXP(-1520./temp); {&1945}
+marker:   49
+elements: C=1 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6409>  Cl      + C2H4   = .6666667 C3H6O2 + HCl : {%TrGCCl}    k_3rd_iupac(temp,cair,1.85E-29,3.3,6.0E-10,0.0,0.4); {&1759}
+marker:   53
+elements: C=1 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G6410>  Cl      + CH3CHO = HCl + PA          : {%TrGCCl}        7.9e-11; {&&1759}
+marker:   49
+elements: C=1 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G6411>  C2H2    + Cl     = CH3O2 + HCl       : {%TrGCCl}        k_3rd_iupac(temp,cair,6.1e-30,3.0,2.0e-10,0.,0.6); {&1759}
+marker:   49
+elements: C=1 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G6412>  C2H6    + Cl     = CH3O2 + HCl       : {%TrGCCl}       8.3E-11*EXP(-100./temp); {&1759}
+marker:   49
+elements: C=1 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G6500>  CF2Cl2  + O1D    = ClO + Cl {+...}   : {%StGFCl}        1.4E-10; {&1945}
+marker:   49
+elements: C=0 N=0 F=1 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G6501>  CFCl3   + O1D    = ClO + 2 Cl {+...} : {%StGFCl}        2.3E-10; {&1945}
+marker:   49
+elements: C=0 N=0 F=1 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<G7nnn> ------------------------------- Br ------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7100>  Br   + O3       = BrO + O2       : {%StTrGBr}   1.7E-11*EXP(-800./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7101>  BrO  + O3P      = Br + O2        : {%StGBr}     1.9E-11*EXP(230./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7102a> BrO  + BrO      = 2 Br + O2      : {%StTrGBr}   2.7E-12; {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7102b> BrO  + BrO      = Br2 + O2       : {%StTrGBr}   2.9E-14*EXP(840./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7200>  Br   + HO2      = HBr + O2       : {%StTrGBr}   7.7E-12*EXP(-450./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7201>  BrO  + HO2      = HOBr + O2      : {%StTrGBr}   4.5E-12*EXP(500./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7202>  HBr  + OH       = Br  + H2O      : {%StTrGBr}   6.7E-12*EXP(155./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7203>  HOBr + O3P      = OH  + BrO      : {%StGBr}     1.2E-10*EXP(-430./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7204>  Br2  + OH       = HOBr + Br      : {%StTrGBr}   2.0E-11*EXP(240./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7300>  Br   + BrNO3    = Br2 + NO3      : {%TrGBr}     4.9E-11; {&1054}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7301>  BrO  + NO       = Br  + NO2      : {%StTrGNBr}  8.7E-12*EXP(260./temp); {&1845}
+marker:   45
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7302>  BrO  + NO2 {+M} = BrNO3          : {%StTrGNBr}  k_BrO_NO2; {&&1845}
+marker:   45
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7303>  BrNO3           = BrO + NO2      : {%TrGBr}     k_BrO_NO2/(5.44E-9*exp(14192./temp)*1.E6*R_gas*temp/(atm2Pa*N_A)); {&&1054, 1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7400>  Br   + HCHO     = HBr + CO + HO2 : {%StTrGBr}   7.7E-12*EXP(-580./temp); {&1759}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7401>  Br   + CH3OOH   = CH3O2 + HBr    : {%TrGBr}     2.66E-12*EXP(-1610./temp); {&233}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7402a> BrO  + CH3O2    = HOBr + HCHO    : {%TrGBr}     0.8/1.1*5.7E-12; {&822}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7402b> BrO  + CH3O2    = Br + HCHO + HO2: {%TrGBr}     0.3/1.1*5.7E-12; {&822}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7403>  CH3Br + OH      = H2O + Br       : {%StTrGBr}   2.35E-12*EXP(-1300./temp); {&1945}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7404>  Br   + C2H4     = .6666667 C3H6O2 + HBr : {%TrGCBr} 2.8E-13*EXP(224./temp)/(1.+1.13E+24*EXP(-3200./temp)/C(ind_O2)); {&1759}
+marker:   52
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7405>  Br   + CH3CHO   = HBr + PA       : {%TrGCCl}    1.8e-11*EXP(-460./temp); {&1759}
+marker:   45
+elements: C=1 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7406>  Br   + C2H2     = CH3O2 + HBr    : {%TrGCBr}    6.35e-15*EXP(440./temp); {&1759}
+marker:   45
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7407>  CHBr3  + OH = H2O + 3 Br {+CH3O2} : {%TrGBr}    1.35E-12*EXP(-600./temp); {&&1945}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7408>  CH2Br2 + OH = H2O + 2 Br {+CH3O2} : {%TrGBr}    2.0E-12*EXP(-840./temp);  {&&1945}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7600>  Br   + BrCl     = Br2  + Cl      : {%TrGBrCl}   3.3E-15; {&233}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7601>  Br   + Cl2      = BrCl + Cl      : {%TrGClBr}   1.1E-15; {&233}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7602>  Br2  + Cl       = BrCl + Br      : {%TrGClBr}   1.2E-10; {&233}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7603a> BrO  + ClO      = Br   + OClO    : {%StTrGClBr} 1.6E-12*EXP(430./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7603b> BrO  + ClO      = Br   + Cl + O2 : {%StTrGClBr} 2.9E-12*EXP(220./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7603c> BrO  + ClO      = BrCl + O2      : {%StTrGClBr} 5.8E-13*EXP(170./temp); {&1845}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G7604>  BrCl + Cl       = Br   + Cl2     : {%TrGClBr}   1.5E-11; {&233}
+marker:   45
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7605>  CHCl2Br + OH = H2O + Br   {+CH3O2} : {%TrGBr} 2.0E-12*EXP(-840./temp); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7606>  CHClBr2 + OH = H2O + 2 Br {+CH3O2} : {%TrGBr} 2.0E-12*EXP(-840./temp); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G7607>  CH2ClBr + OH = H2O + Br   {+CH3O2} : {%TrGBr} 2.4E-12*EXP(-920./temp); {&&1945}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<G8nnn> ------------------------------- I -------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8100>  I     + O3    = IO + O2           : {%TrGI}   2.1E-11*EXP(-830./temp); {&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8102>  OIO   + OIO   = IPART             : {%TrGI}   5.E-11; {&&1456}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8103>  IO    + IO    = .38 OIO + 1.62 I + .62 O2 : {%TrGI} 5.4E-11*EXP(180./temp); {&&1845}
+marker:   54
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8200>  I     + HO2   = HI  + O2          : {%TrGI}   1.5E-11*EXP(-1090./temp); {&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8201>  IO    + HO2   = HOI + O2          : {%TrGI}   1.4E-11*EXP(540./temp); {&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8202>  HI    + OH    = I   + H2O         : {%TrGI}   1.6E-11*EXP(440./temp); {&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8203>  OIO   + OH    = HIO3              : {%TrGI}   2.2E-10*EXP(243./temp); {&1788}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8204>  I2    + OH    = HOI + I           : {%TrGI}   2.1E-10; {&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8300>  I + NO2 {+M}  = INO2              : {%TrGI}   k_I_NO2; {&&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8301>  I     + NO3   = IO + NO2          : {%TrGI}   1.E-10; {&2244}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8302>  IO    + NO    = I  + NO2          : {%TrGI}   7.15E-12*EXP(300./temp); {&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8303>  IO + NO2 {+M} = INO3              : {%TrGI}   k_3rd_iupac(temp,cair,7.7E-31,5.,1.6E-11,0.,0.4); {&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8304>  OIO   + NO    = NO2 + IO          : {%TrGI}   1.1E-12*EXP(542./temp); {&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8305>  INO2          = I + NO2           : {%TrGI}   k_I_NO2/(3.7E-7*exp(9568./temp)*1.E6*R_gas*temp/(atm2Pa*N_A)); {&&1644, 1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8306>  INO3          = IO + NO2          : {%TrGI}   0.; {&&}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8307>  I2    + NO3   = I + INO3          : {%TrGI}   1.5E-12; {&1845}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8308>  IO    + NO3   = OIO + NO2         : {%TrGI}   1.E-11; {&2244}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8400>  C3H7I + OH    = CH3O2 + I         : {%TrGI}   1.2E-12; {&1503}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8401>  CH3O2 + IO    = .4 I + .6 OIO + HCHO + HO2 : {%TrGI} 2.E-12; {&&2079, 2089}
+marker:   55
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8402>  CH3I + NO3 {+O2} = HNO3 + HCHO + IO : {%TrGI} 3.4E-17; {&&94}
+marker:   48
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8600>  IO    + ClO   = .2 ICl + .25 Cl + .55 OClO + .8 I + .45 O2 : {%TrGClI} 4.7E-12*EXP(280./temp); {&1845} {products: 20% ICl+O2, 25% I+Cl+O2, 55% I+OClO}
+marker:   71
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8700>  I     + BrO   = IO + Br           : {%TrGBrI} 1.2E-11; {&1945}
+marker:   46
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G8701>  IO    + BrO   = Br + .8 OIO + .2 I + .2 O2 : {%TrGBrI} 1.5E-11*EXP(510./temp); {&&1845}
+marker:   55
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<G9nnn> ------------------------------- S -------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G9200>  SO2    + OH    = H2SO4 + HO2         : {%StTrGS}   k_3rd(temp,cair,3.3E-31,4.3,1.6E-12,0.,0.6); {&1945}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G9400a> DMS    + OH    = CH3SO2 + HCHO       : {%TrGS}   1.13E-11*EXP(-253./temp); {&&1610}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G9400b> DMS    + OH    = DMSO + HO2          : {%TrGS}   k_DMS_OH; {&&1610}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G9401>  DMS    + NO3   = CH3SO2 + HNO3 + HCHO  {-O3}: {%TrGNS} 1.9E-13*EXP(520./temp); {&1610}
+marker:   56
+elements: C=0 N=1 F=0 S=1 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G9402>  DMSO   + OH    = .6 SO2 +  HCHO + .6 CH3O2 + .4 HO2 + .4 CH3SO3H : {%TrGS} 1.E-10; {&746}
+marker:   77
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G9403>  CH3SO2         = SO2 + CH3O2         : {%TrGS}   1.9E13*EXP(-8661./temp); {&749}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G9404>  CH3SO2 + O3    = CH3SO3              : {%TrGS}   3.E-13; {&749}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G9405>  CH3SO3 + HO2   = CH3SO3H             : {%TrGS}   5.E-11; {&749}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<G9600>  DMS + Cl       = CH3SO2 + HCl + HCHO : {%TrGSCl} 3.3E-10; {&1610}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G9700>  DMS + Br       = CH3SO2 + HBr + HCHO : {%TrGSBr} 9.E-11*EXP(-2386./temp); {&299}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G9701>  DMS + BrO      = DMSO + Br           : {%TrGSBr} 2.54E-14*EXP(850./temp); {&932}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G9800>  DMS + IO       = DMSO + I            : {%TrGSI}  3.2E-13*EXP(-925./temp); {&2080}
+marker:   49
+elements: C=0 N=0 F=0 S=1 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<G10nnn> ------------------------------- Hg ------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10100>  Hg + O3       = HgO + O2            : {%TrGHg}   3.0E-20; {&2394}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10200>  Hg + OH       = HgO + H             : {%TrGHg}   3.55E-14*EXP(294./temp); {&2252}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10201>  Hg + H2O2     = HgO + H2O           : {%TrGHg}   8.5E-19; {&&2248}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10600>  Hg + Cl       = HgCl                : {%TrGHgCl} 1.0E-11; {&2246}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10601>  Hg + Cl2      = HgCl2               : {%TrGHgCl} 2.6E-18; {&2246}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10700>  Hg + Br       = HgBr                : {%TrGHgBr} 3.0E-13; {&2282}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10701>  HgBr + Br     = HgBr2               : {%TrGHgBr} 3.0E-12; {&2273}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10702>  Hg + Br2      = HgBr2               : {%TrGHgBr} 9.0E-17; {&2246} 
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10703>  Hg + BrO      = HgO + Br            : {%TrGHgBr} 1.0E-15; {&2261}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10704>  HgBr + BrO    = BrHgOBr             : {%TrGHgBr} 3.0E-12; {&2273}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10705>  HgCl + BrO    = ClHgOBr             : {%TrGHgClBr} 3.0E-12; {&2273}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10706>  HgBr + Cl     = ClHgBr              : {%TrGHgClBr} 3.0E-12; {&2273}
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<G10707>  HgCl + Br     = ClHgBr              : {%TrGHgClBr} 3.0E-12; {&2273} 
+marker:   49
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=1
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<J1nnn> ------------------------------- O -------------------------}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J1000>  O2      + hv = O3P + O3P  : {%StTrGJ} jx(ip_O2); {&&}
+marker:   38
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J1001a> O3      + hv = O1D        : {%StTrGJ} jx(ip_O1D); {&&}
+marker:   38
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J1001b> O3      + hv = O3P        : {%StTrGJ} jx(ip_O3P); {&&}
+marker:   38
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<J2nnn> ------------------------------- H -------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J2100>  H2O     + hv = H + OH     : {%StGJ}   jx(ip_H2O); {&&}
+marker:   38
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J2101>  H2O2    + hv = 2 OH       : {%StTrGJ} jx(ip_H2O2); {&&}
+marker:   38
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<J3nnn> ------------------------------- N -------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J3100>  N2O     + hv = O1D        : {%StGNJ}   jx(ip_N2O); {&&}
+marker:   38
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J3101>  NO2     + hv = NO + O3P   : {%StTrGNJ} jx(ip_NO2); {&&}
+marker:   38
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J3102>  NO      + hv = N + O3P    : {%StGNJ}   jx(ip_NO); {&&}
+marker:   38
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J3103a> NO3     + hv = NO2 + O3P  : {%StTrGNJ} jx(ip_NO2O); {&&}
+marker:   38
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J3103b> NO3     + hv = NO         : {%StTrGNJ} jx(ip_NOO2); {&&}
+marker:   38
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J3104a> N2O5    + hv = NO2 + NO3  : {%StTrGNJ} jx(ip_N2O5); {&&}
+marker:   38
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J3104b> N2O5    + hv = NO + O3P + NO3  : {%StGNJ} jx(ip_NO3NOO); {&&}
+marker:   43
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J3200>  HONO    + hv = NO + OH    : {%TrGJ}    jx(ip_HONO); {&&}
+marker:   38
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J3201>  HNO3    + hv = NO2 + OH   : {%StTrGNJ} jx(ip_HNO3); {&&}
+marker:   38
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J3202>  HNO4    + hv = .667 NO2 + .667 HO2 + .333 NO3 + .333 OH : {%StTrGNJ} jx(ip_HNO4); {&&}
+marker:   68
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<J4nnn> ------------------------------- C -------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J4100>  CH3OOH  + hv = HCHO + OH + HO2            : {%StTrGJ} jx(ip_CH3OOH); {&&}
+marker:   54
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4101a> HCHO    + hv = H2 + CO                    : {%StTrGJ} jx(ip_COH2); {&&}
+marker:   54
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4101b> HCHO    + hv = H + CO + HO2               : {%StTrGJ} jx(ip_CHOH); {&&}
+marker:   54
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4102>  CO2     + hv = CO + O3P                   : {%StGJ}   jx(ip_CO2); {&&}
+marker:   54
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4103>  CH4     + hv = CO + 0.31 H + 0.69 H2 + 1.155 H2O : {%StGJ} jx(ip_CH4); {&&}
+marker:   61
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4200>  EtOOH   + hv = CH3CHO + HO2 + OH          : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4201>  CH3CHO  + hv = CH3O2 + HO2 + CO           : {%TrGCJ}  jx(ip_CH3CHO); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4202>  PAA     + hv = CH3O2 + OH                 : {%TrGCJ}  jx(ip_PAA); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4203>  NACA    + hv = NO2 + HCHO + CO            : {%TrGNCJ} 0.19*jx(ip_CHOH); {&&}
+marker:   54
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4204>  PAN     + hv = .6 PA + .6 NO2 + .4 CH3O2 + .4 NO3 + .4 CO2 : {%TrGNCJ} jx(ip_PAN); {&&}
+marker:   71
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4300>  PrOOH    + hv = CH3COCH3 + HO2 + OH       : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4301>  CH3COCH3 + hv = PA + CH3O2                : {%TrGCJ}  jx(ip_CH3COCH3); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4302>  ACETOL   + hv = PA + HCHO + HO2           : {%TrGCJ}  0.074*jx(ip_CHOH); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4303>  CH3COCHO + hv = PA + CO + HO2             : {%TrGCJ}  jx(ip_CH3COCHO); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4304>  ACETP    + hv = PA + HO2 + OH             : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4305>  MPAN     + hv = ACETOL + NO2              : {%TrGNCJ} jx(ip_PAN); {&&}
+marker:   54
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4306>  PrONO2   + hv = CH3COCH3 + NO2 + HO2      : {%TrGNCJ} 3.7*jx(ip_PAN); {&&}
+marker:   54
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4400>  C4H9OOH + hv = OH + .67 MEK + .67 HO2 + .33 EtO2 + .33 CH3CHO : {%TrGCJ} jx(ip_CH3OOH); {&&}
+marker:   74
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4401>  MVK     + hv = PA + HCHO + CO + HO2       : {%TrGCJ}  0.019*jx(ip_COH2)+.015*jx(ip_CH3COCHO); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4402>  MVKOOH  + hv = OH + .5 CH3COCHO + .25 ACETOL + .75 HCHO + .75 HO2 + .25 PA + .25 CO : {%TrGCJ} jx(ip_CH3OOH); {&&}
+marker:   96
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4403>  MEK     + hv = PA + EtO2                  : {%TrGCJ}  0.42*jx(ip_CHOH); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4404>  MEKOOH  + hv = PA + CH3CHO + OH           : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4405>  MeCOCO  + hv = 2 PA                       : {%TrGCJ}  2.15*jx(ip_CH3COCHO); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4406>  ONIT    + hv = NO2 + .67 MEK + .67 HO2 + .33 EtO2 + .33 CH3CHO : {%TrGNCJ} 3.7*jx(ip_PAN); {&&}
+marker:   75
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4500>  ISOOH   + hv = MVK + HCHO + HO2 + OH      : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+marker:   54
+elements: C=1 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J4501>  ISON    + hv = MVK + HCHO + NO2 + HO2     : {%TrGNCJ} 3.7*jx(ip_PAN); {&&}
+marker:   54
+elements: C=1 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<J5nnn> ------------------------------- F -------------------------}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<J6nnn> ------------------------------- Cl ------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J6000>  Cl2     + hv = Cl + Cl             : {%StTrGClJ}   jx(ip_Cl2); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6100>  Cl2O2   + hv = 2 Cl                : {%StTrGClJ}   1.4*jx(ip_Cl2O2); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6101>  OClO    + hv = ClO + O3P           : {%StTrGClJ}   jx(ip_OClO); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6200>  HCl     + hv = Cl + H              : {%StGClJ}     jx(ip_HCl); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6201>  HOCl    + hv = OH + Cl             : {%StTrGClJ}   jx(ip_HOCl); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6300>  ClNO2   + hv = Cl + NO2            : {%TrGNClJ}    jx(ip_ClNO2); {&&}
+marker:   47
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J6301a> ClNO3   + hv = Cl + NO3            : {%StTrGNClJ}  jx(ip_ClNO3); {&&}
+marker:   47
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6301b> ClNO3   + hv = ClO + NO2           : {%StTrGNClJ}  jx(ip_ClONO2); {&&}
+marker:   47
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6400>  CH3Cl   + hv = Cl + CH3O2          : {%StGClJ}     jx(ip_CH3Cl); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6401>  CCl4    + hv = 4 Cl                : {%StGClJ}     jx(ip_CCl4); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6402>  CH3CCl3 + hv = 3 Cl                : {%StGCClJ}    jx(ip_CH3CCl3); {&&}
+marker:   47
+elements: C=1 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6500>  CFCl3   + hv = 3 Cl                : {%StGFClJ}    jx(ip_CFCl3); {&&}
+marker:   47
+elements: C=0 N=0 F=1 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J6501>  CF2Cl2  + hv = 2 Cl                : {%StGFClJ}    jx(ip_CF2Cl2); {&&}
+marker:   47
+elements: C=0 N=0 F=1 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+{<J7nnn> ------------------------------- Br ------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J7000>  Br2     + hv = Br + Br             : {%StTrGBrJ}   jx(ip_Br2); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J7100>  BrO     + hv = Br + O3P            : {%TrGBrJ}     jx(ip_BrO); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J7200>  HOBr    + hv = Br + OH             : {%StTrGBrJ}   jx(ip_HOBr); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J7300>  BrNO2   + hv = Br + NO2            : {%TrGNBrJ}    jx(ip_BrNO2); {&&}
+marker:   47
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J7301>  BrNO3   + hv = 0.29 Br + 0.29 NO3 + 0.71 BrO + 0.71 NO2 : {%StTrGNBrJ}  jx(ip_BrNO3); {&&}
+marker:   68
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J7400>  CH3Br   + hv = Br + CH3O2          : {%StGBrJ}   jx(ip_CH3Br); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J7401>  CH2Br2  + hv = 2 Br {+CH3O2}       : {%TrGBrJ}     jx(ip_CH2Br2); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J7402>  CHBr3   + hv = 3 Br {+CH3O2}       : {%TrGBrJ}     jx(ip_CHBr3); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J7500>  CF3Br   + hv = Br                  : {%StGFBrJ}    jx(ip_CF3Br); {&&}
+marker:   47
+elements: C=0 N=0 F=1 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J7600>  BrCl    + hv = Br + Cl             : {%StTrGClBrJ} jx(ip_BrCl); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J7601>  CF2ClBr + hv = Br + Cl             : {%StGFBrJ}    jx(ip_CF2ClBr); {&&}
+marker:   47
+elements: C=0 N=0 F=1 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=0 St=1 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<J7602>  CH2ClBr + hv = Br + Cl   {+CH3O2}  : {%TrGClBrJ}   jx(ip_CH2ClBr); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J7603>  CHCl2Br + hv = Br + 2 Cl {+CH3O2}  : {%TrGClBrJ}   jx(ip_CHCl2Br); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J7604>  CHClBr2 + hv = 2 Br + Cl {+CH3O2}  : {%TrGClBrJ}   jx(ip_CHClBr2); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<J8nnn> ------------------------------- I -------------------------}{@\myhline}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8000>  I2      + hv = I + I               : {%TrGIJ}      jx(ip_I2); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8100>  IO      + hv = I + O3P             : {%TrGIJ}      jx(ip_IO); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8200>  HOI     + hv = I + OH              : {%TrGIJ}      jx(ip_HOI); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8300>  INO2    + hv = I + NO2             : {%TrGNIJ}     jx(ip_INO2); {&&}
+marker:   47
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8301>  INO3    + hv = I + NO3             : {%TrGNIJ}     jx(ip_INO3); {&&}
+marker:   47
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8400>  CH2I2   + hv = 2 I + 2 HO2 + CO    : {%TrGIJ}      jx(ip_CH2I2); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8401>  CH3I    + hv = I + CH3O2           : {%TrGIJ}      jx(ip_CH3I); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8402>  C3H7I   + hv = I + CH3O2           : {%TrGIJ}      jx(ip_C3H7I); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8403>  CH2ClI  + hv = I + Cl + 2 HO2 + CO : {%TrGIClJ}    jx(ip_CH2ClI); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8600>  ICl     + hv = I + Cl              : {%TrGClIJ}    jx(ip_ICl); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<J8700>  IBr     + hv = I + Br              : {%TrGBrIJ}    jx(ip_IBr); {&&}
+marker:   47
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=1 Hg=0
+phase:    Aa=0 G=1 Ara=0
+other:    Tr=1 St=0 J=1 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<J9nnn> ------------------------------- S -------------------------}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{<HETnnn> ------------------------------ HET ------------------------}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<HET200> N2O5 + H2O  = 2 HNO3       : {%StHetN}     khet_St(ihs_N2O5_H2O);  {&&}
+marker:   39
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET201> N2O5        = 2 NO3m_cs + 2 Hp_cs : {%TrHetN}     khet_Tr(iht_N2O5);      {&&}
+marker:   46
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=0 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET202> HNO3        = NO3m_cs + Hp_cs : {%TrHetN}     khet_Tr(iht_HNO3);      {&&}
+marker:   42
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=0 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET410> HOCl  + HCl = Cl2 + H2O    : {%StHetCl}    khet_St(ihs_HOCl_HCl);  {&&}
+marker:   39
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET420> ClNO3 + HCl = Cl2 + HNO3   : {%StHetNCl}   khet_St(ihs_ClNO3_HCl); {&&}
+marker:   39
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET421> ClNO3 + H2O = HOCl + HNO3  : {%StHetNCl}   khet_St(ihs_ClNO3_H2O); {&&}
+marker:   39
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET422> N2O5  + HCl = ClNO2 + HNO3 : {%StHetNCl}   khet_St(ihs_N2O5_HCl);  {&&}
+marker:   39
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET510> HOBr  + HBr = Br2 + H2O    : {%StHetBr}    khet_St(ihs_HOBr_HBr);  {&&}
+marker:   39
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET520> BrNO3 + H2O = HOBr + HNO3  : {%StHetNBr}   khet_St(ihs_BrNO3_H2O); {&&}
+marker:   39
+elements: C=0 N=1 F=0 S=0 Cl=0 Br=1 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET540> ClNO3 + HBr = BrCl + HNO3  : {%StHetNClBr} khet_St(ihs_ClNO3_HBr); {&&}
+marker:   39
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET541> BrNO3 + HCl = BrCl + HNO3  : {%StHetNClBr} khet_St(ihs_BrNO3_HCl); {&&}
+marker:   39
+elements: C=0 N=1 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET542> HOCl  + HBr = BrCl + H2O   : {%StHetClBr}  khet_St(ihs_HOCl_HBr);  {&&}
+marker:   39
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET543> HOBr  + HCl = BrCl + H2O   : {%StHetClBr}  khet_St(ihs_HOBr_HCl);  {&&}
+marker:   39
+elements: C=0 N=0 F=0 S=0 Cl=1 Br=1 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   1
+
+<HET1001> Hg         = RGM_cs : {%StTrHetHg}     khet_Tr(iht_Hg)  + khet_St(ihs_Hg);      {&&}
+marker:   33
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<HET1002> HgO        = RGM_cs : {%StTrHetHg}     khet_Tr(iht_RGM) + khet_St(ihs_RGM);      {&&}
+marker:   33
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<HET1003> HgCl       = RGM_cs : {%StTrHetHg}     khet_Tr(iht_RGM) + khet_St(ihs_RGM);      {&&}
+marker:   33
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<HET1004> HgCl2      = RGM_cs : {%StTrHetHg}     khet_Tr(iht_RGM) + khet_St(ihs_RGM);      {&&}
+marker:   33
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<HET1005> HgBr       = RGM_cs : {%StTrHetHg}     khet_Tr(iht_RGM) + khet_St(ihs_RGM);      {&&}
+marker:   33
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<HET1006> HgBr2      = RGM_cs : {%StTrHetHg}     khet_Tr(iht_RGM) + khet_St(ihs_RGM);      {&&}
+marker:   33
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<HET1007> ClHgBr     = RGM_cs : {%StTrHetHg}     khet_Tr(iht_RGM) + khet_St(ihs_RGM);      {&&}
+marker:   33
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<HET1008> BrHgOBr    = RGM_cs : {%StTrHetHg}     khet_Tr(iht_RGM) + khet_St(ihs_RGM);      {&&}
+marker:   33
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+<HET1009> ClHgOBr    = RGM_cs : {%StTrHetHg}     khet_Tr(iht_RGM) + khet_St(ihs_RGM);      {&&}
+marker:   33
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=1
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=1 St=1 J=0 Het=1 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+{***** END:   gas-phase chemistry from gas.eqn *****}
+marker:   0
+elements: C=0 N=0 F=0 S=0 Cl=0 Br=0 I=0 Hg=0
+phase:    Aa=0 G=0 Ara=0
+other:    Tr=0 St=0 J=0 Het=0 Mbl=0 Sc=0 Scm=0
+wanted:   0
+
+REQ_HET     = .TRUE.
+REQ_PHOTRAT = .TRUE.
+REQ_AEROSOL = .FALSE.
+No diagtracfile selected
+
+Numerical integrator:
+Default selection: rosenbrock_posdef
+
+This is KPP-2.2.1_rs3.
+
+KPP is parsing the equation file.
+### Options -------------------------------------------
+FUNCTION - AGGREGATE
+JACOBIAN - SPARSE W/ ACCOUNT FOR LU DECOMPOSITION FILL-IN
+DOUBLE   - ON
+REORDER  - ON
+MEX      - OFF
+DUMMYINDEX - ON
+EQNTAGS - ON
+
+KPP is computing Jacobian sparsity structure.
+KPP is starting the code generation.
+KPP is initializing the code generation.
+KPP is generating the monitor data:
+    - messy_mecca_kpp_Monitor
+KPP is generating the utility data:
+    - messy_mecca_kpp_Util
+KPP is generating the global declarations:
+    - messy_mecca_kpp_Main
+KPP is generating the ODE function:
+    - messy_mecca_kpp_Function
+KPP is generating the ODE Jacobian:
+    - messy_mecca_kpp_Jacobian
+    - messy_mecca_kpp_JacobianSP
+KPP is generating the linear algebra routines:
+    - messy_mecca_kpp_LinearAlgebra
+KPP is generating the utility functions:
+    - messy_mecca_kpp_Util
+KPP is generating the rate laws:
+    - messy_mecca_kpp_Rates
+KPP is generating the parameters:
+    - messy_mecca_kpp_Parameters
+KPP is generating the global data:
+    - messy_mecca_kpp_Global
+KPP is generating the driver from none.f90:
+    - messy_mecca_kpp_Main
+KPP is starting the code post-processing.
+
+KPP has succesfully created the model "messy_mecca_kpp".
+
+
+Number of species in selected mechanism:
+gas phase:          106
+aqueous phase:      0
+all species:        106
+
+Number of reactions in selected mechanism:
+gas phase      G:   196
+aqueous phase  A:   0
+Henry          H:   0
+photolysis     J:   60
+aq. photolysis PH:  0
+heterogeneous  HET: 13
+equilibria     EQ:  0
+dummy          D:   0
+all equations:      269
+Deleting the temporary xmecca files:
+Makefile_messy_mecca_kpp
+messy_mecca_kpp.map
+messy_mecca_kpp_Model.f90
+tmp_0.eqn
+tmp_1.awk
+tmp_1.eqn
+tmp_1.f90
+tmp_2.eqn
+tmp_2.f90
+tmp_3.tex
+tmp_4.eqn
+tmp_messy_mecca_kpp_Global_f90
+tmp_param

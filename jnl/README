@@ -1,0 +1,4 @@
+To make sure that ferret finds the files in the tools directory, you
+have to set the $FER_GO environment variable accordingly:
+
+setenv FER_GO "$FER_GO ./tools"

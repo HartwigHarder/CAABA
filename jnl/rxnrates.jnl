@@ -1,0 +1,62 @@
+\CANCEL MODE verify ! like "unset echo" under unix
+CANCEL DATA/ALL
+CANCEL VARIABLE/ALL
+CANCEL SYMBOL/ALL
+
+! argument checking
+DEFINE SYMBOL dim         = $1"0d|0d|1d|2d"
+DEFINE SYMBOL unitacronym = $2"mpm|mpm|mpc|pa|"
+DEFINE SYMBOL jnlfile     = rxnrates
+DEFINE SYMBOL argv        = ($dim) ($unitacronym)
+
+! set makepdf to TRUE only for 1-page plots:
+!DEFINE SYMBOL makepdf = TRUE
+
+go setmodelrun
+go initialize
+USE "($run0)/caaba_messy.nc"     ! d=1 press,temp
+! sensi first
+DEFINE SYMBOL dsensi = 2 !data set number of first sensi (try `,RETURN=dsetnum`)
+IF `($nsensi) GT 0` THEN ! for PLOT/OVER
+  REPEAT/range=1:($nsensi)/name=dnum ( \
+    DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+    USE "($run($dnum))/caaba_mecca.nc" )
+ENDIF
+! base last because it must be the current data set
+!USE "($run0)_tracer_gp.nc"
+USE "($run0)/caaba_mecca.nc"
+DEFINE SYMBOL dbase = `($nsensi)+2`
+say base run = data set number ($dbase)
+
+GO initviewport 3 7 smallheader
+DEFINE SYMBOL pagetitle = rxnrates
+GO _kppvarg ! DEFINE kpp variables
+
+! DEFINE factor for conversion to selected unit
+IF ($unitacronym%|mpm>TRUE|*>FALSE|%) THEN
+  ! leave DATA as it is [mol/mol]
+  LET conv = 1
+  DEFINE SYMBOL unit = fromdataset
+ENDIF
+IF ($unitacronym%|mpc>TRUE|*>FALSE|%) THEN
+  ! convert DATA to [molecules/cm3]
+  LET conv = 6.022e23*1.e-6*press[d=1]/(8.314409*temp[d=1])
+  DEFINE SYMBOL unit = mcl/cc
+ENDIF
+IF ($unitacronym%|pa>TRUE|*>FALSE|%) THEN
+  ! convert DATA to partial pressure [Pa]
+  LET conv = press[d=1]
+  DEFINE SYMBOL unit = Pa
+ENDIF
+SAY unit = [($unit)]
+LET factor = conv
+
+!-------------------------------------------------------------------------------
+
+go _rxnrates
+
+!-------------------------------------------------------------------------------
+
+GO exitviewport
+
+EXIT

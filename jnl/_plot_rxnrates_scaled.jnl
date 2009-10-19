@@ -1,0 +1,13 @@
+! ------------------------------------------------------------------------------
+
+IF `"($3)" EQ "($species)"` THEN
+  GO nextviewport
+  DEFINE SYMBOL plotunit = `$1, RETURN=unit`
+  !qqq improve unit (maybe rate per day?)
+  LET/UNITS="($plotunit)/s" scaledplotdata = $1[l=@ddc]
+  PLOT/SET/TITLE="($2)" scaledplotdata
+  GO ppl_mylayout
+  PPL PLOT
+ENDIF
+
+! ------------------------------------------------------------------------------

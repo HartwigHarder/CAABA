@@ -1,0 +1,29 @@
+! test IF VARIABLE $1 exists
+LET/D ($1) = 0 ! default = dummy scalar value
+LET datasize = `$1,RETURN=SIZE`
+IF `datasize EQ 1` THEN
+  IF ($undefinedinfo) THEN SAY ($1) is undefined
+  EXIT
+ENDIF
+
+! test IF VARIABLE $2 exists
+LET/D ($2) = 0 ! default = dummy scalar value
+LET datasize = `$2,RETURN=SIZE`
+IF `datasize EQ 1` THEN
+  IF ($undefinedinfo) THEN SAY ($2) is undefined
+  EXIT
+ENDIF
+
+! calculate PLOT TITLE from $1
+IF ($($1)%FALSE|*>TRUE%) THEN
+  DEFINE SYMBOL plottitle = ($($1))
+ELSE
+  DEFINE SYMBOL plottitle = `$1, RETURN=TITLE`
+ENDIF
+
+LET khenry   = $3*EXP($4*(1/temp[d=1,k=($plotlevel)]-1/298.15))
+LET ($1)_eq =  $2[k=($plotlevel)] / ($1[k=($plotlevel)] *  khenry) *fac
+SET VARIABLE/TITLE="@sr($plottitle) equil." ($1)_eq
+
+LET factor = 1
+go _plot_0d ($1)_eq

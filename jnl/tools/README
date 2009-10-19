@@ -1,0 +1,12 @@
+To have the ferret tools in this directory available in all ferret
+scripts, add the following line to ~/.tcshrc (after installing ferret
+via soft.init):
+
+setenv FER_GO "$FER_GO $HOME/ferret/tools"
+
+Alternatively, you can create a link to this directory and include the
+tools directory in $FER_GO:
+
+cd <my-ferret-files-dir>
+ln -s $HOME/ferret/tools .
+setenv FER_GO "$FER_GO ./tools"

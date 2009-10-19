@@ -1,0 +1,25 @@
+// -*- kpp -*- kpp mode for emacs
+
+// Syntax of this replacement file is similar to kpp syntax, but...
+// - Only the commands "#REPLACE" and "#ENDREPLACE" are allowed.
+// - Comments must start with "//", curly braces ("{}") cannot be used here.
+
+// replacements-file to remove ozonolysis reactions for alkenes (double bond specs)
+// this is for checking O3 budget in CO
+
+// C2H4 + O3
+#REPLACE <G4200>
+#ENDREPLACE
+
+// C3H6 + O3
+#REPLACE <G4301>
+#ENDREPLACE
+
+// MVK + O3
+#REPLACE <G4405>
+#ENDREPLACE
+
+// ISOP + O3
+#REPLACE <G4500>
+#ENDREPLACE
+

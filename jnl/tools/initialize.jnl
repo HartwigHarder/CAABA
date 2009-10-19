@@ -1,0 +1,61 @@
+!*******************************************************************************
+
+! nsensi must be defined before calling this code:
+IF ($nsensi%TRUE|*>FALSE%) THEN 
+  SAY You must define the SYMBOL nsensi (e.g. via _define_sensi.jnl)
+  EXIT/PROMPT 
+ENDIF
+
+! decrement nsensi by 1 because the run0 is not counted as a sensitivity run:
+DEFINE SYMBOL nsensi = `($nsensi)-1`
+
+! define dash types:
+DEFINE SYMBOL dashtype1 = (0.05,0.05,0.05,0.05)
+DEFINE SYMBOL dashtype2 = (0.07,0.07,0.07,0.07)
+DEFINE SYMBOL dashtype3 = (0.09,0.09,0.09,0.09)
+DEFINE SYMBOL dashtype4 = (0.11,0.11,0.11,0.11)
+DEFINE SYMBOL dashtype5 = (0.13,0.13,0.13,0.13)
+DEFINE SYMBOL dashtype6 = (0.15,0.15,0.15,0.15)
+DEFINE SYMBOL dashtype7 = (0.17,0.17,0.17,0.17)
+DEFINE SYMBOL dashtype8 = (0.19,0.19,0.19,0.19)
+DEFINE SYMBOL dashtype9 = (0.21,0.21,0.21,0.21)
+
+! IF undefined, SET default values
+IF ($plotlon%TRUE|*>FALSE%)       THEN DEFINE SYMBOL plotlon    = 1
+IF ($plotlat%TRUE|*>FALSE%)       THEN DEFINE SYMBOL plotlat    = 1
+
+IF ($plotlevel%TRUE|*>FALSE%)     THEN DEFINE SYMBOL plotlevel  = 1
+IF ($startlevel%TRUE|*>FALSE%)    THEN DEFINE SYMBOL startlevel = 0
+IF ($endlevel%TRUE|*>FALSE%)      THEN DEFINE SYMBOL endlevel   = 999999
+
+IF ($plotday%TRUE|*>FALSE%)       THEN DEFINE SYMBOL plotday    = 0
+IF ($startday%TRUE|*>FALSE%)      THEN DEFINE SYMBOL startday   = 01-jan-1900 00:00
+IF ($endday%TRUE|*>FALSE%)        THEN DEFINE SYMBOL endday     = 31-dec-2222 00:00
+
+IF ($diffplot%TRUE|*>FALSE%)      THEN DEFINE SYMBOL diffplot      = FALSE
+IF ($rangeinfo%TRUE|*>FALSE%)     THEN DEFINE SYMBOL rangeinfo     = TRUE
+IF ($undefinedinfo%TRUE|*>FALSE%) THEN DEFINE SYMBOL undefinedinfo = TRUE
+
+!*******************************************************************************
+
+! print some info
+
+SAY run0 = ($run0)
+IF `($nsensi) GT 0` THEN ! for PLOT/OVER
+  REPEAT/range=1:($nsensi)/name=dnum ( \
+    DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
+    SAY run($dnum) = ($run($dnum)) )
+ENDIF
+
+SAY plotlon       = ($plotlon)
+SAY plotlat       = ($plotlat)
+SAY plotlevel     = ($plotlevel)
+SAY startlevel    = ($startlevel)
+SAY endlevel      = ($endlevel)
+SAY plotday       = ($plotday)
+SAY startday      = ($startday)
+SAY endday        = ($endday)
+SAY rangeinfo     = ($rangeinfo)
+SAY undefinedinfo = ($undefinedinfo)
+
+!*******************************************************************************
