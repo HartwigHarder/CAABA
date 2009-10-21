@@ -1,5 +1,5 @@
 !*****************************************************************************
-!                Time-stamp: <2008-11-10 13:00:55 sander>
+!                Time-stamp: <2009-08-10 11:56:58 sander>
 !*****************************************************************************
 
 ! SAPPHO = Simplified And Parameterized PHOtolysis rates
@@ -31,6 +31,7 @@ MODULE messy_sappho
 
   IMPLICIT NONE
   PRIVATE
+  CHARACTER(LEN=*), PARAMETER, PUBLIC :: modstr = 'sappho'
   PUBLIC :: jvalues
 
   ! pointer to photolysis rate coeff.
@@ -40,15 +41,15 @@ MODULE messy_sappho
 
 CONTAINS
 
-  SUBROUTINE jvalues(cossza, l_ff, rad_lat, photon)
+  SUBROUTINE jvalues(cossza, photo_scenario, rad_lat, photon)
 
     IMPLICIT NONE
 
     ! I/O
-    REAL(DP), INTENT(IN)  :: cossza
-    LOGICAL,  INTENT(IN)  :: l_ff
-    REAL(DP), INTENT(IN)  :: rad_lat
-    REAL(DP), INTENT(OUT) :: photon
+    REAL(DP),          INTENT(IN)  :: cossza
+    CHARACTER(LEN=12), INTENT(IN)  :: photo_scenario
+    REAL(DP),          INTENT(IN)  :: rad_lat
+    REAL(DP),          INTENT(OUT) :: photon
 
     REAL(DP), PARAMETER :: DUSK = 0.0721347_DP ! 5.E-2/LOG(2.) = photon at dusk
     REAL(DP) :: DAY8090, FCT, dn
@@ -67,7 +68,28 @@ CONTAINS
     !dn = dn * jfudge
     !mz_hr_20080206-
 
-    IF (l_ff) THEN
+    SELECT CASE (TRIM(photo_scenario))
+    CASE ('FF_ANTARCTIC','FF_ARCTIC')
+      CALL photo_ff
+    !qqq todo: CASE ('FREE_TROP')
+      !qqq todo: CALL photo_free_trop
+    CASE ('','OOMPH','MBL')
+      CALL photo_mbl
+    !qqq todo: CASE ('STRATO')
+      !qqq todo: CALL photo_strato
+    CASE DEFAULT
+      PRINT *, 'ERROR, photo_scenario '//TRIM(photo_scenario)// &
+        ' is not defined in '//TRIM(modstr)//'.'
+      STOP
+    END SELECT
+
+    !-------------------------------------------------------------------------
+
+  CONTAINS
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE photo_ff
       ! quick and dirty conversion of J values by Landgraf et al.
       ! DAY8090 = ratio between first day of spring (JD80) and 1 April (JD90);
       DAY8090 = 0.674_DP;
@@ -112,7 +134,11 @@ CONTAINS
       jx(ip_HONO)   = 1.0218E-02 / EXP( 8.7261E-01/( 1.4850E-01+photon)) ! J92
       jx(ip_CH3Br)  = 0.                                                 ! J99
       jx(ip_CH3CHO) = jx(ip_CHOH)+jx(ip_COH2) ! mz_rs_20050911 assumed
-    ELSE
+    END SUBROUTINE photo_ff
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE photo_mbl
       ! J values from PAPER model by Landgraf et al.
       ! J value as a function of photon: J = A*exp(-B/(C+photon))
       ! photon=sin(PSI)=cos(THETA)
@@ -159,7 +185,9 @@ CONTAINS
       jx(ip_HNO4)   = dn*2.1532E-05*EXP(-1.9648E+00 /(2.1976E-01+photon)) !J91
       jx(ip_HONO)   = dn*2.9165E-03*EXP(-5.1317E-01 /(7.4940E-02+photon)) !J92
       jx(ip_CH3Br)  = dn*7.3959E-10*EXP(-2.9326E+01 /(1.0132E-01+photon)) !J99
-    ENDIF
+    END SUBROUTINE photo_mbl
+
+    !-------------------------------------------------------------------------
 
   END SUBROUTINE jvalues
 

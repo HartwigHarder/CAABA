@@ -1,5 +1,5 @@
 !*****************************************************************************
-!                Time-stamp: <2009-01-08 10:03:41 sander>
+!                Time-stamp: <2009-08-10 11:55:55 sander>
 !*****************************************************************************
 
 ! JVAL = calculation of J-VALues (photolysis rate coefficients)
@@ -32,8 +32,7 @@ MODULE messy_jval_box
                        close_file
   USE messy_cmn_photol_mem      ! IP_MAX, ip_*, jname
   USE messy_jval ! ONLY: jval_gp, jname, ip_MAX, jval_read_nml_ctrl,
-  !       lookup, lookup_io,
-  !       aerosol_data, jvalues, lp
+  !       lookup, lookup_io, aerosol_data, jvalues, lp, modstr
 
   IMPLICIT NONE
 
@@ -127,7 +126,8 @@ CONTAINS
   SUBROUTINE jval_physc
 
     USE caaba_mem,        ONLY: cossza, press, x_j_no2, l_input_jval, &
-                                lyear, lmonth, lday, lhour, jval_clev
+                                lyear, lmonth, lday, lhour, jval_clev, &
+                                photo_scenario
     USE messy_main_tools, ONLY: nn_index
 
     IMPLICIT NONE
@@ -141,49 +141,27 @@ CONTAINS
     REAL(DP), DIMENSION(nsza,nlev)   :: aclc
     REAL(DP), DIMENSION(nsza)        :: slf
     REAL(DP), DIMENSION(nsza,nlev)   :: clp
-    LOGICAL                      :: lmidatm
-    LOGICAL                      :: l_heating
-    INTEGER                      :: pbllev   ! number of levels in pbl
-    INTEGER                      :: status   ! mz_pj_20071029
-    INTEGER :: ii  ! counter
+    LOGICAL :: lmidatm
+    LOGICAL :: l_heating
+    INTEGER :: pbllev
+    INTEGER :: status
+    INTEGER :: ii ! counter
     REAL(DP), DIMENSION(nlev) :: z_jpress
 
-    ! global average values are extracted with ferret from messy and
-    ! jval_diag streams using e.g.: "list jrhum[i=@ave,j=@ave,l=1]"
- 
-    ! vertical ozone column [mcl/cm2]
-    v3(1,:)    = (/ &
-      3.366E+17, 1.437E+18, 4.085E+18, 5.428E+18, 6.157E+18, 6.583E+18, &
-      6.860E+18, 7.070E+18, 7.227E+18, 7.343E+18, 7.436E+18, 7.523E+18, &
-      7.605E+18, 7.678E+18, 7.740E+18, 7.788E+18, 7.822E+18, 7.844E+18, &
-      7.857E+18, 7.862E+18 /)
-    ! relative ozone, i.e. ozone mixing ratio [mol/mol]
-    relo3(1,:) = (/ &
-      7.182E-06, 8.319E-06, 4.172E-06, 2.041E-06, 9.525E-07, 4.334E-07, &
-      2.571E-07, 1.514E-07, 9.760E-08, 5.775E-08, 5.064E-08, 4.394E-08, &
-      3.980E-08, 3.636E-08, 3.209E-08, 2.807E-08, 2.479E-08, 2.242E-08, &
-      2.105E-08, 2.065E-08 /)
-    ! pressure [Pa]
-    jpress(1,:) = (/ &
-      1000., 3000., 5040., 7339., 10248., 14053., 18935., 24966., 32107., &
-      40212., 49027., 58204., 67317., 75897., 83472., 89631., 94099.,     &
-      96838., 98169. /)
-    ! relative humidity [%]
-    jrhum(1,:)  = (/ &
-      0.23, 1.57, 3.52, 11.73, 24.55, 25.31, 27.45, 36.46, 44.52, 46.27,  &
-      46.48, 49.18, 51.73, 57.95, 72.82, 80.71, 81.66, 77.65, 76.18 /)
-    ! temperature [K]
-    jtemp(1,:)  = (/ &
-      230.6, 218.2, 211.7, 207.0, 205.6, 210.9, 218.1, 225.8, 235.7, 246.6, &
-      256.4, 264.2, 270.6, 275.4, 278.2, 280.9, 283.2, 284.9, 285.7 /)
-    albedo(:)  = 0.07
-    aclc(:,:)  = 0.            ! assume clear sky
-    slf(:)     = 0.            ! 0 = sea
-    ! clp = cloud liquid water path per layer [g/m^2]
-    clp(:,:)   = 0.            ! assume clear sky
-    lmidatm    = .FALSE.
-    l_heating  = .FALSE.
-    pbllev     = 5
+    SELECT CASE (TRIM(photo_scenario))
+    !qqq todo: CASE ('FF_ANTARCTIC','FF_ARCTIC')
+      !qqq todo: CALL photo_ff
+    !qqq todo: CASE ('FREE_TROP')
+      !qqq todo: CALL photo_free_trop
+    CASE ('','OOMPH','MBL')
+      CALL photo_mbl
+    !qqq todo: CASE ('STRATO')
+      !qqq todo: CALL photo_strato
+    CASE DEFAULT
+      PRINT *, 'ERROR, photo_scenario '//TRIM(photo_scenario)// &
+        ' is not defined in '//TRIM(modstr)//'.'
+      STOP
+    END SELECT
 
     ! mz_pj_20071029+ mz_hr_20080609+
     ! use solar cycle data for 01.01.2000 00 UTC
@@ -235,6 +213,52 @@ CONTAINS
     ENDIF
     !mz_hr_20080228-
 
+    !-------------------------------------------------------------------------
+
+  CONTAINS
+
+    !-------------------------------------------------------------------------
+    
+    SUBROUTINE photo_mbl
+      ! global average values are extracted with ferret from messy and
+      ! jval_diag streams using e.g.: "list jrhum[i=@ave,j=@ave,l=1]"
+      ! vertical ozone column [mcl/cm2]
+      v3(1,:)    = (/ &
+        3.366E+17, 1.437E+18, 4.085E+18, 5.428E+18, 6.157E+18, 6.583E+18, &
+        6.860E+18, 7.070E+18, 7.227E+18, 7.343E+18, 7.436E+18, 7.523E+18, &
+        7.605E+18, 7.678E+18, 7.740E+18, 7.788E+18, 7.822E+18, 7.844E+18, &
+        7.857E+18, 7.862E+18 /)
+      ! relative ozone, i.e. ozone mixing ratio [mol/mol]
+      relo3(1,:) = (/ &
+        7.182E-06, 8.319E-06, 4.172E-06, 2.041E-06, 9.525E-07, 4.334E-07, &
+        2.571E-07, 1.514E-07, 9.760E-08, 5.775E-08, 5.064E-08, 4.394E-08, &
+        3.980E-08, 3.636E-08, 3.209E-08, 2.807E-08, 2.479E-08, 2.242E-08, &
+        2.105E-08, 2.065E-08 /)
+      ! pressure [Pa]
+      jpress(1,:) = (/ &
+        1000., 3000., 5040., 7339., 10248., 14053., 18935., 24966., 32107., &
+        40212., 49027., 58204., 67317., 75897., 83472., 89631., 94099.,     &
+        96838., 98169. /)
+      ! relative humidity [%]
+      jrhum(1,:)  = (/ &
+        0.23, 1.57, 3.52, 11.73, 24.55, 25.31, 27.45, 36.46, 44.52, 46.27,  &
+        46.48, 49.18, 51.73, 57.95, 72.82, 80.71, 81.66, 77.65, 76.18 /)
+      ! temperature [K]
+      jtemp(1,:)  = (/ &
+        230.6, 218.2, 211.7, 207.0, 205.6, 210.9, 218.1, 225.8, 235.7, 246.6, &
+        256.4, 264.2, 270.6, 275.4, 278.2, 280.9, 283.2, 284.9, 285.7 /)
+      albedo(:)  = 0.07
+      aclc(:,:)  = 0.      ! assume clear sky
+      slf(:)     = 0.      ! 0 = sea
+      ! clp = cloud liquid water path per layer [g/m^2]
+      clp(:,:)   = 0.      ! assume clear sky
+      lmidatm    = .FALSE.
+      l_heating  = .FALSE.
+      pbllev     = 5       ! number of levels in pbl
+    END SUBROUTINE photo_mbl
+
+    !-------------------------------------------------------------------------
+
   END SUBROUTINE jval_physc
 
   ! --------------------------------------------------------------------------
@@ -269,7 +293,6 @@ CONTAINS
     USE messy_main_constants_mem, ONLY: FLAGGED_BAD !mz_hr_20080220
 
     IMPLICIT NONE
-
 
 !!$    INTEGER :: ip
 !!$    DO ip=1, ip_MAX

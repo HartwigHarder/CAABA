@@ -26,6 +26,9 @@ MODULE messy_main_control_cb
   ! the main box model program and the MESSy submodels
 
   USE caaba_mem, ONLY: USE_JVAL, USE_MECCA, USE_READJ, USE_SAPPHO, &
+#ifdef E4CHEM
+                       USE_E4CHEM,                                 &
+#endif
                        USE_SEMIDEP, USE_TRAJECT
 
   IMPLICIT NONE
@@ -48,6 +51,9 @@ CONTAINS
     USE messy_readj_box,          ONLY:   readj_init
     USE messy_sappho_box,         ONLY:  sappho_init
     USE messy_traject_box,        ONLY: traject_init
+#ifdef E4CHEM
+    USE messy_e4chem_box,         ONLY:  e4chem_init
+#endif
 
     IMPLICIT NONE
 
@@ -63,6 +69,9 @@ CONTAINS
     IF (USE_READJ)   CALL   readj_init
     IF (USE_SAPPHO)  CALL  sappho_init
     IF (USE_JVAL)    CALL    jval_init
+#ifdef E4CHEM
+    IF (USE_E4CHEM)  CALL  e4chem_init
+#endif
 
     WRITE(*,*) HLINE1
     WRITE(*,*) 'Input/Output time unit and origin: ', TRIM(time_string)
@@ -102,6 +111,9 @@ CONTAINS
     USE messy_sappho_box,  ONLY:  sappho_physc
     USE messy_semidep_box, ONLY: semidep_physc
     USE messy_traject_box, ONLY: traject_physc
+#ifdef E4CHEM
+    USE messy_e4chem_box,  ONLY:  e4chem_physc
+#endif
 
     ! Do not change the order of *_physc subroutines!
     IF (USE_TRAJECT) CALL traject_physc
@@ -109,6 +121,9 @@ CONTAINS
     IF (USE_JVAL)    CALL    jval_physc
     IF (USE_SAPPHO)  CALL  sappho_physc
     IF (USE_MECCA)   CALL   mecca_physc
+#ifdef E4CHEM
+    IF (USE_E4CHEM)  CALL  e4chem_physc
+#endif
 
   END SUBROUTINE messy_physc
 
@@ -120,11 +135,17 @@ CONTAINS
     USE messy_mecca_box,   ONLY:   mecca_result
     USE messy_sappho_box,  ONLY:  sappho_result
     USE messy_traject_box, ONLY: traject_result
+#ifdef E4CHEM
+    USE messy_e4chem_box,  ONLY:  e4chem_result
+#endif
 
     IF (USE_MECCA)   CALL   mecca_result
     IF (USE_JVAL)    CALL    jval_result
     IF (USE_SAPPHO)  CALL  sappho_result
     IF (USE_TRAJECT) CALL traject_result
+#ifdef E4CHEM
+    IF (USE_E4CHEM)  CALL  e4chem_result
+#endif
 
   END SUBROUTINE messy_result
 
@@ -136,11 +157,17 @@ CONTAINS
     USE messy_mecca_box,   ONLY:   mecca_finish
     USE messy_sappho_box,  ONLY:  sappho_finish
     USE messy_traject_box, ONLY: traject_finish
+#ifdef E4CHEM
+    USE messy_e4chem_box,  ONLY:  e4chem_finish
+#endif
 
     IF (USE_JVAL)    CALL    jval_finish
     IF (USE_MECCA)   CALL   mecca_finish
     IF (USE_SAPPHO)  CALL  sappho_finish
     IF (USE_TRAJECT) CALL traject_finish
+#ifdef E4CHEM
+    IF (USE_E4CHEM)  CALL  e4chem_finish
+#endif
 
   END SUBROUTINE messy_finish
 

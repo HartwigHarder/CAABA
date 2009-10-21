@@ -1,5 +1,5 @@
 !*****************************************************************************
-!                Time-stamp: <2009-07-08 13:41:10 sander>
+!                Time-stamp: <2009-08-27 12:53:33 sander>
 !*****************************************************************************
 
 ! submodel MECCA
@@ -39,7 +39,7 @@ MODULE messy_mecca
   PUBLIC :: define_mcfct
 
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: modstr = 'mecca' ! name of module
-  CHARACTER(LEN=*), PUBLIC, PARAMETER :: modver = '2.5j'  ! module version
+  CHARACTER(LEN=*), PUBLIC, PARAMETER :: modver = '2.5k'  ! module version
   LOGICAL, PUBLIC, SAVE :: l_aero     ! switch for aero chemistry
 
   ! GLOBAL CTRL-NAMELIST
@@ -158,10 +158,13 @@ CONTAINS
     IMPLICIT NONE
     REAL(DP), DIMENSION(:), INTENT(IN) :: c
     REAL(DP), SAVE :: old_oh = 0.
-    REAL(DP) ::  change 
+    REAL(DP) :: change 
      
     steady_state_reached = .FALSE.
 
+    ! Steady state is defined here as less than 0.1% change of the OH
+    ! radical. Note that this definition is probably only useful if the
+    ! day/night cycle is switched off.
     change=abs((old_oh-c(ind_oh))/c(ind_oh))
     IF (change<1e-3) steady_state_reached = .TRUE.
 

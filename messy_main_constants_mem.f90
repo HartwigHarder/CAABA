@@ -18,7 +18,7 @@ MODULE messy_main_constants_mem
   ! PUBLIC is already default
 
   CHARACTER(LEN=*), PARAMETER :: modstr = 'MESSy'
-  CHARACTER(LEN=*), PARAMETER :: modver = '2.3r'
+  CHARACTER(LEN=*), PARAMETER :: modver = '2.3z'
 
   ! MACHINE PRECISION CONSTANTS
   INTEGER, PARAMETER :: sp = SELECTED_REAL_KIND(6,37)
@@ -86,6 +86,15 @@ MODULE messy_main_constants_mem
   REAL(dp), PARAMETER :: M_air   = 28.970_dp    ! molar mass of dry air [g/mol]
   REAL(dp), PARAMETER :: cp_air  = 1005.46_dp   ! specific heat of dry air at
                                                 ! constant pressure [J/K/kg]
+  ! mz_ap_20090519+
+  REAL(dp), PARAMETER :: alv   = 2.5008e6_dp    ! latent heat for vaporisation 
+  !                                             ! [J/kg]
+  REAL(dp), PARAMETER :: als   = 2.8345e6_dp    ! latent heat for sublimation
+  !                                             ! [J/kg]
+  REAL(dp), PARAMETER :: alf   = als-alv        ! latent heat for fusion [J/kg]
+  
+  ! mz_ap_20090519-
+
   ! gas constant for dry air [J/K/kg]
   REAL(dp), PARAMETER :: rd      = 1000._dp * R_gas/M_air ! 287.05_dp
   ! gas constant for water vapour
@@ -111,6 +120,16 @@ MODULE messy_main_constants_mem
   ! fu_kk_20061002-
   ! *ratio: atmospheric height/radius of the earth.
   REAL(dp), PARAMETER :: crae = 0.1277e-02_dp
+
+  ! mz_ab_20090525+
+  REAL(dp), PARAMETER:: AM = 1.673e-27     ! Atomic mass unit
+  REAL(dp), PARAMETER:: ELCH =  1.602E-19  ! Electron charge
+
+  REAL(dp), PARAMETER:: TWOPI = pi*2._dp      ! Pi*2.
+  REAL(dp), PARAMETER:: PI_2  = pi*0.5_dp     ! Pi/2.
+  REAL(dp), PARAMETER:: DTR   = pi/180._dp    ! Degrees to radians
+  REAL(dp), PARAMETER:: RTD   = 180._dp/pi    ! Radians to degrees
+  ! mz_ab_20090525-
 
 END MODULE messy_main_constants_mem
 

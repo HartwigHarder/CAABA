@@ -1,4 +1,4 @@
-! Time-stamp: <2009-03-10 14:03:47 sander>
+! Time-stamp: <2009-08-04 17:52:20 sander>
 
 ! SEMIDEP = Simplified EMIssion and DEPosition
 
@@ -24,8 +24,8 @@ MODULE messy_semidep_box
 
   USE messy_mecca_kpp            ! dp, ind_*
   USE messy_main_constants_mem,  ONLY: OneDay, N_A
-  USE caaba_mem,                 ONLY: model_time, zmbl, l_ff, l_oomph, &
-                                       l_injectNOx, t_NOxon, t_NOxoff,  &
+  USE caaba_mem,                 ONLY: model_time, zmbl,                   &
+                                       l_injectNOx, t_NOxon, t_NOxoff,     &
                                        time_step_len, startday, c
 
   IMPLICIT NONE
@@ -52,6 +52,7 @@ CONTAINS
     ! This should be changed if numerical problems occur.
 
     USE messy_main_constants_mem, ONLY: MH, MC ! for OOMPH only
+    USE caaba_mem,                ONLY: emission_scenario
     IMPLICIT NONE
     REAL(dp) :: fct, fct2, fct3
 
@@ -63,13 +64,23 @@ CONTAINS
     fct2 = fct * 1E-9 * N_A * 1E-4 / OneDay
     ! conversion from ng/(m2*s²)to g/(cm2*s):
     fct3 = 1.E-4 * 1.E-9 ! cm2/m2 * g/ng
-    IF (l_ff) THEN
-      CALL emission_ff      ! frost flower scenario
-    ELSEIF (l_oomph) THEN
-      CALL emission_oomph   ! OOMPH scenario
-    ELSE
-      CALL emission_default ! default = mbl
-    ENDIF
+
+    SELECT CASE (TRIM(emission_scenario))
+    CASE ('FF_ARCTIC','FF_ANTARCTIC')
+      CALL emission_ff
+    CASE ('OOMPH')
+      CALL emission_oomph
+    !qqq todo: CASE ('STRATO')
+      !qqq todo: CALL emission_strato
+    CASE ('MBL')
+      CALL emission_mbl
+    CASE ('')
+      CALL emission_default
+    CASE DEFAULT
+      PRINT *, 'ERROR, emission_scenario'//TRIM(emission_scenario)// &
+        ' is not defined'
+      STOP
+    END SELECT
 
     ! additional NO(x) EMISSIONS via injectNOx
     IF (l_injectNOx .AND. &
@@ -87,6 +98,12 @@ CONTAINS
 
     SUBROUTINE emission_default
       IF (ind_O3     /= 0) c(ind_O3)     = c(ind_O3)     + 5.E10 * fct ! ref0203, p. 6699
+    END SUBROUTINE emission_default
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE emission_mbl
+      IF (ind_O3     /= 0) c(ind_O3)     = c(ind_O3)     + 5.E10 * fct ! ref0203, p. 6699
       IF (ind_NO     /= 0) c(ind_NO)     = c(ind_NO)     + 1.5E9 * fct
       IF (ind_NH3    /= 0) c(ind_NH3)    = c(ind_NH3)    + 1.0E9 * fct
       IF (ind_DMS    /= 0) c(ind_DMS)    = c(ind_DMS)    + 2.0E9 * fct
@@ -99,7 +116,7 @@ CONTAINS
       IF (ind_CH2I2  /= 0) c(ind_CH2I2)  = c(ind_CH2I2)  + 54.7 *10.*fct2 !Lucy
       !IF (ind_CH2ClI /= 0) c(ind_CH2ClI) = c(ind_CH2ClI) + 2.0E7 * fct ! ref0897
       !IF (ind_CH2I2  /= 0) c(ind_CH2I2)  = c(ind_CH2I2)  + 3.0E7 * fct ! ref0897
-    END SUBROUTINE emission_default
+    END SUBROUTINE emission_mbl
 
     !-------------------------------------------------------------------------
 
@@ -146,14 +163,40 @@ CONTAINS
 
     ! deposition velocities [cm/s]
 
+    USE caaba_mem, ONLY: drydep_scenario
     IMPLICIT NONE
     REAL(dp) :: fct
 
     fct = time_step_len / (zmbl * 100.)
 
-    IF (l_ff) THEN
+    SELECT CASE (TRIM(drydep_scenario))
+    CASE ('FF_ARCTIC','FF_ANTARCTIC')
+      CALL drydep_ff
+    !qqq todo: CASE ('STRATO')
+      !qqq todo: CALL photo_strato
+    CASE ('OOMPH','MBL')
+      CALL drydep_mbl
+    CASE ('')
+      CALL drydep_default
+    CASE DEFAULT
+      PRINT *, 'ERROR, drydep_scenario'//TRIM(drydep_scenario)// &
+        ' is not defined'
+      STOP
+    END SELECT
+
+    !-------------------------------------------------------------------------
+
+  CONTAINS
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE drydep_ff
       ! no deposition for frostflower model setup
-    ELSE
+    END SUBROUTINE drydep_ff
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE drydep_mbl
       ! default values for mbl:
       IF (ind_O3      /= 0) c(ind_O3)      = (1.-fct*0.04) * c(ind_O3)
       IF (ind_H2O2    /= 0) c(ind_H2O2)    = (1.-fct*0.5)  * c(ind_H2O2)
@@ -181,7 +224,15 @@ CONTAINS
       IF (ind_H2SO4   /= 0) c(ind_H2SO4)   = (1.-fct*2.0)  * c(ind_H2SO4)
       IF (ind_CH3SO3H /= 0) c(ind_CH3SO3H) = (1.-fct*1.0)  * c(ind_CH3SO3H)
       IF (ind_DMSO    /= 0) c(ind_DMSO)    = (1.-fct*1.0)  * c(ind_DMSO)
-    ENDIF
+    END SUBROUTINE drydep_mbl
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE drydep_default
+      ! no deposition for simple default setup
+    END SUBROUTINE drydep_default
+
+    !-------------------------------------------------------------------------
 
   END SUBROUTINE drydep
 

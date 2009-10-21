@@ -1,5 +1,5 @@
 // ------------------------------- gas.eqn -----------------------------------
-// Time-stamp: <2009-07-08 13:01:36 sander>
+// Time-stamp: <2009-07-24 19:49:14 sander>
 // ---------------------------------------------------------------------------
 
 // This program is free software; you can redistribute it and/or
@@ -679,7 +679,7 @@
 <J7301>  BrNO3   + hv = 0.29 Br + 0.29 NO3 + 0.71 BrO + 0.71 NO2 : {%StTrGNBrJ}  jx(ip_BrNO3); {&&}
 
 // Br + C (#J74nn)
-<J7400>  CH3Br   + hv = Br + CH3O2          : {%StGBrJ}   jx(ip_CH3Br); {&&}
+<J7400>  CH3Br   + hv = Br + CH3O2          : {%StGBrJ}     jx(ip_CH3Br); {&&}
 <J7401>  CH2Br2  + hv = 2 Br {+CH3O2}       : {%TrGBrJ}     jx(ip_CH2Br2); {&&}
 <J7402>  CHBr3   + hv = 3 Br {+CH3O2}       : {%TrGBrJ}     jx(ip_CHBr3); {&&}
 

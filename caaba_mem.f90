@@ -1,4 +1,4 @@
-! Time-stamp: <2009-02-27 17:48:57 sander>
+! Time-stamp: <2009-08-24 14:12:22 sander>
 
 ! This file declares global variables for caaba
 
@@ -40,8 +40,10 @@ MODULE caaba_mem
   LOGICAL  :: USE_SAPPHO          = .FALSE. ! (messy_main_switch)
   LOGICAL  :: USE_SEMIDEP         = .FALSE. ! (messy_main_switch)
   LOGICAL  :: USE_TRAJECT         = .FALSE. ! (messy_main_switch)
+#ifdef E4CHEM
+  LOGICAL  :: USE_E4CHEM          = .FALSE. ! (messy_main_switch)
+#endif
   LOGICAL  :: l_ff                = .FALSE. ! frostflower model run?
-  LOGICAL  :: l_oomph             = .FALSE. ! OOMPH model run?
   LOGICAL  :: l_skipkpp           = .FALSE. ! skip KPP calculations?
   LOGICAL  :: l_steady_state_stop = .FALSE. ! stop caaba at steady state?
   LOGICAL  :: l_injectNOx         = .FALSE. ! additional NOx emissions?
@@ -53,11 +55,15 @@ MODULE caaba_mem
   REAL(DP) :: t_NOxon             = -1._DP  ! start of injection (day of run)
   REAL(DP) :: t_NOxoff            = -1._DP  ! end of injection (day of run)
   REAL(DP) :: runlast             = -1._DP  ! in days
+  CHARACTER(LEN=12) ::     init_scenario = ''
+  CHARACTER(LEN=12) ::    photo_scenario = ''
+  CHARACTER(LEN=12) :: emission_scenario = ''
+  CHARACTER(LEN=12) ::   drydep_scenario = ''
   CHARACTER(LEN=STRLEN_VLONG)  :: ext_runtime     = '' ! external runtime
   CHARACTER(LEN=STRLEN_VLONG)  :: time_step       = '' ! time step length string
   CHARACTER(LEN=STRLEN_ULONG)  :: init_spec       = ''
   CHARACTER(LEN=STRLEN_ULONG)  :: init_j          = ''
-  INTEGER                      :: init_j_index
+  INTEGER                      :: init_j_index    = 1
   CHARACTER(LEN=STRLEN_MEDIUM) :: photrat_channel = ''
   CHARACTER(LEN=STRLEN_ULONG)  :: input_physc     = ''
   CHARACTER(LEN=STRLEN_ULONG)  :: input_jval      = ''

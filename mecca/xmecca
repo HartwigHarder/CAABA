@@ -1,11 +1,12 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-07-08 13:39:03 sander>
+# Time-stamp: <2009-08-27 13:00:33 sander>
 # Authors:
 # Rolf Sander,     Max-Planck-Institute, Mainz, Germany, 2003-2009
 # Astrid Kerkweg,  Max-Planck-Institute, Mainz, Germany, 2005-2007
 # Patrick Joeckel, Max-Planck-Institute, Mainz, Germany, 2007
 
 ##############################################################################
+
 #set echo verbose
 echo "\nxmecca = eXecute KPP on equations from mecca mechanism"
 echo "         For more information, read:"
@@ -303,7 +304,7 @@ else
   echo "21) frost flower scheme with Hg:          ($wanted21)"
 
   set default  = "$wanted01"
-  echo "Choose a selection number or type a boolean expression [q=quit, default=1]"
+  echo "Choose a selection number or type a boolean expression [q=quit, default=1]:"
   set inputstring = "$<"
   if ( "$inputstring" == "q" ) exit 1
   switch ("$inputstring")
@@ -953,6 +954,34 @@ endif
 
 ##############################################################################
 
+cd latex
+
+if (-f meccanism.pdf) rm meccanism.pdf
+set infofile = mecca_info.tex
+echo "% $dontedit"                                  > $infofile
+echo "% $timestamp"                                >> $infofile
+echo "\\def\\meccaversion{\\code{$MECCA_VERSION}}" >> $infofile
+echo "\\def\\kppversion{\\code{$KPP_VERSION}}"     >> $infofile
+echo "\\def\\wanted{\\code{$wanted}}"              >> $infofile
+echo "\\def\\apn{$apn}"                            >> $infofile
+echo "\\def\\gasspc{$gas_spc}"                     >> $infofile
+echo "\\def\\aqspc{$aq_spc}"                       >> $infofile
+echo "\\def\\allspc{$all_spc}"                     >> $infofile
+echo "\\def\\Geqns{$G_eqns}"                       >> $infofile
+echo "\\def\\Aeqns{$A_eqns}"                       >> $infofile
+echo "\\def\\Heqns{$H_eqns}"                       >> $infofile
+echo "\\def\\Jeqns{$J_eqns}"                       >> $infofile
+echo "\\def\\HETeqns{$HET_eqns}"                   >> $infofile
+echo "\\def\\EQeqns{$EQ_eqns}"                     >> $infofile
+echo "\\def\\Deqns{$D_eqns}"                       >> $infofile
+echo "\\def\\alleqns{$all_eqns}"                   >> $infofile
+# for strange reasons, gawk only works properly if LC_COLLATE = C
+setenv LC_COLLATE C
+gawk -f spc2tex.awk   ../$spcfile
+gawk -f eqn2tex.awk   ../$eqnfile
+gawk -f henry2tex.awk -v paramfile=$paramfile ../smcl/messy_mecca_aero.f90
+gawk -f alpha2tex.awk -v paramfile=$paramfile ../smcl/messy_mecca_aero.f90
+
 if ${?latex} then
   echo "\nFrom ${batchfile}: latex = $latex" | tee -a $logfile
 else
@@ -961,37 +990,6 @@ else
 endif
 if ( "$latex" == "q" ) exit 1
 if ( "$latex" == "y" ) then
-  cd latex
-  set infofile = mecca_info.tex
-  echo "% $dontedit"                                  > $infofile
-  echo "% $timestamp"                                >> $infofile
-  echo "\\def\\meccaversion{\\code{$MECCA_VERSION}}" >> $infofile
-  echo "\\def\\kppversion{\\code{$KPP_VERSION}}"     >> $infofile
-  echo "\\def\\wanted{\\code{$wanted}}"              >> $infofile
-  echo "\\def\\apn{$apn}"                            >> $infofile
-  echo "\\def\\gasspc{$gas_spc}"                     >> $infofile
-  echo "\\def\\aqspc{$aq_spc}"                       >> $infofile
-  echo "\\def\\allspc{$all_spc}"                     >> $infofile
-  echo "\\def\\Geqns{$G_eqns}"                       >> $infofile
-  echo "\\def\\Aeqns{$A_eqns}"                       >> $infofile
-  echo "\\def\\Heqns{$H_eqns}"                       >> $infofile
-  echo "\\def\\Jeqns{$J_eqns}"                       >> $infofile
-  echo "\\def\\HETeqns{$HET_eqns}"                   >> $infofile
-  echo "\\def\\EQeqns{$EQ_eqns}"                     >> $infofile
-  echo "\\def\\Deqns{$D_eqns}"                       >> $infofile
-  echo "\\def\\alleqns{$all_eqns}"                   >> $infofile
-  # for strange reasons, gawk only works properly if LC_COLLATE = C
-  setenv LC_COLLATE C
-  gawk -f spc2tex.awk   ../$spcfile
-  gawk -f eqn2tex.awk   ../$eqnfile
-  gawk -f henry2tex.awk -v paramfile=$paramfile ../smcl/messy_mecca_aero.f90
-  gawk -f alpha2tex.awk -v paramfile=$paramfile ../smcl/messy_mecca_aero.f90
-  if (! ${?batch}) then
-    echo "\nContinue? [y/n/q, default=y]"
-    set inputstring = "$<"
-    if ( "$inputstring" == "n" ) exit 1
-    if ( "$inputstring" == "q" ) exit 1
-  endif
   pdflatex meccanism.tex
   # extract the references that are really used
   # (activate only when all reactions were selected):
@@ -999,39 +997,49 @@ if ( "$latex" == "y" ) then
   bibtex meccanism
   pdflatex meccanism.tex
   pdflatex meccanism.tex
+  pdflatex meccanism.tex
   if ( -e `which kpdf` ) then
     kpdf meccanism.pdf &
   else
     acroread meccanism.pdf &
   endif
-  set tmpfiles = "mecca_*.tex meccanism.aux meccanism.bbl meccanism.blg meccanism.log"
-  if ${?deltmptex} then
-    echo "\nFrom ${batchfile}: deltmptex = $deltmptex" | tee -a $logfile
+endif
+
+cd -
+
+##############################################################################
+
+if ( -e `which dot` ) then
+  if ${?graphviz} then
+    echo "\nFrom ${batchfile}: graphviz = $graphviz" | tee -a $logfile
   else
-    echo "Do you want to delete the temporary LaTeX files"
-    ls -1 $tmpfiles
-    echo "[y/n/q, default=y]?"
-    set deltmptex = "$<"
+    echo "\nCreate graphviz plots of selected mechanism? [y/n/q, default=n]"
+    set graphviz = "$<"
   endif
-  if ( "$deltmptex" == "q" ) exit 1
-  if ( "$deltmptex" != "n" ) then
-    echo "Deleting the temporary LaTeX files:" | tee -a $logfile
-    ls -1 $tmpfiles | tee -a $logfile
-    if (${?TRASH}) then
-      # move to trash directory:
-      mv -f $tmpfiles $TRASH
-    else
-      # or delete:
-      rm $tmpfiles
-    endif
+  if ( "$graphviz" == "q" ) exit 1
+  if ( "$graphviz" == "y" ) then
+    cd graphviz
+    ./xgraphvizall
+    cd -
   endif
-  cd -
 endif
 
 ##############################################################################
 
 # $spcfile and $eqnfile removed from list of tmpfiles
 set tmpfiles = "tmp_*"
+# temporary LaTeX files:
+set tmpfiles = "$tmpfiles latex/*.log"
+if (-f latex/meccanism.aux) then
+  set tmpfiles = "$tmpfiles latex/meccanism.aux"
+endif
+if (-f latex/meccanism.bbl) then
+  set tmpfiles = "$tmpfiles latex/meccanism.bbl"
+endif
+if (-f latex/meccanism.blg) then
+  set tmpfiles = "$tmpfiles latex/meccanism.blg"
+endif
+# temporary KPP files:
 if (-f messy_mecca_kpp_Model.f90) then
   set tmpfiles = "$tmpfiles messy_mecca_kpp_Model.f90"
 endif

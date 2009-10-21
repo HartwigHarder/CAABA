@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Parameters.f90
-! Time                 : Fri Jul 24 09:54:14 2009
-! Working directory    : /home/caaba/caaba_2.5j-rs/mecca
+! Time                 : Thu Aug 27 13:00:44 2009
+! Working directory    : /home/sander/e2/messy_2.3z_rs/messy/mbm/caaba/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -30,25 +30,25 @@ MODULE messy_mecca_kpp_Parameters
 
 
 ! NSPEC - Number of chemical species
-  INTEGER, PARAMETER :: NSPEC = 106 
+  INTEGER, PARAMETER :: NSPEC = 33 
 ! NVAR - Number of Variable species
-  INTEGER, PARAMETER :: NVAR = 103 
+  INTEGER, PARAMETER :: NVAR = 30 
 ! NVARACT - Number of Active species
-  INTEGER, PARAMETER :: NVARACT = 98 
+  INTEGER, PARAMETER :: NVARACT = 29 
 ! NFIX - Number of Fixed species
   INTEGER, PARAMETER :: NFIX = 3 
 ! NREACT - Number of reactions
-  INTEGER, PARAMETER :: NREACT = 269 
+  INTEGER, PARAMETER :: NREACT = 67 
 ! NVARST - Starting of variables in conc. vect.
   INTEGER, PARAMETER :: NVARST = 1 
 ! NFIXST - Starting of fixed in conc. vect.
-  INTEGER, PARAMETER :: NFIXST = 104 
+  INTEGER, PARAMETER :: NFIXST = 31 
 ! NONZERO - Number of nonzero entries in Jacobian
-  INTEGER, PARAMETER :: NONZERO = 942 
+  INTEGER, PARAMETER :: NONZERO = 200 
 ! LU_NONZERO - Number of nonzero entries in LU factoriz. of Jacobian
-  INTEGER, PARAMETER :: LU_NONZERO = 1136 
+  INTEGER, PARAMETER :: LU_NONZERO = 219 
 ! CNVAR - (NVAR+1) Number of elements in compressed row format
-  INTEGER, PARAMETER :: CNVAR = 104 
+  INTEGER, PARAMETER :: CNVAR = 31 
 ! NLOOKAT - Number of species to look at
   INTEGER, PARAMETER :: NLOOKAT = 0 
 ! NMONITOR - Number of species to monitor
@@ -59,120 +59,111 @@ MODULE messy_mecca_kpp_Parameters
 ! Index declaration for variable species in C and VAR
 !   VAR(ind_spc) = C(ind_spc)
 
-  INTEGER, PARAMETER :: ind_CF3Br = 1 
-  INTEGER, PARAMETER :: ind_CF2ClBr = 2 
-  INTEGER, PARAMETER :: ind_ClNO2 = 3 
-  INTEGER, PARAMETER :: ind_H2SO4 = 4 
-  INTEGER, PARAMETER :: ind_CH3SO3H = 5 
-  INTEGER, PARAMETER :: ind_NO3m_cs = 6 
-  INTEGER, PARAMETER :: ind_Hp_cs = 7 
-  INTEGER, PARAMETER :: ind_C2H2 = 8 
-  INTEGER, PARAMETER :: ind_MeCOCO = 9 
-  INTEGER, PARAMETER :: ind_Cl2O2 = 10 
-  INTEGER, PARAMETER :: ind_NH3 = 11 
-  INTEGER, PARAMETER :: ind_C2H6 = 12 
-  INTEGER, PARAMETER :: ind_C4H10 = 13 
-  INTEGER, PARAMETER :: ind_CCl4 = 14 
-  INTEGER, PARAMETER :: ind_CF2Cl2 = 15 
-  INTEGER, PARAMETER :: ind_CFCl3 = 16 
-  INTEGER, PARAMETER :: ind_CH3SO3 = 17 
-  INTEGER, PARAMETER :: ind_C3H8 = 18 
-  INTEGER, PARAMETER :: ind_OClO = 19 
-  INTEGER, PARAMETER :: ind_CH3Br = 20 
-  INTEGER, PARAMETER :: ind_Cl2 = 21 
-  INTEGER, PARAMETER :: ind_SO2 = 22 
-  INTEGER, PARAMETER :: ind_N2O = 23 
-  INTEGER, PARAMETER :: ind_NACA = 24 
-  INTEGER, PARAMETER :: ind_N = 25 
-  INTEGER, PARAMETER :: ind_CH3CCl3 = 26 
-  INTEGER, PARAMETER :: ind_DMSO = 27 
-  INTEGER, PARAMETER :: ind_PAA = 28 
-  INTEGER, PARAMETER :: ind_NH2OH = 29 
-  INTEGER, PARAMETER :: ind_CH3Cl = 30 
-  INTEGER, PARAMETER :: ind_HCOOH = 31 
-  INTEGER, PARAMETER :: ind_NH2O = 32 
-  INTEGER, PARAMETER :: ind_EtOOH = 33 
-  INTEGER, PARAMETER :: ind_PrOOH = 34 
-  INTEGER, PARAMETER :: ind_C3H6OOH = 35 
-  INTEGER, PARAMETER :: ind_PrONO2 = 36 
-  INTEGER, PARAMETER :: ind_MEKOOH = 37 
-  INTEGER, PARAMETER :: ind_MPAN = 38 
-  INTEGER, PARAMETER :: ind_ISOOH = 39 
-  INTEGER, PARAMETER :: ind_Br2 = 40 
-  INTEGER, PARAMETER :: ind_C2H4 = 41 
-  INTEGER, PARAMETER :: ind_DMS = 42 
-  INTEGER, PARAMETER :: ind_CH3SO2 = 43 
-  INTEGER, PARAMETER :: ind_ACETP = 44 
-  INTEGER, PARAMETER :: ind_CH3COOH = 45 
-  INTEGER, PARAMETER :: ind_HNO4 = 46 
-  INTEGER, PARAMETER :: ind_BrCl = 47 
-  INTEGER, PARAMETER :: ind_HONO = 48 
-  INTEGER, PARAMETER :: ind_PAN = 49 
-  INTEGER, PARAMETER :: ind_C4H9OOH = 50 
-  INTEGER, PARAMETER :: ind_MVKOOH = 51 
-  INTEGER, PARAMETER :: ind_MEK = 52 
-  INTEGER, PARAMETER :: ind_NHOH = 53 
-  INTEGER, PARAMETER :: ind_H2O2 = 54 
-  INTEGER, PARAMETER :: ind_HNO = 55 
-  INTEGER, PARAMETER :: ind_CH3COCH3 = 56 
-  INTEGER, PARAMETER :: ind_N2O5 = 57 
-  INTEGER, PARAMETER :: ind_CH3OOH = 58 
-  INTEGER, PARAMETER :: ind_CH3OH = 59 
-  INTEGER, PARAMETER :: ind_CO = 60 
-  INTEGER, PARAMETER :: ind_ISON = 61 
-  INTEGER, PARAMETER :: ind_NH2 = 62 
-  INTEGER, PARAMETER :: ind_PrO2 = 63 
-  INTEGER, PARAMETER :: ind_ACETO2 = 64 
-  INTEGER, PARAMETER :: ind_BrNO3 = 65 
-  INTEGER, PARAMETER :: ind_CH3COCHO = 66 
-  INTEGER, PARAMETER :: ind_C3H6 = 67 
-  INTEGER, PARAMETER :: ind_HNO3 = 68 
-  INTEGER, PARAMETER :: ind_MEKO2 = 69 
-  INTEGER, PARAMETER :: ind_C4H9O2 = 70 
-  INTEGER, PARAMETER :: ind_CH4 = 71 
-  INTEGER, PARAMETER :: ind_C3H6O2 = 72 
-  INTEGER, PARAMETER :: ind_ISOP = 73 
-  INTEGER, PARAMETER :: ind_ACETOL = 74 
-  INTEGER, PARAMETER :: ind_ONIT = 75 
-  INTEGER, PARAMETER :: ind_H2 = 76 
-  INTEGER, PARAMETER :: ind_MVK = 77 
-  INTEGER, PARAMETER :: ind_HOCl = 78 
-  INTEGER, PARAMETER :: ind_ISO2 = 79 
-  INTEGER, PARAMETER :: ind_MVKO2 = 80 
-  INTEGER, PARAMETER :: ind_HOBr = 81 
-  INTEGER, PARAMETER :: ind_CH3CHO = 82 
-  INTEGER, PARAMETER :: ind_ClNO3 = 83 
-  INTEGER, PARAMETER :: ind_EtO2 = 84 
-  INTEGER, PARAMETER :: ind_PA = 85 
-  INTEGER, PARAMETER :: ind_Br = 86 
-  INTEGER, PARAMETER :: ind_CH3O2 = 87 
-  INTEGER, PARAMETER :: ind_H = 88 
-  INTEGER, PARAMETER :: ind_HBr = 89 
-  INTEGER, PARAMETER :: ind_BrO = 90 
-  INTEGER, PARAMETER :: ind_H2O = 91 
-  INTEGER, PARAMETER :: ind_O1D = 92 
-  INTEGER, PARAMETER :: ind_O3P = 93 
-  INTEGER, PARAMETER :: ind_NO3 = 94 
-  INTEGER, PARAMETER :: ind_HCl = 95 
-  INTEGER, PARAMETER :: ind_HCHO = 96 
-  INTEGER, PARAMETER :: ind_NO2 = 97 
-  INTEGER, PARAMETER :: ind_NO = 98 
-  INTEGER, PARAMETER :: ind_O3 = 99 
-  INTEGER, PARAMETER :: ind_ClO = 100 
-  INTEGER, PARAMETER :: ind_Cl = 101 
-  INTEGER, PARAMETER :: ind_OH = 102 
-  INTEGER, PARAMETER :: ind_HO2 = 103 
+  INTEGER, PARAMETER :: ind_N2O = 1 
+  INTEGER, PARAMETER :: ind_HCOOH = 2 
+  INTEGER, PARAMETER :: ind_NH3 = 3 
+  INTEGER, PARAMETER :: ind_CH4 = 4 
+  INTEGER, PARAMETER :: ind_N2O5 = 5 
+  INTEGER, PARAMETER :: ind_H = 6 
+  INTEGER, PARAMETER :: ind_O3P = 7 
+  INTEGER, PARAMETER :: ind_H2O2 = 8 
+  INTEGER, PARAMETER :: ind_H2 = 9 
+  INTEGER, PARAMETER :: ind_CH3OH = 10 
+  INTEGER, PARAMETER :: ind_CO = 11 
+  INTEGER, PARAMETER :: ind_O1D = 12 
+  INTEGER, PARAMETER :: ind_NH2OH = 13 
+  INTEGER, PARAMETER :: ind_NHOH = 14 
+  INTEGER, PARAMETER :: ind_HNO4 = 15 
+  INTEGER, PARAMETER :: ind_CH3OOH = 16 
+  INTEGER, PARAMETER :: ind_HONO = 17 
+  INTEGER, PARAMETER :: ind_HNO3 = 18 
+  INTEGER, PARAMETER :: ind_H2O = 19 
+  INTEGER, PARAMETER :: ind_NH2O = 20 
+  INTEGER, PARAMETER :: ind_HNO = 21 
+  INTEGER, PARAMETER :: ind_NH2 = 22 
+  INTEGER, PARAMETER :: ind_HCHO = 23 
+  INTEGER, PARAMETER :: ind_CH3O2 = 24 
+  INTEGER, PARAMETER :: ind_O3 = 25 
+  INTEGER, PARAMETER :: ind_NO3 = 26 
+  INTEGER, PARAMETER :: ind_OH = 27 
+  INTEGER, PARAMETER :: ind_NO = 28 
+  INTEGER, PARAMETER :: ind_HO2 = 29 
+  INTEGER, PARAMETER :: ind_NO2 = 30 
 
 ! Index declaration for fixed species in C
 !   C(ind_spc)
 
-  INTEGER, PARAMETER :: ind_O2 = 104 
-  INTEGER, PARAMETER :: ind_N2 = 105 
-  INTEGER, PARAMETER :: ind_CO2 = 106 
+  INTEGER, PARAMETER :: ind_O2 = 31 
+  INTEGER, PARAMETER :: ind_N2 = 32 
+  INTEGER, PARAMETER :: ind_CO2 = 33 
 
 ! Index declaration for dummy species
 
+  INTEGER, PARAMETER :: ind_N = 0 
+  INTEGER, PARAMETER :: ind_C2H6 = 0 
+  INTEGER, PARAMETER :: ind_C2H4 = 0 
+  INTEGER, PARAMETER :: ind_C2H2 = 0 
+  INTEGER, PARAMETER :: ind_EtO2 = 0 
+  INTEGER, PARAMETER :: ind_EtOOH = 0 
+  INTEGER, PARAMETER :: ind_CH3CHO = 0 
+  INTEGER, PARAMETER :: ind_CH3COOH = 0 
+  INTEGER, PARAMETER :: ind_PA = 0 
+  INTEGER, PARAMETER :: ind_PAA = 0 
+  INTEGER, PARAMETER :: ind_NACA = 0 
+  INTEGER, PARAMETER :: ind_PAN = 0 
+  INTEGER, PARAMETER :: ind_C3H8 = 0 
+  INTEGER, PARAMETER :: ind_C3H6 = 0 
+  INTEGER, PARAMETER :: ind_PrO2 = 0 
+  INTEGER, PARAMETER :: ind_PrOOH = 0 
+  INTEGER, PARAMETER :: ind_C3H6O2 = 0 
+  INTEGER, PARAMETER :: ind_C3H6OOH = 0 
+  INTEGER, PARAMETER :: ind_CH3COCH3 = 0 
+  INTEGER, PARAMETER :: ind_ACETO2 = 0 
+  INTEGER, PARAMETER :: ind_ACETP = 0 
+  INTEGER, PARAMETER :: ind_ACETOL = 0 
+  INTEGER, PARAMETER :: ind_CH3COCHO = 0 
+  INTEGER, PARAMETER :: ind_PrONO2 = 0 
+  INTEGER, PARAMETER :: ind_C4H10 = 0 
+  INTEGER, PARAMETER :: ind_C4H9O2 = 0 
+  INTEGER, PARAMETER :: ind_C4H9OOH = 0 
+  INTEGER, PARAMETER :: ind_MVK = 0 
+  INTEGER, PARAMETER :: ind_MVKO2 = 0 
+  INTEGER, PARAMETER :: ind_MVKOOH = 0 
+  INTEGER, PARAMETER :: ind_MEK = 0 
+  INTEGER, PARAMETER :: ind_MEKO2 = 0 
+  INTEGER, PARAMETER :: ind_MEKOOH = 0 
+  INTEGER, PARAMETER :: ind_MeCOCO = 0 
+  INTEGER, PARAMETER :: ind_ONIT = 0 
+  INTEGER, PARAMETER :: ind_MPAN = 0 
+  INTEGER, PARAMETER :: ind_ISOP = 0 
+  INTEGER, PARAMETER :: ind_ISO2 = 0 
+  INTEGER, PARAMETER :: ind_ISOOH = 0 
+  INTEGER, PARAMETER :: ind_ISON = 0 
+  INTEGER, PARAMETER :: ind_Cl = 0 
+  INTEGER, PARAMETER :: ind_Cl2 = 0 
+  INTEGER, PARAMETER :: ind_ClO = 0 
+  INTEGER, PARAMETER :: ind_HCl = 0 
+  INTEGER, PARAMETER :: ind_HOCl = 0 
+  INTEGER, PARAMETER :: ind_Cl2O2 = 0 
+  INTEGER, PARAMETER :: ind_OClO = 0 
+  INTEGER, PARAMETER :: ind_ClNO2 = 0 
+  INTEGER, PARAMETER :: ind_ClNO3 = 0 
+  INTEGER, PARAMETER :: ind_CCl4 = 0 
+  INTEGER, PARAMETER :: ind_CH3Cl = 0 
+  INTEGER, PARAMETER :: ind_CH3CCl3 = 0 
+  INTEGER, PARAMETER :: ind_CF2Cl2 = 0 
+  INTEGER, PARAMETER :: ind_CFCl3 = 0 
+  INTEGER, PARAMETER :: ind_Br = 0 
+  INTEGER, PARAMETER :: ind_Br2 = 0 
+  INTEGER, PARAMETER :: ind_BrO = 0 
+  INTEGER, PARAMETER :: ind_HBr = 0 
+  INTEGER, PARAMETER :: ind_HOBr = 0 
   INTEGER, PARAMETER :: ind_BrNO2 = 0 
+  INTEGER, PARAMETER :: ind_BrNO3 = 0 
+  INTEGER, PARAMETER :: ind_BrCl = 0 
+  INTEGER, PARAMETER :: ind_CH3Br = 0 
+  INTEGER, PARAMETER :: ind_CF3Br = 0 
+  INTEGER, PARAMETER :: ind_CF2ClBr = 0 
   INTEGER, PARAMETER :: ind_CHCl2Br = 0 
   INTEGER, PARAMETER :: ind_CHClBr2 = 0 
   INTEGER, PARAMETER :: ind_CH2ClBr = 0 
@@ -196,7 +187,14 @@ MODULE messy_mecca_kpp_Parameters
   INTEGER, PARAMETER :: ind_IBr = 0 
   INTEGER, PARAMETER :: ind_S = 0 
   INTEGER, PARAMETER :: ind_SO = 0 
+  INTEGER, PARAMETER :: ind_SO2 = 0 
   INTEGER, PARAMETER :: ind_SH = 0 
+  INTEGER, PARAMETER :: ind_H2SO4 = 0 
+  INTEGER, PARAMETER :: ind_CH3SO3H = 0 
+  INTEGER, PARAMETER :: ind_DMS = 0 
+  INTEGER, PARAMETER :: ind_DMSO = 0 
+  INTEGER, PARAMETER :: ind_CH3SO2 = 0 
+  INTEGER, PARAMETER :: ind_CH3SO3 = 0 
   INTEGER, PARAMETER :: ind_OCS = 0 
   INTEGER, PARAMETER :: ind_SF6 = 0 
   INTEGER, PARAMETER :: ind_Hg = 0 
@@ -208,6 +206,8 @@ MODULE messy_mecca_kpp_Parameters
   INTEGER, PARAMETER :: ind_ClHgBr = 0 
   INTEGER, PARAMETER :: ind_BrHgOBr = 0 
   INTEGER, PARAMETER :: ind_ClHgOBr = 0 
+  INTEGER, PARAMETER :: ind_NO3m_cs = 0 
+  INTEGER, PARAMETER :: ind_Hp_cs = 0 
   INTEGER, PARAMETER :: ind_RGM_cs = 0 
   INTEGER, PARAMETER :: ind_IPART = 0 
   INTEGER, PARAMETER :: ind_Dummy = 0 

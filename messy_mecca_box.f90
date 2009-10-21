@@ -1,4 +1,4 @@
-! Time-stamp: <2009-07-08 12:45:20 sander>
+! Time-stamp: <2009-08-11 13:00:41 sander>
 
 ! MECCA =  Module Efficiently Calculating the Chemistry of the Atmosphere
 
@@ -230,14 +230,14 @@ CONTAINS
     PRINT *, gas_eqn_file,     ' (', gas_eqn_file_sum,     ')'
     PRINT *, aqueous_eqn_file, ' (', aqueous_eqn_file_sum, ')'
     PRINT *, mecca_eqn_file,   ' (', mecca_eqn_file_sum,   ')'
-    PRINT *, 'rplfile      = ', rplfile     
-    PRINT *, 'wanted       = ', wanted      
+    PRINT *, 'rplfile      = ', rplfile
+    PRINT *, 'wanted       = ', wanted
     PRINT *, 'diagtracfile = ', diagtracfile
     PRINT *, 'tagdbl       = ', tagdbl
-    PRINT *, 'kppoption    = ', kppoption   
-    PRINT *, 'KPP_HOME     = ', KPP_HOME    
-    PRINT *, 'KPP_version  = ', KPP_version 
-    PRINT *, 'integr       = ', integr      
+    PRINT *, 'kppoption    = ', kppoption
+    PRINT *, 'KPP_HOME     = ', KPP_HOME
+    PRINT *, 'KPP_version  = ', KPP_version
+    PRINT *, 'integr       = ', integr
 
     ! ------------------------------------------------------------------------
 
@@ -566,7 +566,7 @@ CONTAINS
 
   SUBROUTINE x0
 
-    USE caaba_mem,         ONLY: l_oomph, degree_lat
+    USE caaba_mem,         ONLY: init_scenario, degree_lat
     USE messy_main_tools,  ONLY: ucase   ! conversion to uppercase
 
     INTRINSIC :: TRIM
@@ -579,17 +579,23 @@ CONTAINS
 
     ! initialize some mixing ratios
     ! values in mol/mol, cair converts to particles/cm3
-    IF (l_ff) THEN
-      IF (degree_lat>0.) THEN
-        CALL x0_ff_arctic      ! Arctic frost flower scenario
-      ELSE
-        CALL x0_ff_antarctic   ! Antarctic frost flower scenario
-      ENDIF
-    ELSEIF (l_oomph) THEN
-        CALL x0_oomph          ! OOMPH scenario
-    ELSE
-      CALL x0_mbl              ! default = mbl
-    ENDIF
+    SELECT CASE (TRIM(init_scenario))
+    CASE ('')
+      CALL x0_simple
+    CASE ('FF_ANTARCTIC')
+      CALL x0_ff_antarctic
+    CASE ('FF_ARCTIC')
+      CALL x0_ff_arctic
+    CASE ('FREE_TROP')
+      CALL x0_free_trop
+    CASE ('OOMPH')
+      CALL x0_oomph
+    CASE ('MBL')
+      CALL x0_mbl
+    CASE DEFAULT
+      PRINT *, 'ERROR, init_scenario '//TRIM(init_scenario)//' is not defined'
+      STOP
+    END SELECT
 
     ! ------------------------------------------------------------------------
 
@@ -656,6 +662,74 @@ CONTAINS
 
     ! ------------------------------------------------------------------------
 
+    SUBROUTINE x0_simple
+      IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
+      IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
+      IF (ind_CH4      /= 0) c(ind_CH4)     =  1.8E-06 * cair
+      IF (ind_CO       /= 0) c(ind_CO)      =  70.E-09 * cair
+      IF (ind_CO2      /= 0) c(ind_CO2)     = 350.E-06 * cair
+    END SUBROUTINE x0_simple
+
+    ! ------------------------------------------------------------------------
+
+    SUBROUTINE x0_ff_antarctic
+      IF (ind_O3       /= 0) c(ind_O3)      =  30.E-09 * cair
+      IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
+      IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
+      IF (ind_NO       /= 0) c(ind_NO)      =  2.0E-12 * cair
+      IF (ind_NO2      /= 0) c(ind_NO2)     =  2.0E-12 * cair
+      IF (ind_CH4      /= 0) c(ind_CH4)     =  1.8E-06 * cair
+      IF (ind_HCHO     /= 0) c(ind_HCHO)    =  50.E-12 * cair
+      IF (ind_CH3CHO   /= 0) c(ind_CH3CHO)  =  10.E-12 * cair
+      IF (ind_CO       /= 0) c(ind_CO)      = 170.E-09 * cair
+      IF (ind_CO2      /= 0) c(ind_CO2)     = 350.E-06 * cair
+      IF (ind_DMS      /= 0) c(ind_DMS)     =  10.E-12 * cair
+      IF (ind_SO2      /= 0) c(ind_SO2)     =  30.E-12 * cair
+      IF (ind_CH3I     /= 0) c(ind_CH3I)    =  2.0E-12 * cair
+      IF (ind_CH3Br    /= 0) c(ind_CH3Br)   =  5.0E-12 * cair
+      IF (ind_C2H4     /= 0) c(ind_C2H4)    =  10.E-12 * cair
+      IF (ind_C2H2     /= 0) c(ind_C2H2)    =  10.E-12 * cair
+      IF (ind_C2H6     /= 0) c(ind_C2H6)    = 300.E-12 * cair
+      IF (ind_Hg       /= 0) c(ind_Hg)      = 1.68E-13 * cair
+    END SUBROUTINE x0_ff_antarctic
+
+    ! ------------------------------------------------------------------------
+
+    SUBROUTINE x0_ff_arctic
+      IF (ind_O3       /= 0) c(ind_O3)      =  40.E-09 * cair
+      IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
+      IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
+      IF (ind_NO       /= 0) c(ind_NO)      =  10.E-12 * cair
+      IF (ind_NO2      /= 0) c(ind_NO2)     =  10.E-12 * cair
+      IF (ind_CH4      /= 0) c(ind_CH4)     =  1.8E-06 * cair
+      IF (ind_HCHO     /= 0) c(ind_HCHO)    = 200.E-12 * cair
+      IF (ind_CH3CHO   /= 0) c(ind_CH3CHO)  = 100.E-12 * cair
+      IF (ind_CO       /= 0) c(ind_CO)      = 170.E-09 * cair
+      IF (ind_CO2      /= 0) c(ind_CO2)     = 350.E-06 * cair
+      IF (ind_DMS      /= 0) c(ind_DMS)     =  10.E-12 * cair
+      IF (ind_SO2      /= 0) c(ind_SO2)     = 100.E-12 * cair
+      IF (ind_CH3I     /= 0) c(ind_CH3I)    =  2.0E-12 * cair
+      IF (ind_CH3Br    /= 0) c(ind_CH3Br)   =  5.0E-12 * cair
+      IF (ind_C2H4     /= 0) c(ind_C2H4)    =   26E-12 * cair ! ref1737
+      ! see also: C2H4 = 100E-12 ! ref0351, Tab.1, 3 Apr
+      IF (ind_C2H2     /= 0) c(ind_C2H2)    =  329E-12 * cair ! ref1737
+      ! see also: C2H2 = 840E-12 ! ref0351, Tab.1, 3 Apr
+      IF (ind_C2H6     /= 0) c(ind_C2H6)    =  2.0E-09 * cair
+      IF (ind_Hg       /= 0) c(ind_Hg)      = 1.68E-13 * cair
+    END SUBROUTINE x0_ff_arctic
+
+    ! ------------------------------------------------------------------------
+
+    SUBROUTINE x0_free_trop
+      IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
+      IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
+      !qqq todo: values from Heiko?
+      PRINT *, 'ERROR: Enter values for free troposphere in x0_free_trop' !qqq
+      STOP
+    END SUBROUTINE x0_free_trop
+
+    ! ------------------------------------------------------------------------
+
     SUBROUTINE x0_mbl
       IF (ind_H2       /= 0) c(ind_H2)      =   1.E-06 * cair
       IF (ind_O3       /= 0) c(ind_O3)      =  25.E-09 * cair
@@ -688,7 +762,6 @@ CONTAINS
     ! ------------------------------------------------------------------------
 
     SUBROUTINE x0_oomph
-      ! OOMPH scenario:
       ! fixed species:
       IF (ind_CO2      /= 0) c(ind_CO2)     = 382.E-06 * cair
       IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
@@ -809,51 +882,52 @@ CONTAINS
 
     ! ------------------------------------------------------------------------
 
-    SUBROUTINE x0_ff_arctic
-      IF (ind_O3       /= 0) c(ind_O3)      =  40.E-09 * cair
-      IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
-      IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
-      IF (ind_NO       /= 0) c(ind_NO)      =  10.E-12 * cair
-      IF (ind_NO2      /= 0) c(ind_NO2)     =  10.E-12 * cair
-      IF (ind_CH4      /= 0) c(ind_CH4)     =  1.8E-06 * cair
-      IF (ind_HCHO     /= 0) c(ind_HCHO)    = 200.E-12 * cair
-      IF (ind_CH3CHO   /= 0) c(ind_CH3CHO)  = 100.E-12 * cair
-      IF (ind_CO       /= 0) c(ind_CO)      = 170.E-09 * cair
-      IF (ind_CO2      /= 0) c(ind_CO2)     = 350.E-06 * cair
-      IF (ind_DMS      /= 0) c(ind_DMS)     =  10.E-12 * cair
-      IF (ind_SO2      /= 0) c(ind_SO2)     = 100.E-12 * cair
-      IF (ind_CH3I     /= 0) c(ind_CH3I)    =  2.0E-12 * cair
-      IF (ind_CH3Br    /= 0) c(ind_CH3Br)   =  5.0E-12 * cair
-      IF (ind_C2H4     /= 0) c(ind_C2H4)    =   26E-12 * cair ! ref1737
-      ! see also: C2H4 = 100E-12 ! ref0351, Tab.1, 3 Apr
-      IF (ind_C2H2     /= 0) c(ind_C2H2)    =  329E-12 * cair ! ref1737
-      ! see also: C2H2 = 840E-12 ! ref0351, Tab.1, 3 Apr
-      IF (ind_C2H6     /= 0) c(ind_C2H6)    =  2.0E-09 * cair
-      IF (ind_Hg       /= 0) c(ind_Hg)      = 1.68E-13 * cair
-    END SUBROUTINE x0_ff_arctic
+    SUBROUTINE x0_strato
 
-    ! ------------------------------------------------------------------------
-
-    SUBROUTINE x0_ff_antarctic
-      IF (ind_O3       /= 0) c(ind_O3)      =  30.E-09 * cair
-      IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
-      IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
-      IF (ind_NO       /= 0) c(ind_NO)      =  2.0E-12 * cair
-      IF (ind_NO2      /= 0) c(ind_NO2)     =  2.0E-12 * cair
-      IF (ind_CH4      /= 0) c(ind_CH4)     =  1.8E-06 * cair
-      IF (ind_HCHO     /= 0) c(ind_HCHO)    =  50.E-12 * cair
-      IF (ind_CH3CHO   /= 0) c(ind_CH3CHO)  =  10.E-12 * cair
-      IF (ind_CO       /= 0) c(ind_CO)      = 170.E-09 * cair
-      IF (ind_CO2      /= 0) c(ind_CO2)     = 350.E-06 * cair
-      IF (ind_DMS      /= 0) c(ind_DMS)     =  10.E-12 * cair
-      IF (ind_SO2      /= 0) c(ind_SO2)     =  30.E-12 * cair
-      IF (ind_CH3I     /= 0) c(ind_CH3I)    =  2.0E-12 * cair
-      IF (ind_CH3Br    /= 0) c(ind_CH3Br)   =  5.0E-12 * cair
-      IF (ind_C2H4     /= 0) c(ind_C2H4)    =  10.E-12 * cair
-      IF (ind_C2H2     /= 0) c(ind_C2H2)    =  10.E-12 * cair
-      IF (ind_C2H6     /= 0) c(ind_C2H6)    = 300.E-12 * cair
-      IF (ind_Hg       /= 0) c(ind_Hg)      = 1.68E-13 * cair
-    END SUBROUTINE x0_ff_antarctic
+      ! from scout02
+      IF (ind_H        /= 0) c(ind_H)      =   1.E-12 * cair
+      IF (ind_OH       /= 0) c(ind_OH)     =   1.E-16 * cair
+      IF (ind_HO2      /= 0) c(ind_HO2)    =   1.E-15 * cair
+      IF (ind_N        /= 0) c(ind_N)      =   1.E-12 * cair
+      IF (ind_NO3      /= 0) c(ind_NO3)    =   1.E-12 * cair
+      IF (ind_N2O5     /= 0) c(ind_N2O5)   =   1.E-10 * cair
+      IF (ind_HNO4     /= 0) c(ind_HNO4)   =   1.E-12 * cair
+      IF (ind_CL       /= 0) c(ind_CL)     =   1.E-30 * cair
+      IF (ind_CLO      /= 0) c(ind_CLO)    =   1.E-15 * cair
+      IF (ind_HOCl     /= 0) c(ind_HOCl)   =   1.E-15 * cair
+      IF (ind_CL2O2    /= 0) c(ind_CL2O2)  =   1.E-12 * cair
+      IF (ind_CL2      /= 0) c(ind_CL2)    =   1.E-20 * cair
+      IF (ind_CH3O2    /= 0) c(ind_CH3O2)  =   1.E-12 * cair
+      IF (ind_N2O      /= 0) c(ind_N2O)    =  1.3E-07 * cair
+      IF (ind_H2O2     /= 0) c(ind_H2O2)   =  2.3E-11 * cair
+      IF (ind_HCl      /= 0) c(ind_HCl)    =   1.E-09 * cair
+      IF (ind_CO       /= 0) c(ind_CO)     =  1.4E-08 * cair
+      IF (ind_CH3OOH   /= 0) c(ind_CH3OOH) =   1.E-12 * cair
+      IF (ind_ClNO3    /= 0) c(ind_ClNO3)  =   8.E-10 * cair
+      IF (ind_CFCl3    /= 0) c(ind_CFCl3)  =  1.4E-11 * cair
+      IF (ind_CF2Cl2   /= 0) c(ind_CF2Cl2) =   1.E-12 * cair
+      IF (ind_CH3CL    /= 0) c(ind_CH3CL)  =   1.E-12 * cair
+      IF (ind_CCL4     /= 0) c(ind_CCL4)   =   1.E-12 * cair
+      IF (ind_CH3CCL3  /= 0) c(ind_CH3CCL3)=   1.E-12 * cair
+      IF (ind_HNO3     /= 0) c(ind_HNO3)   =   6.E-09 * cair
+      IF (ind_H2O      /= 0) c(ind_H2O)    =   1.E-12 * cair
+      IF (ind_O3P      /= 0) c(ind_O3P)    =   9.E-34 * cair
+      IF (ind_O1D      /= 0) c(ind_O1D)    =   1.E-16 * cair
+      IF (ind_CO2      /= 0) c(ind_CO2)    =   3.E-06 * cair
+      IF (ind_H2       /= 0) c(ind_H2)     =   5.E-07 * cair
+      IF (ind_O3       /= 0) c(ind_O3)     =   4.E-06 * cair
+      IF (ind_NO       /= 0) c(ind_NO)     =   1.E-24 * cair
+      IF (ind_NO2      /= 0) c(ind_NO2)    =   1.E-09 * cair
+      IF (ind_CH4      /= 0) c(ind_CH4)    =  1.8E-06 * cair
+      IF (ind_HCHO     /= 0) c(ind_HCHO)   =   1.E-11 * cair
+      IF (ind_CO       /= 0) c(ind_CO)     =  70.E-09 * cair
+      IF (ind_CO2      /= 0) c(ind_CO2)    = 350.E-06 * cair
+      IF (ind_H2O2     /= 0) c(ind_H2O2)   =   2.E-11 * cair
+      IF (ind_HCl      /= 0) c(ind_HCl)    =  40.E-12 * cair
+      IF (ind_SO2      /= 0) c(ind_HCl)    =   8.E-13 * cair
+      IF (ind_O2       /= 0) c(ind_O2)     = 210.E-03 * cair
+      IF (ind_N2       /= 0) c(ind_N2)     = 780.E-03 * cair
+    END SUBROUTINE x0_strato
 
     ! ------------------------------------------------------------------------
 
@@ -954,7 +1028,7 @@ CONTAINS
     IF (l_dbl) CALL dbl_process
     ! 1 for the # of steps to take:
     IF (l_tag) CALL tag_process(time_step_len, 20, C, press, cair, temp)
-    
+
     IF (l_steady_state_stop) THEN
       IF (steady_state_reached(c(:))) THEN
         PRINT *, 'steady-state reached at day = ', model_time/OneDay

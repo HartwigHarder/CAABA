@@ -1,5 +1,5 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-01-21 11:13:04 sander>
+# Time-stamp: <2009-08-14 14:37:37 sander>
 # zipcaaba: create a zip file of caaba code
 
 if ( "$1" == "" ) then
@@ -26,7 +26,7 @@ if ( "$1" == "zipall" ) then
   zip -ory $zipfile $dirname
   else 
   zip -ory $zipfile $dirname \
-    -x '*~' -x '*.mod' -x '*.exe' -x '*.o' -x '*.a' -x '*.nc' \
+    -x '*~' -x '*.mod' -x '*.exe' -x '*.o' -x '*.a' -x $dirname/'*.nc' \
     -x '*.old' -x '*.zip' -x '*.tar' -x '*/tmp/*' \
     -x '*.ps' -x '*.dat' -x '*/Makefile.m' -x $dirname/'output/?*' \
     -x $dirname/'temporaryfile*'

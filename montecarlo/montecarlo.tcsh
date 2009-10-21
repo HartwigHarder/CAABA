@@ -1,13 +1,10 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-01-14 16:47:52 sander>
+# Time-stamp: <2009-08-26 18:21:14 sander>
 
 ##############################################################################
 
-echo "\nRun Monte-Carlo simulations with CAABA? [y/q, default=y]"
-set inputstring = "$<"
-if ( "$inputstring" == "q" ) exit
-
-set outputdir = "output/montecarlo-`date +'%Y-%m-%d-%H:%M:%S'`"
+if (! -d output/montecarlo) mkdir output/montecarlo
+set outputdir = "output/montecarlo/`date +'%Y-%m-%d-%H:%M:%S'`"
 mkdir $outputdir
 
 set maxline=5
@@ -74,8 +71,8 @@ foreach fullfilename (0001/*.nc)
 
 end
 
-cd -
 rm tmp_*.nc
+cd -
 
 ##############################################################################
 

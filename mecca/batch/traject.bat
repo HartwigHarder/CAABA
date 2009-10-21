@@ -17,5 +17,5 @@
  set decomp       = n                 # remove indirect indexing
                                       # kp4: 0/1/2/3/q; kpp: y/n/q
  set latex        = n                 # latex list of reactions
- set deltmptex    = y                 # delete temporary LaTeX files?
+ set graphviz     = n                 # graphviz plots
  set deltmp       = y                 # delete temporary xmecca files?

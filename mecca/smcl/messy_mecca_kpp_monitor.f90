@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Monitor.f90
-! Time                 : Fri Jul 24 09:54:14 2009
-! Working directory    : /home/caaba/caaba_2.5j-rs/mecca
+! Time                 : Thu Aug 27 13:00:44 2009
+! Working directory    : /home/sander/e2/messy_2.3z_rs/messy/mbm/caaba/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -25,343 +25,101 @@
 MODULE messy_mecca_kpp_Monitor
 
 
-  CHARACTER(LEN=32), PARAMETER, DIMENSION(90) :: SPC_NAMES_0 = (/ &
-     'CF3Br                           ','CF2ClBr                         ','ClNO2                           ', &
-     'H2SO4                           ','CH3SO3H                         ','NO3m_cs                         ', &
-     'Hp_cs                           ','C2H2                            ','MeCOCO                          ', &
-     'Cl2O2                           ','NH3                             ','C2H6                            ', &
-     'C4H10                           ','CCl4                            ','CF2Cl2                          ', &
-     'CFCl3                           ','CH3SO3                          ','C3H8                            ', &
-     'OClO                            ','CH3Br                           ','Cl2                             ', &
-     'SO2                             ','N2O                             ','NACA                            ', &
-     'N                               ','CH3CCl3                         ','DMSO                            ', &
-     'PAA                             ','NH2OH                           ','CH3Cl                           ', &
-     'HCOOH                           ','NH2O                            ','EtOOH                           ', &
-     'PrOOH                           ','C3H6OOH                         ','PrONO2                          ', &
-     'MEKOOH                          ','MPAN                            ','ISOOH                           ', &
-     'Br2                             ','C2H4                            ','DMS                             ', &
-     'CH3SO2                          ','ACETP                           ','CH3COOH                         ', &
-     'HNO4                            ','BrCl                            ','HONO                            ', &
-     'PAN                             ','C4H9OOH                         ','MVKOOH                          ', &
-     'MEK                             ','NHOH                            ','H2O2                            ', &
-     'HNO                             ','CH3COCH3                        ','N2O5                            ', &
-     'CH3OOH                          ','CH3OH                           ','CO                              ', &
-     'ISON                            ','NH2                             ','PrO2                            ', &
-     'ACETO2                          ','BrNO3                           ','CH3COCHO                        ', &
-     'C3H6                            ','HNO3                            ','MEKO2                           ', &
-     'C4H9O2                          ','CH4                             ','C3H6O2                          ', &
-     'ISOP                            ','ACETOL                          ','ONIT                            ', &
-     'H2                              ','MVK                             ','HOCl                            ', &
-     'ISO2                            ','MVKO2                           ','HOBr                            ', &
-     'CH3CHO                          ','ClNO3                           ','EtO2                            ', &
-     'PA                              ','Br                              ','CH3O2                           ', &
-     'H                               ','HBr                             ','BrO                             ' /)
-  CHARACTER(LEN=32), PARAMETER, DIMENSION(16) :: SPC_NAMES_1 = (/ &
-     'H2O                             ','O1D                             ','O3P                             ', &
-     'NO3                             ','HCl                             ','HCHO                            ', &
-     'NO2                             ','NO                              ','O3                              ', &
-     'ClO                             ','Cl                              ','OH                              ', &
-     'HO2                             ','O2                              ','N2                              ', &
-     'CO2                             ' /)
-  CHARACTER(LEN=32), PARAMETER, DIMENSION(106) :: SPC_NAMES = (/&
-    SPC_NAMES_0, SPC_NAMES_1 /)
+  CHARACTER(LEN=32), PARAMETER, DIMENSION(33) :: SPC_NAMES = (/ &
+     'N2O                             ','HCOOH                           ','NH3                             ', &
+     'CH4                             ','N2O5                            ','H                               ', &
+     'O3P                             ','H2O2                            ','H2                              ', &
+     'CH3OH                           ','CO                              ','O1D                             ', &
+     'NH2OH                           ','NHOH                            ','HNO4                            ', &
+     'CH3OOH                          ','HONO                            ','HNO3                            ', &
+     'H2O                             ','NH2O                            ','HNO                             ', &
+     'NH2                             ','HCHO                            ','CH3O2                           ', &
+     'O3                              ','NO3                             ','OH                              ', &
+     'NO                              ','HO2                             ','NO2                             ', &
+     'O2                              ','N2                              ','CO2                             ' /)
 
   INTEGER, DIMENSION(1) :: LOOKAT
   INTEGER, DIMENSION(1) :: MONITOR
   CHARACTER(LEN=32), DIMENSION(1) :: SMASS
   CHARACTER(LEN=100), PARAMETER, DIMENSION(30) :: EQN_NAMES_0 = (/ &
-     '      O1D + O2 --> O3P + O2                                                                         ', &
-     '      O3P + O2 --> O3                                                                               ', &
-     '      O1D + O3 --> 2 O2                                                                             ', &
-     '      O3P + O3 --> 2 O2                                                                             ', &
-     '        H + O2 --> HO2                                                                              ', &
-     '        H + O3 --> OH + O2                                                                          ', &
-     '      H2 + O1D --> H + OH                                                                           ', &
-     '      O3P + OH --> H + O2                                                                           ', &
-     '       O3 + OH --> HO2 + O2                                                                         ', &
-     '       H2 + OH --> H + H2O                                                                          ', &
-     '     O3P + HO2 --> OH + O2                                                                          ', &
-     '      O3 + HO2 --> OH + 2 O2                                                                        ', &
-     '       H + HO2 --> 2 OH                                                                             ', &
-     '       H + HO2 --> H2 + O2                                                                          ', &
-     '       H + HO2 --> H2O + O3P                                                                        ', &
-     '      OH + HO2 --> H2O + O2                                                                         ', &
-     '         2 HO2 --> H2O2 + O2                                                                        ', &
-     '     H2O + O1D --> 2 OH                                                                             ', &
-     '     H2O2 + OH --> H2O + HO2                                                                        ', &
-     '        N + O2 --> O3P + NO                                                                         ', &
-     '      O1D + N2 --> O3P + N2                                                                         ', &
-     '     N2O + O1D --> 2 NO                                                                             ', &
-     '     N2O + O1D --> O2 + N2                                                                          ', &
-     '       NO + O3 --> NO2 + O2                                                                         ', &
-     '        N + NO --> O3P + N2                                                                         ', &
-     '     O3P + NO2 --> NO + O2                                                                          ', &
-     '      NO2 + O3 --> NO3 + O2                                                                         ', &
-     '       N + NO2 --> N2O + O3P                                                                        ', &
-     '      NO3 + NO --> 2 NO2                                                                            ', &
-     '     NO3 + NO2 --> N2O5                                                                             ' /)
+     '   O1D + O2 --> O3P + O2                                                                            ', &
+     '   O3P + O2 --> O3                                                                                  ', &
+     '     H + O2 --> HO2                                                                                 ', &
+     '    O3 + OH --> HO2 + O2                                                                            ', &
+     '    H2 + OH --> H + H2O                                                                             ', &
+     '   O3 + HO2 --> OH + 2 O2                                                                           ', &
+     '   OH + HO2 --> H2O + O2                                                                            ', &
+     '      2 HO2 --> H2O2 + O2                                                                           ', &
+     '  O1D + H2O --> 2 OH                                                                                ', &
+     '  H2O2 + OH --> H2O + HO2                                                                           ', &
+     '   O1D + N2 --> O3P + N2                                                                            ', &
+     '    O3 + NO --> NO2 + O2                                                                            ', &
+     '   O3 + NO2 --> NO3 + O2                                                                            ', &
+     '   NO3 + NO --> 2 NO2                                                                               ', &
+     '  NO3 + NO2 --> N2O5                                                                                ', &
+     '       N2O5 --> NO3 + NO2                                                                           ', &
+     '    OH + NO --> HONO                                                                                ', &
+     '   NO + HO2 --> OH + NO2                                                                            ', &
+     '   OH + NO2 --> HNO3                                                                                ', &
+     '  HO2 + NO2 --> HNO4                                                                                ', &
+     '  NO3 + HO2 --> OH + NO2 + O2                                                                       ', &
+     '  HONO + OH --> H2O + NO2                                                                           ', &
+     '  HNO3 + OH --> H2O + NO3                                                                           ', &
+     '       HNO4 --> HO2 + NO2                                                                           ', &
+     '  HNO4 + OH --> H2O + NO2                                                                           ', &
+     '   NH3 + OH --> H2O + NH2                                                                           ', &
+     '   NH2 + O3 --> NH2O + O2                                                                           ', &
+     '  NH2 + HO2 --> NH2O + OH                                                                           ', &
+     '  NH2 + HO2 --> H2O + HNO                                                                           ', &
+     '   NH2 + NO --> OH + HO2 + N2                                                                       ' /)
   CHARACTER(LEN=100), PARAMETER, DIMENSION(30) :: EQN_NAMES_1 = (/ &
-     '          N2O5 --> NO3 + NO2                                                                        ', &
-     '       NO + OH --> HONO                                                                             ', &
-     '      NO + HO2 --> NO2 + OH                                                                         ', &
-     '      NO2 + OH --> HNO3                                                                             ', &
-     '     NO2 + HO2 --> HNO4                                                                             ', &
-     '     NO3 + HO2 --> NO2 + OH + O2                                                                    ', &
-     '     HONO + OH --> H2O + NO2                                                                        ', &
-     '     HNO3 + OH --> H2O + NO3                                                                        ', &
-     '          HNO4 --> NO2 + HO2                                                                        ', &
-     '     HNO4 + OH --> H2O + NO2                                                                        ', &
-     '      NH3 + OH --> NH2 + H2O                                                                        ', &
-     '      NH2 + O3 --> NH2O + O2                                                                        ', &
-     '     NH2 + HO2 --> NH2O + OH                                                                        ', &
-     '     NH2 + HO2 --> HNO + H2O                                                                        ', &
-     '      NH2 + NO --> OH + HO2 + N2                                                                    ', &
-     '      NH2 + NO --> H2O + N2                                                                         ', &
-     '     NH2 + NO2 --> N2O + H2O                                                                        ', &
-     '     NH2 + NO2 --> NH2O + NO                                                                        ', &
-     '     NH2O + O3 --> NH2 + O2                                                                         ', &
-     '          NH2O --> NHOH                                                                             ', &
-     '      HNO + OH --> H2O + NO                                                                         ', &
-     '    NHOH + HNO --> NH2OH + NO                                                                       ', &
-     '     HNO + NO2 --> HONO + NO                                                                        ', &
-     '     NHOH + OH --> HNO + H2O                                                                        ', &
-     '    NH2OH + OH --> NHOH + H2O                                                                       ', &
-     '      HNO + O2 --> NO + HO2                                                                         ', &
-     '     CH4 + O1D --> 0.05 H2 + 0.75 CH3O2 + 0.4 H + 0.25 HCHO + 0.75 OH                               ', &
-     '      CH4 + OH --> CH3O2 + H2O                                                                      ', &
-     '    CH3OH + OH --> HCHO + HO2                                                                       ', &
-     '   CH3O2 + HO2 --> CH3OOH + O2                                                                      ' /)
-  CHARACTER(LEN=100), PARAMETER, DIMENSION(30) :: EQN_NAMES_2 = (/ &
-     '    CH3O2 + NO --> HCHO + NO2 + HO2                                                                 ', &
-     '   CH3O2 + NO3 --> HCHO + NO2 + HO2                                                                 ', &
-     '       2 CH3O2 --> 2 HCHO + 2 HO2                                                                   ', &
-     '       2 CH3O2 --> CH3OH + HCHO + O2                                                                ', &
-     '   CH3OOH + OH --> 0.7 CH3O2 + H2O + 0.3 HCHO + 0.3 OH                                              ', &
-     '     HCHO + OH --> CO + H2O + HO2                                                                   ', &
-     '    NO3 + HCHO --> CO + HNO3 + HO2                                                                  ', &
-     '       CO + OH --> H + CO2                                                                          ', &
-     '    HCOOH + OH --> HO2                                                                              ', &
-     '     C2H6 + OH --> EtO2 + H2O                                                                       ', &
-     '     C2H4 + O3 --> 0.54 HCOOH + 0.23 CO + 0.1 H2 + HCHO + 0.12 OH + 0.22 HO2 ... etc.               ', &
-     '     C2H4 + OH --> 0.666667 C3H6O2                                                                  ', &
-     '    EtO2 + HO2 --> EtOOH                                                                            ', &
-     '     EtO2 + NO --> CH3CHO + NO2 + HO2                                                               ', &
-     '    EtO2 + NO3 --> CH3CHO + NO2 + HO2                                                               ', &
-     '  EtO2 + CH3O2 --> 0.25 CH3OH + 0.75 CH3CHO + 0.75 HCHO + HO2                                       ', &
-     '    EtOOH + OH --> 0.7 CH3CHO + 0.3 EtO2 + 0.7 OH                                                   ', &
-     '   CH3CHO + OH --> PA + H2O                                                                         ', &
-     '  CH3CHO + NO3 --> HNO3 + PA                                                                        ', &
-     '  CH3COOH + OH --> CH3O2 + H2O + CO2                                                                ', &
-     '      PA + HO2 --> PAA                                                                              ', &
-     '      PA + HO2 --> CH3COOH + O3                                                                     ', &
-     '       PA + NO --> CH3O2 + NO2                                                                      ', &
-     '      PA + NO2 --> PAN                                                                              ', &
-     '      PA + NO3 --> CH3O2 + NO2                                                                      ', &
-     '    PA + CH3O2 --> CH3O2 + HCHO + HO2 + CO2                                                         ', &
-     '    PA + CH3O2 --> CH3COOH + HCHO                                                                   ', &
-     '     EtO2 + PA --> 0.18 CH3COOH + CH3CHO + 0.82 CH3O2 + 0.82 HO2                                    ', &
-     '          2 PA --> 2 CH3O2 + O2 + 2 CO2                                                             ', &
-     '      PAA + OH --> PA                                                                               ' /)
-  CHARACTER(LEN=100), PARAMETER, DIMENSION(30) :: EQN_NAMES_3 = (/ &
-     '     NACA + OH --> CO + HCHO + NO2                                                                  ', &
-     '      PAN + OH --> HCHO + NO2                                                                       ', &
-     '           PAN --> PA + NO2                                                                         ', &
-     '     C2H2 + OH --> CH3O2                                                                            ', &
-     '     C3H8 + OH --> 0.82 PrO2 + 0.18 EtO2 + H2O                                                      ', &
-     '     C3H6 + O3 --> 0.22 HCOOH + 0.03 CH3OH + 0.31 CO + 0.04 CH3COCHO + 0.06 CH4 ... etc.            ', &
-     '     C3H6 + OH --> C3H6O2                                                                           ', &
-     '    C3H6 + NO3 --> ONIT                                                                             ', &
-     '    PrO2 + HO2 --> PrOOH                                                                            ', &
-     '     PrO2 + NO --> 0.04 PrONO2 + 0.96 CH3COCH3 + 0.96 NO2 + 0.96 HO2                                ', &
-     '  PrO2 + CH3O2 --> CH3COCH3 + 0.2 CH3OH + 0.8 HCHO + 0.8 HO2                                        ', &
-     '    PrOOH + OH --> 0.7 CH3COCH3 + 0.3 PrO2 + 0.7 OH                                                 ', &
-     '  C3H6O2 + HO2 --> C3H6OOH                                                                          ', &
-     '   C3H6O2 + NO --> 0.02 ONIT + 0.98 CH3CHO + 0.98 HCHO + 0.98 NO2 + 0.98 HO2 ... etc.               ', &
-     '  C3H6OOH + OH --> 0.5 C3H6O2 + 0.5 ACETOL + H2O + 0.5 OH                                           ', &
-     ' CH3COCH3 + OH --> ACETO2 + H2O                                                                     ', &
-     '  ACETO2 + HO2 --> ACETP                                                                            ', &
-     '   ACETO2 + NO --> PA + HCHO + NO2                                                                  ', &
-     'ACETO2 + CH3O2 --> 0.5 CH3OH + 0.5 CH3COCHO + 0.2 ACETOL + 0.3 PA + 0.8 HCHO ... etc.               ', &
-     '    ACETP + OH --> 0.3 ACETO2 + 0.7 CH3COCHO + 0.7 OH                                               ', &
-     '   ACETOL + OH --> CH3COCHO + HO2                                                                   ', &
-     ' CH3COCHO + OH --> CO + PA                                                                          ', &
-     '     MPAN + OH --> ACETOL + NO2                                                                     ', &
-     '          MPAN --> MVKO2 + NO2                                                                      ', &
-     '   PrONO2 + OH --> CH3COCH3 + NO2                                                                   ', &
-     '    C4H10 + OH --> C4H9O2 + H2O                                                                     ', &
-     'C4H9O2 + CH3O2 --> 0.88 MEK + 0.18 CH3OH + 0.12 CH3CHO + 0.12 EtO2 + 0.68 HCHO ... etc.             ', &
-     '  C4H9O2 + HO2 --> C4H9OOH                                                                          ', &
-     '   C4H9O2 + NO --> 0.56 MEK + 0.16 ONIT + 0.84 CH3CHO + 0.28 EtO2 + 0.84 NO2 ... etc.               ', &
-     '  C4H9OOH + OH --> 0.85 MEK + 0.15 C4H9O2 + 0.85 H2O + 0.85 OH                                      ' /)
-  CHARACTER(LEN=100), PARAMETER, DIMENSION(30) :: EQN_NAMES_4 = (/ &
-     '      MVK + O3 --> 0.45 HCOOH + 0.22 CO + 0.9 CH3COCHO + 0.1 PA + 0.19 OH ... etc.                  ', &
-     '      MVK + OH --> MVKO2                                                                            ', &
-     '   MVKO2 + HO2 --> MVKOOH                                                                           ', &
-     '    MVKO2 + NO --> 0.25 CO + 0.5 CH3COCHO + 0.25 ACETOL + 0.25 PA + 0.75 HCHO ... etc.              ', &
-     '   MVKO2 + NO2 --> MPAN                                                                             ', &
-     ' MVKO2 + CH3O2 --> 0.25 CH3OH + 0.125 CO + 0.5 CH3COCHO + 0.375 ACETOL ... etc.                     ', &
-     '       2 MVKO2 --> 0.5 CO + CH3COCHO + ACETOL + 0.5 HCHO + HO2                                      ', &
-     '   MVKOOH + OH --> MVKO2                                                                            ', &
-     '      MEK + OH --> MEKO2                                                                            ', &
-     '   MEKO2 + HO2 --> MEKOOH                                                                           ', &
-     '    MEKO2 + NO --> 0.015 ONIT + 0.985 CH3CHO + 0.985 PA + 0.985 NO2                                 ', &
-     '   MEKOOH + OH --> 0.8 MeCOCO + 0.2 MEKO2 + 0.8 OH                                                  ', &
-     '     ONIT + OH --> MEK + H2O + NO2                                                                  ', &
-     '     ISOP + O3 --> 0.28 HCOOH + 0.09 H2O2 + 0.14 CO + 0.65 MVK + 0.1 MVKO2 ... etc.                 ', &
-     '     ISOP + OH --> ISO2                                                                             ', &
-     '    ISOP + NO3 --> ISON                                                                             ', &
-     '    ISO2 + HO2 --> ISOOH                                                                            ', &
-     '     ISO2 + NO --> 0.12 ISON + 0.88 MVK + 0.88 HCHO + 0.88 NO2 + 0.88 HO2 ... etc.                  ', &
-     '  ISO2 + CH3O2 --> 0.25 CH3OH + 0.25 CH3COCHO + 0.25 ACETOL + 0.5 MVK + 1.25 HCHO ... etc.          ', &
-     '        2 ISO2 --> 2 MVK + HCHO + HO2                                                               ', &
-     '    ISOOH + OH --> MVK + OH                                                                         ', &
-     '     ISON + OH --> NACA + ACETOL                                                                    ', &
-     '       O3 + Cl --> ClO + O2                                                                         ', &
-     '     O3P + ClO --> Cl + O2                                                                          ', &
-     '         2 ClO --> Cl2 + O2                                                                         ', &
-     '         2 ClO --> 2 Cl + O2                                                                        ', &
-     '         2 ClO --> OClO + Cl                                                                        ', &
-     '         2 ClO --> Cl2O2                                                                            ', &
-     '         Cl2O2 --> 2 ClO                                                                            ', &
-     '       H2 + Cl --> H + HCl                                                                          ' /)
-  CHARACTER(LEN=100), PARAMETER, DIMENSION(30) :: EQN_NAMES_5 = (/ &
-     '      Cl + HO2 --> HCl + O2                                                                         ', &
-     '      Cl + HO2 --> ClO + OH                                                                         ', &
-     '     H2O2 + Cl --> HCl + HO2                                                                        ', &
-     '      ClO + OH --> 0.06 HCl + 0.94 Cl + 0.94 HO2 + 0.06 O2                                          ', &
-     '     ClO + HO2 --> HOCl                                                                             ', &
-     '      HCl + OH --> H2O + Cl                                                                         ', &
-     '     HOCl + OH --> H2O + ClO                                                                        ', &
-     '      NO + ClO --> NO2 + Cl                                                                         ', &
-     '     NO2 + ClO --> ClNO3                                                                            ', &
-     '   ClNO3 + O3P --> NO3 + ClO                                                                        ', &
-     '    ClNO3 + Cl --> Cl2 + NO3                                                                        ', &
-     '      CH4 + Cl --> CH3O2 + HCl                                                                      ', &
-     '     HCHO + Cl --> CO + HCl + HO2                                                                   ', &
-     '   CH3OOH + Cl --> HCl + HCHO + OH                                                                  ', &
-     '   CH3O2 + ClO --> HCHO + Cl + HO2                                                                  ', &
-     '    CCl4 + O1D --> ClO + 3 Cl                                                                       ', &
-     '   CH3Cl + O1D --> Cl + OH                                                                          ', &
-     '    CH3Cl + OH --> H2O + Cl                                                                         ', &
-     ' CH3CCl3 + O1D --> 3 Cl + OH                                                                        ', &
-     '  CH3CCl3 + OH --> H2O + 3 Cl                                                                       ', &
-     '  CF2Cl2 + O1D --> ClO + Cl                                                                         ', &
-     '   CFCl3 + O1D --> ClO + 2 Cl                                                                       ', &
-     '       Br + O3 --> BrO + O2                                                                         ', &
-     '     BrO + O3P --> Br + O2                                                                          ', &
-     '         2 BrO --> 2 Br + O2                                                                        ', &
-     '         2 BrO --> Br2 + O2                                                                         ', &
-     '      Br + HO2 --> HBr + O2                                                                         ', &
-     '     BrO + HO2 --> HOBr + O2                                                                        ', &
-     '      HBr + OH --> Br + H2O                                                                         ', &
-     '    HOBr + O3P --> BrO + OH                                                                         ' /)
-  CHARACTER(LEN=100), PARAMETER, DIMENSION(30) :: EQN_NAMES_6 = (/ &
-     '      Br2 + OH --> HOBr + Br                                                                        ', &
-     '      BrO + NO --> Br + NO2                                                                         ', &
-     '     BrO + NO2 --> BrNO3                                                                            ', &
-     '     Br + HCHO --> CO + HBr + HO2                                                                   ', &
-     '    CH3Br + OH --> Br + H2O                                                                         ', &
-     '     BrO + ClO --> OClO + Br                                                                        ', &
-     '     BrO + ClO --> Br + Cl + O2                                                                     ', &
-     '     BrO + ClO --> BrCl + O2                                                                        ', &
-     '      SO2 + OH --> H2SO4 + HO2                                                                      ', &
-     '      DMS + OH --> CH3SO2 + HCHO                                                                    ', &
-     '      DMS + OH --> DMSO + HO2                                                                       ', &
-     '     DMS + NO3 --> CH3SO2 + HNO3 + HCHO                                                             ', &
-     '     DMSO + OH --> 0.4 CH3SO3H + 0.6 SO2 + 0.6 CH3O2 + HCHO + 0.4 HO2                               ', &
-     '        CH3SO2 --> SO2 + CH3O2                                                                      ', &
-     '   CH3SO2 + O3 --> CH3SO3                                                                           ', &
-     '  CH3SO3 + HO2 --> CH3SO3H                                                                          ', &
-     '            O2 --> 2 O3P                                                                            ', &
-     '            O3 --> O1D                                                                              ', &
-     '            O3 --> O3P                                                                              ', &
-     '           H2O --> H + OH                                                                           ', &
-     '          H2O2 --> 2 OH                                                                             ', &
-     '           N2O --> O1D                                                                              ', &
-     '           NO2 --> O3P + NO                                                                         ', &
-     '            NO --> N + O3P                                                                          ', &
-     '           NO3 --> O3P + NO2                                                                        ', &
-     '           NO3 --> NO                                                                               ', &
-     '          N2O5 --> NO3 + NO2                                                                        ', &
-     '          N2O5 --> O3P + NO3 + NO                                                                   ', &
-     '          HONO --> NO + OH                                                                          ', &
-     '          HNO3 --> NO2 + OH                                                                         ' /)
-  CHARACTER(LEN=100), PARAMETER, DIMENSION(30) :: EQN_NAMES_7 = (/ &
-     '          HNO4 --> 0.333 NO3 + 0.667 NO2 + 0.333 OH + 0.667 HO2                                     ', &
-     '        CH3OOH --> HCHO + OH + HO2                                                                  ', &
-     '          HCHO --> CO + H2                                                                          ', &
-     '          HCHO --> CO + H + HO2                                                                     ', &
-     '           CO2 --> CO + O3P                                                                         ', &
-     '           CH4 --> CO + 0.69 H2 + 0.31 H + 1.155 H2O                                                ', &
-     '         EtOOH --> CH3CHO + OH + HO2                                                                ', &
-     '        CH3CHO --> CO + CH3O2 + HO2                                                                 ', &
-     '           PAA --> CH3O2 + OH                                                                       ', &
-     '          NACA --> CO + HCHO + NO2                                                                  ', &
-     '           PAN --> 0.6 PA + 0.4 CH3O2 + 0.4 NO3 + 0.6 NO2 + 0.4 CO2                                 ', &
-     '         PrOOH --> CH3COCH3 + OH + HO2                                                              ', &
-     '      CH3COCH3 --> PA + CH3O2                                                                       ', &
-     '        ACETOL --> PA + HCHO + HO2                                                                  ', &
-     '      CH3COCHO --> CO + PA + HO2                                                                    ', &
-     '         ACETP --> PA + OH + HO2                                                                    ', &
-     '          MPAN --> ACETOL + NO2                                                                     ', &
-     '        PrONO2 --> CH3COCH3 + NO2 + HO2                                                             ', &
-     '       C4H9OOH --> 0.67 MEK + 0.33 CH3CHO + 0.33 EtO2 + OH + 0.67 HO2                               ', &
-     '           MVK --> CO + PA + HCHO + HO2                                                             ', &
-     '        MVKOOH --> 0.25 CO + 0.5 CH3COCHO + 0.25 ACETOL + 0.25 PA + 0.75 HCHO ... etc.              ', &
-     '           MEK --> EtO2 + PA                                                                        ', &
-     '        MEKOOH --> CH3CHO + PA + OH                                                                 ', &
-     '        MeCOCO --> 2 PA                                                                             ', &
-     '          ONIT --> 0.67 MEK + 0.33 CH3CHO + 0.33 EtO2 + NO2 + 0.67 HO2 ... etc.                     ', &
-     '         ISOOH --> MVK + HCHO + OH + HO2                                                            ', &
-     '          ISON --> MVK + HCHO + NO2 + HO2                                                           ', &
-     '           Cl2 --> 2 Cl                                                                             ', &
-     '         Cl2O2 --> 2 Cl                                                                             ', &
-     '          OClO --> O3P + ClO                                                                        ' /)
-  CHARACTER(LEN=100), PARAMETER, DIMENSION(29) :: EQN_NAMES_8 = (/ &
-     '           HCl --> H + Cl                                                                           ', &
-     '          HOCl --> Cl + OH                                                                          ', &
-     '         ClNO3 --> NO3 + Cl                                                                         ', &
-     '         ClNO3 --> NO2 + ClO                                                                        ', &
-     '         CH3Cl --> CH3O2 + Cl                                                                       ', &
-     '          CCl4 --> 4 Cl                                                                             ', &
-     '       CH3CCl3 --> 3 Cl                                                                             ', &
-     '         CFCl3 --> 3 Cl                                                                             ', &
-     '        CF2Cl2 --> 2 Cl                                                                             ', &
-     '           Br2 --> 2 Br                                                                             ', &
-     '          HOBr --> Br + OH                                                                          ', &
-     '         BrNO3 --> 0.29 Br + 0.71 BrO + 0.29 NO3 + 0.71 NO2                                         ', &
-     '         CH3Br --> Br + CH3O2                                                                       ', &
-     '         CF3Br --> Br                                                                               ', &
-     '          BrCl --> Br + Cl                                                                          ', &
-     '       CF2ClBr --> Br + Cl                                                                          ', &
-     '    N2O5 + H2O --> 2 HNO3                                                                           ', &
-     '          N2O5 --> 2 NO3m_cs + 2 Hp_cs                                                              ', &
-     '          HNO3 --> NO3m_cs + Hp_cs                                                                  ', &
-     '    HOCl + HCl --> Cl2 + H2O                                                                        ', &
-     '   ClNO3 + HCl --> Cl2 + HNO3                                                                       ', &
-     '   ClNO3 + H2O --> HNO3 + HOCl                                                                      ', &
-     '    N2O5 + HCl --> ClNO2 + HNO3                                                                     ', &
-     '    HOBr + HBr --> Br2 + H2O                                                                        ', &
-     '   BrNO3 + H2O --> HNO3 + HOBr                                                                      ', &
-     '   ClNO3 + HBr --> BrCl + HNO3                                                                      ', &
-     '   BrNO3 + HCl --> BrCl + HNO3                                                                      ', &
-     '    HOCl + HBr --> BrCl + H2O                                                                       ', &
-     '    HOBr + HCl --> BrCl + H2O                                                                       ' /)
-  CHARACTER(LEN=100), PARAMETER, DIMENSION(269) :: EQN_NAMES = (/&
-    EQN_NAMES_0, EQN_NAMES_1, EQN_NAMES_2, EQN_NAMES_3, EQN_NAMES_4, &
-    EQN_NAMES_5, EQN_NAMES_6, EQN_NAMES_7, EQN_NAMES_8 /)
+     '   NH2 + NO --> H2O + N2                                                                            ', &
+     '  NH2 + NO2 --> N2O + H2O                                                                           ', &
+     '  NH2 + NO2 --> NH2O + NO                                                                           ', &
+     '  NH2O + O3 --> NH2 + O2                                                                            ', &
+     '       NH2O --> NHOH                                                                                ', &
+     '   HNO + OH --> H2O + NO                                                                            ', &
+     ' NHOH + HNO --> NH2OH + NO                                                                          ', &
+     '  HNO + NO2 --> HONO + NO                                                                           ', &
+     '  NHOH + OH --> H2O + HNO                                                                           ', &
+     ' NH2OH + OH --> NHOH + H2O                                                                          ', &
+     '   HNO + O2 --> NO + HO2                                                                            ', &
+     '   CH4 + OH --> H2O + CH3O2                                                                         ', &
+     ' CH3OH + OH --> HCHO + HO2                                                                          ', &
+     'CH3O2 + HO2 --> CH3OOH + O2                                                                         ', &
+     ' CH3O2 + NO --> HCHO + HO2 + NO2                                                                    ', &
+     'CH3O2 + NO3 --> HCHO + HO2 + NO2                                                                    ', &
+     '    2 CH3O2 --> 2 HCHO + 2 HO2                                                                      ', &
+     '    2 CH3O2 --> CH3OH + HCHO + O2                                                                   ', &
+     'CH3OOH + OH --> H2O + 0.3 HCHO + 0.7 CH3O2 + 0.3 OH                                                 ', &
+     '  HCHO + OH --> CO + H2O + HO2                                                                      ', &
+     ' HCHO + NO3 --> CO + HNO3 + HO2                                                                     ', &
+     '    CO + OH --> H + CO2                                                                             ', &
+     ' HCOOH + OH --> HO2                                                                                 ', &
+     '         O2 --> 2 O3P                                                                               ', &
+     '         O3 --> O1D                                                                                 ', &
+     '         O3 --> O3P                                                                                 ', &
+     '       H2O2 --> 2 OH                                                                                ', &
+     '        NO2 --> O3P + NO                                                                            ', &
+     '        NO3 --> O3P + NO2                                                                           ', &
+     '        NO3 --> NO                                                                                  ' /)
+  CHARACTER(LEN=100), PARAMETER, DIMENSION(7) :: EQN_NAMES_2 = (/ &
+     '       N2O5 --> NO3 + NO2                                                                           ', &
+     '       HONO --> OH + NO                                                                             ', &
+     '       HNO3 --> OH + NO2                                                                            ', &
+     '       HNO4 --> 0.333 NO3 + 0.333 OH + 0.667 HO2 + 0.667 NO2                                        ', &
+     '     CH3OOH --> HCHO + OH + HO2                                                                     ', &
+     '       HCHO --> H2 + CO                                                                             ', &
+     '       HCHO --> H + CO + HO2                                                                        ' /)
+  CHARACTER(LEN=100), PARAMETER, DIMENSION(67) :: EQN_NAMES = (/&
+    EQN_NAMES_0, EQN_NAMES_1, EQN_NAMES_2 /)
 
-  CHARACTER(LEN=32), PARAMETER, DIMENSION(90) :: EQN_TAGS_0 = (/ &
-     'G1000                           ','G1001                           ','G1002                           ', &
-     'G1003                           ','G2100                           ','G2101                           ', &
-     'G2102                           ','G2103                           ','G2104                           ', &
-     'G2105                           ','G2106                           ','G2107                           ', &
-     'G2108a                          ','G2108b                          ','G2108c                          ', &
+  CHARACTER(LEN=32), PARAMETER, DIMENSION(67) :: EQN_TAGS = (/ &
+     'G1000                           ','G1001                           ','G2100                           ', &
+     'G2104                           ','G2105                           ','G2107                           ', &
      'G2109                           ','G2110                           ','G2111                           ', &
-     'G2112                           ','G3100                           ','G3101                           ', &
-     'G3102a                          ','G3102b                          ','G3103                           ', &
-     'G3104                           ','G3105                           ','G3106                           ', &
-     'G3107                           ','G3108                           ','G3109                           ', &
+     'G2112                           ','G3101                           ','G3103                           ', &
+     'G3106                           ','G3108                           ','G3109                           ', &
      'G3110                           ','G3200                           ','G3201                           ', &
      'G3202                           ','G3203                           ','G3204                           ', &
      'G3205                           ','G3206                           ','G3207                           ', &
@@ -370,82 +128,16 @@ MODULE messy_mecca_kpp_Monitor
      'G3214                           ','G3215                           ','G3216                           ', &
      'G3217                           ','G3218                           ','G3219                           ', &
      'G3220                           ','G3221                           ','G3222                           ', &
-     'G3223                           ','G3224                           ','G4100                           ', &
-     'G4101                           ','G4102                           ','G4103                           ', &
-     'G4104                           ','G4105                           ','G4106a                          ', &
-     'G4106b                          ','G4107                           ','G4108                           ', &
-     'G4109                           ','G4110                           ','G4111                           ', &
-     'G4200                           ','G4201                           ','G4202                           ', &
-     'G4203                           ','G4204                           ','G4205                           ', &
-     'G4206                           ','G4207                           ','G4208                           ', &
-     'G4209                           ','G4210                           ','G4211a                          ', &
-     'G4211b                          ','G4212                           ','G4213                           ', &
-     'G4214                           ','G4215a                          ','G4215b                          ', &
-     'G4216                           ','G4217                           ','G4218                           ' /)
-  CHARACTER(LEN=32), PARAMETER, DIMENSION(90) :: EQN_TAGS_1 = (/ &
-     'G4219                           ','G4220                           ','G4221                           ', &
-     'G4222                           ','G4300                           ','G4301                           ', &
-     'G4302                           ','G4303                           ','G4304                           ', &
-     'G4305                           ','G4306                           ','G4307                           ', &
-     'G4308                           ','G4309                           ','G4310                           ', &
-     'G4311                           ','G4312                           ','G4313                           ', &
-     'G4314                           ','G4315                           ','G4316                           ', &
-     'G4317                           ','G4318                           ','G4319                           ', &
-     'G4320                           ','G4400                           ','G4401                           ', &
-     'G4402                           ','G4403                           ','G4404                           ', &
-     'G4405                           ','G4406                           ','G4407                           ', &
-     'G4408                           ','G4409                           ','G4410                           ', &
-     'G4411                           ','G4412                           ','G4413                           ', &
-     'G4414                           ','G4415                           ','G4416                           ', &
-     'G4417                           ','G4500                           ','G4501                           ', &
-     'G4502                           ','G4503                           ','G4504                           ', &
-     'G4505                           ','G4506                           ','G4507                           ', &
-     'G4508                           ','G6100                           ','G6101                           ', &
-     'G6102a                          ','G6102b                          ','G6102c                          ', &
-     'G6102d                          ','G6103                           ','G6200                           ', &
-     'G6201a                          ','G6201b                          ','G6202                           ', &
-     'G6203                           ','G6204                           ','G6205                           ', &
-     'G6206                           ','G6300                           ','G6301                           ', &
-     'G6303                           ','G6304                           ','G6400                           ', &
-     'G6401                           ','G6402                           ','G6403                           ', &
-     'G6404                           ','G6405                           ','G6406                           ', &
-     'G6407                           ','G6408                           ','G6500                           ', &
-     'G6501                           ','G7100                           ','G7101                           ', &
-     'G7102a                          ','G7102b                          ','G7200                           ', &
-     'G7201                           ','G7202                           ','G7203                           ' /)
-  CHARACTER(LEN=32), PARAMETER, DIMENSION(89) :: EQN_TAGS_2 = (/ &
-     'G7204                           ','G7301                           ','G7302                           ', &
-     'G7400                           ','G7403                           ','G7603a                          ', &
-     'G7603b                          ','G7603c                          ','G9200                           ', &
-     'G9400a                          ','G9400b                          ','G9401                           ', &
-     'G9402                           ','G9403                           ','G9404                           ', &
-     'G9405                           ','J1000                           ','J1001a                          ', &
-     'J1001b                          ','J2100                           ','J2101                           ', &
-     'J3100                           ','J3101                           ','J3102                           ', &
-     'J3103a                          ','J3103b                          ','J3104a                          ', &
-     'J3104b                          ','J3200                           ','J3201                           ', &
+     'G3223                           ','G3224                           ','G4101                           ', &
+     'G4102                           ','G4103                           ','G4104                           ', &
+     'G4105                           ','G4106a                          ','G4106b                          ', &
+     'G4107                           ','G4108                           ','G4109                           ', &
+     'G4110                           ','G4111                           ','J1000                           ', &
+     'J1001a                          ','J1001b                          ','J2101                           ', &
+     'J3101                           ','J3103a                          ','J3103b                          ', &
+     'J3104a                          ','J3200                           ','J3201                           ', &
      'J3202                           ','J4100                           ','J4101a                          ', &
-     'J4101b                          ','J4102                           ','J4103                           ', &
-     'J4200                           ','J4201                           ','J4202                           ', &
-     'J4203                           ','J4204                           ','J4300                           ', &
-     'J4301                           ','J4302                           ','J4303                           ', &
-     'J4304                           ','J4305                           ','J4306                           ', &
-     'J4400                           ','J4401                           ','J4402                           ', &
-     'J4403                           ','J4404                           ','J4405                           ', &
-     'J4406                           ','J4500                           ','J4501                           ', &
-     'J6000                           ','J6100                           ','J6101                           ', &
-     'J6200                           ','J6201                           ','J6301a                          ', &
-     'J6301b                          ','J6400                           ','J6401                           ', &
-     'J6402                           ','J6500                           ','J6501                           ', &
-     'J7000                           ','J7200                           ','J7301                           ', &
-     'J7400                           ','J7500                           ','J7600                           ', &
-     'J7601                           ','HET200                          ','HET201                          ', &
-     'HET202                          ','HET410                          ','HET420                          ', &
-     'HET421                          ','HET422                          ','HET510                          ', &
-     'HET520                          ','HET540                          ','HET541                          ', &
-     'HET542                          ','HET543                          ' /)
-  CHARACTER(LEN=32), PARAMETER, DIMENSION(269) :: EQN_TAGS = (/&
-    EQN_TAGS_0, EQN_TAGS_1, EQN_TAGS_2 /)
+     'J4101b                          ' /)
 
 ! INLINED global variables
 

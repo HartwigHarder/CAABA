@@ -1,4 +1,4 @@
-! -*- f90 -*- Time-stamp: <2008-08-15 16:49:39 sander>
+! -*- f90 -*- Time-stamp: <2009-08-10 09:48:50 sander>
 
 !*****************************************************************************
 !
@@ -14,6 +14,24 @@
  USE_SAPPHO  = T
  USE_SEMIDEP = T
 !USE_TRAJECT = T
+
+!-----------------------------------------------------------------------------
+! Arctic:
+ init_scenario     = 'FF_ARCTIC'
+ photo_scenario    = 'FF_ARCTIC'
+ emission_scenario = 'FF_ARCTIC'
+ drydep_scenario   = 'FF_ARCTIC'
+ degree_lat = 82.
+ startday   = 90.
+!-----------------------------------------------------------------------------
+! Antarctic:
+!init_scenario     = 'FF_ANTARCTIC'
+!photo_scenario    = 'FF_ANTARCTIC'
+!emission_scenario = 'FF_ANTARCTIC'
+!drydep_scenario   = 'FF_ANTARCTIC'
+!degree_lat = -82.
+!startday   = 272.
+!-----------------------------------------------------------------------------
 
  temp    =    240.   ! temperature [K]
 !press   = 101325.   ! pressure [Pa]
@@ -31,20 +49,6 @@
 
  ext_runtime = '10 days'
 !l_skipkpp = T    ! skip call to kpp chemistry integration
-
-! select reaction rates to be output to MECCA channel
-! (comma-separated list of equation IDs, no spaces, wildcards with "?*"):
-!printrates = 'G1000,J3*,G?110,H*,G*b,J1'
-
-!-----------------------------------------------------------------------------
-
-! choose location:
-! Arctic:
- degree_lat = 82.
- startday   = 90.
-! Antarctic:
-!degree_lat = -82.
-!startday   = 272.
 
 /
 

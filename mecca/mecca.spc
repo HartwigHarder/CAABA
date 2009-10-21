@@ -1,5 +1,5 @@
 {This file was created automatically by xmecca, DO NOT EDIT!}
-{xmecca was run on 2009-07-24 at 09:53:58 by caaba}
+{xmecca was run on 2009-08-27 at 13:00:42 by sander}
 {***** START: gas-phase species from gas.spc *****}
 #INCLUDE atoms
 
@@ -120,7 +120,7 @@ HCl           = H + Cl           ; {@HCl}               {hydrochloric acid}
 HOCl          = H + O + Cl       ; {@HOCl}              {hypochlorous acid}
 Cl2O2         = 2Cl + 2O         ; {@Cl_2O_2}           {dichlorine dioxide}
 OClO          = Cl + 2O          ; {@OClO}              {chlorine dioxide}
-ClNO2         = Cl + 2O + N      ; {@ClNO_2}            {}
+ClNO2         = Cl + 2O + N      ; {@ClNO_2}            {nitryl chloride}
 ClNO3         = Cl + N + 3O      ; {@ClNO_3}            {chlorine nitrate}
 CCl4          = C + 4Cl          ; {@CCl_4}             {tetrachloro methane}
 CH3Cl         = C + 3H + Cl      ; {@CH_3Cl}            {chloromethane}
@@ -135,7 +135,7 @@ Br2           = 2Br              ; {@Br_2}              {bromine}
 BrO           = Br + O           ; {@BrO}               {bromine oxide}
 HBr           = H + Br           ; {@HBr}               {hydrobromic acid}
 HOBr          = H + O + Br       ; {@HOBr}              {hypobromous acid}
-BrNO2         = Br + N + 2O      ; {@BrNO_2}            {}
+BrNO2         = Br + N + 2O      ; {@BrNO_2}            {nitryl bromide}
 BrNO3         = Br + N + 3O      ; {@BrNO_3}            {bromine nitrate}
 BrCl          = Br + Cl          ; {@BrCl}              {bromine chloride}
 CH3Br         = Br + C +3H       ; {@CH_3Br}            {bromomethane}

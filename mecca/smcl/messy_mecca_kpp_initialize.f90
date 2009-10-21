@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Initialize.f90
-! Time                 : Fri Jul 24 09:54:14 2009
-! Working directory    : /home/caaba/caaba_2.5j-rs/mecca
+! Time                 : Thu Aug 27 13:00:44 2009
+! Working directory    : /home/sander/e2/messy_2.3z_rs/messy/mbm/caaba/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -58,41 +58,13 @@ SUBROUTINE Initialize ( )
   END DO
 
 ! constant rate coefficients
-  RCONST(3) = 1.2e-10
-  RCONST(7) = 1.1e-10
-  RCONST(13) = 7.2e-11
-  RCONST(14) = 6.9e-12
-  RCONST(15) = 1.6e-12
-  RCONST(19) = 1.8e-12
-  RCONST(36) = 3.5e-12
-  RCONST(49) = 1.2e-14
-  RCONST(50) = 1300
-  RCONST(54) = 1.66e-12
-  RCONST(57) = 1.5e-10
-  RCONST(62) = 1.3e-12
-  RCONST(69) = 4e-13
-  RCONST(75) = 2.3e-12
-  RCONST(85) = 4e-12
-  RCONST(92) = 2e-14
-  RCONST(113) = 3.2e-11
-  RCONST(126) = 2e-12
-  RCONST(127) = 2e-12
-  RCONST(128) = 3e-11
-  RCONST(133) = 1.7e-12
-  RCONST(139) = 2e-12
-  RCONST(140) = 2e-12
-  RCONST(141) = 1e-10
-  RCONST(142) = 1.3e-11
-  RCONST(164) = 5.9e-11
-  RCONST(166) = 3.3e-10
-  RCONST(167) = 1.65e-10
-  RCONST(169) = 3e-10
-  RCONST(171) = 1.4e-10
-  RCONST(172) = 2.3e-10
-  RCONST(175) = 2.7e-12
-  RCONST(193) = 1e-10
-  RCONST(195) = 3e-13
-  RCONST(196) = 5e-11
+  RCONST(10) = 1.8e-12
+  RCONST(21) = 3.5e-12
+  RCONST(34) = 1.2e-14
+  RCONST(35) = 1300
+  RCONST(39) = 1.66e-12
+  RCONST(46) = 1.3e-12
+  RCONST(53) = 4e-13
 ! END constant rate coefficients
 
 ! INLINED initializations

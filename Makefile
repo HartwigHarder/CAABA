@@ -24,6 +24,10 @@ ifeq "$(findstring 64,$(MACHTYPE))" "64"
 else
   BITS = 32
 endif
+### q&d fix for bromine:
+ifeq "$(HOST)" "bromine"
+  BITS = 32
+endif
 
 ifeq ($(SYSTEM),Linux)
   ### Choose compiler:
@@ -42,7 +46,7 @@ endif
 
 ifeq ($(SYSTEM),AIX)
   COMPILER = xlf95
-  DEFOPT = -Wf,-D
+  DEFOPT = -WF,-D
 endif
 
 ### If this automatic mechanim doesn't work for you, define the compiler here:
@@ -117,6 +121,11 @@ ifeq ($(COMPILER),g95)
       NETCDF_LIB     = -L/soft/netcdf/v3.6.0b6_g/lib -lnetcdf
     endif
   endif
+  ### qqq+ q&d fix for bromine:
+  ifeq "$(HOST)" "bromine"
+    BITS = 64
+  endif
+  ### qqq-
 endif
 
 # ----------------------------------------------------------------------------
@@ -176,7 +185,7 @@ ifeq ($(COMPILER),xlf95)
   F90       = xlf95_r
   F90FLAGS  = -q64 -qsuppress=1518-061:1518-128 -qsuppress=1500-036 -O3 -qstrict -qMAXMEM=-1 -qsuffix=cpp=f90 -qzerosize -WF,-D__ibm__ -d -WF,-qlanglvl=classic -qlanglvl=95pure -qfree=f90 -qspillsize=32648 -qarch=pwr4 -qtune=pwr4 -Q -qhot
   NETCDF_INCLUDE = -I/afs/ipp-garching.mpg.de/home/j/joeckel/extra_space/@sys/netcdf/v3.6.0b6/include
-  NETCDF_LIB     = -L/afs/ipp-garching.mpg.de/home/j/joeckel/extra_space/@sys/netcdf/v3.6.0b6/lib -lnetcdf90 -lnetcdf
+  NETCDF_LIB     = -L/afs/ipp-garching.mpg.de/home/j/joeckel/extra_space/@sys/netcdf/v3.6.0b6/lib -lnetcdf
 endif
 
 ##############################################################################

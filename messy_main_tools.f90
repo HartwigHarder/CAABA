@@ -102,6 +102,7 @@ MODULE messy_main_tools
   !mz_hr_20080229+
   PUBLIC :: ucase               ! turn a string into all uppercase
   PUBLIC :: spec2relhum         ! conversion from specific to relative
+  PUBLIC :: rel2spechum         ! conversion from relative to specific 
   !mz_hr_20080229-
   PUBLIC :: find_next_free_unit
 
@@ -1254,6 +1255,40 @@ END FUNCTION match_wild
   END FUNCTION spec2relhum
 ! --------------------------------------------------------------------- 
 !mz_hr_20080226-
+
+  ! ---------------------------------------------------------------------
+  REAL(dp) FUNCTION rel2spechum(status, z_relhum, z_temp, z_press)
+
+    ! calculates specific humidity from relative humidity
+    ! [Jacobson, Fundamentals of Atmospheric Modeling, CamUnivPress, 1999]
+
+    ! molar mass of water (vapour) / molar mass of dry air
+    USE messy_main_constants_mem, ONLY: MM_eps, TINY_DP, FLAGGED_BAD
+
+    IMPLICIT NONE
+
+    ! e funct, natural log, absolute value
+    INTRINSIC EXP, LOG, ABS
+
+    !I/O
+    INTEGER, INTENT(OUT) :: status
+    REAL(dp), INTENT(IN) :: z_relhum    ! 
+    REAL(dp), INTENT(IN) :: z_temp       ! K
+    REAL(dp), INTENT(IN) :: z_press      ! Pa
+
+    !LOCAL
+    REAL(dp) ::  omega_vs
+
+    status = 0
+
+    omega_vs = MM_eps * psatf(z_temp) / (z_press - psatf(z_temp))
+
+    ! calc relhum, def by World Meteorological Organization WMO in %
+    rel2spechum = 1._dp/(1._dp/(z_relhum * omega_vs) + 1._dp)
+
+ 
+  END FUNCTION rel2spechum
+! --------------------------------------------------------------------- 
 
   !---------------------------------------------------------------------
   FUNCTION find_next_free_unit(istart,istop) RESULT(unit)

@@ -1,5 +1,5 @@
 !*****************************************************************************
-!                Time-stamp: <2008-11-10 12:08:45 sander>
+!                Time-stamp: <2009-08-03 19:22:09 sander>
 !*****************************************************************************
 
 ! SAPPHO = Simplified And Parameterized PHOtolysis rates
@@ -29,7 +29,7 @@ MODULE messy_sappho_box
   USE caaba_io,                 ONLY: open_output_file, write_output_file,         &
                                       close_file
   USE messy_main_constants_mem, ONLY: PI, DP
-  USE caaba_mem,                ONLY: model_time, l_ff
+  USE caaba_mem,                ONLY: photo_scenario, model_time
   USE messy_main_tools,         ONLY: PTR_3D_ARRAY
   USE messy_sappho              ! jx, jvalues
   USE messy_cmn_photol_mem      ! IP_MAX, ip_*, jname
@@ -95,7 +95,7 @@ CONTAINS
 
     IMPLICIT NONE
 
-    CALL jvalues(cossza, l_ff, degree_lat*PI/180., photon)
+    CALL jvalues(cossza, photo_scenario, degree_lat*PI/180., photon)
 
   END SUBROUTINE sappho_physc
 

@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Global.f90
-! Time                 : Fri Jul 24 09:54:14 2009
-! Working directory    : /home/caaba/caaba_2.5j-rs/mecca
+! Time                 : Thu Aug 27 13:00:44 2009
+! Working directory    : /home/sander/e2/messy_2.3z_rs/messy/mbm/caaba/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -40,7 +40,7 @@ MODULE messy_mecca_kpp_Global
   REAL(kind=dp) :: FIX(NFIX)
 ! VAR, FIX are chunks of array C
       EQUIVALENCE( C(1),VAR(1) )
-      EQUIVALENCE( C(104),FIX(1) )
+      EQUIVALENCE( C(31),FIX(1) )
 ! RCONST - Rate constants (global)
   REAL(kind=dp) :: RCONST(NREACT)
 ! TIME - Current integration time
@@ -70,20 +70,20 @@ MODULE messy_mecca_kpp_Global
 
   ! MECCA info from xmecca:
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: &
-    timestamp            = 'xmecca was run on 2009-07-24 at 09:53:58 by caaba', &
-    gas_spc_file         = '-rw------- 1 caaba caaba 12702 2009-06-24 19:33 gas.spc', &
-    aqueous_spc_file     = '-rw------- 1 caaba caaba 8371 2008-07-17 18:28 aqueous.spc', &
-    gas_eqn_file         = '-rw------- 1 caaba caaba 46514 2009-07-08 13:01 gas.eqn', &
-    aqueous_eqn_file     = '-rw------- 1 caaba caaba 55063 2009-01-30 16:33 aqueous.eqn', &
-    gas_spc_file_sum     = '35348    13', &
+    timestamp            = 'xmecca was run on 2009-08-27 at 13:00:42 by sander', &
+    gas_spc_file         = '-rw------- 1 sander sander 12731 2009-07-16 18:14 gas.spc', &
+    aqueous_spc_file     = '-rw------- 1 sander sander 8371 2008-07-17 18:28 aqueous.spc', &
+    gas_eqn_file         = '-rw------- 1 sander sander 46516 2009-07-24 19:49 gas.eqn', &
+    aqueous_eqn_file     = '-rw------- 1 sander sander 55063 2009-01-30 16:33 aqueous.eqn', &
+    gas_spc_file_sum     = '23346    13', &
     aqueous_spc_file_sum = '39581     9', &
-    gas_eqn_file_sum     = '22540    46', &
+    gas_eqn_file_sum     = '05842    46', &
     aqueous_eqn_file_sum = '54359    54', &
     rplfile              = '', &
-    wanted               = '((Tr && (G || Het) && !Cl && !Br && !I) || St) && !Hg', &
+    wanted               = 'Tr && G && !C && !S && !Cl && !Br && !I && !Hg', &
     diagtracfile         = '', &
-    rxnrates             = '', &
-    tagdbl               = ''
+    rxnrates             = 'n', &
+    tagdbl               = 'n'
   LOGICAL, PARAMETER :: REQ_MCFCT = .FALSE.
 
   ! from xmecca for aerosol:
@@ -264,18 +264,18 @@ MODULE messy_mecca_kpp_Global
     testfac_IClBr = 1.e2_dp, testfac_H2SO4  = 1.e7_dp
 
   ! from xmecca:
-  LOGICAL, PARAMETER :: REQ_HET     = .TRUE.
+  LOGICAL, PARAMETER :: REQ_HET     = .FALSE.
   LOGICAL, PARAMETER :: REQ_PHOTRAT = .TRUE.
   LOGICAL, PARAMETER :: REQ_AEROSOL = .FALSE.
 
   ! KPP info from xmecca:
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: &
-    mecca_spc_file     = '-rw------- 1 caaba caaba 21451 2009-07-24 09:53 mecca.spc', &
-    mecca_eqn_file     = '-rw-r--r-- 1 caaba caaba 41032 2009-07-24 09:54 mecca.eqn', &
-    mecca_spc_file_sum = '33468    21', &
-    mecca_eqn_file_sum = '59568    41', &
+    mecca_spc_file     = '-rw------- 1 sander sander 21481 2009-08-27 13:00 mecca.spc', &
+    mecca_eqn_file     = '-rw------- 1 sander sander 22311 2009-08-27 13:00 mecca.eqn', &
+    mecca_spc_file_sum = '46658    21', &
+    mecca_eqn_file_sum = '07337    22', &
     kppoption          = 'k', &
-    KPP_HOME           = '/home/caaba/caaba_2.5j-rs/mecca/kpp', &
+    KPP_HOME           = '/home/sander/e2/messy_2.3z_rs/messy/tools/kpp', &
     KPP_version        = '2.2.1_rs3', &
     integr             = 'rosenbrock_posdef'
 

@@ -15,5 +15,5 @@
  set integr       = rosenbrock_posdef # integrator
  set decomp       = n                 # remove indirect indexing
  set latex        = n                 # latex list of reactions
- set deltmptex    = n                 # delete temporary LaTeX files?
+ set graphviz     = y                 # graphviz plots
  set deltmp       = n                 # delete temporary xmecca files?

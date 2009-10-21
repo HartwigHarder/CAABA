@@ -1,4 +1,4 @@
-! Time-stamp: <2009-02-27 17:48:07 sander>
+! Time-stamp: <2009-08-10 11:00:03 sander>
 
 ! CAABA = Chemistry As A Boxmodel Application
 
@@ -6,7 +6,7 @@
 ! calculations for emission, deposition, and photolysis
 
 ! Authors:
-! Rolf Sander, MPICH, Mainz, 2003-2008
+! Rolf Sander, MPICH, Mainz, 2003-2009
 ! Hella Riede, MPICH, Mainz, 2007
 
 ! This program is free software; you can redistribute it and/or
@@ -49,8 +49,13 @@ CONTAINS
       ! namelist:
       USE_JVAL, USE_MECCA, USE_READJ,        & ! MESSy submodels
       USE_SAPPHO, USE_SEMIDEP, USE_TRAJECT,  & ! MESSy submodels
+#ifdef E4CHEM
+      USE_E4CHEM,                            & ! MESSy submodels
+#endif
+      init_scenario, photo_scenario,         & ! scenarios
+      emission_scenario, drydep_scenario,    & ! ...
       temp, press, relhum, zmbl,             & ! CAABA (meteorology)
-      degree_lat, degree_lon, l_ff, l_oomph, & ! CAABA (location)
+      degree_lat, degree_lon, l_ff,          & ! CAABA (location)
       startday, ext_runtime, time_step,      & ! CAABA (time)
       Ca_precip, init_spec,                  & ! MECCA-specific
       photrat_channel, l_skipkpp,            & ! MECCA-specific
@@ -69,8 +74,19 @@ CONTAINS
     INTEGER, INTENT(IN)  :: iou        ! I/O unit
     ! local:
     CHARACTER(LEN=*), PARAMETER :: substr = 'caaba_read_nml'
+    INTEGER, PARAMETER :: MAX_SCENARIOS = 7
+    CHARACTER(LEN=12), PARAMETER, DIMENSION(MAX_SCENARIOS) :: &
+      list_of_scenarios = (/ &
+      '            ', 'MBL         ', 'FF_ARCTIC   ', 'FF_ANTARCTIC', &
+      'OOMPH       ', 'FREE_TROP   ', 'STRATO      ' /)
+    LOGICAL :: l_init_scenario_ok     = .FALSE.
+    LOGICAL :: l_photo_scenario_ok    = .FALSE.
+    LOGICAL :: l_emission_scenario_ok = .FALSE.
+    LOGICAL :: l_drydep_scenario_ok   = .FALSE.
     LOGICAL :: lex   ! file exists?
+    LOGICAL :: l_ok
     INTEGER :: fstat ! file status
+    INTEGER :: i
     INTEGER                        :: nosub
     CHARACTER(LEN=STRLEN_SHORT)    :: tsunit    = ''! time step length unit
     CHARACTER(LEN=STRLEN_SHORT)    :: rtunit    = ''! ext_runtime unit
@@ -79,8 +95,13 @@ CONTAINS
     NAMELIST /CAABA/ &
       USE_JVAL, USE_MECCA, USE_READJ,        & ! MESSy submodels
       USE_SAPPHO, USE_SEMIDEP, USE_TRAJECT,  & ! MESSy submodels
+#ifdef E4CHEM
+      USE_E4CHEM,                            & ! MESSy submodels
+#endif
+      init_scenario, photo_scenario,         & ! scenarios
+      emission_scenario, drydep_scenario,    & ! ...
       temp, press, relhum, zmbl,             & ! CAABA (meteorology)
-      degree_lat, degree_lon, l_ff, l_oomph, & ! CAABA (location)
+      degree_lat, degree_lon, l_ff,          & ! CAABA (location)
       startday, ext_runtime, time_step,      & ! CAABA (time)
       Ca_precip, init_spec,                  & ! MECCA-specific
       photrat_channel, l_skipkpp,            & ! MECCA-specific
@@ -109,6 +130,47 @@ CONTAINS
     IF (USE_SAPPHO)  WRITE(*,*) '  SAPPHO'
     IF (USE_SEMIDEP) WRITE(*,*) '  SEMIDEP'
     IF (USE_TRAJECT) WRITE(*,*) '  TRAJECT'
+#ifdef E4CHEM
+    IF (USE_E4CHEM)  WRITE(*,*) '  E4CHEM'
+#endif
+    WRITE(*,*) HLINE2
+
+    ! scenarios:
+    DO i=1, MAX_SCENARIOS
+      IF (TRIM(list_of_scenarios(i))==TRIM(init_scenario)) &
+        l_init_scenario_ok = .TRUE.
+      IF (TRIM(list_of_scenarios(i))==TRIM(photo_scenario)) &
+        l_photo_scenario_ok = .TRUE.
+      IF (TRIM(list_of_scenarios(i))==TRIM(emission_scenario)) &
+        l_emission_scenario_ok = .TRUE.
+      IF (TRIM(list_of_scenarios(i))==TRIM(drydep_scenario)) &
+        l_drydep_scenario_ok = .TRUE.
+    ENDDO
+    WRITE(*,*) 'Selected scenarios:'
+    IF (l_init_scenario_ok) THEN
+      WRITE(*,*) '  Init:       ', TRIM(init_scenario)
+    ELSE
+      WRITE(*,*) 'ERROR, unknown init scenario ', TRIM(init_scenario)
+      STOP
+    ENDIF
+    IF (l_photo_scenario_ok) THEN
+      WRITE(*,*) ' Photo:       ', TRIM(photo_scenario)
+    ELSE
+      WRITE(*,*) 'ERROR, unknown photo scenario ', TRIM(photo_scenario)
+      STOP
+    ENDIF
+    IF (l_emission_scenario_ok) THEN
+      WRITE(*,*) '  Emission:   ', TRIM(emission_scenario)
+    ELSE
+      WRITE(*,*) 'ERROR, unknown emission scenario ', TRIM(emission_scenario)
+      STOP
+    ENDIF
+    IF (l_drydep_scenario_ok) THEN
+      WRITE(*,*) '  Deposition: ', TRIM(drydep_scenario)
+    ELSE
+      WRITE(*,*) 'ERROR, unknown deposition scenario ', TRIM(drydep_scenario)
+      STOP
+    ENDIF
     WRITE(*,*) HLINE2
 
     cair = (N_A/1.E6) * press / (R_gas*temp) ! cair = c(air) in [mcl/cc]
@@ -135,7 +197,7 @@ CONTAINS
     !mz_hr_20070508+
     IF (TRIM(ext_runtime) /= '') THEN
       ! crack string into value and unit
-      CALL strcrack(trim(ext_runtime), " ", field, nosub)
+      CALL strcrack(TRIM(ext_runtime), " ", field, nosub)
 
       rtunit        = TRIM(ADJUSTL(field(2)(1:7)))
       ext_runtime   = TRIM(field(1))
@@ -163,7 +225,7 @@ CONTAINS
     ! set time step if specified in namelist
     IF (TRIM(time_step) /= '') THEN
       ! crack string into value and unit
-      CALL strcrack(trim(time_step), " ", field, nosub)
+      CALL strcrack(TRIM(time_step), " ", field, nosub)
 
       tsunit        = TRIM(ADJUSTL(field(2)(1:7)))
       time_step     = TRIM(field(1))
@@ -377,17 +439,28 @@ CONTAINS
 
   SUBROUTINE caaba_init
 
+#ifndef E4CHEM
     USE messy_mecca_kpp,            ONLY: NSPEC
+#else
+    USE messy_mecca_kpp,            ONLY: NSPEC_mecca => NSPEC
+    USE messy_e4chem,               ONLY: NSPEC_fchem => NSPEC
+#endif
     USE messy_mecca,                ONLY: mecca_version => modver
     USE caaba_mem,                  ONLY: model_time, model_start,     &
                                           model_end, USE_TRAJECT,      &
-                                          relhum, zmbl, l_ff, l_oomph, &
+                                          relhum, zmbl,                &
                                           temp, press,                 &
+#ifdef E4CHEM
+                                          USE_MECCA, USE_E4CHEM,       &
+#endif
                                           c, runtime, startday,        &
                                           caaba_version
     USE messy_main_constants_mem,   ONLY: OneDay
     USE caaba_io,                   ONLY: open_output_file
 
+#ifdef E4CHEM
+    INTEGER             :: NSPEC
+#endif
     INTEGER, PARAMETER  :: iou = 999   ! I/O unit
     INTEGER             :: status ! error status
 
@@ -406,6 +479,11 @@ CONTAINS
     model_start = startday * OneDay
     model_time  = model_start
     model_end   = model_time + runtime * OneDay ! time end
+
+#ifdef E4CHEM
+    IF (USE_MECCA)    NSPEC = NSPEC_mecca
+    IF (USE_E4CHEM)   NSPEC = NSPEC_fchem
+#endif
 
     ALLOCATE(c(NSPEC))
 

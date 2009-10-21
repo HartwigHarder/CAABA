@@ -1,4 +1,4 @@
-\def\filedate{2009-02-24}\let\thedate\filedate % packages may change \filedate
+\def\filedate{2009-08-27}\let\thedate\filedate % packages may change \filedate
 
 \documentclass[twoside]{article}
 \usepackage{natbib}
@@ -28,9 +28,9 @@
 \renewcommand{\topfraction}{0.95}
 \renewcommand{\dbltopfraction}{0.95}
 \renewcommand{\bottomfraction}{0.95}
-\renewcommand{\floatpagefraction}{0.95}
-\renewcommand{\dblfloatpagefraction}{0.95}
-\renewcommand{\textfraction}{0.01}
+\renewcommand{\floatpagefraction}{0.9}
+\renewcommand{\dblfloatpagefraction}{0.9}
+\renewcommand{\textfraction}{0.1}
 \setcounter{topnumber}{3}
 \setcounter{bottomnumber}{3}
 
@@ -58,8 +58,8 @@
     \underline{C}alculating the\\[5mm]
     \underline{C}hemistry of the
     \underline{A}tmosphere}\\[10mm]
-  {\huge\bf Rolf Sander, Patrick J\"ockel, Astrid Kerkweg \& Hella
-    Riede}\\[15mm]
+  {\huge\bf Rolf Sander, Hartwig Harder, Patrick J\"ockel, Astrid
+    Kerkweg \& Hella Riede}\\[15mm]
   \Large
   Air Chemistry Department\\
   Max-Planck Institute of Chemistry\\
@@ -77,7 +77,7 @@
 
 \tableofcontents
 
-\begin{figure*}[htb]
+\begin{figure*}%[htb]
   \begin{center}
   \includegraphics[width=0.9\textwidth]{modular-mecca}
   \end{center}
@@ -86,98 +86,14 @@
   \label{fig:modular-mecca}
 \end{figure*}
 
-\begin{table*}[htb]
-  \begin{center}
-    \caption{List of CAABA/MECCA Fortran90 files}
-    \label{tab:files}
-    \begin{tabular}{lp{0.5\textwidth}}
-      \hline
-      \multicolumn{2}{l}{CAABA box model related files}\\
-      \hline
-      \verb|caaba.f90|                         & main box model file\\
-      \verb|caaba_io.f90|                      & input/output\\
-      \verb|caaba_io_netcdf.inc|               & netCDF input/output\\
-      \verb|caaba_io_ascii.inc|                & ascii input/output\\
-      \verb|caaba_mem.f90|                     & declaration of CAABA variables\\
-      \verb|messy_main_control_cb.f90|         & flow control\\
-      \verb|messy_jval_box.f90|                & connection of JVAL to CAABA\\
-      \verb|messy_mecca_box.f90|               & connection of MECCA to CAABA\\
-      \verb|messy_sappho_box.f90|              & connection of SAPPHO to CAABA\\
-      \verb|messy_semidep_box.f90|             & simplified emission and
-                                                 deposition, including
-                                                 connection to CAABA\\
-      \verb|messy_traject_box.f90|             & trajectory calculations
-                                                 (under construction)\\ 
-      % \hline
-      % \multicolumn{2}{l}{ECHAM5 related files}\\
-      % \hline
-      % \verb|messy_mecca_e5.f90|                & interface between ECHAM5 and
-      %                                            MECCA subroutines\\
-      % \verb|messy_mecca_aero_e5.f90|           & interface between ECHAM5 and
-      % MECCA-AERO subroutines\\
-      % \verb|messy_mecca_mem_e5.f90|            & declaration and
-      %                                            memory for variables\\ 
-      % \verb|messy_mecca_idt_e5.inc|            & include file\\
-      % \verb|messy_mecca_c2mr_e5.inc|           & include file\\
-      % \verb|messy_mecca_mr2c_e5.inc|           & include file\\
-      % \verb|messy_mecca_trac_e5.inc|           & include file\\
-      % \verb|mecca_t.nml|                       & namelist for tracer
-      %                                            initialization\\
-      \hline
-      \multicolumn{2}{l}{static core files}\\
-      \hline
-      \verb|messy_main_constants_mem.f90|      & physical constants\\
-      \verb|messy_main_blather.f90|            & print utilities\\
-      \verb|messy_main_tools.f90|              & auxiliary functions\\
-      \verb|messy_main_tools_kp4_compress.f90| & (file exists but is not
-                                                 not used with CAABA)\\
-      \verb|messy_jval.f90|                    & calculation of J-values\\
-      \verb|messy_sappho.f90|                  & simplified and parameterized 
-                                                 photolysis rate coefficients\\
-      \hline
-      \multicolumn{2}{l}{static MECCA core files in the {\tt mecca/smcl/}
-        directory}\\
-      \hline
-      \verb|messy_mecca.f90|                   & MECCA core\\
-      \verb|messy_mecca_aero.f90|              & aerosol chemistry\\
-      \verb|messy_mecca_khet.f90|              & (file exists but is not
-                                                 used with CAABA)\\
-      \hline
-      \multicolumn{2}{l}{KPP- and {\tt xmecca}-produced files in the {\tt
-          mecca/smcl/} directory}\\
-      \hline
-      \verb|messy_mecca_kpp.f90|               & a wrapper for the KPP files\\
-      \verb|messy_mecca_kpp_function.f90|      & ODE function\\
-      \verb|messy_mecca_kpp_global.f90|        & global data headers\\
-      \verb|messy_mecca_kpp_initialize.f90|    & initialization\\
-      \verb|messy_mecca_kpp_integrator.f90|    & numerical integration\\
-      \verb|messy_mecca_kpp_jacobian.f90|      & ODE Jacobian\\
-      \verb|messy_mecca_kpp_jacobiansp.f90|    & Jacobian sparsity\\
-      \verb|messy_mecca_kpp_linearalgebra.f90| & sparse linear algebra\\
-      \verb|messy_mecca_kpp_monitor.f90|       & equation info\\
-      \verb|messy_mecca_kpp_parameters.f90|    & model parameters\\
-      \verb|messy_mecca_kpp_precision.f90|     & arithmetic precision\\
-      \verb|messy_mecca_kpp_rates.f90|         & user-defined rate laws\\
-      \verb|messy_mecca_kpp_util.f90|          & utility input-output\\
-      \hline
-      \multicolumn{2}{l}{namelist files}\\
-      \hline
-      \verb|caaba.nml|                         & CAABA namelist\\
-      \verb|jval.nml|                          & JVAL namelist\\
-      \verb|mecca.nml|                         & MECCA namelist\\
-      \hline
-    \end{tabular}
-  \end{center}
-\end{table*}
-
 \section{Introduction}
 
 MECCA (\underline{M}odule \underline{E}fficiently
 \underline{C}alculating the \underline{C}hemistry of the
 \underline{A}tmosphere) is an atmospheric chemistry module that contains
 a comprehensive chemical mechanism with tropospheric and stratospheric
-chemistry of both the gas and the aqueous phase \citep{1666}. For the
-numerical integration, MECCA uses the KPP software \citep{1665}.
+chemistry of both the gas and the aqueous phase \citep{1666,2405}. For
+the numerical integration, MECCA uses the KPP software \citep{1665}.
 
 To apply the MECCA chemistry to an atmospheric scenario, MECCA must be
 connected to a base model. As shown in Fig.~\ref{fig:modular-mecca}, the
@@ -191,9 +107,10 @@ connected to the box model CAABA (\underline{C}hemistry \underline{A}s
 \underline{A} \underline{B}oxmodel \underline{A}pplication). This
 combination will be referred to as ``CAABA/MECCA''. The main features of
 the CAABA box model are shown in Fig.~\ref{fig:caaba_sketch}. In
-addition to MECCA chemistry, CAABA also contains modules for calculating
-J-values (JVAL), simplified and parameterized photolysis rates (SAPPHO),
-and simplified emission and depostion (SEMIDEP).
+addition to MECCA chemistry, CAABA also contains several other
+submodels, e.g.\ JVAL for calculating J-values, SAPPHO for simplified
+and parameterized photolysis rates, and SEMIDEP for simplified emission
+and deposition.
 
 \section{Installation}
 \label{sec:install}
@@ -204,9 +121,9 @@ computer.
 CAABA/MECCA has been tested successfully on several UNIX-like operating
 systems. The easiest installation is probably on a Linux PC since
 several auxiliary programs are already included in a typical Linux
-distribution. Installation under ``Windows'' is neither recommended nor
-supported. CAABA/MECCA consists of the Fortran90 files listed in
-Tab.~\ref{tab:files}. The prerequisites are:
+distribution. Installation under Windows is neither recommended nor
+supported (although it is possible to run the model in a virtual Linux
+machine on a Windows PC). The prerequisites are:
 \begin{description}
 \item[A Fortran90 compiler (mandatory):] Several compilers have been
   tested successfully: g95 (for Linux), Lahey (for Linux), Intel (for
@@ -219,18 +136,18 @@ Tab.~\ref{tab:files}. The prerequisites are:
   into a set of ordinary differential equations (ODEs) in Fortran90
   syntax. MECCA needs the KPP version that is provided in the
   \verb|mecca/kpp/| directory.
-\item[Perl, tcsh, gawk, sed, and make (mandatory):] These UNIX tools are
-  standard on Linux systems. Please check that recent versions of them
-  are installed. Especially gawk may lead to strange error messages.
-  To test gawk, type:\\
-  \verb|gawk 'BEGIN {print match("X","[^a-z]")}'|\\
+\item[Perl, tcsh, awk, sed, and make (mandatory):] These UNIX tools are
+  standard on Linux systems. Check that recent versions of them are
+  installed. Especially awk may lead to strange error messages.
+  To test awk, type:\\
+  \verb|awk 'BEGIN {print match("X","[^a-z]")}'|\\
   The result should be ``1''. However, you may get ``0'' as the result
-  on your system. Supposedly, this is not a bug in gawk but a feature.
+  on your system. Supposedly, this is not a bug in awk but a feature.
   You can solve the problem by setting the environment variable
   \verb|LC_COLLATE| to ``\verb|C|'':\\
   \verb|export LC_COLLATE=C| $\qquad$ (if you use bash)\\
   \verb|setenv LC_COLLATE C| $\qquad$ (if you use tcsh)\\
-  When you try the gawk test again, it should work fine.
+  When you try the awk test again, it should work fine.
 \item[La\TeX\ (optional):] If you have La\TeX\ installed on your
   computer, you can print a table (including rate coefficients and
   references) of the currently selected mechanism (see
@@ -241,13 +158,19 @@ Tab.~\ref{tab:files}. The prerequisites are:
   manipulating or displaying netCDF data is listed at:
   \url{http://www.unidata.ucar.edu/software/netcdf/software.html}. If
   you don't have the netCDF library, you can still run the model but
-  produce only ascii output.
+  produce only ASCII output.
+\item[netCDF tools (optional):] Several tools are used to analyse the
+  netCDF output when the model is run in the multirun
+  (Sect.~\ref{sec:multirun}) or Monte-Carlo (Sect.~\ref{sec:montecarlo})
+  mode. Specifically, the NCO programs \verb|ncpdq|, \verb|ncrcat|, and
+  \verb|ncks| from \url{http://nco.sourceforge.net} and the program
+  \verb|ncclamp| from \url{http://ncclamp.sourceforge.net} are needed.
 \item[ferret (optional):] The ferret plotting program is needed to plot
   the contents of the netCDF output using the ferret scripts in the
   \verb|jnl/| directory (see Sect.~\ref{sec:ferret} for details).
 \end{description}
 
-\begin{figure*}[htb]
+\begin{figure*}%[htb]
   \begin{center}
   \includegraphics[width=0.9\textwidth]{caaba_sketch}
   \end{center}
@@ -255,21 +178,52 @@ Tab.~\ref{tab:files}. The prerequisites are:
   \label{fig:caaba_sketch}
 \end{figure*}
 
+\begin{figure*}
+  \begin{center}
+    \includegraphics[width=\textwidth]{caaba_use_diagr}
+  \end{center}
+  \caption{Module structure of MECCA when it is connected to the CAABA
+    box model. The box-model related files are in the colored layers
+    marked with BML, BMIL, and SMIL. The submodel core layer (SMCL) of
+    MECCA is independent of the box model (see \citet{1664} for details
+    about the MESSy layers). The arrows start at the module which is
+    exporting the variables and subroutines. They point to the module
+    importing them via the Fortran90 USE instruction. Here, the box {\tt
+      messy\_mecca\_kpp*} represents all KPP-generated files. The
+    KPP-internal structure is shown in Fig.~\ref{fig:kpp_use_diagr}.}
+  \label{fig:caaba_use_diagr}
+\end{figure*}
+
+\begin{figure*}
+  \begin{center}
+    \includegraphics[width=\textwidth]{kpp_use_diagr}
+  \end{center}
+  \caption{Module structure of KPP-produced Fortran90 files. The arrows
+    start at the module which is exporting the variables and subroutines
+    shown in blue. They point to the module importing them via the
+    Fortran90 USE instruction.}
+  \label{fig:kpp_use_diagr}
+\end{figure*}
+
+\begin{figure*}
+  \begin{center}
+    \fbox{\includegraphics[width=0.9\textwidth]{Br}}
+  \end{center}
+  \caption{Visualization of the MECCA gas-phase bromine chemistry
+    generated with the graphviz software.}
+  \label{fig:Br}
+\end{figure*}
+
 Once all prerequisites are fulfilled, you can install CAABA/MECCA by
 simply unpacking the zip archive:\\[2mm]
 {\tt unzip caaba\_\meccaversion.zip}\\[2mm]
-Please make sure that the directory structure has not changed during the
-unzipping process. Unfortunately, some unzipping programs seem to put
-all files into one directory, ignoring the original directory structure.
 
 Next, you have to check that all settings in \verb|Makefile| are
 correct. If necessary, edit the file: Choose a Fortran90 compiler
 (\verb|COMPILER|), enter its name (\verb|F90|) and the compiler options
 (\verb|F90FLAGS|). If you add a new compiler, be sure to activate the
-C-preprocessor option. Values for \verb|NETCDF_INCLUDE| and
-\verb|NETCDF_LIB| are only needed for the model run when netCDF output
-is selected. To activate netCDF output, you also have to edit the
-\verb|Makefile|:
+C-preprocessor option. To activate netCDF output, you also have to edit
+the \verb|Makefile|:
 \begin{itemize}\nosep
 \item Change the variable \verb|OUTPUT| from \verb|ASCII| to
   \verb|NETCDF|.
@@ -287,45 +241,94 @@ check the following:
   \verb|which perl|
 \item Confirm that the tcsh paths in the first lines of
   \verb|xcaaba| and \verb|xmecca| are correct.
+\item Confirm that the model code was unzipped successfully from the zip
+  archive. Check for potential problems during the unzipping process:
+  \begin{itemize}
+  \item Make sure that the directory structure has not changed.
+    Unfortunately, some unzipping programs seem to put all files into
+    one directory, ignoring the original directory structure.
+  \item Make sure that links have not been converted to files. For
+    example, the output of the command ``\verb|file caaba.nml|'' should
+    tell you that \verb|caaba.nml| is a symbolic link to
+    \verb|nml/simple/caaba.nml|.
+  \end{itemize}
 \end{itemize}
 
 \section{Compiling and running the CAABA/MECCA box model with the shell
   script {\tt xcaaba}}
 \label{sec:execute}
 
-First, go to the directory of the model code:\\[2mm]
+First, go to the base directory of the model code (note that all path
+names given in this manual are relative to this base directory):\\[2mm]
 {\tt cd caaba\_\meccaversion}\\[2mm]
-Now the tcsh script \verb|xcaaba| guides you through the process of
-running the box model. To execute it, type:
+Next, the tcsh script \verb|xcaaba| will guide you through the process
+of running the box model. To execute it, type:
 \begin{verbatim}
 ./xcaaba
 \end{verbatim}
-First, you are asked if you want to create a chemical mechanism with
-\verb|xmecca|. If you answer ``y'', you can select a new chemical
-mechanism with \verb|xmecca| as described in detail in
-Sect.~\ref{sec:xmecca}. However, for the first tests with CAABA/MECCA it
-is recommended to answer ``n'' and use the default mechanism, i.e.\
-marine gas-phase and aerosol chemistry including halogens. Next, when
-asked for an option, choose ``c'' to compile the Fortran90 code. After a
-successful compilation, \verb|xcaaba| asks if you want to run the CAABA
-boxmodel. After answering ``y'', \verb|xcaaba| lists the active contents
-of the \verb|CAABA| and \verb|CTRL| namelists which control the
-behaviour of CAABA/MECCA during run-time. The namelists are contained in
-the files \verb|caaba.nml| and \verb|mecca.nml|, and editing them allows
-fine-tuning of the model run (see Sect.~\ref{sec:nmlfiles}). However,
-for the first tests, the defaults can be used as they are. Answer
-``Continue?'' with ``y'', and the model run will start. The model day
-and the current solar zenith angle (sza) are printed on the screen
-during the model run. The default is to integrate 8 days. After the
-model run, \verb|xcaaba| asks if you want to save the model output
-inside the \verb|output/| directory.
+\verb|xcaaba| will ask several questions, and recommended answers are
+given below. If you only press the Return key, you select the default.
+\begin{verbatim}
+Start xmecca?
+\end{verbatim}
+If you answer ``y'', you can create a new chemical mechanism with
+\verb|xmecca| as described in detail in Sect.~\ref{sec:xmecca}. However,
+for the first tests with CAABA/MECCA it is recommended to answer ``n''
+and use the simple default mechanism.
+\begin{verbatim}
+Choose an option:
+s = Start from scratch
+c = Compile
+r = Run existing executable
+h = Help
+q = Quit
+\end{verbatim}
+Choose ``c'' to compile the Fortran90 code. After a successful
+compilation, \verb|xcaaba| asks if you want to run the model:
+\begin{verbatim}
+Run CAABA boxmodel with MECCA chemistry?
+y = Yes (default)
+n = No
+m = Multirun (multiple runs)
+q = Quit
+\end{verbatim}
+Answer ``y'' here (see Sect.~\ref{sec:multirun} for more information
+about the ``m'' = multirun option).
+\begin{verbatim}
+Choose a namelist file from
+the nml/ directory:
+...
+\end{verbatim}
+Namelists control the behaviour of CAABA/MECCA during run-time, and
+editing them allows fine-tuning of the model run (see
+Sect.~\ref{sec:nmlfiles}). The default is to use the same namelist as
+last time. For the first tests, the file \verb|simple/caaba.nml| can be
+chosen. Next, \verb|xcaaba| shows the active contents of the namelist
+files \verb|caaba.nml| and \verb|mecca.nml|.
+\begin{verbatim}
+Before you continue, ensure that
+the namelist is consistent with
+the selected chemistry mechanism!
+Continue?
+\end{verbatim}
+Answer ``y'', and the CAABA/MECCA model simulation will start. The flow
+control is illustrated in Fig:~\ref{fig:caaba_flowcontrol}. The model
+day and the current solar zenith angle (sza) are printed on the screen
+during the model run. The default is to integrate 8 days.
+\begin{verbatim}
+Save the output and model code 
+in output/ directory?
+\end{verbatim}
+Answer ``y'', and \verb|xcaaba| will put the files into a subdirectory
+with a name based on the date and time of the model run, e.g.\
+\verb|output/2009-08-24-16:29:00/|.
 
 \section{Plotting the model results with the ferret software}
 \label{sec:ferret}
 
 If you have chosen netCDF output, you can plot the model results with
 the ferret program (\url{http://ferret.wrc.noaa.gov/Ferret/}). Change
-into the \verb|jnl| directory, then start the program by typing
+into the \verb|jnl/| directory, then start the program by typing
 ``\verb|ferret|''. When ferret has started, you can plot the gas-phase
 species of the latest model run with the ferret script \verb|xxxg.jnl|
 by typing:
@@ -343,13 +346,24 @@ results. The second parameter can be set to ``\verb|mpl|'' or
 [\unit{mol/L}] or mixing ratios [\unit{mol(aq)/mol(air)}], respectively.
 The third parameter defines the aerosol bin. With two aerosol bins,
 ``\verb|A01|'' refers to sulfate particles, and ``\verb|A02|'' to
-sea-salt particles. As an example, type:
+sea-salt particles. For example, type:
 \begin{verbatim}
-go xxxa.jnl 0d mpl A01
+go xxxa.jnl 0d mpl A02
 \end{verbatim}
 Photolysis rate coefficients can be plotted with \verb|jval.jnl|:
 \begin{verbatim}
 go jval.jnl
+\end{verbatim}
+If the calculation of accumulated reaction rates had been switched on
+(Sect.~~\ref{sec:xmecca}), a plot of all reaction rates can be made
+with:
+\begin{verbatim}
+go rxnrates.jnl
+\end{verbatim}
+Alternatively, it is possible to plot only the production and
+destruction rates for a certain species, e.g.\ for OH:
+\begin{verbatim}
+go rxnrates_scaled.jnl OH
 \end{verbatim}
 To plot results from previous runs which are saved in the \verb|output/|
 directory, edit the file \verb|setmodelrun.jnl| and enter the paths of
@@ -358,33 +372,6 @@ model runs, you can enter two or more ``\verb|GO _define_sensi|''
 commands in \verb|setmodelrun.jnl|. To plot the difference between model
 runs, activate the line ``\verb|DEFINE SYMBOL diffplot TRUE|'' in
 \verb|setmodelrun.jnl|.
-
-\begin{figure*}
-  \begin{center}
-    \includegraphics[width=\textwidth]{kpp_use_diagr}
-  \end{center}
-  \caption{Module structure of KPP-produced Fortran90 files. The arrows
-    start at the module which is exporting the variables and subroutines
-    shown in blue. They point to the module importing them via the
-    Fortran90 USE instruction.}
-  \label{fig:kpp_use_diagr}
-\end{figure*}
-
-\begin{figure*}
-  \begin{center}
-    \includegraphics[width=\textwidth]{caaba_use_diagr}
-  \end{center}
-  \caption{Module structure of MECCA when it is connected to the CAABA
-    box model. The box-model related files are in the colored layers
-    marked with BML, BMIL, and SMIL. The submodel core layer (SMCL) of
-    MECCA is independent of the box model (see \citet{1664} for details
-    about the MESSy layers). The arrows start at the module which is
-    exporting the variables and subroutines. They point to the module
-    importing them via the Fortran90 USE instruction. Here, the box {\tt
-      messy\_mecca\_kpp} represents all KPP-generated files. The
-    KPP-internal structure is shown in Fig.~\ref{fig:kpp_use_diagr}.}
-  \label{fig:caaba_use_diagr}
-\end{figure*}
 
 \section{Selecting a chemical mechanism with the shell script {\tt xmecca}}
 \label{sec:xmecca}
@@ -403,20 +390,21 @@ cd mecca
 \verb|xmecca| will ask several questions, and recommended answers are
 given below. If you only press the Return key, you select the default.
 \begin{verbatim}
-How many aerosol phases? [0...99, default=0]
+How many aerosol phases?
 \end{verbatim}
 For a gas-phase only mechanism, type ``0''. For a mechanism with
 aqueous-phase chemistry in seasalt and in sulfate particles, type ``2''.
+Other values are possible if they have been defined in subroutine
+\verb|define_aerosol| in \verb|messy_mecca_box.f90|.
 \begin{verbatim}
 Modify gas.eqn with a replacement file?
-[q/number, default=0]
 \end{verbatim}
 Answer ``0'' unless you have written your own replacement file. More
 information about the replacement feature can be found in the file
 \verb|rpl/gas.rpl-example|.
 \begin{verbatim}
 Choose a selection number or type a boolean
-expression [q=quit, default=1]
+expression:
 \end{verbatim}
 Now you can choose a subset of chemical reactions. Not all possible
 selections have been tested thoroughly. Try one of these:
@@ -425,26 +413,34 @@ selections have been tested thoroughly. Try one of these:
 \item [Troposphere, Gas, no halogens:] A gas-phase mechanism that
   includes NMHCs
 \item [EVAL:] A mechanism that was used for the evaluation of the MECCA
-  chemistry in the global model ECHAM5/MESSy.
+  chemistry in the global model ECHAM5/MESSy \citep{1851}.
 \item [Minimum MBL chemistry:] A mechanism that contains aqueous-phase
   chemistry and should only be used if the number of aerosol phases is
   $>0$.
 \end{description}
 For details about the selection, see Sect.~\ref{sec:selectreactions}.
 \begin{verbatim}
+Add Monte-Carlo factor to all rate
+coefficients? [y/n/q, default=n]
+\end{verbatim}
+Answer ``n'' here unless you want to perform Monte-Carlo calculations,
+as described in Sect.~\ref{sec:montecarlo}.
+\begin{verbatim}
 Add diagnostic tracers to gas.eqn?
 [q/0/?, default=0]
 \end{verbatim}
-When this question shows up, answer ``0''.
+Answer ``0''.
 \begin{verbatim}
-Add diagnostic tracers to all equations?
-[y/n/q, default=n]
+Calculate accumulated reaction rates
+of all equations? [y/n/q, default=n]
 \end{verbatim}
-Answer ``n''.
+Answer ``y'' if you want to have all accumulated reaction rates in the
+model output. Otherwise, answer ``n''.
 \begin{verbatim}
-Tagging? [y/n/q, default=n]
+Tagging, doubling, both, or
+none? [t/d/b/n/q, default=n]
 \end{verbatim}
-Tagging is under construction, so please answer ``n''.
+Tagging is under construction, so please answer ``n''. %qqq
 \begin{verbatim}
 Run KPP?
 \end{verbatim}
@@ -470,6 +466,16 @@ be produced. Only the selected reactions will be listed. The table also
 contains the rate coefficients and their references, as described in
 Sect.~\ref{sec:latextable}.
 \begin{verbatim}
+Create graphviz plots of selected
+mechanism? [y/n/q, default=n]
+\end{verbatim}
+If you have the ``\verb|dot|'' program from the graphviz software
+installed, you can create graphical visualizations of the reaction
+mechanism. As an example, the graphviz-generated plot of gas-phase
+bromine chemistry is shown in Fig.~\ref{fig:Br}. For more information,
+look at the files \verb|xgraphvizall|, \verb|xgraphviz|, and
+\verb|spc_extract.awk| in the \verb|mecca/graphviz/| directory.
+\begin{verbatim}
 Do you want to delete the temporary
 xmecca files?
 \end{verbatim}
@@ -486,11 +492,16 @@ files is shown in Fig.~\ref{fig:kpp_use_diagr}.
 
 If you need to create a chemical mechanism very often, it is quite
 tedious to answer all questions every time. To make this easier, you can
-copy the template \verb|batch/example.bat| to a new name (e.g.
-\verb|batch/myfile.bat|) and then enter your answers into that file. Now
-you can create a new chemical mechanism in batch mode with
+copy the template \verb|batch/example.bat| to a new name (e.g.\
+\verb|batch/myfile.bat|) and then enter your answers into that batch
+file. Now you can create a new chemical mechanism in batch mode with
 \begin{verbatim}
 ./xmecca myfile
+\end{verbatim}
+It is also possible to add the name of the batch file to the
+\verb|xcaaba| command:
+\begin{verbatim}
+./xcaaba myfile
 \end{verbatim}
 
 \subsection{Selecting a set of chemical reactions}
@@ -503,7 +514,7 @@ labels which contain information about the altitude
 Sect.~\ref{sec:markerslabels} for a complete list of labels. To define a
 set of chemical reactions, you can either choose a pre-defined selection
 by number or enter a boolean expression based on the labels. Boolean
-expressions are typed in gawk syntax. The most important operators and
+expressions are typed in awk syntax. The most important operators and
 expressions are:\\
 \begin{tabular}{l@{ = }l}
 \verb|&&| & AND\\
@@ -543,26 +554,200 @@ manual time-step control (\verb|ros2_manual|) is also available, it is
 strongly recommended not to use it for stiff sets of equations. If you
 choose it, you do so at your own risk!
 
+\section{Run CAABA/MECCA in special modes}
+\label{sec:special}
+
+In the base configuration described so far, CAABA/MECCA calculates the
+temporal evolution of the chemistry inside an air parcel. This is ideal
+for sensitivity studies analyzing the effect of individual reactions
+inside a large chemical mechanism. For other applications, some special
+modes exist as described below.
+
+\subsection{Multiple model runs and steady-state}
+\label{sec:multirun}
+
+The so-called ``multirun'' mode performs multiple model runs, each of
+them terminating when a steady-state has been reached. This is useful to
+calculate the steady-state concentrations of short-lived species (e.g.\
+OH) when the concentrations of longer-lived species (e.g.\ non-methane
+hydrocarbons) are known from measurements. The default termination
+condition is that the change of OH between two model time steps is less
+than 0.1~\unit{\%}. If necessary, this can be changed in the function
+\verb|steady_state_reached| in \verb|messy_mecca.f90|. To avoid that the
+concentrations of long-lived species change from their initial values,
+they can be fixed in the file \verb|mecca/messy_mecca_kpp.kpp| by adding
+them to the ``\verb|#SETFIX|'' line. Initial mixing ratios and J-values
+must be available in netCDF files in the \verb|multirun/input/|
+directory. As an example, the file \verb|example.nc| is available. To
+create such input netCDF files from ASCII files, the script
+\verb|asc2ferret4nc.tcsh| can be used. Finally, since the multirun mode
+needs ``\verb|ncks|'' from the netCDF Operators (NCO) software, it must
+be ensured that this program is available. After these preparations, the
+multirun mode can be entered by running \verb|xcaaba| and answering the
+question ``Run CAABA boxmodel with MECCA chemistry?'' with ``m''. This
+will start the \verb|multirun.tcsh| script in the \verb|multirun/|
+directory. The user can either select one input file or run model
+simulations for all input files in the \verb|multirun/input/| directory.
+For each input netCDF file, the script \verb|loopcaaba.tcsh| is called.
+For each time step contained in the input file, \verb|loopcaaba.tcsh|
+performs a CAABA/MECCA model run. It first creates a suitable namelist
+file \verb|caaba.nml|. Values for temperature and pressure are
+transferred from the input netCDF file to the namelist file. In
+addition, \verb|loopcaaba.tcsh| creates two important settings in
+\verb|caaba.nml|: First, the steady-state option is switched on with
+``\verb|l_steady_state_stop = T|''. Second, the submodel READJ is
+activated and used with ``\verb|USE_READJ = T|'' and
+``\verb|photrat_channel = 'readj'|''. After the model runs have
+finished, a summary of the output is placed in the output directory. The
+name of the output directory will be based on the name of the input
+netCDF file, e.g.\ when the file \verb|example.nc| is used, the output
+will be in \verb|output/multirun/example/|.
+
+\subsection{Monte-Carlo}
+\label{sec:montecarlo}
+
+In the Monte-Carlo mode, several CAABA/MECCA runs are performed with
+slightly different rate coefficients. To activate it, you first have to
+create a new chemistry mechanism with \verb|xmecca| and answer the
+question ``Add Monte-Carlo factor to all rate coefficients'' with ``y''.
+This will start the awk script \verb|mcfct.awk|, which adds Monte-Carlo
+factors to the rate coefficients in the equation file, e.g.\
+``\verb|10.**(0.1*mcfct(42))|''. The measurement uncertainty $\Delta\log
+k$ is defined in the equation file in a comment starting with the
+paragraph symbol. If not available, it is set to $\Delta\log k = 0.1$.
+Next, \verb|xcaaba| will start the script \verb|montecarlo.tcsh| in the
+directory \verb|montecarlo/|. The default is to make 5 model runs. To
+choose another value, change the definition of \verb|maxline| in
+\verb|montecarlo.tcsh| and make sure that the file \verb|mcfct_seed.txt|
+contains enough seed values for calculating the necessary random
+numbers. After performing the model runs, the resulting netCDF files are
+merged (using the tools \verb|ncpdq|, \verb|ncclamp|, and \verb|ncrcat|)
+and then stored in a directory with a name based on the date and time of
+the model run, e.g.\ \verb|output/montecarlo/2009-08-24-16:29:00/|. If
+just a few model runs were made, they can be plotted together with
+ferret by activating the Monte-Carlo runs in \verb|setmodelrun.jnl|.
+Tools for the analysis of a large number of runs have to be developed in
+the future.
+
+\subsection{Lagrangian trajectories}
+\label{sec:lagrangian}
+
+The Lagrangian trajectory mode has recently been implemented by
+\citet{2403}. A description of its usage will be added here in the
+future. %qqq
+
+\begin{table*}%[htb]
+  \begin{center}
+    \caption{List of CAABA/MECCA Fortran90 files}
+    \label{tab:files}
+    \begin{tabular}{lp{0.55\textwidth}}
+      \hline
+      \multicolumn{2}{l}{CAABA box model related files}\\
+      \hline
+      \verb|caaba.f90|                         & main box model file\\
+      \verb|caaba_io.f90|                      & input/output\\
+      \verb|caaba_io_netcdf.inc|               & netCDF input/output\\
+      \verb|caaba_io_ascii.inc|                & ASCII input/output\\
+      \verb|caaba_mem.f90|                     & declaration of CAABA variables\\
+      \verb|messy_main_control_cb.f90|         & flow control\\
+      %\verb|messy_e4chem_box.f90|              & connection of E4CHEM to CAABA\\
+      \verb|messy_jval_box.f90|                & connection of JVAL to CAABA\\
+      \verb|messy_mecca_box.f90|               & connection of MECCA to CAABA\\
+      \verb|messy_mecca_dbl_box.f90|           & (under construction)\\
+      \verb|messy_mecca_tag_box.f90|           & (under construction)\\
+      \verb|messy_readj_box.f90|               & connection of READJ to CAABA\\
+      \verb|messy_sappho_box.f90|              & connection of SAPPHO to CAABA\\
+      \verb|messy_semidep_box.f90|             & simplified emission and
+                                                 deposition, including
+                                                 connection to CAABA\\
+      \verb|messy_traject_box.f90|             & trajectory calculations\\
+      % \hline
+      % \multicolumn{2}{l}{ECHAM5 related files}\\
+      % \hline
+      % \verb|messy_mecca_e5.f90|                & interface between ECHAM5 and
+      %                                            MECCA subroutines\\
+      % \verb|messy_mecca_aero_e5.f90|           & interface between ECHAM5 and
+      % MECCA-AERO subroutines\\
+      % \verb|messy_mecca_mem_e5.f90|            & declaration and
+      %                                            memory for variables\\ 
+      % \verb|messy_mecca_idt_e5.inc|            & include file\\
+      % \verb|messy_mecca_c2mr_e5.inc|           & include file\\
+      % \verb|messy_mecca_mr2c_e5.inc|           & include file\\
+      % \verb|messy_mecca_trac_e5.inc|           & include file\\
+      % \verb|mecca_t.nml|                       & namelist for tracer
+      %                                            initialization\\
+      \hline
+      \multicolumn{2}{l}{static core files}\\
+      \hline
+      \verb|messy_cmn_photol_mem.f90|          & common definitions for photolysis\\
+      \verb|messy_main_constants_mem.f90|      & physical constants\\
+      \verb|messy_main_blather.f90|            & print utilities\\
+      \verb|messy_main_rnd.f90|                & random number generation\\
+      \verb|messy_main_rnd_lux.f90|            & Luxury random numbers\\
+      \verb|messy_main_rnd_mtw.f90|            & Mersenne-Twister random numbers\\
+      \verb|messy_main_timer.f90|              & timer\\
+      \verb|messy_main_tools.f90|              & auxiliary functions\\
+      \verb|messy_main_tools_kp4_compress.f90| & (file exists but is not
+                                                 not used with CAABA)\\
+      %\verb|messy_e4chem.f90|                  & \\
+      \verb|messy_jval.f90|                    & calculation of J-values\\
+      \verb|messy_jval_jvpp.inc|               & include file for JVAL\\
+      \verb|messy_readj.f90|                   & read J-values\\
+      \verb|messy_sappho.f90|                  & simplified and parameterized 
+                                                 photolysis rate coefficients\\
+      \hline
+      \multicolumn{2}{l}{static MECCA core files in the {\tt mecca/smcl/}
+        directory}\\
+      \hline
+      \verb|messy_mecca.f90|                   & MECCA core\\
+      \verb|messy_mecca_aero.f90|              & aerosol chemistry\\
+      \verb|messy_mecca_khet.f90|              & (file exists but is not
+                                                 used with CAABA)\\
+      \hline
+      \multicolumn{2}{l}{KPP- and {\tt xmecca}-produced files in the {\tt
+          mecca/smcl/} directory}\\
+      \hline
+      \verb|messy_mecca_kpp.f90|               & a wrapper for the KPP files\\
+      \verb|messy_mecca_kpp_function.f90|      & ODE function\\
+      \verb|messy_mecca_kpp_global.f90|        & global data headers\\
+      \verb|messy_mecca_kpp_initialize.f90|    & initialization\\
+      \verb|messy_mecca_kpp_integrator.f90|    & numerical integration\\
+      \verb|messy_mecca_kpp_jacobian.f90|      & ODE Jacobian\\
+      \verb|messy_mecca_kpp_jacobiansp.f90|    & Jacobian sparsity\\
+      \verb|messy_mecca_kpp_linearalgebra.f90| & sparse linear algebra\\
+      \verb|messy_mecca_kpp_monitor.f90|       & equation info\\
+      \verb|messy_mecca_kpp_parameters.f90|    & model parameters\\
+      \verb|messy_mecca_kpp_precision.f90|     & arithmetic precision\\
+      \verb|messy_mecca_kpp_rates.f90|         & user-defined rate laws\\
+      \verb|messy_mecca_kpp_util.f90|          & utility input-output\\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table*}
+
 \section{Modifying CAABA/MECCA}
 \label{sec:modifying}
 
-\begin{figure*}[htb]
+\begin{figure*}%[htb]
   \begin{center}
-  \includegraphics[width=0.9\textwidth]{caaba_flowcontrol}
+  \includegraphics[width=\textwidth]{caaba_flowcontrol}
   \end{center}
   \caption{Flow control of a CAABA box model run}
   \label{fig:caaba_flowcontrol}
 \end{figure*}
 
-The flow control of a CAABA/MECCA model simulation is shown in
-Fig:~\ref{fig:caaba_flowcontrol}.
-
 The CAABA/MECCA model simulation can be modified by changing the
 namelist files (\verb|*.nml|), the species files (\verb|*.spc|), the
 equation files (\verb|*.eqn|) and the Fortran90 files (\verb|*.f90|).
 
-\subsection{The namelist files {\tt caaba.nml} and {\tt mecca.nml}}
+\subsection{Namelist files}
 \label{sec:nmlfiles}
+
+Fortran90 namelist files allow modifications of the model simulation
+without having to recompile the source code.
+
+\subsubsection{The CAABA namelist file {\tt caaba.nml}}
+\label{sec:caaba_nml}
 
 The file \verb|caaba.nml| contains the namelist \verb|&CAABA|. Here
 individual parts of the CAABA model (the so-called ``MESSy submodels'')
@@ -583,7 +768,7 @@ is fine to switch on both the JVAL and the SAPPHO submodel, which can be
 useful for a comparison. However, only the values selected by
 \verb|photrat_channel| are used for the MECCA chemistry.
 
-You can define the model start, runtime, and time step. e.g.:
+You can define the model start, runtime, and time step, e.g.:
 \begin{verbatim}
 startday    = 90.
 ext_runtime = '10 days'
@@ -592,11 +777,114 @@ time_step   = '15 minutes'
 If you don't set these, the default is a model start on Julian day 80, a
 model run duration of 8 days, and an output time step of 20 minutes.
 
+As an alternative, it is possible to stop the model run when a steady
+state has been reached. This is normally used in the ``multirun'' mode
+(Sect.~\ref{sec:multirun}):
+
+\begin{verbatim}
+l_steady_state_stop = T
+\end{verbatim}
+
+The default location of the model run (latitude, longitude) is
+45$^\circ$ N and 0$^\circ$ E. It can be changed here, e.g.:
+
+\begin{verbatim}
+degree_lat = 82  ! Alert
+degree_lon = 297 ! Canada
+\end{verbatim}
+
+Changing it only affects photolysis calculations (via the zenith angle
+calculations).
+
+The values of temperature (\verb|temp|), pressure (\verb|press|),
+relative humidity (\verb|relhum|), and the height of the boundary layer
+(\verb|zmbl|) can be defined, e.g.:
+
+\begin{verbatim}
+temp   = 293.    ! [K]
+press  = 101325. ! [Pa]
+relhum = 0.81    ! [1]
+zmbl   = 1000.   ! [m]
+\end{verbatim}
+
+The values shown here are the default values as defined in
+\verb|caaba_mem.f90|.
+
+In the submodel SEMIDEP, emissions are distributed evenly into the
+well-mixed boundary layer of height \verb|zmbl|. Note that CAABA is only
+a box model, and changing \verb|zmbl| has no other effects than this.
+
+It is possible to initialize chemical species from a netcdf file. To
+activate this feature, define a valid input file name, e.g.:
+
+\begin{verbatim}
+init_spec = 'inputfile.nc'
+\end{verbatim}
+
+If the submodel READJ is switched on, a netcdf file containing J-values
+must be defined. In addition, an index can be defined if the netcdf file
+contains data for more than one time step, e.g.:
+
+\begin{verbatim}
+init_j = 'readj_input.nc'
+init_j_index = 25
+\end{verbatim}
+
+To facilitate running CAABA under different boundary conditions,
+so-called ``scenarios'' can be defined. Currently, there are scenarios
+for photolysis (\verb|photo_scenario|), initialization
+(\verb|init_scenario|), emission (\verb|emission_scenario|), and dry
+deposition (\verb|drydep_scenario|):
+
+\begin{verbatim}
+photo_scenario    = 'MBL'
+init_scenario     = 'MBL'
+emission_scenario = 'MBL'
+drydep_scenario   = 'MBL'
+\end{verbatim}
+
+Possible values (``\verb|MBL|'' is used here as an example) for the
+scenarios can be found in the variable \verb|list_of_scenarios| in
+\verb|caaba.f90|. Note that values have not yet been assigned for all
+scenarios. New data can be added to these files:
+
+\begin{center}  
+  \begin{tabular}{ll}
+    \hline
+    scenario & file\\
+    \hline
+    \verb|photo|    & \verb|messy_sappho.f90|\\
+                    & \verb|messy_jval_box.f90|\\
+    \verb|init|     & \verb|messy_mecca_box.f90|\\
+    \verb|emission| & \verb|messy_semidep_box.f90|\\
+    \verb|drydep|   & \verb|messy_semidep_box.f90|\\
+    \hline
+  \end{tabular}
+\end{center}
+
+Finally, it is possible to skip the chemistry calculations with KPP
+completely. This is only useful for debugging:
+
+\begin{verbatim}
+l_skipkpp = T
+\end{verbatim}
+
+\subsubsection{The MECCA namelist file {\tt mecca.nml}}
+\label{sec:mecca_nml}
+
 The file \verb|mecca.nml| contains the namelists \verb|&CTRL_KPP| and
 \verb|&CTRL| (the namelist \verb|&CPL| is not used in connection with
 CAABA). \verb|&CTRL_KPP| is used for fine-tuning the numerical
 integration. The default selection \verb|icntrl(3) = 2| should normally
 be suitable.
+
+\subsubsection{The JVAL namelist file {\tt jval.nml}}
+\label{sec:jval_nml}
+
+The file {\tt jval.nml} contains several namelists. When JVAL is run as
+a submodel for CAABA, only the control namelist (\verb|&CTRL|) is used.
+Normally, there is no need to change the default setting of
+``\verb|time_control = 'constant'|''.
 
 \subsection{The species files {\tt gas.spc} and {\tt aqueous.spc}}
 \label{sec:spcfiles}
@@ -607,7 +895,8 @@ species may also be declared here.
 
 Gas-phase species are declared in \verb|gas.spc|. Examples for gas-phase
 species are \verb|O2|, \verb|O1D|, and \verb|NO2|. The names of lumped
-species start with ``\verb|l_|''.
+species start with ``\verb|L|''. The names of species with two or more
+carbon atoms are taken from the master chemical mechanism (MCM).
 
 MECCA also includes aqueous species which are declared in
 \verb|aqueous.spc|. The names of cations end with ``\verb|p|'' for plus.
@@ -630,7 +919,9 @@ them as prognostic variables. To treat a species as a constant (e.g.\
 \label{sec:eqnfiles}
 
 The equation files \verb|*.eqn| define the chemical reaction mechanism
-for KPP. Each reaction occupies one line in this file. An example is:
+for KPP. After making any changes to the equation files, it is always
+necessary to execute KPP via \verb|xmecca| again. Each reaction occupies
+one line in this file. An example is:
 
 \begin{verbatim}
 <G1000> O2 + O1D = O3P + O2 : {%StTrG}
@@ -649,7 +940,10 @@ with the percent symbol ``\verb|{%...}|''
   with the ampersand ``\verb|{&...}|'', the ``at''-symbol
   ``\verb|{@...}|'', or the dollar ``\verb|{$...}|'' are used to store
   information for the listing of reactions, as explained in
-  Sect.~\ref{sec:latextable}.
+  Sect.~\ref{sec:latextable}. Comments starting with the paragraph
+  symbol ``\verb|{|$\S$\verb|...}|'' are defining uncertainties of the
+  rate coefficients for Monte-Carlo calculations (see
+  Sect.~\ref{sec:montecarlo}).
 
 If the definition of a rate coefficient is very complex, it can be
 stored in a Fortran90 variable and the variable is put into the
@@ -756,7 +1050,7 @@ The syntax is ``\verb|{%...}|'' where the dots represent the
     \verb|Aa##| & Aqueous, aerosol (\verb|##| is a placeholder for the
     2-digit aerosol phase number)\\
     \verb|G|    & Gas phase reactions\\
-    \verb|Het|  & heterogeneous reactions (e.g. on polar stratospheric
+    \verb|Het|  & heterogeneous reactions (e.g.\ on polar stratospheric
                   clouds)\\ 
   \end{tabular}
 \item elements (include all elements that occur in the reaction, except
@@ -789,28 +1083,27 @@ See Sect.~\ref{sec:newlabel} for a description how to add new labels to
 
 To ensure that the documentation of the chemical mechanism is always up
 to date, the necessary information is contained inside the species and
-equation files. The gawk scripts \verb|spc2tex.awk| and
-\verb|eqn2tex.awk| convert information from the selected reactions into
-a La\TeX\ table. Bib\TeX\ citations are included in comments starting
-with an ampersand ``\verb|{&...}|''. If there is a second ampersand
-``\verb|{&&...}|'', additional information about reactions can be found
-in \verb|meccanism.tex| as a footnote to the tables. Comments starting
-with the at symbol ``\verb|{@...}|'' or the dollar ``\verb|{$...}|'' can
-be used to put La\TeX\ commands directly into the \verb|*.eqn| files.
+equation files. If you have the programs pdfLa\TeX\ and Bib\TeX\
+installed on your system, you can generate a table of the chemical
+mechanism in pdf format.
+
+The awk scripts \verb|spc2tex.awk| and \verb|eqn2tex.awk| convert
+information from the selected reactions into a La\TeX\ table. Bib\TeX\
+citations are included in comments starting with an ampersand
+``\verb|{&...}|''. If there is a second ampersand ``\verb|{&&...}|'',
+additional information about reactions can be found in
+\verb|meccanism.tex| as a footnote to the tables. Comments starting with
+the at symbol ``\verb|{@...}|'' or the dollar ``\verb|{$...}|'' can be
+used to put La\TeX\ commands directly into the \verb|*.eqn| files.
 \verb|eqn2tex.awk| produces several \verb|*.tex| files which are
 included into \verb|meccanism.tex|.
-
-Creating the document only works if you have the programs \verb|latex|,
-\verb|bibtex|, \verb|dvips|, and \verb|gv| installed on your system. If
-you want to use different programs (e.g. pdf\LaTeX\ instead of \LaTeX\ 
-or a postscript viewer other than \verb|gv|) you can enter the
-appropriate commands into \verb|xmecca|.
 
 \subsection{Fortran90 files}
 \label{sec:f90files}
 
 The CAABA/MECCA simulations can be modified by changing the Fortran90
-files. The modular structure of the Fortran90 files is shown in
+files (see Tab.~\ref{tab:files} for a list of files). The modular
+structure of the Fortran90 files is shown in
 Fig.~\ref{fig:caaba_use_diagr}. Most of the files need only be changed
 by model developers. Those that are also interesting for model users,
 are briefly explained below.
@@ -818,9 +1111,6 @@ are briefly explained below.
 \subsubsection{{\tt caaba.f90}}
 
 This file contains the main Fortran90 code (``\verb|PROGRAM caaba|'').
-Here, the values of temperature (\verb|temp|), pressure (\verb|press|),
-relative humidity (\verb|relhum|), and the height of the boundary layer
-(\verb|zmbl|) can be defined.
 
 \subsubsection{{\tt caaba\_mem.f90}}
 
@@ -836,9 +1126,9 @@ added.
 
 This file contains the connection of JVAL to CAABA.
 
-\subsubsection{{\tt messy\_jval.f90}}
+\subsubsection{{\tt messy\_jval.f90} and {\tt messy\_jval\_jvpp.inc}}
 
-This file contains the calculation of J-values.
+These files contain the calculation of J-values.
 
 \subsubsection{{\tt messy\_mecca\_box.f90}}
 
@@ -880,7 +1170,8 @@ volume).
 
 This section contains brief descriptions for experienced model
 developers explaining where to make changes to the code for certain
-model expansions.
+model expansions. In the descriptions, ``\verb|xyz|'' is used as an
+example for the name of the addition.
 
 \subsubsection{Adding a new gas-phase species}
 
@@ -954,11 +1245,6 @@ development branches, the final reaction numbers will be assigned.
   If necessary, add a footnote about the new reaction here.
 \end{itemize}
 
-\begin{itemize}\nosep
-\item \verb|jnl/rates.jnl|:\\
-  Add one line per new reaction.
-\end{itemize}
-
 \subsubsection{Adding a new gas-phase photolysis reaction}
 
 First, choose an appropriate reaction number, as explained in
@@ -966,8 +1252,7 @@ Sect.~\ref{sec:addgprxn}.
 
 \begin{itemize}\nosep
 \item \verb|gas.eqn|:\\
-  Add one line per new reaction. Check that the necessary photolysis
-  rate coefficient is provided by SAPPHO, READJ, and/or JVAL.
+  Add one line per new reaction.
 \end{itemize}
 
 \begin{itemize}\nosep
@@ -975,9 +1260,32 @@ Sect.~\ref{sec:addgprxn}.
   If necessary, add a footnote about the new reaction here.
 \end{itemize}
 
+Check if the necessary photolysis rate coefficient is already provided
+by SAPPHO, READJ, and/or JVAL. If not, add it:
+
 \begin{itemize}\nosep
-\item \verb|jnl/rates.jnl|:\\
-  Add one line per new reaction.
+\item \verb|messy_cmn_photol_mem.f90|:\\
+  \begin{itemize}\nosep
+  \item Add a new index of photolysis \verb|ip_XYZ| at the end of the
+    list.
+  \item Increase \verb|IP_MAX|.
+  \item Add the name to \verb|jname|.
+  \end{itemize}
+\end{itemize}
+
+\begin{itemize}\nosep
+\item \verb|messy_sappho_box.f90|:\\
+  Add \verb|XYZ| to \verb|CALL open_output_file| and
+  \verb|CALL write_output_file|.
+\item \verb|messy_sappho.f90|:\\
+  Add a simple definition for \verb|jx(ip_XYZ)|.
+\end{itemize}
+
+\begin{itemize}\nosep
+\item \verb|messy_jval_box.f90|:\\
+  Add one line.
+\item \verb|messy_jval_jvpp.inc|:\\
+  Calculate the definition with \verb|jvpp| or add it manually here.
 \end{itemize}
 
 \subsubsection{Adding a new aqueous-phase reaction}
@@ -993,11 +1301,6 @@ Sect.~\ref{sec:addgprxn}.
 \begin{itemize}\nosep
 \item \verb|latex/meccanism.tex|:\\
   If necessary, add a footnote about the new reaction here.
-\end{itemize}
-
-\begin{itemize}\nosep
-\item \verb|jnl/rates.jnl|:\\
-  Add one line per new reaction.
 \end{itemize}
 
 \subsubsection{Adding a new Henry's law equilibrium}
@@ -1022,17 +1325,6 @@ Sect.~\ref{sec:addgprxn}.
   If necessary, add a footnote about the new equilibrium here.
 \end{itemize}
 
-\begin{itemize}\nosep
-\item \verb|jnl/rates.jnl|:\\
-  Add two lines per new equilibrium, one to define the net rate and one
-  to plot it.
-\end{itemize}
-
-\begin{itemize}\nosep
-\item \verb|jnl/tools/_kppvarrates.jnl|:\\
-  Add one line per new equilibrium.
-\end{itemize}
-
 \subsubsection{Adding a new acid-base equilibrium}
 
 First, choose an appropriate reaction number, as explained in
@@ -1047,17 +1339,6 @@ Sect.~\ref{sec:addgprxn}.
 \begin{itemize}\nosep
 \item \verb|latex/meccanism.tex|:\\
   If necessary, add a footnote about the new equilibrium here.
-\end{itemize}
-
-\begin{itemize}\nosep
-\item \verb|jnl/rates.jnl|:\\
-  Add two lines per new equilibrium, one to define the net rate and one
-  to plot it.
-\end{itemize}
-
-\begin{itemize}\nosep
-\item \verb|jnl/tools/_kppvarrates.jnl|:\\
-  Add one line per new equilibrium.
 \end{itemize}
 
 \subsubsection{Adding a new label}
@@ -1084,7 +1365,7 @@ final label name can be assigned.
 \subsubsection{Adding a new emission}
 
 \begin{itemize}\nosep
-\item \verb|messy_mecca_semidep.f90|:\\
+\item \verb|messy_semidep_box.f90|:\\
   Add one line to \verb|emission_default| (or one of the other
   \verb|emission_*| subroutines).
 \end{itemize}
@@ -1092,8 +1373,9 @@ final label name can be assigned.
 \subsubsection{Adding a new deposition}
 
 \begin{itemize}\nosep
-\item \verb|messy_mecca_semidep.f90|:\\
-  Add one line to \verb|drydep|.
+\item \verb|messy_semidep_box.f90|:\\
+  Add one line to \verb|drydep_default| (or one of the other
+  \verb|drydep_*| subroutines).
 \end{itemize}
 
 \subsection{How to add a new MESSy submodel}
@@ -1160,35 +1442,44 @@ final label name can be assigned.
 \section{Revision history}
 
 The major changes between different CAABA/MECCA versions are listed
-here. An almost complete listing can be found in the file
-\verb|CHANGELOG|.
+here. A very detailed listing can be found in the file \verb|CHANGELOG|.
 
-% \subsection{New in version 2.6}
+\subsection{New in version 2.6}
 
-% The following major changes were made since version 2.5:
-
-% \begin{itemize}\nosep
-% \item
-% \end{itemize}
+\begin{itemize}\nosep
+\item In its default configuration, the model now simulates very simple
+  methane chemistry.
+\item Scenarios in namelists make it easier to define boundary
+  conditions (Sect.~\ref{sec:caaba_nml}).
+\item Multiple model runs can be performed, each of them terminating
+  when a steady-state has been reached (Sect.~\ref{sec:multirun}).
+\item The Monte-Carlo method can be used to investigate the effect of
+  uncertainties of the rate coefficients (Sect.~\ref{sec:montecarlo}).
+%qqq \item MIM2
+\item The graphviz software can be used to visualize the complex
+  reaction mechanism.
+\item Plots of all reaction rates and scaled plot of
+  production/destruction of specific species is now possible with the
+  ferret plotting program.
+\item The new submodel READJ can read photolysis rate coefficients
+  (``J-values'') from a netcdf file.
+\end{itemize}
 
 \subsection{New in version 2.5}
-
-The following major changes were made since version 2.4:
 
 \begin{itemize}\nosep
 \item Output of more information at the start of a model run.
 \item It is not necessary anymore to have the netcdf library for running
-  CAABA/MECCA with ascii output. The corresponding output functions are
+  CAABA/MECCA with ASCII output. The corresponding output functions are
   now in the \verb|caaba_io*| files.
 \item For clarity, different initializations and emissions are put into
   individual subroutines.
 \item \verb|xmecca|-generated infos are now available as f90 strings in
   \verb|messy_mecca_kpp_global.f90|.
+\item A reaction mechanism for Hg chemistry has been added.
 \end{itemize}
 
 \subsection{New in version 2.4}
-
-The following major changes were made since version 2.3:
 
 \begin{itemize}\nosep
 \item \verb|xmecca| runs in batch mode with \verb|*.bat| files.

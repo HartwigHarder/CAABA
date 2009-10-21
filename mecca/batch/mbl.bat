@@ -8,11 +8,11 @@
  set wanted       = "Tr && (G || (Aa && Mbl)) && \!I && \!Hg" # 17) Minimum MBL-chem, no I
  set mcfct        = n                 # Monte-Carlo factor?
  set diagtracfile =                   # diagnostic tracers?
- set rxnrates     = n                 # calculate accumulated reaction rates?
+ set rxnrates     = y                 # calculate accumulated reaction rates?
  set tagdbl       = n                 # tagging, doubling, both, none ??
  set kppoption    = k                 # k=kpp, 4=kp4, q=quit
  set integr       = rosenbrock_posdef # integrator
  set decomp       = n                 # remove indirect indexing
  set latex        = n                 # latex list of reactions
- set deltmptex    = y                 # delete temporary LaTeX files?
+ set graphviz     = y                 # graphviz plots
  set deltmp       = y                 # delete temporary xmecca files?

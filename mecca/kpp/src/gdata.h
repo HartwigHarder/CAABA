@@ -37,7 +37,7 @@
 #include <stdio.h>
 
 #define MAX_EQN       11000 /* mz_rs_20070124 */
-#define MAX_SPECIES    2500 /* mz_ak_20060206 */
+#define MAX_SPECIES    3500 /* mz_ak_20060206 */
 #define MAX_SPNAME       30
 #define MAX_IVAL         40
 /* MAX_EQNTAG = max length of equation ID in eqn file */

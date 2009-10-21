@@ -3,7 +3,7 @@
 # Author:
 #   Rolf Sander, Max-Planck-Institute, Mainz, Germany, 2009
 #
-# Time-stamp: <2009-05-20 19:04:17 sander>
+# Time-stamp: <2009-08-17 11:00:47 sander>
 #
 # rxnrates.awk creates ferret jnl files to plot reaction rates
 #
@@ -15,7 +15,7 @@ BEGIN {
   printf "working on %s...\n", ARGV[1]
   logfile  = basename ".log"
   dontedit = "DO NOT EDIT! This file was created automatically by rxnrates"
-  printf "%s %s\n", "%", dontedit > logfile
+  printf "%s\n",   dontedit > logfile
   printf "! %s\n", dontedit > jnlfile1
   printf "! %s\n", dontedit > jnlfile2
   # initialize errorstring:

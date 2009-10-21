@@ -18,5 +18,5 @@
                                       # kp4: 0/1/2/3/q; kpp: y/n/q
  set deltmpkp4    = y                 # delete temporary kp4 files
  set latex        = n                 # latex list of reactions
- set deltmptex    = n                 # delete temporary LaTeX files?
+ set graphviz     = n                 # graphviz plots
  set deltmp       = n                 # delete temporary xmecca files?

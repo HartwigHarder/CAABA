@@ -128,6 +128,7 @@ MODULE messy_main_timer
   PUBLIC :: julian_day          ! function to calculate the Julian day
   !
   PUBLIC :: time_span_s         ! time difference [s] between two greg.dates
+  PUBLIC :: time_span_d         ! time difference [d] between two greg.dates
   !
   PUBLIC :: gregor2julian       ! convert gregorian date + time to julian date
   PUBLIC :: julian2gregor       ! convert julian date to gregorian date + time
@@ -140,6 +141,8 @@ MODULE messy_main_timer
   INTERFACE timer_set_date
      MODULE PROCEDURE timer_set_date_str
      MODULE PROCEDURE timer_set_date_myd
+     MODULE PROCEDURE timer_set_date_str_ds ! mz_ak_20090526
+     MODULE PROCEDURE timer_set_date_myd_ds ! mz_ak_20090526
   END INTERFACE
   PUBLIC :: timer_set_date
 
@@ -154,6 +157,10 @@ MODULE messy_main_timer
 
   PUBLIC :: timer_add_date
   PUBLIC :: timer_set_lresume
+  ! mz_pj_20090414+
+  PUBLIC :: timer_set_time_step_len
+  ! mz_pj_20090414-
+
 !!$  PUBLIC :: timer_read_nml_ctrl
 
   ! mz_rs_20090108+
@@ -767,6 +774,34 @@ CONTAINS
     END SUBROUTINE time_span_s
     !-------------------------------------------------------------------------
 
+! mz_pj_20090519+
+    !-------------------------------------------------------------------------
+    SUBROUTINE time_span_d(dtd           &
+         , yy1, mo1, dy1, hr1, mi1, se1  &
+         , yy2, mo2, dy2, hr2, mi2, se2 )
+
+
+      IMPLICIT NONE
+
+      INTRINSIC :: INT
+
+      ! I/O
+      REAL(dp), INTENT(OUT) :: dtd ! dime span [d]
+      INTEGER,  INTENT(IN)  :: yy1, mo1, dy1, hr1, mi1, se1
+      INTEGER,  INTENT(IN)  :: yy2, mo2, dy2, hr2, mi2, se2
+
+      ! LOCAL
+      REAL(dp) :: day_1, day_2
+
+      day_1 = gregor2julian(yy1, mo1, dy1, hr1, mi1, se1)
+      day_2 = gregor2julian(yy2, mo2, dy2, hr2, mi2, se2)
+
+      dtd = (day_2 - day_1)
+
+    END SUBROUTINE time_span_d
+    !-------------------------------------------------------------------------
+! mz_pj_20090519-
+
     ! ------------------------------------------------------------------------ 
     FUNCTION gregor2julian(YY, MM, DD, hr, mi, se) RESULT(julian_date)
 
@@ -1024,6 +1059,78 @@ CONTAINS
   END SUBROUTINE timer_set_date_myd
   ! ---------------------------------------------------------------------------
 
+! mz_ak_20090526+
+  ! ---------------------------------------------------------------------------
+  SUBROUTINE timer_set_date_str_ds(status, strflag, day, second)
+
+    IMPLICIT NONE
+
+    ! I/O
+    INTEGER,          INTENT(OUT) :: status
+    CHARACTER(LEN=*), INTENT(IN)  :: strflag
+    INTEGER,          INTENT(IN)  :: day, second
+
+    ! LOCAL 
+    INTEGER  ::  yr, mo, dy, hr, mi, se
+
+    SELECT CASE(strflag)
+    CASE('start')
+       CALL date_set(day, second, start_date)
+       CALL date_get_components(start_date, yr, mo, dy, hr, mi, se, status)
+
+       ! SET DATE COMPONENTS
+       YEAR_START   = yr
+       MONTH_START  = mo
+       DAY_START    = dy
+       HOUR_START   = hr
+       MINUTE_START = mi
+       SECOND_START = se
+
+       ! SET JULIAN START DATE
+       JULIAN_DATE_START = &
+            INT(gregor2julian( YEAR_START,MONTH_START, DAY_START &
+            , HOUR_START,MINUTE_START,SECOND_START ))
+
+    CASE('previous')
+       CALL date_set(day, second, previous_date)
+    CASE('current')
+       CALL date_set(day, second, current_date)
+    CASE('next')
+       CALL date_set(day, second, next_date)
+    CASE('stop')
+       CALL date_set(day, second, stop_date)
+    CASE('resume')
+       CALL date_set(day, second, resume_date)
+!!$    CASE('rerun_stop')
+!!$       CALL date_set_components(yr, mo, dy, hr, mi, se, rerun_stop_date)
+    CASE DEFAULT
+       status = 3443 ! unknown date 
+       RETURN
+    END SELECT
+
+    status = 0
+    
+  END SUBROUTINE timer_set_date_str_ds
+  ! ---------------------------------------------------------------------------
+
+  ! ---------------------------------------------------------------------------
+  SUBROUTINE timer_set_date_myd_ds(status, my_date, day, second)
+
+    IMPLICIT NONE
+
+    ! I/O
+    INTEGER,          INTENT(OUT) :: status
+    TYPE(time_days),  INTENT(OUT) :: my_date
+    INTEGER,          INTENT(IN)  :: day, second
+
+
+    CALL date_set(day, second, my_date)
+    status = 0
+
+  END SUBROUTINE timer_set_date_myd_ds
+  ! ---------------------------------------------------------------------------
+! mz_ak_20090526-
+
   ! ---------------------------------------------------------------------------
   SUBROUTINE timer_get_date_str(status, strflag, yr, mo, dy, hr, mi, se)
 
@@ -1152,6 +1259,28 @@ CONTAINS
     lresume = .TRUE.
 
   END SUBROUTINE timer_set_lresume
+  ! ---------------------------------------------------------------------------
+
+  ! ---------------------------------------------------------------------------
+  ! mz_pj_20090414+
+  SUBROUTINE timer_set_time_step_len(l2tls)
+
+    IMPLICIT NONE
+
+    LOGICAL, INTENT(IN) :: l2tls
+
+    IF (lstart) THEN
+       time_step_len = delta_time
+    ELSE
+       IF (l2tls) THEN
+          time_step_len = delta_time
+       ELSE
+          time_step_len = 2.0_dp*delta_time
+       ENDIF
+    END IF
+
+  END SUBROUTINE timer_set_time_step_len
+  ! mz_pj_20090414-
   ! ---------------------------------------------------------------------------
 
   !===========================================================================

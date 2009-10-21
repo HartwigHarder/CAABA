@@ -17,6 +17,8 @@
 
 // add new reactions, specify an empty reaction number
 
+// in 2.3z the NH3 mechanism was moved to gas.eqn
+
 #REPLACE <J8401>
 <a>  CH3I    + hv = CH3O2                 : {%TrGJ}     JX(ip_CH3I); {&&}
 #ENDREPLACE
@@ -40,6 +42,11 @@
 #ENDREPLACE
 
 #REPLACE <G7406>
+#ENDREPLACE
+
+// exclude C2H6 + Cl reaction for backward compatibility to M2E23_exp??
+// (this was introduced in 2.3z)
+#REPLACE <G6412>
 #ENDREPLACE
 
 // O3s diagnostic

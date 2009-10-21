@@ -1,5 +1,5 @@
 {This file was created automatically by xmecca, DO NOT EDIT!}
-{xmecca was run on 2009-07-08 at 13:39:49 by sander}
+{xmecca was run on 2009-08-27 at 13:00:42 by sander}
 {***** START: gas-phase species from gas.spc *****}
 #INCLUDE atoms
 
@@ -120,7 +120,7 @@ HCl           = H + Cl           ; {@HCl}               {hydrochloric acid}
 HOCl          = H + O + Cl       ; {@HOCl}              {hypochlorous acid}
 Cl2O2         = 2Cl + 2O         ; {@Cl_2O_2}           {dichlorine dioxide}
 OClO          = Cl + 2O          ; {@OClO}              {chlorine dioxide}
-ClNO2         = Cl + 2O + N      ; {@ClNO_2}            {}
+ClNO2         = Cl + 2O + N      ; {@ClNO_2}            {nitryl chloride}
 ClNO3         = Cl + N + 3O      ; {@ClNO_3}            {chlorine nitrate}
 CCl4          = C + 4Cl          ; {@CCl_4}             {tetrachloro methane}
 CH3Cl         = C + 3H + Cl      ; {@CH_3Cl}            {chloromethane}
@@ -135,7 +135,7 @@ Br2           = 2Br              ; {@Br_2}              {bromine}
 BrO           = Br + O           ; {@BrO}               {bromine oxide}
 HBr           = H + Br           ; {@HBr}               {hydrobromic acid}
 HOBr          = H + O + Br       ; {@HOBr}              {hypobromous acid}
-BrNO2         = Br + N + 2O      ; {@BrNO_2}            {}
+BrNO2         = Br + N + 2O      ; {@BrNO_2}            {nitryl bromide}
 BrNO3         = Br + N + 3O      ; {@BrNO_3}            {bromine nitrate}
 BrCl          = Br + Cl          ; {@BrCl}              {bromine chloride}
 CH3Br         = Br + C +3H       ; {@CH_3Br}            {bromomethane}
@@ -397,195 +397,5 @@ LO3s          = IGNORE           ; {@LO_3(s)}           {lost strat. ozone}
  PROD2_a01      = IGNORE; {@PROD2\aq}        {}
  Nap_a01        = IGNORE; {@Na^+\aq}         {dummy cation}
 {**** END:   aerosol species (phase 1) from aqueous.spc ****}
-{**** START: aerosol species (phase 2) from aqueous.spc ****}
-{-----------------------------------------------------------------------------}
-{------------------------------ aerosol mode: 02# -----------------------------}
-{-----------------------------------------------------------------------------}
-
-{------------------------------- neutral species -----------------------------}
-
-{------------------------------------- O -------------------------------------}
-
- O2_a02         = IGNORE; {@O_2\aq}          {oxygen}
- O3_a02         = IGNORE; {@O_3\aq}          {ozone}
-
-{------------------------------------- H -------------------------------------}
-
- OH_a02         = IGNORE; {@OH\aq}           {hydroxyl radical}
- HO2_a02        = IGNORE; {@HO_2\aq}         {perhydroxyl radical}
- H2O_a02        = IGNORE; {@H_2O\aq}         {water}
- H2O2_a02       = IGNORE; {@H_2O_2\aq}       {hydrogen peroxide}
-
-{------------------------------------- N -------------------------------------}
-
- NH3_a02        = IGNORE; {@NH_3\aq}         {ammonia}
- NO_a02         = IGNORE; {@NO\aq}           {nitric oxide}
- NO2_a02        = IGNORE; {@NO_2\aq}         {nitrogen dioxide}
- NO3_a02        = IGNORE; {@NO_3\aq}         {nitrogen trioxide}
- HONO_a02       = IGNORE; {@HONO\aq}         {nitrous acid}
- HNO3_a02       = IGNORE; {@HNO_3\aq}        {nitric acid}
- HNO4_a02       = IGNORE; {@HNO_4\aq}        {pernitric acid}
- N2O5_a02       = IGNORE; {@N_2O_5\aq}       {dinitrogen pentoxide}
-
-{------------------------------------- C -------------------------------------}
-
-{1C}
- CH3OH_a02      = IGNORE; {@CH_3OH\aq}       {methanol}
- HCOOH_a02      = IGNORE; {@HCOOH\aq}        {formic acid}
- HCHO_a02       = IGNORE; {@HCHO\aq}         {methanal (formaldehyde)}
- CH3O2_a02      = IGNORE; {@CH_3OO\aq}       {methylperoxy radical}
- CH3OOH_a02     = IGNORE; {@CH_3OOH\aq}      {}
- CO2_a02        = IGNORE; {@CO_2\aq}         {carbon dioxide}
-
-{2C}
- CH3COOH_a02    = IGNORE; {@CH_3COOH\aq}     {acetic acid}
- PAN_a02        = IGNORE; {@PAN\aq}          {peroxyacetylnitrate}
- EtO2_a02       = IGNORE; {@C_2H_5O_2\aq}    {ethylperoxy radical}
- CH3CHO_a02     = IGNORE; {@CH_3CHO\aq}      {acetaldehyde}
-
-{3C}
- CH3COCH3_a02   = IGNORE; {@CH_3COCH_3\aq}   {acetone}
-
-{------------------------------------- Cl ------------------------------------}
-
- Cl_a02         = IGNORE; {@Cl\aq}           {chlorine atom}
- Cl2_a02        = IGNORE; {@Cl_2\aq}         {molecular chlorine}
- HCl_a02        = IGNORE; {@HCl\aq}          {hydrogen chloride}
- HOCl_a02       = IGNORE; {@HOCl\aq}         {hypochlorous acid}
-
-{------------------------------------- Br ------------------------------------}
-
- Br_a02         = IGNORE; {@Br\aq}           {bromine atom}
- Br2_a02        = IGNORE; {@Br_2\aq}         {molecular bromine}
- HBr_a02        = IGNORE; {@HBr\aq}          {hydrogen bromide}
- HOBr_a02       = IGNORE; {@HOBr\aq}         {hypobromous acid}
- BrCl_a02       = IGNORE; {@BrCl\aq}         {bromine chloride}
-
-{------------------------------------- I -------------------------------------}
-
- I2_a02         = IGNORE; {@I_2\aq}          {molecular iodine}
- IO_a02         = IGNORE; {@IO\aq}           {iodine monoxide radical}
- HI_a02         = IGNORE; {@HI\aq}           {hydrogen iodide}
- HOI_a02        = IGNORE; {@HOI\aq}          {hypoiodous acid}
- ICl_a02        = IGNORE; {@ICl\aq}          {iodine chloride}
- IBr_a02        = IGNORE; {@IBr\aq}          {iodine bromide}
- HIO3_a02       = IGNORE; {@HIO_3\aq}        {iodic acid}
-
-{------------------------------------- S -------------------------------------}
-
- SO2_a02        = IGNORE; {@SO_2\aq}         {sulfur dioxide}
- H2SO4_a02      = IGNORE; {@H_2SO_4\aq}      {sulfuric acid}
- DMSO_a02       = IGNORE; {@DMSO\aq}         {dimethyl sulfoxide: CH3SOCH3}
-
-{------------------------------------- Hg ------------------------------------}
-
- Hg_a02         = IGNORE; {@Hg\aq}           {mercury}
- HgO_a02        = IGNORE; {@HgO\aq}          {} 
- HgOH_a02       = IGNORE; {@HgOH\aq}         {}
- HgOHOH_a02     = IGNORE; {@Hg(OH)_2\aq}     {}
- HgOHCl_a02     = IGNORE; {@Hg(OH)Cl\aq}     {}
- HgCl2_a02      = IGNORE; {@HgCl_2\aq}       {}
- HgBr2_a02      = IGNORE; {@HgBr_2\aq}       {}
- HgSO3_a02      = IGNORE; {@HgSO_3\aq}       {}
- ClHgBr_a02     = IGNORE; {@ClHgBr\aq}       {}
- BrHgOBr_a02    = IGNORE; {@BrHgOBr\aq}      {}
- ClHgOBr_a02    = IGNORE; {@ClHgOBr\aq}      {}
-
-{----------------------------------- ions ------------------------------------}
-
-{------------------------------------- O -------------------------------------}
-
- O2m_a02        = IGNORE; {@O_2^-\aq}        {}
- OHm_a02        = IGNORE; {@OH^-\aq}         {}
-
-{------------------------------------- H -------------------------------------}
-
- Hp_a02         = IGNORE; {@H^+\aq}          {}
-
-{------------------------------------- N -------------------------------------}
-
- NH4p_a02       = IGNORE; {@NH_4^+\aq}       {ammonium}
- NO2m_a02       = IGNORE; {@NO_2^-\aq}       {nitrite}
- NO3m_a02       = IGNORE; {@NO_3^-\aq}       {nitrate}
- NO4m_a02       = IGNORE; {@NO_4^-\aq}       {peroxy nitrate}
-
-{------------------------------------- C -------------------------------------}
-
-{1C}
- CO3m_a02       = IGNORE; {@CO_3^-\aq}       {}
- HCOOm_a02      = IGNORE; {@HCOO^-\aq}       {formate}
- HCO3m_a02      = IGNORE; {@HCO_3^-\aq}      {hydrogen carbonate}
-
-{2C}
- CH3COOm_a02    = IGNORE; {@CH_3COO^-\aq}    {acetate}
-
-{------------------------------------- Cl ------------------------------------}
-
- Clm_a02        = IGNORE; {@Cl^-\aq}         {chloride}
- Cl2m_a02       = IGNORE; {@Cl_2^-\aq}       {}
- ClOm_a02       = IGNORE; {@ClO^-\aq}        {}
- ClOHm_a02      = IGNORE; {@ClOH^-\aq}       {}
-
-{------------------------------------- Br ------------------------------------}
-
- Brm_a02        = IGNORE; {@Br^-\aq}         {bromide}
- Br2m_a02       = IGNORE; {@Br_2^-\aq}       {}
- BrOm_a02       = IGNORE; {@BrO^-\aq}        {}
- BrOHm_a02      = IGNORE; {@BrOH^-\aq}       {}
- BrCl2m_a02     = IGNORE; {@BrCl_2^-\aq}     {}
- Br2Clm_a02     = IGNORE; {@Br_2Cl^-\aq}     {}
-
-{------------------------------------- I -------------------------------------}
-
- Im_a02         = IGNORE; {@I^-\aq}          {iodide}
- IO2m_a02       = IGNORE; {@IO_2^-\aq}       {}
- IO3m_a02       = IGNORE; {@IO_3^-\aq}       {iodate}
- ICl2m_a02      = IGNORE; {@ICl_2^-\aq}      {}
- IClBrm_a02     = IGNORE; {@IClBr^-\aq}      {}
- IBr2m_a02      = IGNORE; {@IBr_2^-\aq}      {}
-
-{------------------------------------- S -------------------------------------}
-
- SO3m_a02       = IGNORE; {@SO_3^-\aq}       {}
- SO3mm_a02      = IGNORE; {@SO_3^<2->\aq}    {sulfite}
- SO4m_a02       = IGNORE; {@SO_4^-\aq}       {}
- SO4mm_a02      = IGNORE; {@SO_4^<2->\aq}    {sulfate}
- SO5m_a02       = IGNORE; {@SO_5^-\aq}       {}
- HSO3m_a02      = IGNORE; {@HSO_3^-\aq}      {hydrogen sulfite}
- HSO4m_a02      = IGNORE; {@HSO_4^-\aq}      {hydrogen sulfate}
- HSO5m_a02      = IGNORE; {@HSO_5^-\aq}      {}
- CH3SO3m_a02    = IGNORE; {@CH_3SO_3^-\aq}   {MSA anion}
- CH2OHSO3m_a02  = IGNORE; {@CH_2OHSO_3^-\aq} {}
-
-{------------------------------------Hg---------------------------------------}
-
- Hgp_a02        = IGNORE; {@Hg^+\aq}              {}
- Hgpp_a02       = IGNORE; {@Hg^<2+>\aq}           {}
- HgOHp_a02      = IGNORE; {@HgOH^+\aq}            {}
- HgClp_a02      = IGNORE; {@HgCl^+\aq}            {}
- HgCl3m_a02     = IGNORE; {@HgCl_3^-\aq}          {}
- HgCl4mm_a02    = IGNORE; {@HgCl_4^<2->\aq}       {}
- HgBrp_a02      = IGNORE; {@HgBr^+\aq}            {}
- HgBr3m_a02     = IGNORE; {@HgBr_3^-\aq}          {}
- HgBr4mm_a02    = IGNORE; {@HgBr_4^<2->\aq}       {}
- HgSO32mm_a02   = IGNORE; {@Hg(SO_3)_2^<2->\aq}   {}
-
-{-----------------------------------------------------------------------------}
-{------------------------------------ dummies --------------------------------}
-{-----------------------------------------------------------------------------}
-
- D1O_a02        = IGNORE; {@D_1O\aq}         {}
- D2O_a02        = IGNORE; {@D_2O\aq}         {}
- DAHp_a02       = IGNORE; {@DAH^+\aq}        {}
- DA_a02         = IGNORE; {@DA\aq}           {}
- DAm_a02        = IGNORE; {@DA^-\aq}         {}
- DGtAi_a02      = IGNORE; {@DGtAi\aq}        {}
- DGtAs_a02      = IGNORE; {@DGtAs\aq}        {}
- PROD1_a02      = IGNORE; {@PROD1\aq}        {}
- PROD2_a02      = IGNORE; {@PROD2\aq}        {}
- Nap_a02        = IGNORE; {@Na^+\aq}         {dummy cation}
-{**** END:   aerosol species (phase 2) from aqueous.spc ****}
 
 {SETFIX H2O_a* is done via xmecca}
-#SETFIX H2O_a01;
-#SETFIX H2O_a02;

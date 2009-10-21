@@ -1,8 +1,9 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-06-18 13:50:51 sander>
+# Time-stamp: <2009-08-27 11:39:59 sander>
+# Author: Rolf Sander, Max-Planck-Institute, Mainz, Germany
 # xcaaba = eXecute CAABA
 
-################################################################################
+##############################################################################
 
 # define hline string
 set hline = "---------------------------------------"
@@ -16,7 +17,7 @@ if ( "$HOST" =~ hydra.* ) set system = hydra
 # default is not to start xmecca:
 unset xmecca
 
-################################################################################
+##############################################################################
 
 if ( "$1" == "" ) then
   echo "\nYou can create a new chemical mechanism with xmecca."
@@ -88,7 +89,7 @@ if (${?xmecca}) then
   echo "\n$hline"
 endif
 
-################################################################################
+##############################################################################
 
 set s_string = "Start from scratch"
 set c_string = "Compile"
@@ -136,7 +137,7 @@ default:
 endsw
 echo "\n$hline"
 
-################################################################################
+##############################################################################
 
 if ( "$option" == "s" ) then
 
@@ -145,7 +146,7 @@ if ( "$option" == "s" ) then
 
 endif
 
-################################################################################
+##############################################################################
 
 if (( "$option" == "c" ) || ( "$option" == "s" )) then
 
@@ -159,46 +160,74 @@ if (( "$option" == "c" ) || ( "$option" == "s" )) then
 
 endif
 
-################################################################################
+##############################################################################
+
+set defaultnml = `ls -la caaba.nml | sed 's|.*nml/||g'`
+echo "\nChoose a namelist file from the nml/ directory:"
+echo "[q/number, default=$defaultnml]"
+
+set inn = "0"
+cd nml
+set allfiles = */*.nml
+cd -
+foreach i ($allfiles) # list all possibilities
+  @ inn=$inn + 1
+  echo "$inn) $allfiles[$inn]"
+end
+set inputstring = "$<"
+if ( "$inputstring" == "q" ) exit 1
+if(($inputstring <= $#allfiles) && ($inputstring >= 1)) then
+  set nmlfile = $allfiles[$inputstring]
+  ln -fs nml/$nmlfile .
+else
+  set nmlfile = $defaultnml
+endif
+echo "The active contents of the selected"
+echo "namelist ($nmlfile) is:"
+sed -ne '/^&CAABA[ ]*$/,/^\//p' caaba.nml | grep -v "^!" | grep -v '^ *$'
+echo "\nThe active contents of mecca.nml is:"
+sed -ne '/^&CTRL/,/^\//p' mecca.nml | grep -v "^!" | grep -v '^ *$'
+echo "\n$hline"
+echo "\nBefore you continue, ensure that the namelist is consistent"
+echo "with the selected chemistry mechanism\!"
+echo "Continue? [y/n/q, default=y]"
+set inputstring = "$<"
+if ( "$inputstring" == "q" ) exit
+if ( "$inputstring" == "n" ) exit
+
+##############################################################################
 
 # check if MECCA code was prepared for Monte-Carlo simulations:
 set test = `grep -i "REQ_MCFCT *= *\.TRUE\." messy_mecca_kpp*.f90`
 if ( "$test" != "" ) then
+  echo "\nRun Monte-Carlo simulations with CAABA? [y/q, default=y]"
+  set inputstring = "$<"
+  if ( "$inputstring" == "q" ) exit
   ./montecarlo/montecarlo.tcsh
   exit
 endif
 
-################################################################################
+##############################################################################
 
 echo "\nRun CAABA boxmodel with MECCA chemistry?"
 echo "y = Yes (default)"
 echo "n = No"
-echo "m = Multirun (multiple runs, under construction, do not use yet...)"
+echo "m = Multirun (multiple runs)"
 echo "q = Quit"
 
 set inputstring = "$<"
+echo "$hline"
 if ( "$inputstring" == "q" ) exit
 
 if ( "$inputstring" == "m" ) then
-  ./multirun/multirun.tcsh
+  cd multirun
+  ./multirun.tcsh
   exit
 endif
 
 if ( "$inputstring" != "n" ) then
-
-  echo "$hline"
-  echo "\nThe active contents of caaba.nml is:"
-  sed -ne '/^&CAABA[ ]*$/,/^\//p' caaba.nml | grep -v "^!" | grep -v '^ *$'
-  echo "\nThe active contents of mecca.nml is:"
-  sed -ne '/^&CTRL/,/^\//p' mecca.nml | grep -v "^!" | grep -v '^ *$'
-  echo "\n$hline"
-  echo "\nBefore you continue, ensure that the namelist is consistent"
-  echo "with the selected chemistry mechanism\!"
-  echo "Continue? [y/n/q, default=y]"
-  set inputstring = "$<"
-  if ( "$inputstring" == "q" ) exit
-  if ( "$inputstring" == "n" ) exit
-
+  # remove old files:
+  rm caaba_*.nc
   echo "Starting CAABA. Please wait...\n"
   if ( "$HOST" =~ grand ) then
     # on grand, the queueing system must be used:
@@ -216,20 +245,21 @@ if ( "$inputstring" != "n" ) then
     end
     mv -f qexec.tcsh.$jobnum.log caaba.log
   else
-    # unbuffer needs expect, see :http://expect.nist.gov/
-    if ( ( -e `which unbuffer` ) && ( -e `which expect` ) ) then
-      unbuffer \time -p ./caaba.exe |& tee caaba.log
-    else
+    # unbuffer needs expect, see: http://expect.nist.gov/
+    #if ( ( -e `which unbuffer` ) && ( -e `which expect` ) ) then
+      #unbuffer \time -p ./caaba.exe |& tee caaba.log
+    #else
       \time -p ./caaba.exe |& tee caaba.log
-    endif
+    #endif
   endif
   echo "Log output is now available in ./caaba.log"
 endif
 
-################################################################################
+##############################################################################
 
 set defaultoutputdir = "output/`date +'%Y-%m-%d-%H:%M:%S'`"
-echo "\nSave the model code and output in output/ directory?\n[y/n/q, default=y]"
+echo "\nSave the output and model code in output/ directory?"
+echo "[y/n/q, default=y]"
 set inputstring = "$<"
 switch ("$inputstring")
 case "":
@@ -255,6 +285,12 @@ if ($?outputdir) then
   ls -la $outputdir
 endif
 
-################################################################################
+##############################################################################
+
+echo "\n$hline"
+echo "                             xcaaba has finished"
+echo "$hline\n"
+
+##############################################################################
 
 exit

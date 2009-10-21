@@ -84,5 +84,6 @@ distclean: clean
 
 # all object files *.o depend on their source files *.f90
 # the object files are created with the "-c" compiler option
+# do not delete $(ADDEFS), since it is set by Makefile.m
 %.o: %.f90
-	$(F90) $(DEFOPT)$(OUTPUT) $(F90R8) $(F90FLAGS) $(NETCDF_INCLUDE) -c $<
+	$(F90) $(DEFOPT)$(OUTPUT) $(ADDEFS) $(F90R8) $(F90FLAGS) $(NETCDF_INCLUDE) -c $<

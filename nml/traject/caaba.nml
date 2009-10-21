@@ -1,4 +1,4 @@
-! -*- f90 -*- Time-stamp: <2008-08-14 18:32:06 sander>
+! -*- f90 -*- Time-stamp: <2009-08-04 17:44:44 sander>
 
 !*****************************************************************************
 !
@@ -59,6 +59,12 @@ USE_MECCA   = T
 USE_SAPPHO  = T
 !USE_SEMIDEP = T
 USE_TRAJECT = T
+
+! see "list_of_scenarios" in caaba.f90 for possibilities:
+!init_scenario     = ''
+!photo_scenario    = ''
+!emission_scenario = ''
+!drydep_scenario   = ''
 
 ! Choose a channel that contains J-values for photolysis reactions:
 photrat_channel = 'jval'
