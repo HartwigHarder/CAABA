@@ -1,0 +1,38 @@
+// Created automatically by xgraphviz, DO NOT EDIT!
+digraph C5 {
+  concentrate=true;
+  rankdir=LR;
+  size="8,8";
+"C5\nchemistry"
+  [shape=box, fontsize=30,
+  style="filled", color=red];
+subgraph species {
+node[shape=oval,
+  color=yellow,
+  style="filled"];
+ISO2
+ISOOH
+ISOP
+}
+ISO2 -> ACETOL [label = "CH3O2 (G4505)"];
+ISO2 -> CH3COCHO [label = "CH3O2 (G4505)"];
+ISO2 -> CH3OH [label = "CH3O2 (G4505)"];
+ISO2 -> HCHO [label = "CH3O2 (G4505)"];
+ISO2 -> HCHO [label = "ISO2 (G4506)"];
+ISO2 -> HCHO [label = "NO (G4504)"];
+ISO2 -> ISOOH [label = "HO2 (G4503)"];
+ISO2 -> MVK [label = "CH3O2 (G4505)"];
+ISO2 -> MVK [label = "ISO2 (G4506)"];
+ISO2 -> MVK [label = "NO (G4504)"];
+ISOOH -> HCHO [label = "hv (J4500)"];
+ISOOH -> MVK [label = "OH (G4507)"];
+ISOOH -> MVK [label = "hv (J4500)"];
+ISOP -> CH3O2 [label = "O3 (G4500)"];
+ISOP -> CO [label = "O3 (G4500)"];
+ISOP -> HCHO [label = "O3 (G4500)"];
+ISOP -> HCOOH [label = "O3 (G4500)"];
+ISOP -> ISO2 [label = "OH (G4501)"];
+ISOP -> MVK [label = "O3 (G4500)"];
+ISOP -> MVKO2 [label = "O3 (G4500)"];
+ISOP -> PA [label = "O3 (G4500)"];
+}

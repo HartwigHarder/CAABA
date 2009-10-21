@@ -1,0 +1,61 @@
+#! /bin/tcsh -f
+
+if ( $1 == "" ) then
+  echo "example usage:"
+  echo "  ./xgraphviz C1.spc C.spc both"
+  exit
+endif
+
+set spc1file  = $1
+set spc2file  = $2
+set labeltype = $3
+
+set eqnfile  = ../mecca.eqn
+set basename = $spc1file:r # remove suffix with ":r"
+set dotfile  = $basename.dot
+set pdffile  = $basename.pdf
+
+echo "// Created automatically by xgraphviz, DO NOT EDIT\!" > $dotfile
+echo "creating $pdffile ..."
+
+# create dependencies with awk script:
+# for strange reasons, gawk only works properly if LC_COLLATE = C
+setenv LC_COLLATE C
+gawk -f eqn2dot.awk -v spc1file="$spc1file" -v spc2file="$spc2file" -v labeltype="$labeltype" $eqnfile
+
+# create inputfile for graphviz:
+echo "digraph $basename {" >> $dotfile
+echo '  concentrate=true;' >> $dotfile
+echo '  rankdir=LR;'       >> $dotfile
+echo '  size="8,8";'       >> $dotfile
+
+echo '"'$basename'\\nchemistry"'     >> $dotfile
+echo '  [shape=box, fontsize=30,'    >> $dotfile
+echo '  style="filled", color=red];' >> $dotfile
+
+echo 'subgraph species {' >> $dotfile
+echo 'node[shape=oval,'   >> $dotfile
+echo '  color=yellow,'    >> $dotfile
+echo '  style="filled"];' >> $dotfile
+# # for strange reasons, gawk only works properly if LC_COLLATE = C
+# setenv LC_COLLATE C
+# grep -E '^ *[A-Za-z0-9_]+' $spc1file \
+#   | sed 's|[^A-Za-z0-9_].*||' \
+#   | sed 's|$|;|' >> $dotfile
+sort node.dot | uniq >> $dotfile
+echo '}' >> $dotfile
+
+sort depend.dot | uniq >> $dotfile
+echo '}'               >> $dotfile
+
+# run graphviz:
+dot -Tps2 -o tmp_1.ps $dotfile
+# svg output is not satisfying:
+#dot -Tsvg -o tmp_1.svg $dotfile
+
+ps2pdf -f tmp_1.ps $pdffile
+
+# cleanup:
+rm node.dot depend.dot tmp_*.ps
+
+exit

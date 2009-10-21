@@ -1,0 +1,4 @@
+digraph mecca {
+  rankdir=LR;
+	size="8,8";
+}

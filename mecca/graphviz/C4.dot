@@ -1,0 +1,94 @@
+// Created automatically by xgraphviz, DO NOT EDIT!
+digraph C4 {
+  concentrate=true;
+  rankdir=LR;
+  size="8,8";
+"C4\nchemistry"
+  [shape=box, fontsize=30,
+  style="filled", color=red];
+subgraph species {
+node[shape=oval,
+  color=yellow,
+  style="filled"];
+C4H10
+C4H9O2
+C4H9OOH
+MEK
+MEKO2
+MEKOOH
+MPAN
+MVK
+MVKO2
+MVKOOH
+MeCOCO
+}
+C4H10 -> C4H9O2 [label = "OH (G4400)"];
+C4H9O2 -> C4H9OOH [label = "HO2 (G4402)"];
+C4H9O2 -> CH3CHO [label = "CH3O2 (G4401)"];
+C4H9O2 -> CH3CHO [label = "NO (G4403)"];
+C4H9O2 -> CH3OH [label = "CH3O2 (G4401)"];
+C4H9O2 -> EtO2 [label = "CH3O2 (G4401)"];
+C4H9O2 -> EtO2 [label = "NO (G4403)"];
+C4H9O2 -> HCHO [label = "CH3O2 (G4401)"];
+C4H9O2 -> MEK [label = "CH3O2 (G4401)"];
+C4H9O2 -> MEK [label = "NO (G4403)"];
+C4H9OOH -> C4H9O2 [label = "OH (G4404)"];
+C4H9OOH -> CH3CHO [label = "hv (J4400)"];
+C4H9OOH -> EtO2 [label = "hv (J4400)"];
+C4H9OOH -> MEK [label = "OH (G4404)"];
+C4H9OOH -> MEK [label = "hv (J4400)"];
+CH3O2 -> MEK [label = "C4H9O2 (G4401)"];
+CH3O2 -> MVK [label = "ISO2 (G4505)"];
+ISO2 -> MVK [label = "CH3O2 (G4505)"];
+ISO2 -> MVK [label = "ISO2 (G4506)"];
+ISO2 -> MVK [label = "NO (G4504)"];
+ISOOH -> MVK [label = "OH (G4507)"];
+ISOOH -> MVK [label = "hv (J4500)"];
+ISOP -> MVK [label = "O3 (G4500)"];
+ISOP -> MVKO2 [label = "O3 (G4500)"];
+MEK -> EtO2 [label = "hv (J4403)"];
+MEK -> MEKO2 [label = "OH (G4413)"];
+MEK -> PA [label = "hv (J4403)"];
+MEKO2 -> CH3CHO [label = "NO (G4415)"];
+MEKO2 -> MEKOOH [label = "HO2 (G4414)"];
+MEKO2 -> PA [label = "NO (G4415)"];
+MEKOOH -> CH3CHO [label = "hv (J4404)"];
+MEKOOH -> MEKO2 [label = "OH (G4416)"];
+MEKOOH -> MeCOCO [label = "OH (G4416)"];
+MEKOOH -> PA [label = "hv (J4404)"];
+MPAN -> ACETOL [label = "OH (G4318)"];
+MPAN -> ACETOL [label = "hv (J4305)"];
+MPAN -> MVKO2 [label = " (G4319)"];
+MVK -> CH3COCHO [label = "O3 (G4405)"];
+MVK -> CO [label = "O3 (G4405)"];
+MVK -> CO [label = "hv (J4401)"];
+MVK -> HCHO [label = "hv (J4401)"];
+MVK -> HCOOH [label = "O3 (G4405)"];
+MVK -> MVKO2 [label = "OH (G4406)"];
+MVK -> PA [label = "O3 (G4405)"];
+MVK -> PA [label = "hv (J4401)"];
+MVKO2 -> ACETOL [label = "CH3O2 (G4410)"];
+MVKO2 -> ACETOL [label = "MVKO2 (G4411)"];
+MVKO2 -> ACETOL [label = "NO (G4408)"];
+MVKO2 -> CH3COCHO [label = "CH3O2 (G4410)"];
+MVKO2 -> CH3COCHO [label = "MVKO2 (G4411)"];
+MVKO2 -> CH3COCHO [label = "NO (G4408)"];
+MVKO2 -> CH3OH [label = "CH3O2 (G4410)"];
+MVKO2 -> CO [label = "CH3O2 (G4410)"];
+MVKO2 -> CO [label = "MVKO2 (G4411)"];
+MVKO2 -> CO [label = "NO (G4408)"];
+MVKO2 -> HCHO [label = "CH3O2 (G4410)"];
+MVKO2 -> HCHO [label = "MVKO2 (G4411)"];
+MVKO2 -> HCHO [label = "NO (G4408)"];
+MVKO2 -> MPAN [label = "NO2 (G4409)"];
+MVKO2 -> MVKOOH [label = "HO2 (G4407)"];
+MVKO2 -> PA [label = "CH3O2 (G4410)"];
+MVKO2 -> PA [label = "NO (G4408)"];
+MVKOOH -> ACETOL [label = "hv (J4402)"];
+MVKOOH -> CH3COCHO [label = "hv (J4402)"];
+MVKOOH -> CO [label = "hv (J4402)"];
+MVKOOH -> HCHO [label = "hv (J4402)"];
+MVKOOH -> MVKO2 [label = "OH (G4412)"];
+MVKOOH -> PA [label = "hv (J4402)"];
+MeCOCO -> PA [label = "hv (J4405)"];
+}

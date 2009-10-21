@@ -1,0 +1,19 @@
+#! /bin/tcsh -f
+
+# for strange reasons, gawk only works properly if LC_COLLATE = C
+setenv LC_COLLATE C
+gawk -f spc_extract.awk ../mecca.spc
+
+./xgraphviz     C1.spc   C.spc both
+./xgraphviz     C2.spc   C.spc both
+./xgraphviz     C3.spc   C.spc both
+./xgraphviz     C4.spc   C.spc both
+./xgraphviz     C5.spc   C.spc both
+
+./xgraphviz     Cl.spc  Cl.spc both
+./xgraphviz     Br.spc  Br.spc both
+./xgraphviz      I.spc   I.spc both
+
+./xgraphviz OH_HO2.spc all.spc both
+
+exit

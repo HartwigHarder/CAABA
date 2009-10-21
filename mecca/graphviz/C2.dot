@@ -1,0 +1,135 @@
+// Created automatically by xgraphviz, DO NOT EDIT!
+digraph C2 {
+  concentrate=true;
+  rankdir=LR;
+  size="8,8";
+"C2\nchemistry"
+  [shape=box, fontsize=30,
+  style="filled", color=red];
+subgraph species {
+node[shape=oval,
+  color=yellow,
+  style="filled"];
+C2H2
+C2H4
+C2H6
+CH3CHO
+CH3COOH
+DMS
+DMSO
+EtO2
+EtOOH
+NACA
+PA
+PAA
+PAN
+}
+ACETO2 -> PA [label = "CH3O2 (G4314)"];
+ACETO2 -> PA [label = "NO (G4313)"];
+ACETOL -> PA [label = "hv (J4302)"];
+ACETP -> PA [label = "hv (J4304)"];
+C2H2 -> CH3O2 [label = "Br (G7406)"];
+C2H2 -> CH3O2 [label = "Cl (G6411)"];
+C2H2 -> CH3O2 [label = "OH (G4222)"];
+C2H4 -> C3H6O2 [label = "Br (G7404)"];
+C2H4 -> C3H6O2 [label = "Cl (G6409)"];
+C2H4 -> C3H6O2 [label = "OH (G4202)"];
+C2H4 -> CO [label = "O3 (G4201)"];
+C2H4 -> HCHO [label = "O3 (G4201)"];
+C2H4 -> HCOOH [label = "O3 (G4201)"];
+C2H6 -> CH3O2 [label = "Cl (G6412)"];
+C2H6 -> EtO2 [label = "OH (G4200)"];
+C3H6 -> CH3CHO [label = "O3 (G4301)"];
+C3H6 -> EtO2 [label = "O3 (G4301)"];
+C3H6 -> PA [label = "O3 (G4301)"];
+C3H6O2 -> CH3CHO [label = "NO (G4309)"];
+C3H8 -> EtO2 [label = "OH (G4300)"];
+C4H9O2 -> CH3CHO [label = "CH3O2 (G4401)"];
+C4H9O2 -> CH3CHO [label = "NO (G4403)"];
+C4H9O2 -> EtO2 [label = "CH3O2 (G4401)"];
+C4H9O2 -> EtO2 [label = "NO (G4403)"];
+C4H9OOH -> CH3CHO [label = "hv (J4400)"];
+C4H9OOH -> EtO2 [label = "hv (J4400)"];
+CH3CHO -> CH3O2 [label = "hv (J4201)"];
+CH3CHO -> CO [label = "hv (J4201)"];
+CH3CHO -> PA [label = "Br (G7405)"];
+CH3CHO -> PA [label = "Cl (G6410)"];
+CH3CHO -> PA [label = "NO3 (G4209)"];
+CH3CHO -> PA [label = "OH (G4208)"];
+CH3COCH3 -> PA [label = "hv (J4301)"];
+CH3COCHO -> PA [label = "OH (G4317)"];
+CH3COCHO -> PA [label = "hv (J4303)"];
+CH3COOH -> CH3O2 [label = "OH (G4210)"];
+CH3COOH -> CO2 [label = "OH (G4210)"];
+CH3O2 -> CH3CHO [label = "C4H9O2 (G4401)"];
+CH3O2 -> CH3CHO [label = "EtO2 (G4206)"];
+CH3O2 -> CH3COOH [label = "PA (G4215b)"];
+CH3O2 -> EtO2 [label = "C4H9O2 (G4401)"];
+CH3O2 -> PA [label = "ACETO2 (G4314)"];
+CH3O2 -> PA [label = "MVKO2 (G4410)"];
+DMS -> CH3SO2 [label = "Br (G9700)"];
+DMS -> CH3SO2 [label = "Cl (G9600)"];
+DMS -> CH3SO2 [label = "NO3 (G9401)"];
+DMS -> CH3SO2 [label = "OH (G9400a)"];
+DMS -> DMSO [label = "BrO (G9701)"];
+DMS -> DMSO [label = "IO (G9800)"];
+DMS -> DMSO [label = "OH (G9400b)"];
+DMS -> HCHO [label = "Br (G9700)"];
+DMS -> HCHO [label = "Cl (G9600)"];
+DMS -> HCHO [label = "NO3 (G9401)"];
+DMS -> HCHO [label = "OH (G9400a)"];
+DMSO -> CH3O2 [label = "OH (G9402)"];
+DMSO -> CH3SO3H [label = "OH (G9402)"];
+DMSO -> HCHO [label = "OH (G9402)"];
+EtO2 -> CH3CHO [label = "CH3O2 (G4206)"];
+EtO2 -> CH3CHO [label = "NO (G4204)"];
+EtO2 -> CH3CHO [label = "NO3 (G4205)"];
+EtO2 -> CH3CHO [label = "PA (G4216)"];
+EtO2 -> CH3COOH [label = "PA (G4216)"];
+EtO2 -> CH3O2 [label = "PA (G4216)"];
+EtO2 -> CH3OH [label = "CH3O2 (G4206)"];
+EtO2 -> EtOOH [label = "HO2 (G4203)"];
+EtO2 -> HCHO [label = "CH3O2 (G4206)"];
+EtOOH -> CH3CHO [label = "OH (G4207)"];
+EtOOH -> CH3CHO [label = "hv (J4200)"];
+EtOOH -> EtO2 [label = "OH (G4207)"];
+ISOP -> PA [label = "O3 (G4500)"];
+MEK -> EtO2 [label = "hv (J4403)"];
+MEK -> PA [label = "hv (J4403)"];
+MEKO2 -> CH3CHO [label = "NO (G4415)"];
+MEKO2 -> PA [label = "NO (G4415)"];
+MEKOOH -> CH3CHO [label = "hv (J4404)"];
+MEKOOH -> PA [label = "hv (J4404)"];
+MVK -> PA [label = "O3 (G4405)"];
+MVK -> PA [label = "hv (J4401)"];
+MVKO2 -> PA [label = "CH3O2 (G4410)"];
+MVKO2 -> PA [label = "NO (G4408)"];
+MVKOOH -> PA [label = "hv (J4402)"];
+MeCOCO -> PA [label = "hv (J4405)"];
+NACA -> CO [label = "OH (G4219)"];
+NACA -> CO [label = "hv (J4203)"];
+NACA -> HCHO [label = "OH (G4219)"];
+NACA -> HCHO [label = "hv (J4203)"];
+PA -> CH3CHO [label = "EtO2 (G4216)"];
+PA -> CH3COOH [label = "CH3O2 (G4215b)"];
+PA -> CH3COOH [label = "EtO2 (G4216)"];
+PA -> CH3COOH [label = "HO2 (G4211b)"];
+PA -> CH3O2 [label = "CH3O2 (G4215a)"];
+PA -> CH3O2 [label = "EtO2 (G4216)"];
+PA -> CH3O2 [label = "NO (G4212)"];
+PA -> CH3O2 [label = "NO3 (G4214)"];
+PA -> CH3O2 [label = "PA (G4217)"];
+PA -> CO2 [label = "CH3O2 (G4215a)"];
+PA -> CO2 [label = "PA (G4217)"];
+PA -> HCHO [label = "CH3O2 (G4215a)"];
+PA -> HCHO [label = "CH3O2 (G4215b)"];
+PA -> PAA [label = "HO2 (G4211a)"];
+PA -> PAN [label = "NO2 (G4213)"];
+PAA -> CH3O2 [label = "hv (J4202)"];
+PAA -> PA [label = "OH (G4218)"];
+PAN -> CH3O2 [label = "hv (J4204)"];
+PAN -> CO2 [label = "hv (J4204)"];
+PAN -> HCHO [label = "OH (G4220)"];
+PAN -> PA [label = " (G4221)"];
+PAN -> PA [label = "hv (J4204)"];
+}
