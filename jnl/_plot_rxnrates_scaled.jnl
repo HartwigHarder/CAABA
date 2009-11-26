@@ -8,6 +8,10 @@ IF `"($3)" EQ "($species)"` THEN
   PLOT/SET/TITLE="($2)" scaledplotdata
   GO ppl_mylayout
   PPL PLOT
+
+  ! write values to output file:
+  LIST/QUIET/APPEND/PRECISION=10/FILE=rxnrates_scaled_($species).log $1[l=@ddc]
+
 ENDIF
 
 ! ------------------------------------------------------------------------------

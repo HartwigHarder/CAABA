@@ -1,5 +1,5 @@
 // ------------------------------- gas.eqn -----------------------------------
-// Time-stamp: <2009-11-26 17:22:08 sander>
+// Time-stamp: <2009-11-26 17:35:33 sander>
 // ---------------------------------------------------------------------------
 
 // This program is free software; you can redistribute it and/or
@@ -32,10 +32,10 @@
 //   - Gas-phase reaction rates updated to JPL2000
 // - Astrid Kerkweg (2003):
 //   - Mbl halogen reactions from MISTRA (von Glasow et al. 2002) added
-// - Rolf Sander (2002-2008):
+// - Rolf Sander (2002-...):
 //   - Stratospheric gas-phase chemistry ECHAM4CHEM (Steil et al. 1998) added
 //   - Reaction mechanisms merged, sorted, labeled, and maintained
-//   - Gas-phase reaction rates updated to JPL2003
+//   - Gas-phase reaction rates updated to JPL2006
 // - Franziska Koellner (2009):
 //   - added uncertainties for reaction constants
 // ---------------------------------------------------------------------------
@@ -48,6 +48,24 @@
   REAL :: k_O3s ! mz_pj_20080812
   ! ALL PHASES:
 !KPPPP_DIRECTIVE vector variable definition start
+  ! -------------------------------------------------------
+  ! IMPORTANT NOTES ABOUT TEMP, PRESS, AND CAIR:
+  ! - The KPP variable "temp" is already defined automatically by KPP in
+  !   messy_mecca_kpp_global.f90. The KPP variables "press" and "cair" are
+  !   defined here.
+  ! - The 3 variables temp, press, and cair are only used inside KPP.
+  !   They are different from the variables with the same names in the base
+  !   model (as used in the SMIL files *_e5.f90 and *_box.f90)
+  ! - Data transfer between the SMIL and the KPP variables is done via the
+  !   fill subroutines in messy_mecca_kpp.f90:
+  !   - fill_temp transfers temperature
+  !   - fill_press transfers pressure
+  !   - fill_cair transfers cair (this is redundant because cair could be
+  !     calculated from temp and press; nevertheless, redundant transfer to
+  !     KPP is preferred to avoid potential numerical differences when
+  !     recalculating cair inside KPP)
+  ! - qqq describe potential KP4 incompatibility here...
+  ! -------------------------------------------------------
   REAL(dp) :: cair    ! c(air) (wet) [mcl/cm^3]
   REAL(dp) :: press   ! pressure [Pa] ! mz_pj_20080716
   REAL(dp) :: mcfct(NREACT) ! Monte-Carlo factor
@@ -193,7 +211,7 @@
   END FUNCTION k_limited
 #ENDINLINE {above lines go into MODULE messy_mecca_kpp_Rates}
 
-//   ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 #EQUATIONS
 
@@ -271,7 +289,7 @@
 
 // 1C (#G41nn)
 <G4100>  CH4     + O1D     = .75 CH3O2 + .75 OH + .25 HCHO + .4 H + .05 H2 : {%StG}    1.5E-10; {&1945}{§1.2}
-<G4101>  CH4     + OH {+O2}= CH3O2 + H2O      : {%StTrG}  1.85E-20*EXP(2.82*log(temp)-987./temp); {&&1627}
+<G4101>  CH4     + OH {+O2}= CH3O2 + H2O       : {%StTrG}  1.85E-20*EXP(2.82*log(temp)-987./temp); {&&1627}
 <G4102>  CH3OH   + OH      = HCHO + HO2        : {%TrG}    2.9E-12*EXP(-345./temp); {&1945}{§1.10}
 <G4103>  CH3O2   + HO2     = CH3OOH + O2       : {%StTrG}  4.1E-13*EXP(750./temp); {&&1945}{§1.3}
 <G4104>  CH3O2   + NO      = HCHO + NO2 + HO2  : {%StTrGN} 2.8E-12*EXP(300./temp); {&1945}{§1.15}
@@ -282,7 +300,7 @@
 <G4108>  HCHO    + OH      = CO + H2O + HO2    : {%StTrG}  9.52E-18*EXP(2.03*log(temp)+636./temp); {&1634}
 <G4109>  HCHO    + NO3     = HNO3 + CO + HO2   : {%TrGN}   3.4E-13*EXP(-1900./temp); {&&1945}{§1.3}
 <G4110>  CO      + OH      = H + CO2           : {%StTrG}  1.57E-13 + cair*3.54E-33; {&1628}
-<G4111>  HCOOH   + OH      = HO2               : {%TrG}    4.0E-13; {&1945}{§1.2}
+<G4111>  HCOOH   + OH {+O2}= CO2 + HO2 + H2O   : {%TrG}    4.0E-13; {&1945}{§1.2}
 
 // 2C (#G42nn)
 <G4200>  C2H6    + OH      = EtO2 + H2O         : {%TrGC}   1.49E-17*temp*temp*EXP(-499./temp); {&1627}
@@ -376,8 +394,8 @@
 {<G6nnn> ------------------------------- Cl ------------------------}{@\myhline}
 
 // Cl + O (#G61nn)
-<G6100>  Cl + O3         = ClO + O2    : {%StTrGCl}       2.8E-11*EXP(-250./temp); {&1845} {§§0.06}
-<G6101>  ClO + O3P       = Cl + O2     : {%StGCl}         2.5E-11*EXP(110./temp); {&1845} {§§0.6}
+<G6100>  Cl + O3         = ClO + O2    : {%StTrGCl}       2.8E-11*EXP(-250./temp); {&1845}{§§0.06}
+<G6101>  ClO + O3P       = Cl + O2     : {%StGCl}         2.5E-11*EXP(110./temp); {&1845}{§§0.6}
 <G6102a> ClO + ClO       = Cl2 + O2    : {%StTrGCl}       1.0E-12*EXP(-1590./temp); {&1845}{§§0.2}
 <G6102b> ClO + ClO       = 2 Cl + O2   : {%StTrGCl}       3.0E-11*EXP(-2450./temp); {&1845}{§§0.2}
 <G6102c> ClO + ClO       = Cl + OClO   : {%StTrGCl}       3.5E-13*EXP(-1370./temp); {&1845}{§§0.2}
@@ -390,7 +408,7 @@
 <G6201b> Cl + HO2        = ClO + OH    : {%StGCl}         7.5E-11*EXP(-620./temp); {&1845}{§§0.2}
 <G6202>  Cl + H2O2       = HCl + HO2   : {%StTrGCl}       1.1E-11*EXP(-980./temp); {&1845}{§§0.2}
 <G6203>  ClO + OH        = .94 Cl + .94 HO2 + .06 HCl + .06 O2 : {%StGCl} 7.3E-12*EXP(300./temp); {&1845}{§§0.15}
-<G6204>  ClO + HO2       = HOCl        : {%StTrGCl}       2.2E-12*EXP(340./temp); {&1845} {§§0.2}
+<G6204>  ClO + HO2       = HOCl + O2   : {%StTrGCl}       2.2E-12*EXP(340./temp); {&1845}{§§0.2}
 <G6205>  HCl + OH        = Cl  + H2O   : {%StTrGCl}       1.7E-12*EXP(-230./temp); {&1845}{§§0.06}
 <G6206>  HOCl+ OH        = ClO + H2O   : {%StGCl}         3.0E-12*EXP(-500./temp); {&1945}{§3.0}
 
@@ -412,7 +430,7 @@
 <G6407>  CH3CCl3 + O1D    = OH + 3 Cl {+...}  : {%StGCCl}        3.E-10; {&&}
 <G6408>  CH3CCl3 + OH     = H2O + 3 Cl {+...} : {%StTrGCCl}      1.64E-12*EXP(-1520./temp); {&1945}{§1.15}
 <G6409>  Cl      + C2H4   = .6666667 C3H6O2 + HCl : {%TrGCCl}    k_3rd_iupac(temp,cair,1.85E-29,3.3,6.0E-10,0.0,0.4); {&1759}
-<G6410>  Cl      + CH3CHO = HCl + PA          : {%TrGCCl}        7.9e-11; {&&1759}{§§0.07}
+<G6410>  Cl      + CH3CHO = HCl + PA          : {%TrGCCl}        8.0e-11; {&1759}{§§0.07}
 <G6411>  C2H2    + Cl     = CH3O2 + HCl       : {%TrGCCl}        k_3rd_iupac(temp,cair,6.1e-30,3.0,2.0e-10,0.,0.6); {&1759}
 <G6412>  C2H6    + Cl     = CH3O2 + HCl       : {%TrGCCl}       8.3E-11*EXP(-100./temp); {&1759}{§§0.06}
 
@@ -446,12 +464,12 @@
 <G7401>  Br   + CH3OOH   = CH3O2 + HBr    : {%TrGBr}     2.66E-12*EXP(-1610./temp); {&233}
 <G7402a> BrO  + CH3O2    = HOBr + HCHO    : {%TrGBr}     0.8/1.1*5.7E-12; {&822}
 <G7402b> BrO  + CH3O2    = Br + HCHO + HO2: {%TrGBr}     0.3/1.1*5.7E-12; {&822}
-<G7403>  CH3Br + OH      = H2O + Br       : {%StTrGBr}   2.35E-12*EXP(-1300./temp); {&1945}{§1.1}
+<G7403>  CH3Br + OH      = H2O + Br {+...} : {%StTrGBr}   2.35E-12*EXP(-1300./temp); {&1945}{§1.1}
 <G7404>  Br   + C2H4     = .6666667 C3H6O2 + HBr : {%TrGCBr} 2.8E-13*EXP(224./temp)/(1.+1.13E+24*EXP(-3200./temp)/C(ind_O2)); {&1759}{§§0.15}
 <G7405>  Br   + CH3CHO   = HBr + PA       : {%TrGCCl}    1.8e-11*EXP(-460./temp); {&1759}{§§0.2}
 <G7406>  Br   + C2H2     = CH3O2 + HBr    : {%TrGCBr}    6.35e-15*EXP(440./temp); {&1759}{§§0.2}
-<G7407>  CHBr3  + OH = H2O + 3 Br {+CH3O2} : {%TrGBr}    1.35E-12*EXP(-600./temp); {&&1945}{§1.5}
-<G7408>  CH2Br2 + OH = H2O + 2 Br {+CH3O2} : {%TrGBr}    2.0E-12*EXP(-840./temp);  {&&1945}{§1.15}
+<G7407>  CHBr3  + OH = H2O + 3 Br {+...}  : {%TrGBr}    1.35E-12*EXP(-600./temp); {&&1945}{§1.5}
+<G7408>  CH2Br2 + OH = H2O + 2 Br {+...}  : {%TrGBr}    2.0E-12*EXP(-840./temp);  {&&1945}{§1.15}
 
 // Br + F (#G75nn)
 
@@ -512,7 +530,7 @@
 //<G9102>  S  + O2        = SO + O3P            : {%StGS} 2.3e-12; {&1555}
 
 // S + H (#G92nn)
-<G9200>  SO2    + OH    = H2SO4 + HO2         : {%StTrGS}   k_3rd(temp,cair,3.3E-31,4.3,1.6E-12,0.,0.6); {&1945}{§1.1}
+<G9200>  SO2 + OH {+O2+H2O} = H2SO4 + HO2         : {%StTrGS}   k_3rd(temp,cair,3.3E-31,4.3,1.6E-12,0.,0.6); {&1945}{§1.1}
 //<G9201>  SH + O2        = OH + SO             : {%StGS} 4.e-19; {&1555} {upper limit}
 
 // S + N (#G93nn)

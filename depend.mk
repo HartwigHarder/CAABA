@@ -67,5 +67,5 @@ messy_sappho_box.o: messy_main_constants_mem.o messy_main_tools.o
 messy_sappho_box.o: messy_sappho.o
 messy_semidep_box.o: caaba_mem.o messy_main_constants_mem.o messy_mecca_kpp.o
 messy_traject_box.o: caaba_io.o caaba_mem.o messy_main_constants_mem.o
-messy_traject_box.o: messy_main_timer.o messy_main_tools.o messy_mecca_kpp.o
+messy_traject_box.o: messy_main_timer.o messy_main_tools.o
 caaba_module.mod: caaba.o

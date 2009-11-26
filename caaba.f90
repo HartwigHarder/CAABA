@@ -1,4 +1,4 @@
-! Time-stamp: <2009-08-10 11:00:03 sander>
+! Time-stamp: <2009-11-26 17:30:54 sander>
 
 ! CAABA = Chemistry As A Boxmodel Application
 
@@ -154,7 +154,7 @@ CONTAINS
       STOP
     ENDIF
     IF (l_photo_scenario_ok) THEN
-      WRITE(*,*) ' Photo:       ', TRIM(photo_scenario)
+      WRITE(*,*) '  Photo:      ', TRIM(photo_scenario)
     ELSE
       WRITE(*,*) 'ERROR, unknown photo scenario ', TRIM(photo_scenario)
       STOP
@@ -250,6 +250,7 @@ CONTAINS
     IF (USE_TRAJECT) THEN
       IF (runlast > 0._DP) THEN
         WRITE(*,*) 'runlast    = ', runlast, ' days'
+        WRITE(*,*) 'overrides intrinsic trajectory runtime'
       ENDIF
       WRITE(*,*) HLINE2
       WRITE(*,*) 'NETCDF INPUT FOR PHYSICAL DATA:'

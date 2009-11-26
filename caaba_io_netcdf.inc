@@ -1,4 +1,4 @@
-! -*- f90 -*- Time-stamp: <2009-02-27 17:48:38 sander>
+! -*- f90 -*- Time-stamp: <2009-10-19 10:39:07 sander>
 
 ! This file produces netcdf output. It can only be used if the netcdf
 ! library is available.
@@ -34,6 +34,8 @@
   ! choose a precision:
   INTEGER, PARAMETER :: PREC = nf90_float
   ! INTEGER, PARAMETER :: PREC = nf90_double
+  ! note: when using nf90_double here, it is also necessary to change
+  ! "REAL(FLAGGED_BAD,SP)" in the code below to double precision
 
   INTEGER :: dimids2d(3), dimids3d(4)
   INTEGER :: londimid, latdimid, levdimid, tdimid

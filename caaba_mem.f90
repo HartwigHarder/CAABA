@@ -1,4 +1,4 @@
-! Time-stamp: <2009-08-24 14:12:22 sander>
+! Time-stamp: <2009-09-01 12:05:58 sander>
 
 ! This file declares global variables for caaba
 
@@ -101,10 +101,9 @@ MODULE caaba_mem
   REAL(DP) :: cair                ! concentration of air [mcl/cc]
   REAL(DP) :: temp   = 293._DP    ! temperature [K]
   REAL(DP) :: press  = 101325._DP ! pressure [Pa]
-  REAL(DP) :: relhum = 0.81_DP    ! relative humidity [0 - 1]
-  REAL(DP) :: zmbl   = 1000._DP   ! height of the mbl [m]
-
-  REAL(DP) :: spechum             ! specific humidity [?]
+  REAL(DP) :: relhum = 0.81_DP    ! relative humidity [0-1], > 1 warning, > 1.1 error
+  REAL(DP) :: spechum   ! specific humidity [water vapor(kg))/(air mass(kg)]
+  REAL(DP) :: zmbl   = 1000._DP   ! boundary layer height [m]
 
 END MODULE caaba_mem
 

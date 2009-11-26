@@ -1,6 +1,6 @@
 ******************************************************************************
 **                               CAABA history                              **
-**                  Time-stamp: <2009-08-27 12:53:03 sander>                **
+**                  Time-stamp: <2009-11-20 16:14:07 sander>                **
 ******************************************************************************
 
 Previous versions are available as zip files at:
@@ -11,16 +11,62 @@ new versions are created with: ncv <VERSION>
 ******************************************************************************
 
 The next version will be:
-caaba_2.5l (09)
+caaba_2.5m (2009)
+
+CHANGES by Andreas Baumgaertner and Rolf Sander:
+- JVAL: scenario photo_strato added with 90 levels
+- MECCA: "CALL x0_strato" added to messy_mecca_box.f90
+- E4CHEM: x0_default renamed to x0_strato
+
+CHANGES by Franziska Koellner:
+- MECCA: uncertainties of rate coefficients {§...} entered in gas.eqn
+
+CHANGES by Rolf Sander:
+- JVAL:
+  - messy_jval_box.f90:
+    - obsolete z_jpress deleted
+    - photo scenarios moved from jval_physc to jval_init (no
+      time-dependent info there)
+    - output of ALL J-values, not just selected species
+- MECCA:
+  - mcfct.awk:
+    - new formula using EXP(x) instead of 10.**x
+    - if two §§, then dlogk (IUPAC), if one §, then f (JPL)
+    - default is now 0.2
+  - gas.eqn: rate constant for G6410 = 8.0e-11
+  - KPP: All Makefiles now use the machine-dependent Makefile.defs.* files
+  - carbon mass balance for C atoms fixed for:
+    <G4111> HCOOH + OH {+O2}= CO2 + HO2 + H2O : {%TrG} 4.0E-13; {&1945}
+  - KPP bug fixes to allow compilation on MAC OSX:
+    - gdata.h: KPP_VERSION updated to 2.2.1_rs4
+    - code_matlab.c: "#include <time.h>" added because it is necessary for
+      time_t, see: http://en.wikipedia.org/wiki/Time_t
+    - scan.y, scanutil.c and y.tab.c: "#include <malloc.h>" deleted
+      because it is not necessary. "malloc" comes from <stdio.h>.
+    - new file Makefile.defs.Darwin for MAC OSX
 
 ******************************************************************************
 
-caaba_2.5k (27 Aug 09)
+caaba_2.5l (2009-09-03)
+
+CHANGES by Hartwig Harder and Rolf Sander:
+- multirun:
+  - loopcaaba.tcsh: P_STAT and AIRTEMP_FZJ__C renamed to press and temp,
+    respectively
+
+CHANGES by Hella Riede:
+- update of TRAJECT submodel
+- output now to caaba_messy.nc instead of caaba_traject.nc for
+  compatibility with non-traject mode
+
+******************************************************************************
+
+caaba_2.5k (2009-08-27)
 
 CHANGES by Rolf Sander:
 - user manual updated
 - xmecca calls dot (graphviz) to create plots of chemistry mechanism
-- xcaaba creates link to caaba.nml
+- xcaaba offers selection and then creates link to caaba.nml
 - scenarios introduced (namelist variables):
   photo_scenario (SAPPHO)
   emission_scenario (SEMIDEP)
@@ -50,7 +96,7 @@ CHANGES by Andreas Baumgaertner:
 
 ******************************************************************************
 
-caaba_2.5j (08 Jul 09)
+caaba_2.5j (2009-07-08)
 
 CHANGES by Rolf Sander:
 - obsolete, static file jnl/rates.jnl deleted
@@ -60,7 +106,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.5i (08 May 09)
+caaba_2.5i (2009-05-08)
 
 CHANGES by Rolf Sander:
 - using the same value for caaba_version as for MECCA version
@@ -76,7 +122,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.5h (29 Jan 09)
+caaba_2.5h (2009-01-29)
 
 CHANGES by Patrick Joeckel:
 - Makefile: g95 option "-pg" changed to "-g"
@@ -86,7 +132,7 @@ CHANGES by Sergey Gromov:
 
 ******************************************************************************
 
-caaba_2.5g (29 Jan 09)
+caaba_2.5g (2009-01-29)
 
 CHANGES by Rolf Sander:
 - starting (cosmetic) changes in messy_jval.f90
@@ -107,7 +153,7 @@ CHANGES by Rolf Sander:
     DEALLOCATE(xaer, radius, lwc, csalt, c0_NH4p, c0_Nap, exchng)
 ******************************************************************************
 
-caaba_2.5f (6 Dec 08)
+caaba_2.5f (2008-12-06)
 
 CHANGES by Hartwig Harder:
 - multirun.tcsh updated
@@ -124,7 +170,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.5e (13 Oct 08)
+caaba_2.5e (2008-10-13)
 
 CHANGES by Rolf Sander:
 - messy_mecca_box.f90: SUBROUTINE check_range does not check reaction
@@ -136,12 +182,13 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.5d (15 Aug 08)
+caaba_2.5d (2008-08-15)
 
 CHANGES by Rolf Sander:
 - temp, press, relhum, and zmbl can now be read via the namelist
 - names of netcdf input files in namelists must be complete now, i.e.
   with the suffix '.nc'
+- l_init_spec replaced by (TRIM(init_spec)/="")
 - xmecca, batch/*.bat:
   - diagtracall renamed to rxnrates
   - pseudo-KPP species renamed from DT* to RR*
@@ -160,7 +207,7 @@ CHANGES by Astrid Kerkweg:
 
 ******************************************************************************
 
-caaba_2.5c (17 Jul 08)
+caaba_2.5c (2008-07-17)
 
 CHANGES by Sergey Gromov:
 - second attempt of introducing tagging and doubling
@@ -170,14 +217,14 @@ CHANGES by Sergey Gromov:
 
 ******************************************************************************
 
-caaba_2.5b (16 Jul 08)
+caaba_2.5b (2008-07-16)
 
 CHANGES by Sergey Gromov:
 - first attempt of introducing tagging and doubling
 
 ******************************************************************************
 
-caaba_2.5 (11 Jul 08)
+caaba_2.5 (2008-07-11)
 
 CHANGES by Rolf Sander:
 - check_conservation.pl: allow white space at beginning of *.spc files
@@ -189,7 +236,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.4d (12 Jun 08)
+caaba_2.4d (2008-06-12)
 
 CHANGES by Hella Riede:
 - jval_clev instead of nlev
@@ -210,7 +257,7 @@ CHANGES by Hella Riede:
 
 ******************************************************************************
 
-caaba_2.4c (9 Jun 08)
+caaba_2.4c (2008-06-09)
 
 CHANGES by Rolf Sander:
 - messy_main_mbmio renamed to caaba_io
@@ -231,7 +278,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.4b (29 May 08)
+caaba_2.4b (2008-05-29)
 
 CHANGES by Rolf Sander:
 - CAABA can now be compiled and run with "OUTPUT = ASCII" in Makefile.
@@ -275,7 +322,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.4 (18 Feb 08)
+caaba_2.4 (2008-02-18)
 
 CHANGES by Rolf Sander:
 - manual/mecca_manual.tex: updated
@@ -308,7 +355,7 @@ CHANGES by Astrid Kerkweg:
 
 ******************************************************************************
 
-caaba_2.3e (12 Dec 07)
+caaba_2.3e (2007-12-12)
 
 CHANGES by Astrid Kerkweg:
 - MECCA:
@@ -342,7 +389,7 @@ CHANGES by Patrick Joeckel:
 
 ******************************************************************************
 
-caaba_2.3d (26 Nov 07)
+caaba_2.3d (2007-11-26)
 
 CHANGES by Rolf Sander:
 - meccanism.tex shows MECCA version (modver from messy_mecca.f90)
@@ -355,7 +402,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.3c (12 Sep 07)
+caaba_2.3c (2007-09-12)
 
 NOTE: This version needs kpp-2.2.1_rs
 
@@ -385,7 +432,7 @@ CHANGES by Hella Riede:
 
 ******************************************************************************
 
-caaba_2.3b (27 Aug 07)
+caaba_2.3b (2007-08-27)
 
 NOTE: This version needs kpp-2.2.2_rs_20070430
 
@@ -405,7 +452,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.3 (2 May 07)
+caaba_2.3 (2007-05-02)
 
 CHANGES by Hella Riede:
 - xmecca: new mechanism wanted18 included
@@ -443,7 +490,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-caaba_2.2e (27 Mar 07)
+caaba_2.2e (2007-03-27)
 
 NOTE: CAABA is currently a side branch of the MECCA development.
 
@@ -476,7 +523,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_2.2e (16 Jul 07)
+mecca_2.2e (2007-07-16)
 
 CHANGES by Rolf Sander:
 - The box model was made compatible with both KPP and KP4:
@@ -503,7 +550,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_2.2d (26 Sep 06)
+mecca_2.2d (2006-09-26)
 
 CHANGES by Rolf Sander:
 - new trajectory features merged into messy_mecca_box.f90
@@ -517,7 +564,7 @@ CHANGES by Hella Riede:
 
 ******************************************************************************
 
-mecca_2.2c (23 Sep 06)
+mecca_2.2c (2006-09-23)
 
 CHANGES by Rolf Sander:
 - new namelist entries in CPL_BOX (l_ff, Ca_precip, degree_lat,
@@ -529,7 +576,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_2.2b (9 Sep 06)
+mecca_2.2b (2006-09-09)
 
 CHANGES by Rolf Sander:
 - messy_mecca_box.f90-frostflower:
@@ -543,7 +590,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_2.2 (6 Mar 06)
+mecca_2.2 (2006-03-06)
 
 CHANGES by Rolf Sander:
 - box model now sent to Mike Long
@@ -586,7 +633,7 @@ CHANGES by ASTRID Kerkweg:
 
 ******************************************************************************
 
-mecca_2.1 (5 Feb 06)
+mecca_2.1 (2006-02-05)
 
 CHANGES by Rolf Sander:
 - box model now uses RHO_H2O, M_H2O, and OneDay from messy_main_constants_mem
@@ -614,7 +661,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_2.0 (29 Nov 05)
+mecca_2.0 (2005-11-29)
 
 CHANGES by Rolf Sander:
 - xmecca:
@@ -659,7 +706,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_0.9.13 (7 Dec 04)
+mecca_0.9.13 (2004-12-07)
 
 CHANGES by Astrid Kerkweg and Rolf Sander:
 - lhrate deleted in CPL namelist
@@ -686,7 +733,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_0.9.12 (22 Nov 04)
+mecca_0.9.12 (2004-11-22)
 
 CHANGES by Rolf Sander:
 - products corrected for G3107: NO2 + N = N2O + O (error found by MECCA
@@ -711,7 +758,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_0.9.11 (5 Oct 04) (new version number starts with "0.9")
+mecca_0.9.11 (2004-10-05) (new version number starts with "0.9")
 
 THIS VERSION IS PART OF MESSY 0.9!
 
@@ -726,7 +773,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_10 (8 Feb 04)
+mecca_10 (2004-02-08)
 
 CHANGES by Rolf Sander:
 - xmecca: the automatically produced files are all left in mecca/. The
@@ -749,7 +796,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_09 (28 Jan 03)
+mecca_09 (2003-01-28)
 
 CHANGES by Rolf Sander:
 - eqn2tex.awk and spc2tex.awk create latex code from mecca.eqn and
@@ -773,7 +820,7 @@ CHANGES by Astrid Kerkweg:
 
 ******************************************************************************
 
-mecca_08 (7 Oct 03)
+mecca_08 (2003-10-07)
 
 CHANGES by Rolf Sander:
 - xkpp renamed to xmecca
@@ -819,7 +866,7 @@ CHANGES by Astrid Kerkweg:
 
 ******************************************************************************
 
-mecca_07 (4 Jul 03)
+mecca_07 (2003-07-04)
 
 - mecca.spc divided into gas.spc and aerosol.spc
 
@@ -831,7 +878,7 @@ mecca_07 (4 Jul 03)
 
 ******************************************************************************
 
-mecca_06 (23 Jun 03)
+mecca_06 (2003-06-23)
 
 CHANGES by Rolf Sander:
 - driver.f90 is now a dummy file. The contents of it has been moved to
@@ -850,7 +897,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_05 (22 May 03)
+mecca_05 (2003-05-22)
 
 CHANGES by Rolf Sander:
 - halogen and aerosol chemistry added (gas.eqn and aerosol.eqn)
@@ -862,7 +909,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_04 (23 Dec 02)
+mecca_04 (2002-12-23)
 
 CHANGES by Rolf Sander:
 - this version was used for echam5.1.04_mz03
@@ -872,7 +919,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_03 (25 Nov 02)
+mecca_03 (2002-11-25)
 
 CHANGES by Rolf Sander:
 - this version was used for echam5.1.04_mz02i
@@ -887,7 +934,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_02 (12 Nov 02)
+mecca_02 (2002-11-12)
 
 CHANGES by Rolf Sander:
 - upgrade to kpp version 1.1-f90-alpha5:
@@ -899,7 +946,7 @@ CHANGES by Rolf Sander:
 
 ******************************************************************************
 
-mecca_01 (4 Nov 02)
+mecca_01 (2002-11-04)
 
 CHANGES by Rolf Sander:
 - produces exactly the files mo_mz_kpp*.f90 as they are included in
