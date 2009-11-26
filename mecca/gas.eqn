@@ -1,5 +1,5 @@
 // ------------------------------- gas.eqn -----------------------------------
-// Time-stamp: <2009-07-24 19:49:14 sander>
+// Time-stamp: <2009-11-26 17:22:08 sander>
 // ---------------------------------------------------------------------------
 
 // This program is free software; you can redistribute it and/or
@@ -36,7 +36,8 @@
 //   - Stratospheric gas-phase chemistry ECHAM4CHEM (Steil et al. 1998) added
 //   - Reaction mechanisms merged, sorted, labeled, and maintained
 //   - Gas-phase reaction rates updated to JPL2003
-
+// - Franziska Koellner (2009):
+//   - added uncertainties for reaction constants
 // ---------------------------------------------------------------------------
 
 #INLINE F90_GLOBAL
