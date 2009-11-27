@@ -24,10 +24,6 @@ ifeq "$(findstring 64,$(MACHTYPE))" "64"
 else
   BITS = 32
 endif
-### q&d fix for bromine:
-ifeq "$(HOST)" "bromine"
-  BITS = 32
-endif
 
 ifeq ($(SYSTEM),Linux)
   ### Choose compiler:
@@ -70,6 +66,9 @@ ifeq ($(COMPILER),lahey)
   ### /usr/local/lf9562/lib/libfst.a
   #F90FLAGS   = -Cpp --staticlink --pca --ap
   #F90FLAGS  = -Cpp --staticlink --chk a,e,s,u --pca --ap -O0 -g --trap
+  ### with implicit double precision (jval core is SP):
+  #F90FLAGS  = -Cpp --chk a,e,s,u --pca --ap -O0 -g --trap --dbl
+  #F90FLAGS  = -Cpp --pca --ap --dbl
 
   ifeq ($(BITS),64)
     NETCDF_INCLUDE  = -I/soft/netcdf_64/v3.6.2_lf_64/include
@@ -121,11 +120,6 @@ ifeq ($(COMPILER),g95)
       NETCDF_LIB     = -L/soft/netcdf/v3.6.0b6_g/lib -lnetcdf
     endif
   endif
-  ### qqq+ q&d fix for bromine:
-  ifeq "$(HOST)" "bromine"
-    BITS = 64
-  endif
-  ### qqq-
 endif
 
 # ----------------------------------------------------------------------------

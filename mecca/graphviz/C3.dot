@@ -16,7 +16,6 @@ ACETP
 C3H6
 C3H6O2
 C3H6OOH
-C3H7I
 C3H8
 CH3COCH3
 CH3COCHO
@@ -56,8 +55,6 @@ C3H6O2 -> CH3CHO [label = "NO (G4309)"];
 C3H6O2 -> HCHO [label = "NO (G4309)"];
 C3H6OOH -> ACETOL [label = "OH (G4310)"];
 C3H6OOH -> C3H6O2 [label = "OH (G4310)"];
-C3H7I -> CH3O2 [label = "OH (G8400)"];
-C3H7I -> CH3O2 [label = "hv (J8402)"];
 C3H8 -> EtO2 [label = "OH (G4300)"];
 C3H8 -> PrO2 [label = "OH (G4300)"];
 CH3COCH3 -> ACETO2 [label = "OH (G4311)"];

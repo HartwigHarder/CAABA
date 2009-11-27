@@ -33,6 +33,10 @@
 #include "gdata.h"
 #include "code.h"
 #include <string.h>
+/*  mz_rs_20090904+ */
+/* time.h is necessary for time_t, see: http://en.wikipedia.org/wiki/Time_t */
+#include <time.h>
+/*  mz_rs_20090904- */
 
 #define MAX_LINE 120
 

@@ -1,5 +1,5 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-08-27 13:00:33 sander>
+# Time-stamp: <2009-11-20 10:27:20 sander>
 # Authors:
 # Rolf Sander,     Max-Planck-Institute, Mainz, Germany, 2003-2009
 # Astrid Kerkweg,  Max-Planck-Institute, Mainz, Germany, 2005-2007
@@ -65,7 +65,8 @@ echo "$dontedit\n$timestamp" > $logfile
 
 if ( "$1" != "" ) then
   # type batchfile with or without extension .bat:
-  set batchfile = `basename $1 .bat`.bat
+  #qqq obsolete: set batchfile = `basename $1 .bat`.bat
+  set batchfile = $1:t:r.bat
   if ( -f batch/$batchfile ) then
     echo "\nUsing batchfile: $batchfile" | tee -a $logfile
     set batch
@@ -136,7 +137,7 @@ while ($counter<$apn_or_1)
 end
 echo ""
 # set H2O fixed:
-echo "\n{SETFIX H2O_a* is done via xmecca}" >> $spcfile
+echo "{SETFIX H2O_a* is done via xmecca}" >> $spcfile
 set counter=0
 while ($counter<$apn)
   @ counter=$counter + 1
@@ -500,6 +501,7 @@ if ( "$mcfct" == "q" ) exit 1
 if ( "$mcfct" == "y" ) then
   cp $eqnfile $eqnfile6
   # for strange reasons, gawk only works properly if LC_COLLATE = C
+  echo "Running mcfct.awk ..."
   setenv LC_COLLATE C
   gawk -f mcfct.awk $eqnfile6 >! $eqnfile
   set REQ_MCFCT = ".TRUE."

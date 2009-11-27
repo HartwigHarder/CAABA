@@ -1,4 +1,4 @@
-! Time-stamp: <2009-08-11 13:00:41 sander>
+! Time-stamp: <2009-11-11 17:37:07 sander>
 
 ! MECCA =  Module Efficiently Calculating the Chemistry of the Atmosphere
 
@@ -64,6 +64,7 @@ MODULE messy_mecca_box
   REAL(DP) :: dummy_khet_Tr(IHT_MAX) ! dummy, not needed in box model
   REAL(DP) :: dummy_khet_St(IHS_MAX) ! dummy, not needed in box model
   ! (for C, cair, and temp, see caaba_mem.f90)
+  ! (see also important notes about temp, press, and cair in gas.eqn!)
 
   INTEGER :: ncid_aero, ncid_tracer, ncid_spec
 
@@ -180,10 +181,14 @@ CONTAINS
         PRINT *, 'average mcfct = ', SUM(mcfct)/NREACT
     ENDIF
 
-    ! choose either definition via psat or psatf:
+    ! choose sat. press definition: psat (series) or psatf(function)
+    ! choose relhum definition: WMO or traditional 
+    ! must be consistent with mecca_physc!
     !mz_hr_20080226+
-    c(ind_H2O) = cair * relhum * &
-      psatf(temp) / (press + (relhum-1.) * psatf(temp))
+    ! using relhum = (mixing ratio H2O)/(sat. mixing ratio H2O): WMO def.
+    c(ind_H2O) = cair * relhum * psatf(temp) / &
+      (press + (relhum-1.) * psatf(temp))
+    ! using relhum = p(H2O)/ps(H2O):
     !c(ind_H2O) = cair * relhum * psat(temp) / press
     !mz_hr_20080226-
     CALL x0 ! initial gas phase mixing ratios
@@ -588,10 +593,12 @@ CONTAINS
       CALL x0_ff_arctic
     CASE ('FREE_TROP')
       CALL x0_free_trop
-    CASE ('OOMPH')
-      CALL x0_oomph
     CASE ('MBL')
       CALL x0_mbl
+    CASE ('OOMPH')
+      CALL x0_oomph
+    CASE ('STRATO')
+      CALL x0_strato
     CASE DEFAULT
       PRINT *, 'ERROR, init_scenario '//TRIM(init_scenario)//' is not defined'
       STOP
@@ -602,6 +609,9 @@ CONTAINS
     !mz_hr_20061120+
     ! external chemical species' initialization
     IF (TRIM(init_spec)/="") THEN
+      PRINT *, HLINE2
+      PRINT *, 'External chemical initialization:'
+      PRINT *, HLINE2
       CALL open_input_file(ncid_spec, init_spec) ! get ID for input file
       CALL nf(nf90_inquire(ncid_spec, n_dim, n_var)) ! no. dims, vars (=specs)
       !print *, 'mm_box: ncid_spec = ', ncid_spec
@@ -626,7 +636,8 @@ CONTAINS
           IF (TRIM(name_spc) == TRIM(name_x)) THEN
             CALL nf(nf90_get_var(ncid_spec, varid_x, mr_x))
             c(ct_spc) = mr_x * cair
-            print *, 'Chemical species initialized:      ', TRIM(name_x)
+            WRITE(*,'(A,A16,1PE10.2,A,1PE10.2,A)') '     initialized: ', &
+              name_x, mr_x, ' mol/mol   = ', c(ct_spc), ' mcl/cm3'
             !print *, 'mm_box: mr(', ct_spc, ') = ', mr_x
             !print *, 'mm_box: c(', ct_spc, ')  = ', c(ct_spc)
             !ct_spc = ct_spc + 1
@@ -634,7 +645,7 @@ CONTAINS
           ELSE
             ct_spc = ct_spc + 1
             IF (ct_spc .GT. NSPEC) THEN
-              print *, 'Chemical species NOT initialized:  ', TRIM(name_x)
+              WRITE(*,'(A,A16)') ' NOT initialized: ', name_x
             ENDIF
           ENDIF
         ENDDO ! kpploop
@@ -882,9 +893,11 @@ CONTAINS
 
     ! ------------------------------------------------------------------------
 
+    ! mz_ab_20091111+
     SUBROUTINE x0_strato
 
-      ! from scout02
+      ! stratosphere, 20 hPa
+      ! from scout02 (ProSECCO simulation)
       IF (ind_H        /= 0) c(ind_H)      =   1.E-12 * cair
       IF (ind_OH       /= 0) c(ind_OH)     =   1.E-16 * cair
       IF (ind_HO2      /= 0) c(ind_HO2)    =   1.E-15 * cair
@@ -892,15 +905,13 @@ CONTAINS
       IF (ind_NO3      /= 0) c(ind_NO3)    =   1.E-12 * cair
       IF (ind_N2O5     /= 0) c(ind_N2O5)   =   1.E-10 * cair
       IF (ind_HNO4     /= 0) c(ind_HNO4)   =   1.E-12 * cair
-      IF (ind_CL       /= 0) c(ind_CL)     =   1.E-30 * cair
+      IF (ind_CL       /= 0) c(ind_CL)     =   1.E-21 * cair
       IF (ind_CLO      /= 0) c(ind_CLO)    =   1.E-15 * cair
-      IF (ind_HOCl     /= 0) c(ind_HOCl)   =   1.E-15 * cair
+      IF (ind_HOCl     /= 0) c(ind_HOCl)   =  40.E-12 * cair
       IF (ind_CL2O2    /= 0) c(ind_CL2O2)  =   1.E-12 * cair
-      IF (ind_CL2      /= 0) c(ind_CL2)    =   1.E-20 * cair
+      IF (ind_CL2      /= 0) c(ind_CL2)    =   1.E-13 * cair
       IF (ind_CH3O2    /= 0) c(ind_CH3O2)  =   1.E-12 * cair
       IF (ind_N2O      /= 0) c(ind_N2O)    =  1.3E-07 * cair
-      IF (ind_H2O2     /= 0) c(ind_H2O2)   =  2.3E-11 * cair
-      IF (ind_HCl      /= 0) c(ind_HCl)    =   1.E-09 * cair
       IF (ind_CO       /= 0) c(ind_CO)     =  1.4E-08 * cair
       IF (ind_CH3OOH   /= 0) c(ind_CH3OOH) =   1.E-12 * cair
       IF (ind_ClNO3    /= 0) c(ind_ClNO3)  =   8.E-10 * cair
@@ -913,7 +924,6 @@ CONTAINS
       IF (ind_H2O      /= 0) c(ind_H2O)    =   1.E-12 * cair
       IF (ind_O3P      /= 0) c(ind_O3P)    =   9.E-34 * cair
       IF (ind_O1D      /= 0) c(ind_O1D)    =   1.E-16 * cair
-      IF (ind_CO2      /= 0) c(ind_CO2)    =   3.E-06 * cair
       IF (ind_H2       /= 0) c(ind_H2)     =   5.E-07 * cair
       IF (ind_O3       /= 0) c(ind_O3)     =   4.E-06 * cair
       IF (ind_NO       /= 0) c(ind_NO)     =   1.E-24 * cair
@@ -922,12 +932,12 @@ CONTAINS
       IF (ind_HCHO     /= 0) c(ind_HCHO)   =   1.E-11 * cair
       IF (ind_CO       /= 0) c(ind_CO)     =  70.E-09 * cair
       IF (ind_CO2      /= 0) c(ind_CO2)    = 350.E-06 * cair
-      IF (ind_H2O2     /= 0) c(ind_H2O2)   =   2.E-11 * cair
-      IF (ind_HCl      /= 0) c(ind_HCl)    =  40.E-12 * cair
-      IF (ind_SO2      /= 0) c(ind_HCl)    =   8.E-13 * cair
+      IF (ind_H2O2     /= 0) c(ind_H2O2)   = 180.E-12 * cair
+      IF (ind_HCl      /= 0) c(ind_HCl)    = 400.E-12 * cair
       IF (ind_O2       /= 0) c(ind_O2)     = 210.E-03 * cair
       IF (ind_N2       /= 0) c(ind_N2)     = 780.E-03 * cair
     END SUBROUTINE x0_strato
+    ! mz_ab_20091111-
 
     ! ------------------------------------------------------------------------
 
@@ -962,10 +972,13 @@ CONTAINS
       ENDIF
     ENDIF
 
-    ! choose either definition via psat or psatf:
+    ! see mecca_init for explanation
     !mz_hr_20080226+
-    c(ind_H2O) = cair * relhum * &
-      psatf(temp) / (press + (relhum-1.) * psatf(temp))
+    ! must be consistent with mecca_init!
+    ! WMO relhum + function for psat
+    c(ind_H2O) = cair * relhum * psatf(temp) / &
+      (press + (relhum-1.) * psatf(temp))
+    ! traditional relhum + series for psat
     !c(ind_H2O) = cair * relhum * psat(temp) / press
     !mz_hr_20080226-
 
@@ -1019,9 +1032,9 @@ CONTAINS
     CALL check_range('before kpp:',c(:))
     IF (.NOT.l_skipkpp) THEN
       c(:) = MAX(c(:),0._DP) ! set negative values to zero
-      cbl = SPREAD(c,1,NBL) ! add one dimension
+      cbl = SPREAD(c,1,NBL) ! add one dummy dimension
       CALL kpp_integrate(time_step_len,cbl)  ! main kpp call
-      c = cbl(1,:)          ! remove one dimension
+      c = cbl(1,:)          ! remove the dummy dimension
       CALL check_range('after kpp: ',c(:))
     ENDIF
 

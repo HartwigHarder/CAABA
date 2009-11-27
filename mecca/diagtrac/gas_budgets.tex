@@ -1,14 +1,19 @@
 % !mz_hr_20080320+ Hella Riede
 % rcn no. & diag added to right side & comment
 % productions and losses for:
+% H2O2
+% HCHO
 % O3
 % CO
 % CH4
 % OH
 % HO2
 % C3H8
+% C2H6
 % NO
 % NO2
+%
+% CH3COCH3
 %
 % NOy productions and losses other than NOx:
 % NO3
@@ -28,6 +33,66 @@
 % BrNO3
 % INO2
 % INO3
+%
+% H2O2 prod and loss
+<G2110>  &     PH2O2 & HO2  + HO2      = H2O2 + O2
+<G2112>  &     LH2O2 & H2O2 + OH       = H2O + HO2
+<G4500>  & .09 PH2O2 & ISOP  + O3        = .28 HCOOH + .65 MVK + .1 MVKO2  + .1 PA + .14 CO + .58 HCHO + .09 H2O2 + .08 CH3O2 + .25 OH + .25 HO2
+<G6202>  &     LH2O2 & Cl + H2O2       = HCl + HO2
+<G10201> &     LH2O2 & Hg + H2O2     = HgO + H2O
+<J2101>  &     LH2O2 & H2O2    + hv = 2 OH
+%
+% HCHO production and loss
+<G4100>  & .25 PHCHO & CH4     + O1D     = .75 CH3O2 + .75 OH + .25 HCHO + .4 H + .05 H2
+<G4102>  &     PHCHO & CH3OH   + OH      = HCHO + HO2
+<G4104>  &     PHCHO & CH3O2   + NO      = HCHO + NO2 + HO2
+<G4105>  &     PHCHO & CH3O2   + NO3     = HCHO + HO2 + NO2
+<G4106a> & 2   PHCHO & CH3O2   + CH3O2   = 2 HCHO + 2 HO2
+<G4106b> &     PHCHO & CH3O2   + CH3O2   = HCHO + CH3OH + O2
+<G4107>  & .3  PHCHO & CH3OOH  + OH      = .7 CH3O2 + .3 HCHO + .3 OH + H2O
+<G4108>  &     LHCHO & HCHO    + OH      = CO + H2O + HO2
+<G4109>  &     LHCHO & HCHO    + NO3     = HNO3 + CO + HO2
+<G4201>  &     PHCHO & C2H4    + O3      = HCHO + .22 HO2 + .12 OH + .23 CO + .54 HCOOH + .1 H2
+<G4206>  & .75 PHCHO & EtO2    + CH3O2   = .75 HCHO + HO2 + .75 CH3CHO + .25 CH3OH {+.25EtOH}
+<G4215a> &     PHCHO & PA      + CH3O2   = HCHO + HO2 + CH3O2 + CO2
+<G4215b> &     PHCHO & PA      + CH3O2   = CH3COOH + HCHO
+<G4219>  &     PHCHO & NACA    + OH      = NO2 + HCHO + CO
+<G4220>  &     PHCHO & PAN     + OH      = HCHO + NO2
+<G4301>  & .57 PHCHO & C3H6    + O3      = .57 HCHO + .47 CH3CHO + .33 OH + .26 HO2 + .07 CH3O2 + .06 EtO2 + .23 PA + .04 CH3COCHO + .06 CH4 + .31 CO + .22 HCOOH + .03 CH3OH
+<G4306>  & .8  PHCHO & PrO2    + CH3O2   = CH3COCH3 + .8 HCHO + .8 HO2 + .2 CH3OH
+<G4309>  & .98 PHCHO & C3H6O2  + NO      = .98 CH3CHO + .98 HCHO + .98 HO2 + .98 NO2 + .02 ONIT
+<G4313>  &     PHCHO & ACETO2  + NO      = NO2 + PA + HCHO
+<G4314>  & .8  PHCHO & ACETO2  + CH3O2   = .5 CH3COCHO + .5 CH3OH + .3 PA + .8 HCHO + .3 HO2 + .2 ACETOL
+<G4401>  & .68 PHCHO & C4H9O2  + CH3O2   = .88 MEK + .68 HCHO + 1.23 HO2 + .12 CH3CHO + .12 EtO2 + .18 CH3OH
+<G4408>  & .75 PHCHO & MVKO2   + NO      = NO2 + .25 PA + .25 ACETOL + .75 HCHO + .25 CO + .75 HO2 + .5 CH3COCHO
+<G4410>  & 1.125 PHCHO & MVKO2   + CH3O2   = .5 CH3COCHO + .375 ACETOL + .125 PA + 1.125 HCHO + .875 HO2 + .125 CO + .25 CH3OH
+<G4411>  & .5  PHCHO & MVKO2   + MVKO2   = ACETOL + CH3COCHO + .5 CO + .5 HCHO + HO2
+<G4500>  & .58 PHCHO & ISOP  + O3        = .28 HCOOH + .65 MVK + .1 MVKO2  + .1 PA + .14 CO + .58 HCHO + .09 H2O2 + .08 CH3O2 + .25 OH + .25 HO2
+<G4504>  & .88 PHCHO & ISO2  + NO        = .88 NO2 + .88 MVK + .88 HCHO + .88 HO2 + .12 ISON
+<G4505>  & 1.25 PHCHO & ISO2  + CH3O2     = .5 MVK + 1.25 HCHO + HO2 + .25 CH3COCHO + .25 ACETOL + .25 CH3OH
+<G4506>  &     PHCHO & ISO2  + ISO2      = 2 MVK + HCHO + HO2
+<G6401>  &     LHCHO & Cl      + HCHO   = HCl + CO + HO2
+<G6402>  &     PHCHO & Cl      + CH3OOH = HCHO + HCl + OH
+<G6403>  &     PHCHO & ClO     + CH3O2  = HO2 + Cl + HCHO
+<G7400>  &     LHCHO & Br   + HCHO     = HBr + CO + HO2
+<G7402a> &     PHCHO & BrO  + CH3O2    = HOBr + HCHO
+<G7402b> &     PHCHO & BrO  + CH3O2    = Br + HCHO + HO2
+<G8401>  &     PHCHO & CH3O2 + IO    = .4 I + .6 OIO + HCHO + HO2
+<G8402>  &     PHCHO & CH3I + NO3 {+O2} = HNO3 + HCHO + IO
+<G9400a> &     PHCHO & DMS    + OH    = CH3SO2 + HCHO
+<G9401>  &     PHCHO & DMS    + NO3   = CH3SO2 + HNO3 + HCHO  {-O3}
+<G9402>  &     PHCHO & DMSO   + OH    = .6 SO2 +  HCHO + .6 CH3O2 + .4 HO2 + .4 CH3SO3H
+<G9600>  &     PHCHO & DMS + Cl       = CH3SO2 + HCl + HCHO
+<G9700>  &     PHCHO & DMS + Br       = CH3SO2 + HBr + HCHO
+<J4100>  &     PHCHO & CH3OOH  + hv = HCHO + OH + HO2
+<J4101a> &     LHCHO & HCHO    + hv = H2 + CO
+<J4101b> &     LHCHO & HCHO    + hv = H + CO + HO2
+<J4203>  &     PHCHO & NACA    + hv = NO2 + HCHO + CO
+<J4302>  &     PHCHO & ACETOL   + hv = PA + HCHO + HO2
+<J4401>  &     PHCHO & MVK     + hv = PA + HCHO + CO + HO2
+<J4402>  & .75 PHCHO & MVKOOH  + hv = OH + .5 CH3COCHO + .25 ACETOL + .75 HCHO + .75 HO2 + .25 PA + .25 CO
+<J4500>  &     PHCHO & ISOOH   + hv = MVK + HCHO + HO2 + OH
+<J4501>  &     PHCHO & ISON    + hv = MVK + HCHO + NO2 + HO2
 %
 % O3 production and loss
 <G1001>  &  PO3  & O2   + O3P {+M} = O3
@@ -274,7 +339,10 @@
 %
 % C3H8 production and loss
 <G4300>  &     LC3H8 & C3H8    + OH      = .82 PrO2 + .18 EtO2 + H2O
-
+%
+% C2H6 production and loss
+<G4200>  &     LC2H6 & C2H6    + OH      = EtO2 + H2O
+%
 % NO production and loss
 <G3100>  &   PNO  & N    + O2       = NO + O3P
 <G3102a> & 2 PNO  & N2O  + O1D      = 2 NO 
@@ -370,6 +438,18 @@
 <J7301>  & .71  PNO2 & BrNO3   + hv = 0.29 Br + 0.29 NO3 + 0.71 BrO + 0.71 NO2 
 <J8300>  &      PNO2 & INO2    + hv = I + NO2 
 % !mz_hr_20080320-
+%
+% !mz_hr_20080617+
+% CH3COCH3 prod and loss
+<G4305>  & .96 PCH3COCH3 & PrO2    + NO      = .96 CH3COCH3 + .96 HO2 + .96 NO2 + .04 PrONO2
+<G4306>  &     PCH3COCH3 & PrO2    + CH3O2   = CH3COCH3 + .8 HCHO + .8 HO2 + .2 CH3OH
+<G4307>  & .7  PCH3COCH3 & PrOOH   + OH      = .3 PrO2 + .7 CH3COCH3 + .7 OH
+<G4311>  &     LCH3COCH3 & CH3COCH3 + OH     = ACETO2 + H2O
+<G4320>  &     PCH3COCH3 & PrONO2  + OH      = CH3COCH3 + NO2
+<J4300>  &     PCH3COCH3 & PrOOH    + hv = CH3COCH3 + HO2 + OH
+<J4301>  &     LCH3COCH3 & CH3COCH3 + hv = PA + CH3O2
+<J4306>  &     PCH3COCH3 & PrONO2   + hv = CH3COCH3 + NO2 + HO2
+% !mz_hr_20080617-
 %
 % !mz_hr_20080605+
 % NO3 prod and loss

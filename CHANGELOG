@@ -1,6 +1,6 @@
 ******************************************************************************
 **                               CAABA history                              **
-**                  Time-stamp: <2009-11-20 16:14:07 sander>                **
+**                  Time-stamp: <2009-11-27 11:19:15 sander>                **
 ******************************************************************************
 
 Previous versions are available as zip files at:
@@ -11,7 +11,11 @@ new versions are created with: ncv <VERSION>
 ******************************************************************************
 
 The next version will be:
-caaba_2.5m (2009)
+caaba_2.5n (2010)
+
+******************************************************************************
+
+caaba_2.5m (2009-11-27)
 
 CHANGES by Andreas Baumgaertner and Rolf Sander:
 - JVAL: scenario photo_strato added with 90 levels

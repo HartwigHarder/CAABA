@@ -10,11 +10,6 @@ subgraph species {
 node[shape=oval,
   color=yellow,
   style="filled"];
-CH2ClI
-CH2I2
-CH3Br
-CH3Cl
-CH3I
 CH3O2
 CH3OH
 CH3OOH
@@ -45,13 +40,8 @@ C3H6 -> CO [label = "O3 (G4301)"];
 C3H6 -> HCHO [label = "O3 (G4301)"];
 C3H6 -> HCOOH [label = "O3 (G4301)"];
 C3H6O2 -> HCHO [label = "NO (G4309)"];
-C3H7I -> CH3O2 [label = "OH (G8400)"];
-C3H7I -> CH3O2 [label = "hv (J8402)"];
 C4H9O2 -> CH3OH [label = "CH3O2 (G4401)"];
 C4H9O2 -> HCHO [label = "CH3O2 (G4401)"];
-CH2ClI -> CO [label = "hv (J8403)"];
-CH2I2 -> CO [label = "hv (J8400)"];
-CH3Br -> CH3O2 [label = "hv (J7400)"];
 CH3CHO -> CH3O2 [label = "hv (J4201)"];
 CH3CHO -> CO [label = "hv (J4201)"];
 CH3COCH3 -> CH3O2 [label = "hv (J4301)"];
@@ -59,9 +49,6 @@ CH3COCHO -> CO [label = "OH (G4317)"];
 CH3COCHO -> CO [label = "hv (J4303)"];
 CH3COOH -> CH3O2 [label = "OH (G4210)"];
 CH3COOH -> CO2 [label = "OH (G4210)"];
-CH3Cl -> CH3O2 [label = "hv (J6400)"];
-CH3I -> CH3O2 [label = "hv (J8401)"];
-CH3I -> HCHO [label = "NO3 (G8402)"];
 CH3O2 -> ACETOL [label = "ACETO2 (G4314)"];
 CH3O2 -> ACETOL [label = "ISO2 (G4505)"];
 CH3O2 -> ACETOL [label = "MVKO2 (G4410)"];
@@ -92,7 +79,6 @@ CH3O2 -> HCHO [label = "CH3O2 (G4106a)"];
 CH3O2 -> HCHO [label = "CH3O2 (G4106b)"];
 CH3O2 -> HCHO [label = "ClO (G6403)"];
 CH3O2 -> HCHO [label = "EtO2 (G4206)"];
-CH3O2 -> HCHO [label = "IO (G8401)"];
 CH3O2 -> HCHO [label = "ISO2 (G4505)"];
 CH3O2 -> HCHO [label = "MVKO2 (G4410)"];
 CH3O2 -> HCHO [label = "NO (G4104)"];
@@ -114,12 +100,8 @@ CH3SO2 -> CH3O2 [label = " (G9403)"];
 CH3SO2 -> CH3SO3 [label = "O3 (G9404)"];
 CH3SO3 -> CH3SO3H [label = "HO2 (G9405)"];
 CH4 -> CH3O2 [label = "Cl (G6400)"];
-CH4 -> CH3O2 [label = "O1D (G4100)"];
 CH4 -> CH3O2 [label = "OH (G4101)"];
-CH4 -> CO [label = "hv (J4103)"];
-CH4 -> HCHO [label = "O1D (G4100)"];
 CO -> CO2 [label = "OH (G4110)"];
-CO2 -> CO [label = "hv (J4102)"];
 DMS -> CH3SO2 [label = "Br (G9700)"];
 DMS -> CH3SO2 [label = "Cl (G9600)"];
 DMS -> CH3SO2 [label = "NO3 (G9401)"];
@@ -140,6 +122,7 @@ HCHO -> CO [label = "NO3 (G4109)"];
 HCHO -> CO [label = "OH (G4108)"];
 HCHO -> CO [label = "hv (J4101a)"];
 HCHO -> CO [label = "hv (J4101b)"];
+HCOOH -> CO2 [label = "OH (G4111)"];
 ISO2 -> CH3OH [label = "CH3O2 (G4505)"];
 ISO2 -> HCHO [label = "CH3O2 (G4505)"];
 ISO2 -> HCHO [label = "ISO2 (G4506)"];

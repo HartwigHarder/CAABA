@@ -72,7 +72,6 @@ DMS -> CH3SO2 [label = "Cl (G9600)"];
 DMS -> CH3SO2 [label = "NO3 (G9401)"];
 DMS -> CH3SO2 [label = "OH (G9400a)"];
 DMS -> DMSO [label = "BrO (G9701)"];
-DMS -> DMSO [label = "IO (G9800)"];
 DMS -> DMSO [label = "OH (G9400b)"];
 DMS -> HCHO [label = "Br (G9700)"];
 DMS -> HCHO [label = "Cl (G9600)"];

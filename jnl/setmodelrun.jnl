@@ -2,11 +2,15 @@
 
 ! define ($C2) as the path to the current model output:
 DEFINE SYMBOL C2 = `{spawn: "cd .. ; pwd"}`
+! if the above spawn command doesn't work, define the path manually, e.g.:
+! DEFINE SYMBOL C2 = /home/myuserid/caaba
 
 GO _define_sensi ($C2) "latest run"
 
 ! show other runs as well, e.g.:
 !GO _define_sensi ($C2)/output/test "test"
+!GO _define_sensi ($C2)/output/before "before"
+!GO _define_sensi ($C2)/output/after "after"
 
 ! adjust and activate these lines for Monte-Carlo runs:
 !GO _define_sensi ($C2)/output/montecarlo/test/0001 "0001"

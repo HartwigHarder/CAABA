@@ -51,6 +51,8 @@ IF ($unitacronym%|pa>TRUE|*>FALSE|%) THEN
 ENDIF
 SAY unit = [($unit)]
 LET factor = conv
+! delete old file 
+LIST/CLOBBER/FILE=rxnrates_scaled_($species).log conv
 
 !-------------------------------------------------------------------------------
 

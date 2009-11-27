@@ -1,5 +1,5 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-08-27 11:39:59 sander>
+# Time-stamp: <2009-09-11 12:56:07 sander>
 # Author: Rolf Sander, Max-Planck-Institute, Mainz, Germany
 # xcaaba = eXecute CAABA
 
@@ -164,21 +164,22 @@ endif
 
 set defaultnml = `ls -la caaba.nml | sed 's|.*nml/||g'`
 echo "\nChoose a namelist file from the nml/ directory:"
-echo "[q/number, default=$defaultnml]"
-
 set inn = "0"
 cd nml
-set allfiles = */*.nml
+set allfiles = *.nml
 cd -
 foreach i ($allfiles) # list all possibilities
   @ inn=$inn + 1
-  echo "$inn) $allfiles[$inn]"
+  printf "%2d) %s\n" $inn $allfiles[$inn]
 end
+echo " q) quit"
+echo "The default is to use the same file as last time:"
+echo "default=$defaultnml"
 set inputstring = "$<"
 if ( "$inputstring" == "q" ) exit 1
 if(($inputstring <= $#allfiles) && ($inputstring >= 1)) then
   set nmlfile = $allfiles[$inputstring]
-  ln -fs nml/$nmlfile .
+  ln -fs nml/$nmlfile caaba.nml
 else
   set nmlfile = $defaultnml
 endif
@@ -190,10 +191,6 @@ sed -ne '/^&CTRL/,/^\//p' mecca.nml | grep -v "^!" | grep -v '^ *$'
 echo "\n$hline"
 echo "\nBefore you continue, ensure that the namelist is consistent"
 echo "with the selected chemistry mechanism\!"
-echo "Continue? [y/n/q, default=y]"
-set inputstring = "$<"
-if ( "$inputstring" == "q" ) exit
-if ( "$inputstring" == "n" ) exit
 
 ##############################################################################
 

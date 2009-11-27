@@ -1153,13 +1153,17 @@ END FUNCTION match_wild
 ! mz_hr_20070906+
 ! ---------------------------------------------------------------------
   REAL(dp) FUNCTION psatf(z_temp)
+  ! source: Mark Z. Jacobson, Fundamentals of Atmospheric Modeling,
+  !         Cambridge University Press, 2000, page 32 
+  !         ISBN: 0-521-637-171
 
     IMPLICIT NONE
 
     REAL(dp), INTENT(in) :: z_temp ! temperature [K]
 
     ! calc sat vap press of H2O [Pa]
-    psatf = 611.2_dp * EXP( 6816._dp * (1._dp/273.15_dp-1._dp/z_temp) + 5.1309_dp * LOG(273.15_dp/z_temp) )
+    psatf = 611.2_dp * EXP( 6816._dp * (1._dp/273.15_dp-1._dp/z_temp) &
+            + 5.1309_dp * LOG(273.15_dp/z_temp) )
 
   END FUNCTION psatf
 ! ---------------------------------------------------------------------
@@ -1223,30 +1227,42 @@ END FUNCTION match_wild
 
     ! convert spechum to mass mixing ratio of water in dry air
     IF (ABS(1._dp - z_spechum) < TINY_DP) THEN
-      WRITE(*,*) 'spec2relhum: Error: spechum=1, division by 0'
+      WRITE(*,*) 'Error spec2relhum: spechum = 1, division by 0'
       spec2relhum = FLAGGED_BAD
       status = 1
       RETURN
+    !mz_hr_20081125+
+    ELSEIF (z_spechum > 1._dp) THEN
+      WRITE(*,*) 'Error spec2relhum: spechum > 1 : ', z_spechum
+      spec2relhum = FLAGGED_BAD
+      status = 1
+      RETURN
+    ELSEIF (z_spechum < 0._dp) THEN
+      WRITE(*,*) 'Error spec2relhum: spechum < 0 : ', z_spechum
+      spec2relhum = FLAGGED_BAD
+      status = 1
+      RETURN
+    !mz_hr_20081125-
     ENDIF
 
     omega_v = z_spechum/(1._dp-z_spechum)
     omega_vs = MM_eps * psatf(z_temp) / (z_press - psatf(z_temp))
 
-    ! calc relhum, def by World Meteorological Organization WMO in %
+    ! calc relhum, def by World Meteorological Organization WMO
     spec2relhum = omega_v / omega_vs
 
-    IF ((spec2relhum > 1._dp) .AND. (spec2relhum <= 1.1_dp)) THEN
-      WRITE(*,*) 'spec2relhum: WARNING! calculated rel. humidity exceeds 100%', &
-        ' rel. humidity: ', spec2relhum
+    IF ((spec2relhum >= 1._dp) .AND. (spec2relhum <= 1.1_dp)) THEN
+      WRITE(*,*) 'Warning spec2relhum: calculated rel. humidity >= 1 (< 1.1) : ', &
+        spec2relhum
     ELSEIF ((spec2relhum > 1.1_dp)) THEN
-      WRITE(*,*) 'spec2relhum: ERROR! spec2relhum: calculated rel. humidity exceeds 110%', &
-        ' rel. humidity: ', spec2relhum
+      WRITE(*,*) 'Error spec2relhum: calculated rel. humidity > 1.1 : ', &
+        spec2relhum
       spec2relhum = FLAGGED_BAD
       status = 1
       RETURN
     ELSEIF (spec2relhum < 0._dp) THEN
-      WRITE(*,*) 'spec2relhum: ERROR! spec2relhum: negative calculated rel. humidity', &
-        ' rel. humidity: ', spec2relhum
+      WRITE(*,*) 'Error spec2relhum: calculated rel. humidity < 0 : ', &
+        spec2relhum
       spec2relhum = FLAGGED_BAD
       status = 1
       RETURN

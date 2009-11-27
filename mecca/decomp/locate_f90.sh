@@ -1,4 +1,4 @@
-F90RAW="mpif90"
+F90RAW="g95"
 case $F90RAW in
   mpif90)
      F90="`mpif90 -show | grep '\-l' | awk '{print $1}'`"

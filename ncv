@@ -1,5 +1,5 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-08-27 12:51:17 sander>
+# Time-stamp: <2009-11-27 11:18:09 sander>
 # create a self-consistent zip file of a new caaba version
 
 if ( "$1" == "" ) then
@@ -14,11 +14,11 @@ if ( "$1" == "" ) then
   echo "  Makefile:        COMPILER = g95"
   echo "                   OUTPUT = ASCII or NETCDF?"
   echo "                   F90FLAGS = fast or with checks?"
-  echo "  caaba.nml:       simple/caaba.nml"
   echo "  mecca.nml:       mecca_aero = 'AUTO'"
   echo '  setmodelrun.jnl: DEFINE SYMBOL C2 = `{spawn: "cd .. ; pwd"}`'
   echo "                   GO _define_sensi ... latest run (no other plots)"
   echo "  run xcaaba simple"
+  echo "    (and choose caaba_simple.nml)"
   echo "- add all changes and current date to CHANGELOG"
   echo "Usage:"
   echo "  ncv nn"
@@ -94,7 +94,7 @@ mv $basedir $dirname
 # -r recurse into directories
 # -x '...' exclude files
 zip -or $zipfile $dirname \
-  -x '*~' -x '*.mod' -x '*.exe' -x '*.o' -x '*.a' -x '*.nc' \
+  -x '*~' -x '*.mod' -x '*.exe' -x '*.o' -x '*.a' -x $dirname/'caaba_*.nc' \
   -x '*.log' -x '*.old' -x '*.zip' -x '*.tar' -x '*/tmp/*' \
   -x '*.ps' -x '*.dat' -x '*/Makefile.m' -x $dirname/'output/?*' \
   -x $dirname/'temporaryfile*' -x '*_e5.inc' \

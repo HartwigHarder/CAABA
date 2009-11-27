@@ -2,7 +2,7 @@
 #INCLUDE mecca.spc
 
 // select which species are fixed
-// (SETFIX H2O_a* is done in mecca.spc via xmecca)
+// (SETFIX of liquid H2O_a* is done in mecca.spc via xmecca)
 #SETFIX CO2; O2; N2;
 // keep these fixed for Learjet measurement suite:
 //#SETFIX H2; CO2; O2; N2; NO; CH4; CO; H2O2; CH3OOH; NO; O3;

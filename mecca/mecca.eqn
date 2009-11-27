@@ -2,14 +2,14 @@
 #INLINE F90_GLOBAL
   ! MECCA info from xmecca:
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: &
-    timestamp            = 'xmecca was run on 2009-08-27 at 13:00:42 by sander', &
+    timestamp            = 'xmecca was run on 2009-11-27 at 11:17:01 by sander', &
     gas_spc_file         = '-rw------- 1 sander sander 12731 2009-07-16 18:14 gas.spc', &
     aqueous_spc_file     = '-rw------- 1 sander sander 8371 2008-07-17 18:28 aqueous.spc', &
-    gas_eqn_file         = '-rw------- 1 sander sander 46516 2009-07-24 19:49 gas.eqn', &
+    gas_eqn_file         = '-rw------- 1 sander sander 48585 2009-11-27 11:05 gas.eqn', &
     aqueous_eqn_file     = '-rw------- 1 sander sander 55063 2009-01-30 16:33 aqueous.eqn', &
     gas_spc_file_sum     = '23346    13', &
     aqueous_spc_file_sum = '39581     9', &
-    gas_eqn_file_sum     = '05842    46', &
+    gas_eqn_file_sum     = '40019    48', &
     aqueous_eqn_file_sum = '54359    54', &
     rplfile              = '', &
     wanted               = 'Tr && G && !C && !S && !Cl && !Br && !I && !Hg', &
@@ -152,6 +152,24 @@ END SUBROUTINE initialize_indexarrays
   REAL :: k_O3s ! mz_pj_20080812
   ! ALL PHASES:
 !KPPPP_DIRECTIVE vector variable definition start
+  ! -------------------------------------------------------
+  ! IMPORTANT NOTES ABOUT TEMP, PRESS, AND CAIR:
+  ! - The KPP variable "temp" is already defined automatically by KPP in
+  !   messy_mecca_kpp_global.f90. The KPP variables "press" and "cair" are
+  !   defined here.
+  ! - The 3 variables temp, press, and cair are only used inside KPP.
+  !   They are different from the variables with the same names in the base
+  !   model (as used in the SMIL files *_e5.f90 and *_box.f90)
+  ! - Data transfer between the SMIL and the KPP variables is done via the
+  !   fill subroutines in messy_mecca_kpp.f90:
+  !   - fill_temp transfers temperature
+  !   - fill_press transfers pressure
+  !   - fill_cair transfers cair (this is redundant because cair could be
+  !     calculated from temp and press; nevertheless, redundant transfer to
+  !     KPP is preferred to avoid potential numerical differences when
+  !     recalculating cair inside KPP)
+  ! - qqq describe potential KP4 incompatibility here...
+  ! -------------------------------------------------------
   REAL(dp) :: cair    ! c(air) (wet) [mcl/cm^3]
   REAL(dp) :: press   ! pressure [Pa] ! mz_pj_20080716
   REAL(dp) :: mcfct(NREACT) ! Monte-Carlo factor
@@ -286,33 +304,33 @@ END SUBROUTINE initialize_indexarrays
 #ENDINLINE {above lines go into MODULE messy_mecca_kpp_Rates}
 #EQUATIONS
 {<G1nnn> ------------------------------- O -------------------------}
-<G1000>  O2   + O1D      = O3P + O2    : {%StTrG} 3.3E-11*EXP(55./temp); {&1945}
-<G1001>  O2   + O3P {+M} = O3          : {%StTrG} 6.E-34*((temp/300.)**(-2.4))*cair; {&1945}
+<G1000>  O2   + O1D      = O3P + O2    : {%StTrG} 3.3E-11*EXP(55./temp); {&1945}{§1.1}
+<G1001>  O2   + O3P {+M} = O3          : {%StTrG} 6.E-34*((temp/300.)**(-2.4))*cair; {&1945}{§1.1}
 {<G2nnn> ------------------------------- H -------------------------}{@\myhline}
-<G2100>  H    + O2 {+M}  = HO2         : {%StTrG} k_3rd(temp,cair,4.4E-32,1.3,4.7E-11,0.2,0.6); {&1945}
-<G2104>  OH   + O3       = HO2 + O2    : {%StTrG} 1.7E-12*EXP(-940./temp); {&1945}
-<G2105>  OH   + H2       = H2O + H     : {%StTrG} 2.8E-12*EXP(-1800./temp); {&1945}
-<G2107>  HO2  + O3       = OH + 2 O2   : {%StTrG} 1.E-14*EXP(-490./temp); {&1945}
-<G2109>  HO2  + OH       = H2O + O2    : {%StTrG} 4.8E-11*EXP(250./temp); {&1945}
+<G2100>  H    + O2 {+M}  = HO2         : {%StTrG} k_3rd(temp,cair,4.4E-32,1.3,4.7E-11,0.2,0.6); {&1945}{§1.3}
+<G2104>  OH   + O3       = HO2 + O2    : {%StTrG} 1.7E-12*EXP(-940./temp); {&1945}{§1.2}
+<G2105>  OH   + H2       = H2O + H     : {%StTrG} 2.8E-12*EXP(-1800./temp); {&1945}{§1.05}
+<G2107>  HO2  + O3       = OH + 2 O2   : {%StTrG} 1.E-14*EXP(-490./temp); {&1945}{§1.15}
+<G2109>  HO2  + OH       = H2O + O2    : {%StTrG} 4.8E-11*EXP(250./temp); {&1945}{§1.25}
 <G2110>  HO2  + HO2      = H2O2 + O2   : {%StTrG} k_HO2_HO2; {&&1599, 165}
-<G2111>  H2O  + O1D      = 2 OH        : {%StTrG} 1.63E-10*EXP(60./temp); {&1945}
+<G2111>  H2O  + O1D      = 2 OH        : {%StTrG} 1.63E-10*EXP(60./temp); {&1945}{§1.15}
 <G2112>  H2O2 + OH       = H2O + HO2   : {%StTrG} 1.8E-12; {&1945}
 {<G3nnn> ------------------------------- N -------------------------}{@\myhline}
-<G3101>  N2   + O1D      = O3P + N2    : {%StTrG}  2.15E-11*EXP(110./temp); {&1945}
-<G3103>  NO   + O3       = NO2 + O2    : {%StTrGN} 3.E-12*EXP(-1500./temp); {&1945}
-<G3106>  NO2  + O3       = NO3 + O2    : {%StTrGN} 1.2E-13*EXP(-2450./temp); {&1945}
-<G3108>  NO3  + NO       = 2 NO2       : {%StTrGN} 1.5E-11*EXP(170./temp); {&1945}
-<G3109>  NO3  + NO2 {+M} = N2O5        : {%StTrGN} k_NO3_NO2; {&&1945}
+<G3101>  N2   + O1D      = O3P + N2    : {%StTrG}  2.15E-11*EXP(110./temp); {&1945}{§1.10}
+<G3103>  NO   + O3       = NO2 + O2    : {%StTrGN} 3.E-12*EXP(-1500./temp); {&1945}{§1.1}
+<G3106>  NO2  + O3       = NO3 + O2    : {%StTrGN} 1.2E-13*EXP(-2450./temp); {&1945}{§1.15}
+<G3108>  NO3  + NO       = 2 NO2       : {%StTrGN} 1.5E-11*EXP(170./temp); {&1945}{§1.3}
+<G3109>  NO3  + NO2 {+M} = N2O5        : {%StTrGN} k_NO3_NO2; {&&1945}{§1.2}
 <G3110>  N2O5       {+M} = NO2 + NO3   : {%StTrGN} k_NO3_NO2/(2.7E-27*EXP(11000./temp)); {&&1945}
-<G3200>  NO   + OH {+M}  = HONO          : {%TrGN}   k_3rd(temp,cair,7.0E-31,2.6,3.6E-11,0.1,0.6); {&1945}
-<G3201>  NO   + HO2      = NO2   + OH    : {%StTrGN} 3.5E-12*EXP(250./temp); {&1945}
-<G3202>  NO2  + OH  {+M} = HNO3          : {%StTrGN} k_3rd(temp,cair,1.8E-30,3.0,2.8E-11,0.,0.6); {&1945}
+<G3200>  NO   + OH {+M}  = HONO          : {%TrGN}   k_3rd(temp,cair,7.0E-31,2.6,3.6E-11,0.1,0.6); {&1945}{§1.2}
+<G3201>  NO   + HO2      = NO2   + OH    : {%StTrGN} 3.5E-12*EXP(250./temp); {&1945}{§1.15}
+<G3202>  NO2  + OH  {+M} = HNO3          : {%StTrGN} k_3rd(temp,cair,1.8E-30,3.0,2.8E-11,0.,0.6); {&1945}{§1.3}
 <G3203>  NO2  + HO2 {+M} = HNO4          : {%StTrGN} k_NO2_HO2; {&&1945}
-<G3204>  NO3  + HO2      = NO2 + OH + O2 : {%TrGN}   3.5E-12; {&1945}
-<G3205>  HONO + OH       = NO2 + H2O     : {%TrGN}   1.8E-11*EXP(-390./temp); {&1945}
-<G3206>  HNO3 + OH       = H2O   + NO3   : {%StTrGN} k_HNO3_OH; {&&1945}
+<G3204>  NO3  + HO2      = NO2 + OH + O2 : {%TrGN}   3.5E-12; {&1945}{§1.5}
+<G3205>  HONO + OH       = NO2 + H2O     : {%TrGN}   1.8E-11*EXP(-390./temp); {&1945}{§1.5}
+<G3206>  HNO3 + OH       = H2O   + NO3   : {%StTrGN} k_HNO3_OH; {&&1945}{§1.2}
 <G3207>  HNO4       {+M} = NO2   + HO2   : {%StTrGN} k_NO2_HO2/(2.1E-27*EXP(10900./temp)); {&&1945}
-<G3208>  HNO4 + OH       = NO2   + H2O   : {%StTrGN} 1.3E-12*EXP(380./temp); {&1945}
+<G3208>  HNO4 + OH       = NO2   + H2O   : {%StTrGN} 1.3E-12*EXP(380./temp); {&1945}{§1.3}
 <G3209>  NH3   + OH      = NH2 + H2O     : {%TrGN}   1.7E-12*EXP(-710./temp); {&2415}
 <G3210>  NH2   + O3      = NH2O + O2     : {%TrGN}   4.3E-12*EXP(-930./temp); {&2415}
 <G3211>  NH2   + HO2     = NH2O + OH     : {%TrGN}   4.8E-07*EXP(-628./temp)*temp**(-1.32); {&2415}
@@ -330,18 +348,18 @@ END SUBROUTINE initialize_indexarrays
 <G3223>  NH2OH + OH      = NHOH + H2O    : {%TrGN}   4.13E-11*EXP(-2138./temp); {&2415}
 <G3224>  HNO   + O2      = HO2 + NO      : {%TrGN}   3.65E-14*EXP(-4600./temp); {&2415}
 {<G4nnn> ------------------------------- C -------------------------}{@\myhline}
-<G4101>  CH4     + OH {+O2}= CH3O2 + H2O      : {%StTrG}  1.85E-20*EXP(2.82*log(temp)-987./temp); {&&1627}
-<G4102>  CH3OH   + OH      = HCHO + HO2        : {%TrG}    2.9E-12*EXP(-345./temp); {&1945}
-<G4103>  CH3O2   + HO2     = CH3OOH + O2       : {%StTrG}  4.1E-13*EXP(750./temp); {&&1945}
-<G4104>  CH3O2   + NO      = HCHO + NO2 + HO2  : {%StTrGN} 2.8E-12*EXP(300./temp); {&1945}
+<G4101>  CH4     + OH {+O2}= CH3O2 + H2O       : {%StTrG}  1.85E-20*EXP(2.82*log(temp)-987./temp); {&&1627}
+<G4102>  CH3OH   + OH      = HCHO + HO2        : {%TrG}    2.9E-12*EXP(-345./temp); {&1945}{§1.10}
+<G4103>  CH3O2   + HO2     = CH3OOH + O2       : {%StTrG}  4.1E-13*EXP(750./temp); {&&1945}{§1.3}
+<G4104>  CH3O2   + NO      = HCHO + NO2 + HO2  : {%StTrGN} 2.8E-12*EXP(300./temp); {&1945}{§1.15}
 <G4105>  CH3O2   + NO3     = HCHO + HO2 + NO2  : {%TrGN}   1.3E-12; {&1207}
-<G4106a> CH3O2   + CH3O2   = 2 HCHO + 2 HO2    : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+1./26.2*EXP(1130./temp)); {&1945}
-<G4106b> CH3O2   + CH3O2   = HCHO + CH3OH + O2 : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+26.2*EXP(-1130./temp)); {&1945}
-<G4107>  CH3OOH  + OH      = .7 CH3O2 + .3 HCHO + .3 OH + H2O : {%StTrG} k_CH3OOH_OH; {&&1945}
+<G4106a> CH3O2   + CH3O2   = 2 HCHO + 2 HO2    : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+1./26.2*EXP(1130./temp)); {&1945}{§1.2}
+<G4106b> CH3O2   + CH3O2   = HCHO + CH3OH + O2 : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+26.2*EXP(-1130./temp)); {&1945}{§1.2}
+<G4107>  CH3OOH  + OH      = .7 CH3O2 + .3 HCHO + .3 OH + H2O : {%StTrG} k_CH3OOH_OH; {&&1945}{§1.4}
 <G4108>  HCHO    + OH      = CO + H2O + HO2    : {%StTrG}  9.52E-18*EXP(2.03*log(temp)+636./temp); {&1634}
-<G4109>  HCHO    + NO3     = HNO3 + CO + HO2   : {%TrGN}   3.4E-13*EXP(-1900./temp); {&&1945}
+<G4109>  HCHO    + NO3     = HNO3 + CO + HO2   : {%TrGN}   3.4E-13*EXP(-1900./temp); {&&1945}{§1.3}
 <G4110>  CO      + OH      = H + CO2           : {%StTrG}  1.57E-13 + cair*3.54E-33; {&1628}
-<G4111>  HCOOH   + OH      = HO2               : {%TrG}    4.0E-13; {&1945}
+<G4111>  HCOOH   + OH {+O2}= CO2 + HO2 + H2O   : {%TrG}    4.0E-13; {&1945}{§1.2}
 {<G5nnn> ------------------------------- F -------------------------}
 {<G6nnn> ------------------------------- Cl ------------------------}{@\myhline}
 {<G7nnn> ------------------------------- Br ------------------------}{@\myhline}

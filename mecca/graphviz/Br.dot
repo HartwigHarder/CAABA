@@ -13,31 +13,22 @@ node[shape=oval,
 Br
 Br2
 BrCl
-BrHgOBr
 BrNO2
 BrNO3
 BrO
-CF2ClBr
-CF3Br
 CH2Br2
 CH2ClBr
 CH3Br
 CHBr3
 CHCl2Br
 CHClBr2
-ClHgBr
-ClHgOBr
 HBr
 HOBr
-HgBr
-HgBr2
-IBr
 }
 Br -> Br2 [label = "BrCl (G7600)"];
 Br -> Br2 [label = "BrNO3 (G7300)"];
 Br -> BrCl [label = "Cl2 (G7601)"];
 Br -> BrO [label = "O3 (G7100)"];
-Br -> ClHgBr [label = "HgCl (G10707)"];
 Br -> HBr [label = "C2H2 (G7406)"];
 Br -> HBr [label = "C2H4 (G7404)"];
 Br -> HBr [label = "CH3CHO (G7405)"];
@@ -45,50 +36,36 @@ Br -> HBr [label = "CH3OOH (G7401)"];
 Br -> HBr [label = "DMS (G9700)"];
 Br -> HBr [label = "HCHO (G7400)"];
 Br -> HBr [label = "HO2 (G7200)"];
-Br -> HgBr [label = "Hg (G10700)"];
-Br -> HgBr2 [label = "HgBr (G10701)"];
 Br2 -> Br [label = "Cl (G7602)"];
 Br2 -> Br [label = "OH (G7204)"];
 Br2 -> Br [label = "hv (J7000)"];
 Br2 -> BrCl [label = "Cl (G7602)"];
 Br2 -> HOBr [label = "OH (G7204)"];
-Br2 -> HgBr2 [label = "Hg (G10702)"];
 BrCl -> Br [label = "Cl (G7604)"];
 BrCl -> Br [label = "hv (J7600)"];
 BrCl -> Br2 [label = "Br (G7600)"];
 BrNO2 -> Br [label = "hv (J7300)"];
 BrNO3 -> Br [label = "hv (J7301)"];
 BrNO3 -> Br2 [label = "Br (G7300)"];
-BrNO3 -> BrCl [label = "HCl (HET541)"];
 BrNO3 -> BrO [label = " (G7303)"];
 BrNO3 -> BrO [label = "hv (J7301)"];
-BrNO3 -> HOBr [label = "H2O (HET520)"];
 BrO -> Br [label = "BrO (G7102a)"];
 BrO -> Br [label = "CH3O2 (G7402b)"];
 BrO -> Br [label = "ClO (G7603a)"];
 BrO -> Br [label = "ClO (G7603b)"];
 BrO -> Br [label = "DMS (G9701)"];
-BrO -> Br [label = "Hg (G10703)"];
-BrO -> Br [label = "I (G8700)"];
-BrO -> Br [label = "IO (G8701)"];
 BrO -> Br [label = "NO (G7301)"];
-BrO -> Br [label = "O3P (G7101)"];
 BrO -> Br [label = "hv (J7100)"];
 BrO -> Br2 [label = "BrO (G7102b)"];
 BrO -> BrCl [label = "ClO (G7603c)"];
-BrO -> BrHgOBr [label = "HgBr (G10704)"];
 BrO -> BrNO3 [label = "NO2 (G7302)"];
-BrO -> ClHgOBr [label = "HgCl (G10705)"];
 BrO -> HOBr [label = "CH3O2 (G7402a)"];
 BrO -> HOBr [label = "HO2 (G7201)"];
-CF2ClBr -> Br [label = "hv (J7601)"];
-CF3Br -> Br [label = "hv (J7500)"];
 CH2Br2 -> Br [label = "OH (G7408)"];
 CH2Br2 -> Br [label = "hv (J7401)"];
 CH2ClBr -> Br [label = "OH (G7607)"];
 CH2ClBr -> Br [label = "hv (J7602)"];
 CH3Br -> Br [label = "OH (G7403)"];
-CH3Br -> Br [label = "hv (J7400)"];
 CHBr3 -> Br [label = "OH (G7407)"];
 CHBr3 -> Br [label = "hv (J7402)"];
 CHCl2Br -> Br [label = "OH (G7605)"];
@@ -96,15 +73,5 @@ CHCl2Br -> Br [label = "hv (J7603)"];
 CHClBr2 -> Br [label = "OH (G7606)"];
 CHClBr2 -> Br [label = "hv (J7604)"];
 HBr -> Br [label = "OH (G7202)"];
-HBr -> Br2 [label = "HOBr (HET510)"];
-HBr -> BrCl [label = "ClNO3 (HET540)"];
-HBr -> BrCl [label = "HOCl (HET542)"];
 HOBr -> Br [label = "hv (J7200)"];
-HOBr -> Br2 [label = "HBr (HET510)"];
-HOBr -> BrCl [label = "HCl (HET543)"];
-HOBr -> BrO [label = "O3P (G7203)"];
-HgBr -> BrHgOBr [label = "BrO (G10704)"];
-HgBr -> ClHgBr [label = "Cl (G10706)"];
-HgBr -> HgBr2 [label = "Br (G10701)"];
-IBr -> Br [label = "hv (J8700)"];
 }

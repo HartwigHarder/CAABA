@@ -1,5 +1,5 @@
 {This file was created automatically by xmecca, DO NOT EDIT!}
-{xmecca was run on 2009-08-27 at 13:00:42 by sander}
+{xmecca was run on 2009-11-27 at 11:17:01 by sander}
 {***** START: gas-phase species from gas.spc *****}
 #INCLUDE atoms
 
@@ -397,5 +397,4 @@ LO3s          = IGNORE           ; {@LO_3(s)}           {lost strat. ozone}
  PROD2_a01      = IGNORE; {@PROD2\aq}        {}
  Nap_a01        = IGNORE; {@Na^+\aq}         {dummy cation}
 {**** END:   aerosol species (phase 1) from aqueous.spc ****}
-
 {SETFIX H2O_a* is done via xmecca}

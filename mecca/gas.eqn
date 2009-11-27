@@ -1,5 +1,5 @@
 // ------------------------------- gas.eqn -----------------------------------
-// Time-stamp: <2009-11-26 17:35:33 sander>
+// Time-stamp: <2009-11-27 11:05:29 sander>
 // ---------------------------------------------------------------------------
 
 // This program is free software; you can redistribute it and/or
@@ -37,7 +37,8 @@
 //   - Reaction mechanisms merged, sorted, labeled, and maintained
 //   - Gas-phase reaction rates updated to JPL2006
 // - Franziska Koellner (2009):
-//   - added uncertainties for reaction constants
+//   - added uncertainties for reaction constants 
+
 // ---------------------------------------------------------------------------
 
 #INLINE F90_GLOBAL
