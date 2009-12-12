@@ -292,9 +292,9 @@
 <G4205>  EtO2    + NO3     = CH3CHO + HO2 + NO2 : {%TrGNC}  2.3E-12; {&1207}
 <G4206>  EtO2    + CH3O2   = .75 HCHO + HO2 + .75 CH3CHO + .25 CH3OH {+.25EtOH} : {%TrGC} 1.6E-13*EXP(195./temp); {&&}
 <G4207>  EtOOH   + OH      = .3 EtO2 + .7 CH3CHO + .7 OH      : {%TrGC} k_CH3OOH_OH; {&&}
-<G4208>  CH3CHO  + OH      = PA + H2O           : {%TrGC}   4.4E-12*EXP(365./temp); {&1759}
+<G4208>  CH3CHO  + OH      = PA + H2O           : {%TrGC}   4.4E-12*EXP(365./temp); {&1759}{§0.08}
 <G4209>  CH3CHO  + NO3     = PA + HNO3          : {%TrGNC}  1.4E-12*EXP(-1900./temp); {&1945}
-<G4210>  CH3COOH + OH {+O2}= CH3O2 + CO2 +H2O   : {%TrGC}   4.2E-14*EXP(855./temp); {&1759}
+<G4210>  CH3COOH + OH {+O2}= CH3O2 + CO2 +H2O   : {%TrGC}   4.2E-14*EXP(855./temp); {&1759}{§0.15}
 <G4211a> PA      + HO2     = PAA                : {%TrGC}   4.3E-13*EXP(1040./temp)/(1.+1./37.*EXP(660./temp)); {&1613}
 <G4211b> PA      + HO2     = CH3COOH + O3       : {%TrGC}   4.3E-13*EXP(1040./temp)/(1.+37.*EXP(-660./temp)); {&1613}
 <G4212>  PA      + NO      = CH3O2 + NO2        : {%TrGNC}  8.1E-12*EXP(270./temp); {&1613}
@@ -490,7 +490,7 @@
 <G8304>  OIO   + NO    = NO2 + IO          : {%TrGI}   1.1E-12*EXP(542./temp); {&1845}{§0.3}
 <G8305>  INO2          = I + NO2           : {%TrGI}   k_I_NO2/(3.7E-7*exp(9568./temp)*1.E6*R_gas*temp/(atm2Pa*N_A)); {&&1644, 1845}
 <G8306>  INO3          = IO + NO2          : {%TrGI}   0.; {&&}
-<G8307>  I2    + NO3   = I + INO3          : {%TrGI}   1.5E-12; {&1845}
+<G8307>  I2    + NO3   = I + INO3          : {%TrGI}   1.5E-12; {&1845}{§0.5}
 <G8308>  IO    + NO3   = OIO + NO2         : {%TrGI}   1.E-11; {&2244}
 // I + C (#G84nn)
 <G8400>  C3H7I + OH    = CH3O2 + I         : {%TrGI}   1.2E-12; {&1503}
