@@ -377,28 +377,28 @@
 // Cl + O (#G61nn)
 <G6100>  Cl + O3         = ClO + O2    : {%StTrGCl}       2.8E-11*EXP(-250./temp); {&1845} {§0.06}
 <G6101>  ClO + O3P       = Cl + O2     : {%StGCl}         2.5E-11*EXP(110./temp); {&1845} {§0.6}
-<G6102a> ClO + ClO       = Cl2 + O2    : {%StTrGCl}       1.0E-12*EXP(-1590./temp); {&1845}
-<G6102b> ClO + ClO       = 2 Cl + O2   : {%StTrGCl}       3.0E-11*EXP(-2450./temp); {&1845}
-<G6102c> ClO + ClO       = Cl + OClO   : {%StTrGCl}       3.5E-13*EXP(-1370./temp); {&1845}
-<G6102d> ClO + ClO {+M}  = Cl2O2       : {%StTrGCl}       k_ClO_ClO; {&1845}
-<G6103>  Cl2O2 {+M}      = ClO + ClO   : {%StTrGCl}       k_ClO_ClO/(9.3E-28*EXP(8835./temp)); {&&1845, 1945}
+<G6102a> ClO + ClO       = Cl2 + O2    : {%StTrGCl}       1.0E-12*EXP(-1590./temp); {&1845}{§0.2}
+<G6102b> ClO + ClO       = 2 Cl + O2   : {%StTrGCl}       3.0E-11*EXP(-2450./temp); {&1845}{§0.2}
+<G6102c> ClO + ClO       = Cl + OClO   : {%StTrGCl}       3.5E-13*EXP(-1370./temp); {&1845}{§0.2}
+<G6102d> ClO + ClO {+M}  = Cl2O2       : {%StTrGCl}       k_ClO_ClO; {&1845}{§0.1}
+<G6103>  Cl2O2 {+M}      = ClO + ClO   : {%StTrGCl}       k_ClO_ClO/(9.3E-28*EXP(8835./temp)); {&&1845, 1945}{§0.3}
 
 // Cl + H (#G62nn)
-<G6200>  Cl + H2         = HCl + H     : {%StGCl}         3.9E-11*EXP(-2310./temp); {&1845}
-<G6201a> Cl + HO2        = HCl + O2    : {%StGCl}         4.4E-11-7.5E-11*EXP(-620./temp); {&1845}
-<G6201b> Cl + HO2        = ClO + OH    : {%StGCl}         7.5E-11*EXP(-620./temp); {&1845}
-<G6202>  Cl + H2O2       = HCl + HO2   : {%StTrGCl}       1.1E-11*EXP(-980./temp); {&1845}
-<G6203>  ClO + OH        = .94 Cl + .94 HO2 + .06 HCl + .06 O2 : {%StGCl} 7.3E-12*EXP(300./temp); {&1845}
+<G6200>  Cl + H2         = HCl + H     : {%StGCl}         3.9E-11*EXP(-2310./temp); {&1845}{§0.1}
+<G6201a> Cl + HO2        = HCl + O2    : {%StGCl}         4.4E-11-7.5E-11*EXP(-620./temp); {&1845}{§0.2}
+<G6201b> Cl + HO2        = ClO + OH    : {%StGCl}         7.5E-11*EXP(-620./temp); {&1845}{§0.2}
+<G6202>  Cl + H2O2       = HCl + HO2   : {%StTrGCl}       1.1E-11*EXP(-980./temp); {&1845}{§0.2}
+<G6203>  ClO + OH        = .94 Cl + .94 HO2 + .06 HCl + .06 O2 : {%StGCl} 7.3E-12*EXP(300./temp); {&1845}{§0.15}
 <G6204>  ClO + HO2       = HOCl        : {%StTrGCl}       2.2E-12*EXP(340./temp); {&1845} {§0.2}
-<G6205>  HCl + OH        = Cl  + H2O   : {%StTrGCl}       1.7E-12*EXP(-230./temp); {&1845}
+<G6205>  HCl + OH        = Cl  + H2O   : {%StTrGCl}       1.7E-12*EXP(-230./temp); {&1845}{§0.06}
 <G6206>  HOCl+ OH        = ClO + H2O   : {%StGCl}         3.0E-12*EXP(-500./temp); {&1945}
 
 // Cl + N (#G63nn)
-<G6300>  ClO   + NO       = NO2 + Cl   : {%StTrGNCl}      6.2E-12*EXP(295./temp); {&1845}
+<G6300>  ClO   + NO       = NO2 + Cl   : {%StTrGNCl}      6.2E-12*EXP(295./temp); {&1845}{§0.1}
 <G6301>  ClO   + NO2 {+M} = ClNO3      : {%StTrGNCl}      k_3rd_iupac(temp,cair,1.6E-31,3.4,7.E-11,0.,0.4); {&1845}
 <G6302>  ClNO3            = ClO + NO2  : {%TrGCl}         6.918E-7*exp(-10909./temp)*cair; {&1059}
-<G6303>  ClNO3 + O3P      = ClO + NO3  : {%StGNCl}        4.5E-12*EXP(-900./temp); {&1845}
-<G6304>  ClNO3 + Cl       = Cl2 + NO3  : {%StTrGNCl}      6.2E-12*EXP(145./temp); {&1845}
+<G6303>  ClNO3 + O3P      = ClO + NO3  : {%StGNCl}        4.5E-12*EXP(-900./temp); {&1845}{§0.08}
+<G6304>  ClNO3 + Cl       = Cl2 + NO3  : {%StTrGNCl}      6.2E-12*EXP(145./temp); {&1845}{§0.1}
 
 // Cl + C (#G64nn)
 <G6400>  Cl      + CH4    = HCl + CH3O2       : {%StTrGCl}       6.6E-12*EXP(-1240./temp); {&1759}
@@ -422,21 +422,21 @@
 {<G7nnn> ------------------------------- Br ------------------------}{@\myhline}
 
 // Br + O (#G71nn)
-<G7100>  Br   + O3       = BrO + O2       : {%StTrGBr}   1.7E-11*EXP(-800./temp); {&1845}
+<G7100>  Br   + O3       = BrO + O2       : {%StTrGBr}   1.7E-11*EXP(-800./temp); {&1845}{§0.08}
 <G7101>  BrO  + O3P      = Br + O2        : {%StGBr}     1.9E-11*EXP(230./temp); {&1845}
-<G7102a> BrO  + BrO      = 2 Br + O2      : {%StTrGBr}   2.7E-12; {&1845}
-<G7102b> BrO  + BrO      = Br2 + O2       : {%StTrGBr}   2.9E-14*EXP(840./temp); {&1845}
+<G7102a> BrO  + BrO      = 2 Br + O2      : {%StTrGBr}   2.7E-12; {&1845}{§0.1}
+<G7102b> BrO  + BrO      = Br2 + O2       : {%StTrGBr}   2.9E-14*EXP(840./temp); {&1845}{§0.1}
 
 // Br + H (#G72nn)
-<G7200>  Br   + HO2      = HBr + O2       : {%StTrGBr}   7.7E-12*EXP(-450./temp); {&1845}
-<G7201>  BrO  + HO2      = HOBr + O2      : {%StTrGBr}   4.5E-12*EXP(500./temp); {&1845}
+<G7200>  Br   + HO2      = HBr + O2       : {%StTrGBr}   7.7E-12*EXP(-450./temp); {&1845}{§0.2}
+<G7201>  BrO  + HO2      = HOBr + O2      : {%StTrGBr}   4.5E-12*EXP(500./temp); {&1845}{§0.3}
 <G7202>  HBr  + OH       = Br  + H2O      : {%StTrGBr}   6.7E-12*EXP(155./temp); {&1845}
-<G7203>  HOBr + O3P      = OH  + BrO      : {%StGBr}     1.2E-10*EXP(-430./temp); {&1845}
-<G7204>  Br2  + OH       = HOBr + Br      : {%StTrGBr}   2.0E-11*EXP(240./temp); {&1845}
+<G7203>  HOBr + O3P      = OH  + BrO      : {%StGBr}     1.2E-10*EXP(-430./temp); {&1845}{§0.2}
+<G7204>  Br2  + OH       = HOBr + Br      : {%StTrGBr}   2.0E-11*EXP(240./temp); {&1845}{§0.1}
 
 // Br + N (#G73nn)
 <G7300>  Br   + BrNO3    = Br2 + NO3      : {%TrGBr}     4.9E-11; {&1054}
-<G7301>  BrO  + NO       = Br  + NO2      : {%StTrGNBr}  8.7E-12*EXP(260./temp); {&1845}
+<G7301>  BrO  + NO       = Br  + NO2      : {%StTrGNBr}  8.7E-12*EXP(260./temp); {&1845}{§0.1}
 <G7302>  BrO  + NO2 {+M} = BrNO3          : {%StTrGNBr}  k_BrO_NO2; {&&1845}
 <G7303>  BrNO3           = BrO + NO2      : {%TrGBr}     k_BrO_NO2/(5.44E-9*exp(14192./temp)*1.E6*R_gas*temp/(atm2Pa*N_A)); {&&1054, 1845}
 
@@ -458,9 +458,9 @@
 <G7600>  Br   + BrCl     = Br2  + Cl      : {%TrGBrCl}   3.3E-15; {&233}
 <G7601>  Br   + Cl2      = BrCl + Cl      : {%TrGClBr}   1.1E-15; {&233}
 <G7602>  Br2  + Cl       = BrCl + Br      : {%TrGClBr}   1.2E-10; {&233}
-<G7603a> BrO  + ClO      = Br   + OClO    : {%StTrGClBr} 1.6E-12*EXP(430./temp); {&1845}
-<G7603b> BrO  + ClO      = Br   + Cl + O2 : {%StTrGClBr} 2.9E-12*EXP(220./temp); {&1845}
-<G7603c> BrO  + ClO      = BrCl + O2      : {%StTrGClBr} 5.8E-13*EXP(170./temp); {&1845}
+<G7603a> BrO  + ClO      = Br   + OClO    : {%StTrGClBr} 1.6E-12*EXP(430./temp); {&1845}{§0.1}
+<G7603b> BrO  + ClO      = Br   + Cl + O2 : {%StTrGClBr} 2.9E-12*EXP(220./temp); {&1845}{§0.1}
+<G7603c> BrO  + ClO      = BrCl + O2      : {%StTrGClBr} 5.8E-13*EXP(170./temp); {&1845}{§0.1}
 <G7604>  BrCl + Cl       = Br   + Cl2     : {%TrGClBr}   1.5E-11; {&233}
 <G7605>  CHCl2Br + OH = H2O + Br   {+CH3O2} : {%TrGBr} 2.0E-12*EXP(-840./temp); {&&}
 <G7606>  CHClBr2 + OH = H2O + 2 Br {+CH3O2} : {%TrGBr} 2.0E-12*EXP(-840./temp); {&&}
@@ -469,25 +469,25 @@
 {<G8nnn> ------------------------------- I -------------------------}{@\myhline}
 
 // I + O (#G81nn)
-<G8100>  I     + O3    = IO + O2           : {%TrGI}   2.1E-11*EXP(-830./temp); {&1845}
+<G8100>  I     + O3    = IO + O2           : {%TrGI}   2.1E-11*EXP(-830./temp); {&1845}{§0.05}
 //<G8101> deleted I2O2          = 2 IO              : {%TrGI}   20.; {&&}
 <G8102>  OIO   + OIO   = IPART             : {%TrGI}   5.E-11; {&&1456}
-<G8103>  IO    + IO    = .38 OIO + 1.62 I + .62 O2 : {%TrGI} 5.4E-11*EXP(180./temp); {&&1845}
+<G8103>  IO    + IO    = .38 OIO + 1.62 I + .62 O2 : {%TrGI} 5.4E-11*EXP(180./temp); {&&1845}{§0.1}
 //qqq Crowley: <G8103>  IO    + IO  = OIO + I                : {%TrGI} 5.4E-11*EXP(180./temp); {&1845}
 //qqq Bremen:  <G8103>  IO    + IO  = .8 OIO + 1.2 I + .2 O2 : {%TrGI} 5.4E-11*EXP(180./temp); {&1845}
 //qqq test this: <G8104>  OIO   + IO    = IPART             : {%TrGI}   1.2E-10; {&2152}
 // I + H (#G82nn)
-<G8200>  I     + HO2   = HI  + O2          : {%TrGI}   1.5E-11*EXP(-1090./temp); {&1845}
-<G8201>  IO    + HO2   = HOI + O2          : {%TrGI}   1.4E-11*EXP(540./temp); {&1845}
-<G8202>  HI    + OH    = I   + H2O         : {%TrGI}   1.6E-11*EXP(440./temp); {&1845}
+<G8200>  I     + HO2   = HI  + O2          : {%TrGI}   1.5E-11*EXP(-1090./temp); {&1845}{§0.3}
+<G8201>  IO    + HO2   = HOI + O2          : {%TrGI}   1.4E-11*EXP(540./temp); {&1845}{§0.2}
+<G8202>  HI    + OH    = I   + H2O         : {%TrGI}   1.6E-11*EXP(440./temp); {&1845}{§0.3}
 <G8203>  OIO   + OH    = HIO3              : {%TrGI}   2.2E-10*EXP(243./temp); {&1788}
-<G8204>  I2    + OH    = HOI + I           : {%TrGI}   2.1E-10; {&1845}
+<G8204>  I2    + OH    = HOI + I           : {%TrGI}   2.1E-10; {&1845}{§0.15}
 // I + N (#G83nn)
 <G8300>  I + NO2 {+M}  = INO2              : {%TrGI}   k_I_NO2; {&&1845}
 <G8301>  I     + NO3   = IO + NO2          : {%TrGI}   1.E-10; {&2244}
-<G8302>  IO    + NO    = I  + NO2          : {%TrGI}   7.15E-12*EXP(300./temp); {&1845}
-<G8303>  IO + NO2 {+M} = INO3              : {%TrGI}   k_3rd_iupac(temp,cair,7.7E-31,5.,1.6E-11,0.,0.4); {&1845}
-<G8304>  OIO   + NO    = NO2 + IO          : {%TrGI}   1.1E-12*EXP(542./temp); {&1845}
+<G8302>  IO    + NO    = I  + NO2          : {%TrGI}   7.15E-12*EXP(300./temp); {&1845}{§0.15}
+<G8303>  IO + NO2 {+M} = INO3              : {%TrGI}   k_3rd_iupac(temp,cair,7.7E-31,5.,1.6E-11,0.,0.4); {&1845}{§0.3}
+<G8304>  OIO   + NO    = NO2 + IO          : {%TrGI}   1.1E-12*EXP(542./temp); {&1845}{§0.3}
 <G8305>  INO2          = I + NO2           : {%TrGI}   k_I_NO2/(3.7E-7*exp(9568./temp)*1.E6*R_gas*temp/(atm2Pa*N_A)); {&&1644, 1845}
 <G8306>  INO3          = IO + NO2          : {%TrGI}   0.; {&&}
 <G8307>  I2    + NO3   = I + INO3          : {%TrGI}   1.5E-12; {&1845}
@@ -499,10 +499,10 @@
 //qqq test this: <G8402>  CH3I + NO3 {+O2} = HNO3 + HCHO + IO : {%TrGI} 4.1E-13; {&&2087}
 // I + F (#G85nn)
 // I + Cl (#G86nn)
-<G8600>  IO    + ClO   = .2 ICl + .25 Cl + .55 OClO + .8 I + .45 O2 : {%TrGClI} 4.7E-12*EXP(280./temp); {&1845} {products: 20% ICl+O2, 25% I+Cl+O2, 55% I+OClO}
+<G8600>  IO    + ClO   = .2 ICl + .25 Cl + .55 OClO + .8 I + .45 O2 : {%TrGClI} 4.7E-12*EXP(280./temp); {&1845} {products: 20% ICl+O2, 25% I+Cl+O2, 55% I+OClO}{§0.1}
 // I + Br (#G87nn)
 <G8700>  I     + BrO   = IO + Br           : {%TrGBrI} 1.2E-11; {&1945}
-<G8701>  IO    + BrO   = Br + .8 OIO + .2 I + .2 O2 : {%TrGBrI} 1.5E-11*EXP(510./temp); {&&1845}
+<G8701>  IO    + BrO   = Br + .8 OIO + .2 I + .2 O2 : {%TrGBrI} 1.5E-11*EXP(510./temp); {&&1845}{§0.1}
 {<G9nnn> ------------------------------- S -------------------------}{@\myhline}
 
 // S + O (#G91nn)
