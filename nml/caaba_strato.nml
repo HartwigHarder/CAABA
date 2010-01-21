@@ -1,0 +1,58 @@
+! -*- f90 -*- Time-stamp: <2009-08-10 09:48:39 sander>
+
+!*****************************************************************************
+!
+! coupling namelist for CAABA boxmodel
+!
+!*****************************************************************************
+
+&CAABA
+
+ USE_JVAL    = T
+ USE_MECCA   = T
+!USE_READJ   = T
+! USE_SAPPHO  = T
+! USE_SEMIDEP = T
+!USE_TRAJECT = T
+! USE_E4CHEM = T
+
+! see "list_of_scenarios" in caaba.f90 for possibilities:
+ init_scenario     = 'STRATO'
+ photo_scenario    = 'STRATO'
+ emission_scenario = 'STRATO'
+ drydep_scenario   = 'STRATO'
+
+!temp   = 293.    ! temperature [K]
+!press  = 101325. ! pressure [Pa]
+!relhum = 0.81    ! relative humidity [1]
+!zmbl   = 1000.   ! height of the mbl [m]
+
+degree_lat = 25.
+temp   = 210.
+press  = 5000. ! pressure [Pa]
+relhum = 0.02
+
+
+!startday    = 14.        ! 15th Jan
+!ext_runtime = '2 days'   ! in days; default: 8
+!ext_runtime = '40 days'  ! in days; default: 8
+
+! Choose a channel that contains J-values for photolysis reactions:
+photrat_channel = 'jval'
+!photrat_channel = 'readj'
+! photrat_channel = 'sappho'
+
+! init_spec = initialize species from netcdf file:
+!init_spec = 'caaba_mecca_1.nc'
+
+! init_j = initialize J-values from netcdf file:
+!init_j = '/home/sander/tmp/readj_input.nc'
+!init_j_index = 25
+
+!l_steady_state_stop = T    ! stop caaba when steady state is reached?
+
+!l_skipkpp = T    ! skip call to kpp chemistry integration
+
+/
+
+!*****************************************************************************
