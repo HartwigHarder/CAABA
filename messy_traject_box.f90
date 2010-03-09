@@ -1,4 +1,4 @@
-! Time-stamp: <2009-08-31 17:43:01 sander>
+! Time-stamp: <2010-02-16 15:52:14 sander>
 
 ! This file contains routines needed for box-trajectory procedures.
 ! It can only be used if the netcdf library is available.
@@ -310,7 +310,6 @@ CONTAINS
 
     USE messy_main_constants_mem, ONLY: pi, TINY_DP
     USE messy_main_tools, ONLY: spec2relhum
-    USE messy_main_timer, ONLY: eval_time_str
 
     IMPLICIT NONE
     SAVE

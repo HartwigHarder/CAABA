@@ -170,7 +170,7 @@ SUBROUTINE Rosenbrock(N,Y,Tstart,Tend, &
 !        = 5 :    Rodas4
 !
 !    ICNTRL(4)  -> maximum number of integration steps
-!        For ICNTRL(4)=0) the default value of 100000 is used
+!        For ICNTRL(4)=0) the default value of 200000 is used
 !
 !    RCNTRL(1)  -> Hmin, lower bound for the integration step size
 !          It is strongly recommended to keep Hmin = ZERO

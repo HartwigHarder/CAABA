@@ -1,5 +1,5 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-11-20 10:27:20 sander>
+# Time-stamp: <2010-02-19 17:42:39 sander>
 # Authors:
 # Rolf Sander,     Max-Planck-Institute, Mainz, Germany, 2003-2009
 # Astrid Kerkweg,  Max-Planck-Institute, Mainz, Germany, 2005-2007
@@ -498,14 +498,16 @@ else
   set mcfct = "$<"
 endif
 if ( "$mcfct" == "q" ) exit 1
+cp $eqnfile $eqnfile6
 if ( "$mcfct" == "y" ) then
-  cp $eqnfile $eqnfile6
   # for strange reasons, gawk only works properly if LC_COLLATE = C
   echo "Running mcfct.awk ..."
   setenv LC_COLLATE C
   gawk -f mcfct.awk $eqnfile6 >! $eqnfile
   set REQ_MCFCT = ".TRUE."
 else
+  # remove factors from eqn file (necessary inside inlined f90 code):
+  sed 's|{§[^}]*}||g' $eqnfile6 >! $eqnfile
   set REQ_MCFCT = ".FALSE."
 endif
 
@@ -774,7 +776,10 @@ if ( "$kppoption" == "k" ) then
 
   # --------------------------------------------------------------------------
 
-  echo "\nRunning KPP. Please wait..."
+  echo "\nRunning KPP with the command:"
+  echo "setenv KPP_HOME $KPP_HOME"
+  echo '$KPP_HOME/bin/kpp messy_mecca_kpp.kpp'
+  echo "Please wait..."
   $KPP_HOME/bin/kpp messy_mecca_kpp.kpp | tee -a $logfile
   set exitstatus = "$status"
   echo "exit status from KPP is: $exitstatus"

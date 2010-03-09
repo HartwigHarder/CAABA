@@ -3,12 +3,13 @@
 # Author:
 #   Rolf Sander, Max-Planck-Institute, Mainz, Germany, 2008
 #
-# Time-stamp: <2009-11-20 14:47:08 sander>
+# Time-stamp: <2010-02-22 15:42:38 sander>
 #
 # mcfct.awk adds Monte-Carlo factor to rate coefficients in *.eqn file
 #
 # usage:
 # gawk -f mcfct.awk mecca.eqn
+# gawk -f mcfct.awk minigas.eqn > mecca.eqn ; diff minigas.eqn mecca.eqn
 #
 # ----------------------------------------------------------------------------
 
@@ -20,30 +21,32 @@ BEGIN {
 
 # note that in awk, "log" = natural logarithm = ln
 
+# (replacement text "\\1" works only with gensub but not with gsub):
+
 {
-  # does current line contain a chemical equation, i.e. something like
-  # " = ... : ... ; " ?
-  if (match($0, "=.*:.*;") != 0) {
-    # assign uncertainty to the rate constant:
-    if (match($0, "{§§([^}]*)}", arr) != 0) {
-        # uncertainty is given as Delta_log_k (IUPAC):
-        lnf = arr[1] * log(10)
-    } else {
-      if (match($0, "{§([^}]*)}", arr) != 0) {
-        # uncertainty is given as factor f (JPL):
-        lnf = log(arr[1])
-      } else {
-        # default uncertainty assumed to be exp(0.2) which is about +/- 22%
-        lnf = 0.2
-      }
-    }
-    # lnf now contains ln(f) where f is the uncertainty factor
-    # define replacement string:
-    replstring = ": EXP(" lnf "*mcfct(" i ")) *"
-    gsub(":", replstring)
-    i = i + 1
+
+  while (match($0, "{§§[^}]*}") != 0) {
+    # logarithmic uncertainty (e.g. IUPAC evaluation):
+    $0 = gensub("{§§([^}]*)}", "*EXP(\\1*LOG(10.)*mcfct(" i++ "))", "", $0)
   }
+
+  while (match($0, "{§}") != 0) {
+    # default uncertainty assumed to be 1.25:
+    $0 = gensub("{§}", "*EXP(LOG(1.25)*mcfct(" i++ "))", "", $0)
+  }
+
+  while (match($0, "{§[^}]*}") != 0) {
+    # uncertainty factor (e.g. JPL evaluation):
+    $0 = gensub("{§([^}]*)}", "*EXP(LOG(\\1)*mcfct(" i++ "))", "", $0)
+  }
+
   printf "%s\n", $0
+
 }
+
+# ----------------------------------------------------------------------------
+
+# END{
+# }
 
 # ----------------------------------------------------------------------------

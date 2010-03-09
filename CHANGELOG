@@ -1,6 +1,6 @@
 ******************************************************************************
 **                               CAABA history                              **
-**                  Time-stamp: <2009-11-27 11:19:15 sander>                **
+**                  Time-stamp: <2010-02-22 17:49:24 sander>                **
 ******************************************************************************
 
 Previous versions are available as zip files at:
@@ -11,7 +11,34 @@ new versions are created with: ncv <VERSION>
 ******************************************************************************
 
 The next version will be:
-caaba_2.5n (2010)
+caaba_2.5o (2010)
+
+******************************************************************************
+
+caaba_2.5n (2010-02-22)
+
+CHANGES by Rolf Sander:
+- KPP: 
+  - gdata.h: KPP_VERSION updated to 2.2.1_rs5
+  - scan.l: crtToken, nextToken, crtFile, and crt_rate increased to 300
+    to allow longer f90 expressions for the rate coefficients in the
+    *.eqn files
+- MECCA:
+  - xmecca and mcfct.awk: Code rewritten so that one reaction can have
+    several uncertainty factors, e.g. a second uncertainty for the
+    temperature dependence or the branching. Factor can now also appear
+    in inlined f90 code. Uncertainties of rate coefficients must now
+    appear directly after the value, e.g. 8.E-12{§1.15} and not at the
+    end of the line anymore.
+
+CHANGES by Hella Riede:
+- useless, unwanted file with the name '-' deleted
+- new script nodiag.tcsh that deletes diagnostic tracers for reaction
+  rates (DT* (old) and RR*) specified in diagtrac file
+
+CHANGES by Franziska Koellner:
+- MECCA:
+  - gas.eqn: uncertainties of rate coefficients moved to correct place
 
 ******************************************************************************
 
@@ -98,6 +125,8 @@ CHANGES by Andreas Baumgaertner:
 - main.mk: ADDEFS preprocessor directive to include compiling of E4CHEM via
   Makefile.m (with 'gmake mbm')
 
+- Makefile: removed "-lnetcdf90" for AIX
+
 ******************************************************************************
 
 caaba_2.5j (2009-07-08)
@@ -155,6 +184,7 @@ CHANGES by Rolf Sander:
   - messy_mecca_box.f90:
     DEALLOCATE(c0_HCO3m, c0_Clm, c0_Brm, c0_Im, c0_IO3m, c0_SO4mm, c0_HSO4m)
     DEALLOCATE(xaer, radius, lwc, csalt, c0_NH4p, c0_Nap, exchng)
+
 ******************************************************************************
 
 caaba_2.5f (2008-12-06)

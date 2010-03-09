@@ -13,11 +13,11 @@ GO _define_sensi ($C2) "latest run"
 !GO _define_sensi ($C2)/output/after "after"
 
 ! adjust and activate these lines for Monte-Carlo runs:
-!GO _define_sensi ($C2)/output/montecarlo/test/0001 "0001"
-!GO _define_sensi ($C2)/output/montecarlo/test/0002 "0002"
-!GO _define_sensi ($C2)/output/montecarlo/test/0003 "0003"
-!GO _define_sensi ($C2)/output/montecarlo/test/0004 "0004"
-!GO _define_sensi ($C2)/output/montecarlo/test/0005 "0005"
+! GO _define_sensi ($C2)/output/montecarlo/test/0001 "0001"
+! GO _define_sensi ($C2)/output/montecarlo/test/0002 "0002"
+! GO _define_sensi ($C2)/output/montecarlo/test/0003 "0003"
+! GO _define_sensi ($C2)/output/montecarlo/test/0004 "0004"
+! GO _define_sensi ($C2)/output/montecarlo/test/0005 "0005"
 
 !*******************************************************************************
 

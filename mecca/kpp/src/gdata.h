@@ -29,12 +29,28 @@
 
 ******************************************************************************/
 
-#define KPP_VERSION "2.2.1_rs4"
+#define KPP_VERSION "2.2.1_rs5"
 
 #ifndef _GDATA_H_
 #define _GDATA_H_
 
 #include <stdio.h>
+
+/* mz_rs_20100222+ */
+/* Some hints: */
+/* - Many limits can be changed here by adjusting the MAX_* constants */
+/* - To increase the max size of inlined code (F90_GLOBAL etc.), */
+/*   change MAX_INLINE in scan.h */
+/* - To increase the maximum length of a rate expression in the eqn file, */
+/*   it is probably necessary to change crt_rate in scan.l */
+/* - To allow longer f90 expressions for the rate coefficients in the
+     eqn file, change consistently:
+     - crtToken, nextToken, crtFile, and crt_rate in scan.l
+     - MAX_K in this file
+     - union in scan.y
+     Note that MAX_EQNLEN only determines how long the printout of the
+     equation in the Monitor file will be. */
+/* mz_rs_20100222- */
 
 #define MAX_EQN       11000 /* mz_rs_20070124 */
 #define MAX_SPECIES    3500 /* mz_ak_20060206 */
@@ -43,8 +59,6 @@
 /* MAX_EQNTAG = max length of equation ID in eqn file */
 #define MAX_EQNTAG       32 /*  mz_pj_20080716 */
 /* check if changes in code_f90.c are also necessary when changing MAX_EQNTAG */
-/* MAX_K = max length of rate expression in eqn file */
-/* note that it is also necessary to change the size of union in scan.y !!! */
 #define MAX_K           300 /* mz_rs_20070430 */
 #define MAX_ATOMS	 10
 #define MAX_ATNAME	 10

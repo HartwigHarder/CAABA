@@ -5,8 +5,8 @@
 
  set apn          = 0                 # number of aerosol phases [0...99, default=0]
  set rplfile      =                   # no replacements
- set wanted       = "Tr && G && \!Cl && \!Br && \!I"
- set mcfct        = y                 # Monte-Carlo factor?
+ set wanted       = "Tr && G && \!C && \!S && \!Cl && \!Br && \!I && \!Hg" # 6) Troposphere, Minimum chemistry
+ set mcfct        = n                 # Monte-Carlo factor?
  set diagtracfile =                   # diagnostic tracers?
  set rxnrates     = n                 # calculate accumulated reaction rates?
  set tagdbl       = n                 # tagging, doubling, both, none ??
