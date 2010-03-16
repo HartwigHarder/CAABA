@@ -124,14 +124,20 @@ parameters as \code{k_3rd} and it is defined as:
                                   ratio})/N)^2} \right)}
 \end{eqnarray}
 
+% O
+
 \note{G1002}{The path leading to 2 \kpp{O3P} + \kpp{O2} results in a
   null cycle regarding odd oxygen and is neglected.}
+
+% H
 
 \note{G2110}{The rate coefficient is: \code{k_HO2_HO2} =
   \code{(1.5E-12*EXP(19./temp)+1.7E-33*EXP(1000./temp)*cair)*
     (1.+1.4E-21*EXP(2200./temp)*C(ind_H2O))}. The value for the first
   (pressure-independent) part is from \citet{1599}, the water term from
   \citet{165}.}
+
+% N
 
 \note{G3109}{The rate coefficient is: \code{k_NO3_NO2} =
   \code{k_3rd(temp,cair,2.E-30,4.4,1.4E-12,0.7,0.6)}.}
@@ -149,6 +155,8 @@ parameters as \code{k_3rd} and it is defined as:
 \note{G3207}{The rate coefficient is defined as backward reaction
   divided by equilibrium constant.}
 
+% C1
+
 \note{G4103}{\citet{1945} recommend a zero product yield for
   \chem{HCHO}.}
 
@@ -158,82 +166,149 @@ parameters as \code{k_3rd} and it is defined as:
 \note{G4109}{The same temperature dependence assumed as for
   \kpp{CH3CHO}+\kpp{NO3}.}
 
-\note{G4201}{The product distribution is from \citet{1612} (see also
-  \citet{1624}).}
+% C2
 
-\note{G4206}{The rate coefficient was calculated by von Kuhlmann (pers.\ 
-  comm.\ 2004) using self reactions of \chem{CH_3OO} and \chem{C_2H_5OO}
-  from \citet{1555} and geometric mean as suggested by \citet{471} and
-  \citet{1632}. The product distribution (branching=0.5/0.25/0.25) is
-  calculated by von Kuhlmann (pers.\ comm.\ 2004) based on \citet{597}
-  and \citet{1613}.}
+\note{G4201}{The product distribution is from \citet{2419}, after
+  substitution of the Criegee intermediate by its decomposition
+  products.}
 
-\note{G4207}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+\note{G4206}{The product \chem{C_2H_5OH}, which reacts only with OH, is
+  substituted by its degradation products $\approx$ 0.1 \kpp{HOCH2CH2O2}
+  + 0.9 \kpp{CH3CHO} + 0.9 \kpp{HO2}.}
 
-\note{G4213}{The rate coefficient is: \code{k_PA_NO2} =
-  \code{k_3rd(temp,cair,8.5E-29,6.5,1.1E-11,1.,0.6)}.}
+\note{G4207}{The rate constant \code{8.01E-12} is for the H abstraction
+  in alpha to the \chem{-OOH} group \citep{2419} and
+  \code{0.6*k_CH3OOH_OH} is for the \chem{C_2H_5O_2} channel. The
+  branching ratios are calculated from the terms of the rate coefficient
+  at 298\,\unit{K}.}
 
-\note{G4216}{The value \code{1.0E-11} is from \citet{1207}, the temperature
-  dependence from \citet{1632}.}
+\note{G4213}{The rate coefficient is: \code{k_CH3CO3_NO2} =
+  \code{k_3rd(temp,cair,9.7E-29,5.6,9.3E-12,1.5,0.6)}.}
 
-\note{G4218}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+\note{G4218}{The rate coefficient is the same as for the \kpp{CH3O2}
+  channel in G4107 (\kpp{CH3OOH}+\kpp{OH}).}
 
-\note{G4219}{According to \citet{1614}, the same value as for
-  \kpp{CH3CHO}+\kpp{OH} can be assumed.}
+\note{G4221}{The rate coefficient is}{\code{k_PAN_M} =
+  \code{k_CH3CO3_NO2/9.E-29*EXP(-14000./temp)}, i.e.\ the rate
+  coefficient is defined as backward reaction divided by equilibrium
+  constant.}
 
-\note{G4220}{This is 50\% of the upper limit given by \citet{1555}, as
-  suggested by \citet{1612}.}
+\note{G4243}{\citet{2425} estimated that about 25\% of the
+  \kpp{HOCH2CH2O} in this reaction is produced with sufficient excess
+  energy that it decomposes promptly. The decomposition products are 2
+  \kpp{HCHO} + \kpp{HO2}.}
 
-\note{G4221}{The rate coefficient is: \code{k_PAN_M} =
-  \code{k_PA_NO2/9.E-29*EXP(-14000./temp)}, i.e.\ the rate coefficient
-  is defined as backward reaction divided by equilibrium constant.}
+\note{G4246a}{The rate coefficient is the same as for the \chem{CH_3O_2}
+  channel in G4107: \kpp{CH3OOH}+\kpp{OH}.}
+
+% C3
+
+\note{G4300}{The product NC3H7O2 is substituted with its degradation
+  products \kpp{C2H5O2} + \kpp{CO2} + \kpp{HO2}.}
 
 \note{G4301}{The product distribution is for terminal olefin carbons
   from \citet{1623}.}
 
-\note{G4304}{The rate coefficient is: \code{k_PrO2_HO2} =
-  \code{1.9E-13*EXP(1300./temp)}. Value for generic \chem{RO_2} +
-  \chem{HO_2} reaction from \citet{964} is used.}
+\note{G4304}{The value for the generic \chem{RO_2} + \chem{HO_2}
+  reaction from \citet{964} is used here.}
 
-\note{G4305}{The rate coefficient is: \code{k_PrO2_NO} =
-  \code{2.7E-12*EXP(360./temp)}.}
+\note{G4306}{The MCM products are 0.2 IPROPOL + 0.2 \kpp{CH3COCH3} + 0.6
+  IC3H7O. IPROPOL and IC3H7O are substituted with their degradation
+  products. We assume IPROPOL to be oxidized entirely to \kpp{CH3COCH3}
+  + \kpp{HO2} by \kpp{OH}. IC3H7O + \kpp{O2} produces the same
+  products.}
+ 
+\note{G4307}{Analogous to G4207 for both rate coefficient and branching
+  ratios.}
 
-\note{G4306}{The rate coefficient is: \code{k_PrO2_CH3O2} =
-  \code{9.46E-14*EXP(431./temp)}. The product distribution is from
-  \citet{1612}.}
+\note{G4315a}{The same value as for G4107 (\kpp{CH3OOH} + \kpp{OH}) is
+  used, multiplied by the branching ratio of the \kpp{CH3O2} channel.}
 
-\note{G4307}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+% C4
 
-\note{G4309}{The products are from \citet{1612}.}
+\note{G4400}{\kpp{LC4H9O2} represents 0.127 NC4H9O2 + 0.873 SC4H9O2.}
 
-\note{G4315}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+\note{G4401}{NC4H9O and SC4H9O are substituted with 2 \kpp{CO2} +
+  \kpp{C2H5O2} and 0.636 \kpp{MEK} + \kpp{HO2} and 0.364 \kpp{CH3CHO} +
+  \kpp{C2H5O2}, repectively. The stoichiometric coefficients on the
+  right side are weighted averages.}
 
-\note{G4319}{Same value as for \kpp{PAN} assumed.}
+\note{G4403}{The alkyl nitrate yield is the weighted average yield for
+  the two isomers forming from NC4H9O2 and SC4H9O2.}
 
-\note{G4401}{Same value as for propyl group assumed (\code{k_PrO2_CH3O2}).}
+\note{G4404}{The product distribution is the weighted average of the
+  single isomer hydroperoxides. It is calculated from the rate constants
+  of single channels and the ratio of the isomers NC4H9O2 and SC4H9O2.
+  The overall rate constant for this reaction is calculated as weighted
+  average of the channels rate constants. The relative weight of the
+  products from NC4H9OOH and SC4H9OOH are then 0.0887 and 0.9113. The
+  channels producing \chem{RO_2} are given the rate coefficient
+  \code{0.6*k_CH3OOH_OH} as for G4107. For NC4H9OOH the products are
+  0.327 NC4H9O2 + 0.673 C3H7CHO + 0.673 OH. C3H7CHO is then substituted
+  with 2 \kpp{CO2} + \kpp{C2H5O2}. Hence, 0.327 NC4H9O2 + 1.346
+  \kpp{CO2} + 0.673 \kpp{C2H5O2} + 0.673 OH. For SC4H9OOH the products
+  are 0.219 SC4H9O2 + 0.781 MEK + 0.781 OH.}
 
-\note{G4402}{Same value as for propyl group assumed (\code{k_PrO2_HO2}).}
+\note{G4413}{\kpp{LMEKO2} represents 0.459 MEKAO2 + 0.462 MEKBO2 + 0.079
+  MEKCO2.}
 
-\note{G4403}{Same value as for propyl group assumed (\code{k_PrO2_NO}).}
+\note{G4415}{Alkyl nitrate formation is neglected. The products of MEKAO
+  and MEKCO are substituted with \kpp{HCHO} + \kpp{CO2} +
+  \kpp{HOCH2CH2O2} and \kpp{HCHO} + \kpp{CO2} + \kpp{C2H5O2}.}
 
-\note{G4404}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+\note{G4416}{\kpp{LMEKOOH} is assumed having the composition 0.459
+  MEKAOOH + 0.462 MEKBOOH + 0.079 MEKCOOH. MEKAOOH + \kpp{OH} gives 0.89
+  CO2C3CHO + 0.89 \kpp{OH} + 0.11 MEKAO2 + \kpp{H2O}. CO2C3CHO is
+  substituted with \kpp{CH3COCH2O2} + \kpp{CO2} and the products become
+  0.89 \kpp{CH3COCH2O2} + 0.89 \kpp{CO2} + 0.89 \kpp{OH} + 0.11 MEKAO2 +
+  \kpp{H2O}. MEKBOOH + \kpp{OH} gives 0.758 \kpp{BIACET} + 0.758
+  \kpp{OH} + 0.242 MEKBO2 + \kpp{H2O}. MEKCOOH + \kpp{OH} gives 0.614
+  EGLYOX + 0.614 \kpp{OH} + 0.386 MEKCO2 + \kpp{H2O}. EGLYOX is
+  substituted with \kpp{C2H5O2} + 2 \kpp{CO2} and the products become
+  0.614 \kpp{C2H5O2} + 1.228 \kpp{CO2} + 0.614 \kpp{OH} + 0.386 MEKCO2 +
+  \kpp{H2O}.}
 
-\note{G4409}{The factor 0.25 was recommended by Uli Poeschl (pers.\ 
-  comm.\ 2004).}
+\note{G4417}{The rate coefficient is the combination of the ones for the
+  two isomers weighted by the relative abundances for NC4H9NO3 and
+  SC4H9NO3, respectively. Product distribution is calculated
+  accordingly. NC4H9NO3 + \kpp{OH} gives C3H7CHO + \kpp{NO2} + \kpp{H2O}
+  with C3H7CHO being substituted with 2 \kpp{CO2} + \kpp{C2H5O2}. After
+  substitution is obtained 2 \kpp{CO2} + \kpp{C2H5O2} + \kpp{NO2} +
+  \kpp{H2O}. SC4H9NO3 + \kpp{OH} gives \kpp{MEK} + \kpp{NO2} + \kpp{H2O}
+  For the product distribution NC4H9NO3 and SC4H9NO3 account for 0.08577
+  and 0.91423, respectively.}
 
-\note{G4414}{Same value as for propyl group assumed (\code{k_PrO2_HO2}).}
+\note{G4419}{The same value as for \kpp{PAN} is assumed.}
 
-\note{G4415}{Same value as for propyl group assumed (\code{k_PrO2_NO}).}
+\note{G4420}{Products are as in G4415. Only the main channels for each
+  isomer are considered. Rate constant is the weighted average for the
+  isomers.}
 
-\note{G4416}{Same value as for G4107: \kpp{CH3OOH}+\kpp{OH} assumed.}
+\note{G4437}{\kpp{LHMVKABO2} is a lumped species of virtual composition
+  0.3 HMVKAO2 + 0.7 HMVKBO2. The products are the weighted average for
+  the permutation reactions of each single MCM RO2.}
 
-\note{G4417}{Value for \chem{C_4H_9ONO_2} used here.}
+\note{G4439}{products are the weighted average for the decomposition of
+  0.3 HMVKAO + 0.7 HMVKBO.}
 
-\note{G4503}{Same temperature dependence assumed as for other
-  \chem{RO_2}+\kpp{HO2} reactions.}
+\note{G4440}{as for G4439}
 
-\note{G4504}{Yield of 12~\% \chem{RONO_2} assumed as suggested in Table
-  2 of \citet{1631}.}
+\note{G4441}{The rate coefficient and products are 30\% for HMVKAOOH and
+  70\% for HMVKBOOH.}
+
+\note{G4444}{\kpp{LMVKOHABO2} is a lumped species of virtual composition
+  0.3 MVKOHAO2 + 0.7 MVKOHBO2. The products are the weighted average for
+  the permutation reactions of each single MCM RO2.}
+
+\note{G4446}{products are the weighted average for the decomposition of
+  0.3 MVKOHAO + 0.7 MVKOHBO.}
+
+\note{G4447}{as for G4446}
+
+\note{G4448}{The rate coefficient and products are 30\% for MVKOHAOOH
+  and 70\% for MVKOHBOOH.}
+
+% Cl
 
 \note{G6102}{The rate coefficient is: \code{k_ClO_ClO} =
   \code{k_3rd_iupac(temp,cair,2.E-32,4.,1.E-11,0.,0.45)}.}
@@ -258,6 +333,8 @@ parameters as \code{k_3rd} and it is defined as:
 \note{G7302}{The rate coefficient is: \code{k_BrO_NO2} =
   \code{k_3rd(temp,cair,5.2E-31,3.2,6.9E-12,2.9,0.6)}.}
 
+% Br
+
 \note{G7303}{The rate coefficient is defined as backward reaction
   \citep{1845} divided by equilibrium constant \citep{1054}.}
 
@@ -278,6 +355,8 @@ parameters as \code{k_3rd} and it is defined as:
 \note{G7607}{It is assumed that the reaction liberates all \kpp{Br}
   atoms but not \kpp{Cl}. The fate of the carbon atom is currently not
   considered.}
+
+% I
 
 \note{G8102}{It is assumed that the reaction produces new particles.}
 
@@ -304,6 +383,8 @@ parameters as \code{k_3rd} and it is defined as:
   \citet{1845}. The remaining channels are assumed to produce \chem{Br}
   + \chem{I} + \chem{O_2}.}
 
+% S
+
 \note{G9400a}{Abstraction path. The assumed reaction sequence (omitting
   \chem{H_2O} and \chem{O_2} as products) according to \citet{243} is:
   \begin{eqnarray*}
@@ -324,6 +405,8 @@ parameters as \code{k_3rd} and it is defined as:
 \note{G9400}{Addition path. The rate coefficient is: \code{k_DMS_OH} =
   \code{1.0E-39*EXP(5820./temp)*C(ind_O2)/
     (1.+5.0E-30*EXP(6280./temp)*C(ind_O2))}.}
+
+% Hg
 
 \note{G10201}{Upper limit.}
 

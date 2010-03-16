@@ -1,0 +1,59 @@
+# --------------------------------------------------------------------------
+# SELECTION OF DESIRED CONFIGURATION(S)
+# --------------------------------------------------------------------------
+
+set letters = (a b d e f g h i j k l m n p r s t u v w x y z)
+
+echo "please, choose the set of tagging configurations from:"
+echo "[one or more letters (no spaces!), quit=q]:"
+
+# list of configurations foubd in the current directory
+set cn = "0"
+set cfgfiles = (*.cfg)
+set cfgletters = ""
+foreach i ($cfgfiles)
+  @ cn=$cn + 1
+  set desc = `grep "###" $cfgfiles[$cn] | sed 's|###||g' | sed 's|;||g'`
+  set ltmp = `grep "+++" $cfgfiles[$cn] | sed 's|+++||g' | sed 's|;||g'`
+  if ("$desc" == "") set desc = "<no description found>"
+  if ("$ltmp" == "") set ltmp = $letters[$cn]
+  set cfgletters = ($cfgletters $ltmp)
+  echo "$cfgletters[$cn]) $cfgfiles[$cn] : $desc"
+end
+
+# inputting selection
+if (! ${?batch}) then
+  set inputstring = "$<"
+else
+  echo "selected configuration from batch (tagcfg) is: $tagcfg"
+  echo ""
+  set inputstring = $tagcfg
+endif
+
+# default: one configuration - c
+if ( "$inputstring" == "" ) set inputstring = "c"
+
+# desired quit
+if ( "$inputstring" == "q" ) exit 1
+
+# parsing configurations selection
+set cfglist = ""
+set cln = "0"
+foreach i ($cfgletters)
+  @ cln=$cln + 1
+  set instr = `echo $inputstring $cfgletters[$cln] | awk '{print index($1,$2)}'`
+  if ("$instr" != "0") then
+  # adding configuration
+    set cfglist = ($cfglist $cfgfiles[$cln])
+  endif
+end
+
+# final choice
+if ("$cfglist" == "") then
+  echo "ambiguous input; no configurations selected. exiting."
+  echo ""
+  exit 1
+endif
+
+echo "[ selected configurations: $cfglist ]"
+echo ""

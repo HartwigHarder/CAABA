@@ -19,47 +19,33 @@
 
 ! {$CONF_PARAM}
 
-MODULE messy_mecca_{%DBL}_box
+MODULE {%CMODEL}_{%DBL}_box
 
   USE messy_mecca_kpp     ! dp, ... nreact, nspec, ind_*, SPC_NAMES, EQN_TAGS
   USE caaba_io,           ONLY: open_output_file, write_output_file, close_file
   USE caaba_mem,          ONLY: C, cair, press
 
-  USE {%CMODEL}_dbl_common_box
+  USE {%CMODEL}_dbl_common ! common routines
+  USE {%CMODEL}_{%DBL}     ! SMCL routines
 
   IMPLICIT NONE
 
 ! netcdf handle for deltas, conc., etc. output
   INTEGER :: ncid_{%DBL}
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! reference standart ratio for 13C, V-PDB
   REAL(dp), PARAMETER :: VPDB_13C     = 1123.72E-05_dp
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! reference standart ratio for 17O, 18O, V-SMOW
   REAL(dp), PARAMETER :: VSMOW_17O    =  386.72E-06_dp  ! Assonov, 2003b, pc
   REAL(dp), PARAMETER :: VSMOW_18O    = 2005.20E-06_dp
 ! oxygen mass-independent fractionation factor
-  REAL(dp), PARAMETER :: NMDF_O        = 0.5281_dp      ! meteoric waters
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+  REAL(dp), PARAMETER :: NMDF_O        = 0.5281_dp      ! beta: meteoric waters
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
-! treshold value: below it, species might stop to sink to the others 
-! (but can receive still)
-  REAL(dp), PARAMETER :: THRES = 1.0E-40_dp * 2.5047E+19_dp  
-!                                ?          * mean cair
-
-! -----------------------------------------------------------------------------
-
-! here constants and doubled species indices are to be defined
-! {$TRAC_DECL} [%ind_#%] <-- boxmodel syntax  (%{%TAG}_#%) <-- isotracers syntax
-
-! -----------------------------------------------------------------------------
-  
-! no. of "rejected" species (under threshold)
-  INTEGER             :: {%DBL}_NREJCT
-
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! output array: doubled carbons: 2 species and D13C (+TC)     = (NSPEC+1)*3
 !                                TC(regular),                 +1
 !                                d0TC(reg), d0TC(iso), d0D13CTC, +3
@@ -69,8 +55,8 @@ MODULE messy_mecca_{%DBL}_box
   
 ! total budget verification
   REAL(dp)            :: TC0, D13CTC0
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! output array: doubled oxygen: 3 species, D17O,D18O,DC17O (+TO) = (NSPEC+1)*6
 !                               TO(regular),
 !                               d0TO(reg),d0TO(iso),d0D17TO,d0D18TO,d0DC17OTO,
@@ -81,23 +67,16 @@ MODULE messy_mecca_{%DBL}_box
 
 ! total budget verification
   REAL(dp)            :: TO0, D17OTO0, D18OTO0, DC17OTO0
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
 ! -----------------------------------------------------------------------------
-
-  PRIVATE NKRSPEC, KRSIND
 
   PUBLIC {%DBL}_x0
   PUBLIC {%DBL}_emis
   PUBLIC {%DBL}_depos
   PUBLIC {%DBL}_pmix
-  PUBLIC {%DBL}_process
-  PUBLIC {%DBL}_calctotals
+  PUBLIC {%DBL}_postprocess
   PUBLIC {%DBL}_calcdeltas
-  PUBLIC {%DBL}_correct2reg
-  PUBLIC {%DBL}_correct2iso
-! PUBLIC {%DBL}_fudge
-  PUBLIC {%DBL}_resetPTs
   PUBLIC {%DBL}_init
   PUBLIC {%DBL}_result
   PUBLIC {%DBL}_finish
@@ -116,13 +95,13 @@ CONTAINS
 
     INTEGER :: i
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>CASE:REM}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>CASE:REM}
 ! {$x0} [%n%]  (%    D13C({%TAG}_#) = $%)
 ! n - # of the minor class, i.e. 1 for d13 / 1 for d17, 2 for d18
 ! # - species name; $ - init. value
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<CASE:REM}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CASE:REM}
   ! initializing isotopologues concentration according to "regular", then
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 
 ! {$x0} [%1%]  (%    D13C({%TAG}_#) = $%)
 
@@ -162,8 +141,8 @@ CONTAINS
 !      C({%RDIND}(i,2)) = C({%RDIND}(i,0)) * D13C(i)
 !    ENDDO
 #endif
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 
 ! {$x0} [%1%]  (%    D17O({%TAG}_#) = $%)
 
@@ -213,22 +192,28 @@ CONTAINS
 !     C({%RDIND}(i,3)) = C({%RDIND}(i,0)) * D18O(i)
 !   ENDDO
 #endif
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
+#ifdef NULL_TEST
+    C({%RDIND}(:,1)) = C({%RDIND}(:,0))
+    DO i = 2, {%NDSPEC}
+      C({%RDIND}(:,i)) = 0.0_dp
+    ENDDO
+#endif
 
   ! updating total {%ATOM} in the system
-    CALL {%DBL}_calctotals
+    CALL {%DBL}_calctotals(C)
     CALL {%DBL}_calcdeltas
     
     T{%ATOM}0 = C(ind_{%ABBR}T{%ATOM})
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
     D13CTC0 = D13CTC
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
     D17OTO0 = D17OTO
     D18OTO0 = D18OTO
     DC17OTO0 = DC17OTO
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
   END SUBROUTINE {%DBL}_x0
 
@@ -250,15 +235,15 @@ CONTAINS
 ! uncomment to manage emission only through {%DBL}
 !    C({%RDIND}(ind_d,0)) = C({%RDIND(ind_d,0)) + amount 
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
     ! 12C
     C({%RDIND}(ind_d,1)) = C({%RDIND}(ind_d,1)) + amount * &
       isofrac2r(deltas(1)/1000.0_dp, VPDB_13C, QD{%ATOM}ATOM(ind_d))
     ! 13C
     C({%RDIND}(ind_d,2)) = C({%RDIND}(ind_d,2)) + amount * &
       isofrac2f(deltas(1)/1000.0_dp, VPDB_13C, QD{%ATOM}ATOM(ind_d))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
     C({%RDIND}(ind_d,1)) = C({%RDIND}(ind_d,1)) + amount *  &
       isofrac3r(deltas(1)/1000.0_dp, VSMOW_17O, &
                 deltas(2)/1000.0_dp, VSMOW_18O, QD{%ATOM}ATOM(ind_d))
@@ -268,7 +253,7 @@ CONTAINS
     C({%RDIND}(ind_d,3)) = C({%RDIND}(ind_d,3)) + amount *  &
       isofrac3f(deltas(2)/1000.0_dp, VSMOW_18O, &
                 deltas(1)/1000.0_dp, VSMOW_17O, QD{%ATOM}ATOM(ind_d))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
   END SUBROUTINE {%DBL}_emis
 
@@ -329,7 +314,7 @@ CONTAINS
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE {%DBL}_process
+  SUBROUTINE {%DBL}_postprocess
 
     IMPLICIT NONE
 
@@ -339,60 +324,28 @@ CONTAINS
   ! calculating the number of specs falling below THRES
     {%DBL}_NREJCT = 0
     DO i = 1, {%NDSPEC}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
       chkamnt = C({%RDIND}(i,1)) + C({%RDIND}(i,2))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
       chkamnt = C({%RDIND}(i,1)) + C({%RDIND}(i,2)) + C({%RDIND}(i,3))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
       IF (chkamnt .LT. THRES) THEN
         {%DBL}_NREJCT = {%DBL}_NREJCT + 1
 !       C(RDCIND(i,0)) = 0.0_dp ! UNDEF
 !       C(RDCIND(i,1)) = 0.0_dp ! UNDEF
 !       C(RDCIND(i,2)) = 0.0_dp ! UNDEF
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 !       C(RDCIND(i,3)) = 0.0_dp ! UNDEF
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
       ENDIF
     ENDDO           ! ndspec cycle
 
   ! every-step deltas/totals update
-    CALL {%DBL}_calctotals
+    CALL {%DBL}_calctotals(C)
     CALL {%DBL}_calcdeltas
 
-  END SUBROUTINE {%DBL}_process
-
-
-
-! -----------------------------------------------------------------------------
-
-  SUBROUTINE {%DBL}_calctotals
-
-    IMPLICIT NONE
-
-    INTEGER  :: i
-
-! here the number of {%ATOM} atoms only calculated, 
-! according to each species composition
-
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-!   careful, TC is from regular!
-    C(ind_ITC)   = SUM( C({%RDIND}(:,0))*REAL(QDCATOM(:),dp) )
-    C(ind_I12TC) = SUM( C({%RDIND}(:,1))*REAL(QDCATOM(:),dp) + &
-                        C({%RDIND}(:,2))*REAL(QDCATOM(:)-1,dp) )
-    C(ind_I13TC) = SUM( C({%RDIND}(:,2)) )
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-!   careful, TO is from regular!
-    C(ind_ITO)   = SUM( C({%RDIND}(:,0))*REAL(QDOATOM(:),dp) )
-    C(ind_I16TO) = SUM( C({%RDIND}(:,1))*REAL(QDOATOM(:),dp) + &
-                        (C({%RDIND}(:,2)) + C({%RDIND}(:,3))) * &
-                        REAL(QDOATOM(:)-1,dp) )
-    C(ind_I17TO) = SUM( C({%RDIND}(:,2)) )
-    C(ind_I18TO) = SUM( C({%RDIND}(:,3)) )
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
-
-  END SUBROUTINE {%DBL}_calctotals
+  END SUBROUTINE {%DBL}_postprocess
 
 
 
@@ -403,14 +356,14 @@ CONTAINS
     IMPLICIT NONE
 
     INTEGER  :: i
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
     REAL(dp) :: f12C
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
     REAL(dp) :: f16O
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
   ! calculating new delta-13C values
     DO i = 1, {%NDSPEC}
       IF (C({%RDIND}(i,1)) .GT. 0.0_dp) THEN
@@ -428,8 +381,8 @@ CONTAINS
     ELSE
       D13CTC = UNDEF / 1000.0_dp
     ENDIF
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
   ! calculating new delta-17O, delta-18O, cap.delta-17O values
     DO i = 1, {%NDSPEC}
       IF (C({%RDIND}(i,1)) .GT. 0.0_dp) THEN
@@ -447,172 +400,20 @@ CONTAINS
     ENDDO        ! NISPEC-cycle
 
     ! total oxygen
-    IF (C(ind_I16TO) /= 0.0_dp) THEN
-      D17OTO  = delta3( C(ind_I16TO), C(ind_I17TO), C(ind_I18TO), VSMOW_17O, 1 )
-      D18OTO  = delta3( C(ind_I16TO), C(ind_I18TO), C(ind_I17TO), VSMOW_18O, 1 )
+    IF (C(ind_{%ABBR}16TO) /= 0.0_dp) THEN
+      D17OTO  = delta3( C(ind_{%ABBR}16TO), C(ind_{%ABBR}17TO), C(ind_{%ABBR}18TO), VSMOW_17O, 1 )
+      D18OTO  = delta3( C(ind_{%ABBR}16TO), C(ind_{%ABBR}18TO), C(ind_{%ABBR}17TO), VSMOW_18O, 1 )
       DC17OTO = D17OTO - NMDF_O * D18OTO
     ELSE
       D17OTO  = UNDEF / 1000.0_dp
       D18OTO  = UNDEF / 1000.0_dp
       DC17OTO = UNDEF / 1000.0_dp
     ENDIF
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
 
   END SUBROUTINE {%DBL}_calcdeltas
   
-
-
-! -----------------------------------------------------------------------------
-
-! correction of total isotopomers budget to "regular" species budget  
-
-  SUBROUTINE {%DBL}_correct2reg
-
-    IMPLICIT NONE
-
-    INTEGER  :: i
-    REAL(dp) :: total
-   
-#ifdef USE_KRSIND
-! here is the ver. with corr. of only KIE-rel species to regular
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-    ! correcting only species related to KIE in this meccanism
-    DO i = 1, NKRSPEC
-      ! whole isotopic carbon
-      total = C({%RDIND}(KRSIND(i),1)) + &
-              C({%RDIND}(KRSIND(i),2))
-      IF (total .LE. 0.0_dp) THEN
-        C({%RDIND}(KRSIND(i),1)) = 0.0_dp
-        C({%RDIND}(KRSIND(i),2)) = 0.0_dp
-      ELSE
-        C({%RDIND}(KRSIND(i),1)) = ( C({%RDIND}(KRSIND(i),1)) * & 
-                                 C({%RDIND}(KRSIND(i),0)) ) / total
-        C({%RDIND}(KRSIND(i),2)) = ( C({%RDIND}(KRSIND(i),2)) * &
-                                 C({%RDIND}(KRSIND(i),0)) ) / total
-      ENDIF
-    ENDDO
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-    ! correcting only species related to KIE in this meccanism
-    DO i = 1, NKRSPEC
-      ! whole isotopic oxygen
-      total = C({%RDIND}(KRSIND(i),1)) + &
-              C({%RDIND}(KRSIND(i),2)) + &
-              C({%RDIND}(KRSIND(i),3)) 
-      IF (total .LE. 0.0_dp) THEN
-        C({%RDIND}(KRSIND(i),1)) = 0.0_dp
-        C({%RDIND}(KRSIND(i),2)) = 0.0_dp
-        C({%RDIND}(KRSIND(i),3)) = 0.0_dp
-      ELSE
-        C({%RDIND}(i,1)) = ( C({%RDIND}(KRSIND(i),1)) * &
-                         C({%RDIND}(KRSIND(i),0)) ) / total
-        C({%RDIND}(i,2)) = ( C({%RDIND}(KRSIND(i),2)) * &
-                         C({%RDIND}(KRSIND(i),0)) ) / total
-        C({%RDIND}(i,3)) = ( C({%RDIND}(KRSIND(i),3)) * &
-                         C({%RDIND}(KRSIND(i),0)) ) / total
-      ENDIF
-    ENDDO
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
-#else
-! here is the ver. with corr. of ALL species to regular
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-    DO i = 1, {%NDSPEC}
-      ! whole isotopic carbon of selected species
-      total = C({%RDIND}(i,1)) + &
-              C({%RDIND}(i,2)) 
-      IF (total .LE. 0.0_dp) THEN
-        C({%RDIND}(i,1)) = 0.0_dp
-        C({%RDIND}(i,2)) = 0.0_dp
-      ELSE
-        C({%RDIND}(i,1)) = ( C({%RDIND}(i,1)) * C({%RDIND}(i,0)) ) / total
-        C({%RDIND}(i,2)) = ( C({%RDIND}(i,2)) * C({%RDIND}(i,0)) ) / total
-      ENDIF
-    ENDDO
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-    DO i = 1, {%NDSPEC}
-      ! whole isotopic oxygen of selected species
-      total = C({%RDIND}(i,1)) + &
-              C({%RDIND}(i,2)) + &
-              C({%RDIND}(i,3)) 
-      IF (total .LE. 0.0_dp) THEN
-        C({%RDIND}(i,1)) = 0.0_dp
-        C({%RDIND}(i,2)) = 0.0_dp
-        C({%RDIND}(i,3)) = 0.0_dp
-      ELSE
-        C({%RDIND}(i,1)) = ( C({%RDIND}(i,0)) * C({%RDIND}(i,1)) ) / total
-        C({%RDIND}(i,2)) = ( C({%RDIND}(i,0)) * C({%RDIND}(i,2)) ) / total
-        C({%RDIND}(i,3)) = ( C({%RDIND}(i,0)) * C({%RDIND}(i,3)) ) / total
-      ENDIF
-    ENDDO
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
-#endif
-
-  END SUBROUTINE {%DBL}_correct2reg
-
-
-
-! -----------------------------------------------------------------------------
-  
-! correction of "regular" species budget to the total isotopologues budget
-
-  SUBROUTINE {%DBL}_correct2iso
-
-    IMPLICIT NONE
-
-    INTEGER  :: i
-
-#ifdef USE_KRSIND
-! here is the ver. with corr. of only KIE-rel species to regular
-    DO i = 1, NKRSPEC
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-      C({%RDIND}(KRSIND(i),0)) = C({%RDIND}(KRSIND(i),1)) + &
-                               C({%RDIND}(KRSIND(i),2))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-      C({%RDIND}(KRSIND(i),0)) = C({%RDIND}(KRSIND(i),1)) + &
-                             ( C({%RDIND}(KRSIND(i),2)) + &
-                               C({%RDIND}(KRSIND(i),3)) )
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
-    ENDDO
-#endif
-#ifndef USE_KRSIND
-! here is the ver. with corr. of ALL species to regular
-    DO i = 1, {%NDSPEC}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-      C({%RDIND}(i,0)) = C({%RDIND}(i,1)) + &       
-                       C({%RDIND}(i,2))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-      C({%RDIND}(i,0)) = C({%RDIND}(i,1)) + &
-                     ( C({%RDIND}(i,2)) + &
-                       C({%RDIND}(i,3)) )
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
-    ENDDO
-#endif
-
-  END SUBROUTINE {%DBL}_correct2iso
-
-
-
-! -----------------------------------------------------------------------------
-  
-  SUBROUTINE {%DBL}_resetPTs
-
-  ! production tracers initialization (reset) routine
-
-    IMPLICIT NONE
-    
-! {x$RESET_PTs}
-! - currently disabled with use of DRPT{%ATOM}IND()
-
-#ifdef USE_PT
-    C(DRPT{%ATOM}IND(:)) = 0.0_dp    ! <-- boxmodel syntax
-#endif
-
-  END SUBROUTINE {%DBL}_resetPTs
-
 
 
 ! -----------------------------------------------------------------------------
@@ -626,7 +427,7 @@ CONTAINS
 
     CALL open_output_file(ncid_{%DBL}, 'caaba_mecca_{%DBL}', &
       (/   &
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! {$TAG_SPECS} [%I12#%]
        , &
 ! {$TAG_SPECS} [%I13#%]
@@ -662,8 +463,8 @@ CONTAINS
 {$ELSA}       '@SGD@SR_t_0(TC_R)', '@SGD@SR_t_0(TC_D)', '@SGD@SR_t_0(@SGd@SR^1^3C(TC_D)) ' &
        , &
 {$ELSA}       '@SRnumber of rejected species' &
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! {$TAG_SPECS} [%I16#%]
        , &
 ! {$TAG_SPECS} [%I17#%]
@@ -723,7 +524,7 @@ CONTAINS
 {$ELSA}       '@SGD@SR_t_0(@SGd@SR^1^8O(TO_D))', '@SGD@SR_t_0(@SGd@SR^1^7O(TO_D))', '@SGD@SR_t_0(@SGD@SR^1^7O(TO_D))' &
        , &
 {$ELSA}       '@SRnumber of rejected species'  &
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
        /) )
 
   END SUBROUTINE {%DBL}_init
@@ -739,7 +540,7 @@ CONTAINS
     REAL(dp), INTENT(IN) :: model_time
     INTEGER              :: i
     
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
     DO i = 1, {%NDSPEC}
       D{%A}OUT(i)           = C({%RDIND}(i,1))/cair
       D{%A}OUT({%NDSPEC}+i)   = C({%RDIND}(i,2))/cair
@@ -756,8 +557,8 @@ CONTAINS
     D{%A}OUT({%NDSPEC}*3+5) = C(ind_ITC)-TC0                   ! d0TC_R   = TC_R - TC_R(t=0)
     D{%A}OUT({%NDSPEC}*3+6) = (C(ind_I12TC)+C(ind_I13TC))-TC0  ! d0TC     = (T12C+T13C) - TC_R(t=0)
     D{%A}OUT({%NDSPEC}*3+7) = (D13CTC-D13CTC0) * 1000.0_dp     ! d0D13CTC = D13CTC - D13CTC(t=0)   
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
     DO i = 1, {%NDSPEC}
       D{%A}OUT(i)           = C({%RDIND}(i,1))/cair
       D{%A}OUT({%NDSPEC}+i)   = C({%RDIND}(i,2))/cair
@@ -768,21 +569,21 @@ CONTAINS
     ENDDO
 
   ! totals
-    D{%A}OUT({%NDSPEC}*6+1) = C(ind_ITO)
-    D{%A}OUT({%NDSPEC}*6+2) = C(ind_I16TO)
-    D{%A}OUT({%NDSPEC}*6+3) = C(ind_I17TO)
-    D{%A}OUT({%NDSPEC}*6+4) = C(ind_I18TO)
+    D{%A}OUT({%NDSPEC}*6+1) = C(ind_{%ABBR}TO)
+    D{%A}OUT({%NDSPEC}*6+2) = C(ind_{%ABBR}16TO)
+    D{%A}OUT({%NDSPEC}*6+3) = C(ind_{%ABBR}17TO)
+    D{%A}OUT({%NDSPEC}*6+4) = C(ind_{%ABBR}18TO)
     D{%A}OUT({%NDSPEC}*6+5) = D18OTO * 1000.0_dp
     D{%A}OUT({%NDSPEC}*6+6) = D17OTO * 1000.0_dp
     D{%A}OUT({%NDSPEC}*6+7) = DC17OTO * 1000.0_dp
 
   ! totals verification
-    D{%A}OUT({%NDSPEC}*6+8) = C(ind_ITO)-TO0                   ! d0TO_R    = TO_R - TO_R(t=0)
-    D{%A}OUT({%NDSPEC}*6+9) = C(ind_I16TO)+C(ind_I17TO)+C(ind_I18TO)-TO0  ! d0TO = (T16O+T17O+T18O) - TO_R(t=0)
+    D{%A}OUT({%NDSPEC}*6+8) = C(ind_{%ABBR}TO)-TO0                   ! d0TO_R    = TO_R - TO_R(t=0)
+    D{%A}OUT({%NDSPEC}*6+9) = C(ind_{%ABBR}16TO)+C(ind_{%ABBR}17TO)+C(ind_{%ABBR}18TO)-TO0  ! d0TO = (T16O+T17O+T18O) - TO_R(t=0)
     D{%A}OUT({%NDSPEC}*6+10) = (D18OTO-D18OTO0) * 1000.0_dp    ! d0D18OTO  = D18OTO - D18OTO(t=0)
     D{%A}OUT({%NDSPEC}*6+11) = (D17OTO-D17OTO0) * 1000.0_dp    ! d0D18OTO  = D17OTO - D17OTO(t=0)
     D{%A}OUT({%NDSPEC}*6+12) = (DC17OTO-DC17OTO0) * 1000.0_dp  ! d0DC17OTO = DC17OTO - DC18OTO(t=0)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
   ! last value is a common parameter
     D{%A}OUT(UBOUND(D{%A}OUT)) = REAL({%DBL}_NREJCT)

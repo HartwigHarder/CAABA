@@ -16,8 +16,8 @@ MODULE messy_cmn_photol_mem
     ip_O2       =  1, ip_O3P      =  2, ip_O1D      =  3, ip_H2O2     =  4, &
     ip_NO2      =  5, ip_NO2O     =  6, ip_NOO2     =  7, ip_N2O5     =  8, &
     ip_HNO3     =  9, ip_HNO4     = 10, ip_PAN      = 11, ip_HONO     = 12, &
-    ip_CH3OOH   = 13, ip_COH2     = 14, ip_CHOH     = 15, ip_PAA      = 16, &
-    ip_CH3CHO   = 17, ip_CH3COCH3 = 18, ip_CH3COCHO = 19, ip_HOCl     = 20, &
+    ip_CH3OOH   = 13, ip_COH2     = 14, ip_CHOH     = 15, ip_CH3CO3H  = 16, &
+    ip_CH3CHO   = 17, ip_CH3COCH3 = 18, ip_MGLYOX   = 19, ip_HOCl     = 20, &
     ip_OClO     = 21, ip_Cl2O2    = 22, ip_ClNO3    = 23, ip_ClNO2    = 24, &
     ip_Cl2      = 25, ip_BrO      = 26, ip_HOBr     = 27, ip_BrCl     = 28, &
     ip_BrNO3    = 29, ip_BrNO2    = 30, ip_Br2      = 31, ip_CCl4     = 32, &
@@ -39,8 +39,8 @@ MODULE messy_cmn_photol_mem
     'O2       ', 'O3P      ', 'O1D      ', 'H2O2     ', &
     'NO2      ', 'NO2O     ', 'NOO2     ', 'N2O5     ', &
     'HNO3     ', 'HNO4     ', 'PAN      ', 'HONO     ', &
-    'CH3OOH   ', 'COH2     ', 'CHOH     ', 'PAA      ', &
-    'CH3CHO   ', 'CH3COCH3 ', 'CH3COCHO ', 'HOCl     ', &
+    'CH3OOH   ', 'COH2     ', 'CHOH     ', 'CH3CO3H  ', &
+    'CH3CHO   ', 'CH3COCH3 ', 'MGLYOX   ', 'HOCl     ', &
     'OClO     ', 'Cl2O2    ', 'ClNO3    ', 'ClNO2    ', &
     'Cl2      ', 'BrO      ', 'HOBr     ', 'BrCl     ', &
     'BrNO3    ', 'BrNO2    ', 'Br2      ', 'CCl4     ', &

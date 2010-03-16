@@ -1,5 +1,5 @@
 !*****************************************************************************
-!                Time-stamp: <2010-02-19 17:08:46 sander>
+!                Time-stamp: <2010-03-16 16:00:25 sander>
 !*****************************************************************************
 
 ! submodel MECCA
@@ -39,7 +39,7 @@ MODULE messy_mecca
   PUBLIC :: define_mcfct
 
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: modstr = 'mecca' ! name of module
-  CHARACTER(LEN=*), PUBLIC, PARAMETER :: modver = '2.5n'  ! module version
+  CHARACTER(LEN=*), PUBLIC, PARAMETER :: modver = '2.6'   ! module version
   LOGICAL, PUBLIC, SAVE :: l_aero     ! switch for aero chemistry
 
   ! GLOBAL CTRL-NAMELIST

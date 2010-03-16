@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Global.f90
-! Time                 : Mon Feb 22 17:50:46 2010
-! Working directory    : /home/sander/e2/messy_2.3z_rs/messy/mbm/caaba/mecca
+! Time                 : Tue Mar 16 16:04:25 2010
+! Working directory    : /home/sander/e2/messy_2.3zp_rs_mim2/messy/mbm/caaba/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -70,15 +70,15 @@ MODULE messy_mecca_kpp_Global
 
   ! MECCA info from xmecca:
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: &
-    timestamp            = 'xmecca was run on 2010-02-22 at 17:50:44 by sander', &
-    gas_spc_file         = '-rw------- 1 sander sander 12731 2009-07-16 18:14 gas.spc', &
-    aqueous_spc_file     = '-rw------- 1 sander sander 8371 2008-07-17 18:28 aqueous.spc', &
-    gas_eqn_file         = '-rw------- 1 sander sander 49394 2010-02-22 15:57 gas.eqn', &
-    aqueous_eqn_file     = '-rw------- 1 sander sander 55063 2009-01-30 16:33 aqueous.eqn', &
-    gas_spc_file_sum     = '23346    13', &
-    aqueous_spc_file_sum = '39581     9', &
-    gas_eqn_file_sum     = '22105    49', &
-    aqueous_eqn_file_sum = '54359    54', &
+    timestamp            = 'xmecca was run on 2010-03-16 at 16:04:22 by sander', &
+    gas_spc_file         = '-rw------- 1 sander sander 18477 2010-03-16 13:54 gas.spc', &
+    aqueous_spc_file     = '-rw------- 1 sander sander 8371 2010-03-04 23:04 aqueous.spc', &
+    gas_eqn_file         = '-rw------- 1 sander sander 70375 2010-03-11 15:35 gas_mim2.eqn', &
+    aqueous_eqn_file     = '-rw------- 1 sander sander 55063 2010-03-04 20:41 aqueous.eqn', &
+    gas_spc_file_sum     = '49309    19', &
+    aqueous_spc_file_sum = '00803     9', &
+    gas_eqn_file_sum     = '39773    69', &
+    aqueous_eqn_file_sum = '61681    54', &
     rplfile              = '', &
     wanted               = 'Tr && G && !C && !S && !Cl && !Br && !I && !Hg', &
     diagtracfile         = '', &
@@ -109,9 +109,9 @@ MODULE messy_mecca_kpp_Global
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3O2_a     = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3OOH_a    = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_CO2_a       = 0
-  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3COOH_a   = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3CO2H_a   = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_PAN_a       = 0
-  INTEGER, PUBLIC, DIMENSION(APN) :: ind_EtO2_a      = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_C2H5O2_a    = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3CHO_a    = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_CH3COCH3_a  = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_Cl_a        = 0
@@ -203,9 +203,10 @@ MODULE messy_mecca_kpp_Global
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_Nap_a       = 0
 
   ! from gas.eqn:
-  REAL :: k_HO2_HO2, k_NO3_NO2, k_NO2_HO2, k_HNO3_OH, k_CH3OOH_OH, k_PA_NO2, &
-          k_PAN_M, k_PrO2_HO2, k_PrO2_NO, k_PrO2_CH3O2, k_ClO_ClO, k_BrO_NO2, &
-          k_I_NO2, k_DMS_OH
+  REAL :: k_HO2_HO2, k_NO3_NO2, k_NO2_HO2, k_HNO3_OH, k_CH3OOH_OH, &
+          k_CH3CO3_NO2, k_PAN_M, k_ClO_ClO, k_BrO_NO2, k_I_NO2, k_DMS_OH
+  REAL :: KRO2NO, KRO2HO2, KAPHO2, KAPNO, KRO2NO3, KNO3AL
+  REAL(dp) :: RO2      ! sum of peroxy radicals
   REAL :: k_O3s ! mz_pj_20080812
   ! ALL PHASES:
 !KPPPP_DIRECTIVE vector variable definition start
@@ -216,7 +217,7 @@ MODULE messy_mecca_kpp_Global
   !   defined here.
   ! - The 3 variables temp, press, and cair are only used inside KPP.
   !   They are different from the variables with the same names in the base
-  !   model (as used in the SMIL files *_e5.f90 and *_box.f90)
+  !   model (as used in the SMIL files *_si.f90 and *_box.f90)
   ! - Data transfer between the SMIL and the KPP variables is done via the
   !   fill subroutines in messy_mecca_kpp.f90:
   !   - fill_temp transfers temperature
@@ -228,7 +229,8 @@ MODULE messy_mecca_kpp_Global
   ! - qqq describe potential KP4 incompatibility here...
   ! -------------------------------------------------------
   REAL(dp) :: cair    ! c(air) (wet) [mcl/cm^3]
-  REAL(dp) :: press   ! pressure [Pa] ! mz_pj_20080716
+  REAL(dp) :: press   ! pressure [Pa]
+  REAL     :: mcfct(NREACT) ! Monte-Carlo factor
 !KPPPP_DIRECTIVE vector variable definition end
   ! AEROSOL ONLY:
 !KPPPP_DIRECTIVE vector variable definition start
@@ -245,10 +247,7 @@ MODULE messy_mecca_kpp_Global
 !KPPPP_DIRECTIVE vector variable definition start
   REAL(dp) :: jx(IP_MAX) = 0.
 !KPPPP_DIRECTIVE vector variable definition end
-!KPPPP_DIRECTIVE vector variable definition start
-  REAL :: mcfct(NREACT) ! Monte-Carlo factor
-!KPPPP_DIRECTIVE vector variable definition end
-  ! iht_ = index of troposheric heterogeneous reactions 
+  ! iht_ = index of troposheric heterogeneous reactions
   INTEGER, PARAMETER, PUBLIC :: &
     iht_N2O5      =  1, iht_HNO3      =  2, iht_Hg      =  3, &
     iht_RGM       = 4
@@ -269,7 +268,7 @@ MODULE messy_mecca_kpp_Global
   REAL(dp) :: khet_St(IHS_MAX) = 0.
 !KPPPP_DIRECTIVE vector variable definition end
   ! Parameters included for acid-base equilibria calculation
-  ! used to enable the double use of the aqueous.eqn for liquid 
+  ! used to enable the double use of the aqueous.eqn for liquid
   ! and aerosol phase.
   REAL(dp), PARAMETER :: &
     testfac_HO2   = 1.e5_dp, testfac_HONO   = 1.e5_dp, &
@@ -290,12 +289,12 @@ MODULE messy_mecca_kpp_Global
 
   ! KPP info from xmecca:
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: &
-    mecca_spc_file     = '-rw------- 1 sander sander 21480 2010-02-22 17:50 mecca.spc', &
-    mecca_eqn_file     = '-rw------- 1 sander sander 23540 2010-02-22 17:50 mecca.eqn', &
-    mecca_spc_file_sum = '57839    21', &
-    mecca_eqn_file_sum = '05279    23', &
+    mecca_spc_file     = '-rw------- 1 sander sander 27226 2010-03-16 16:04 mecca.spc', &
+    mecca_eqn_file     = '-rw------- 1 sander sander 24935 2010-03-16 16:04 mecca.eqn', &
+    mecca_spc_file_sum = '52734    27', &
+    mecca_eqn_file_sum = '17546    25', &
     kppoption          = 'k', &
-    KPP_HOME           = '/home/sander/e2/messy_2.3z_rs/messy/tools/kpp', &
+    KPP_HOME           = '/home/sander/e2/messy_2.3zp_rs_mim2/messy/tools/kpp', &
     KPP_version        = '2.2.1_rs5', &
     integr             = 'rosenbrock_posdef'
 

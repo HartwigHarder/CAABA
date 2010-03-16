@@ -23,16 +23,17 @@ MODULE {%CMODEL}_dbl_box
   USE messy_mecca_kpp ! dp, ...
 
 ! configurations linked
+! {$CONF_LIST} [%  USE {%CMODEL}_#%]
 ! {$CONF_LIST} [%  USE {%CMODEL}_#_box%]
 
   IMPLICIT NONE
 
-  PUBLIC dbl_emis
-  PUBLIC dbl_process     ! substitutes calc totals/deltas/fractions
-  PUBLIC dbl_resetPTs
-  PUBLIC dbl_init
-  PUBLIC dbl_result
-  PUBLIC dbl_finish
+  PUBLIC mecca_dbl_emis
+  PUBLIC mecca_dbl_postprocess      ! substitutes calc totals/deltas/fractions
+  PUBLIC mecca_dbl_resetPTs
+  PUBLIC mecca_dbl_init
+  PUBLIC mecca_dbl_result
+  PUBLIC mecca_dbl_finish
 
 ! =============================================================================
 
@@ -40,7 +41,7 @@ CONTAINS
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE dbl_x0
+  SUBROUTINE mecca_dbl_x0
   
     IMPLICIT NONE
 
@@ -50,13 +51,13 @@ CONTAINS
     print *,'dbl_x0: passed'
 #endif 
 
-  END SUBROUTINE dbl_x0
+  END SUBROUTINE mecca_dbl_x0
 
 
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE dbl_emis
+  SUBROUTINE mecca_dbl_emis
  
     IMPLICIT NONE
     
@@ -71,51 +72,51 @@ CONTAINS
     print *,'dbl_emis: passed'
 #endif 
 
-  END SUBROUTINE dbl_emis
+  END SUBROUTINE mecca_dbl_emis
 
 
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE dbl_process
+  SUBROUTINE mecca_dbl_postprocess
 
     IMPLICIT NONE
 
-! {$CONF_LIST} [%    CALL #_process%]
+! {$CONF_LIST} [%    CALL #_postprocess%]
 
   ! by default, to remove deviation due to KIEs, correcting
-! {$CONF_LIST} [%    CALL #_correct2reg%]
+! {$CONF_LIST} [%    CALL #_correct2reg(C)%]
 
 #ifdef DEBUG
-    print *,'dbl_process: passed'
+    print *,'dbl_postprocess: passed'
 #endif 
 
-  END SUBROUTINE dbl_process
+  END SUBROUTINE mecca_dbl_postprocess
 
 
 
 ! -----------------------------------------------------------------------------
  
-  SUBROUTINE dbl_resetPTs
+  SUBROUTINE mecca_dbl_resetPTs
   
     IMPLICIT NONE
     
-! {$CONF_LIST} [%    CALL #_resetPTs %]
+! {$CONF_LIST} [%    CALL #_resetPTs(C)%]
 
 #ifdef DEBUG
     print *,'dbl_resetPTs: passed'
 #endif 
 
-  END SUBROUTINE dbl_resetPTs
+  END SUBROUTINE mecca_dbl_resetPTs
 
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE dbl_init
+  SUBROUTINE mecca_dbl_init
 
     IMPLICIT NONE
 
-    CALL dbl_x0
+    CALL mecca_dbl_x0
 
 ! {$CONF_LIST} [%    CALL #_init%]
   
@@ -123,13 +124,13 @@ CONTAINS
     print *,'dbl_init: passed'
 #endif 
 
-  END SUBROUTINE dbl_init
+  END SUBROUTINE mecca_dbl_init
 
 
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE dbl_result(model_time)
+  SUBROUTINE mecca_dbl_result(model_time)
   
     IMPLICIT NONE
     
@@ -141,13 +142,13 @@ CONTAINS
     print *,'dbl_result: passed'
 #endif 
 
-  END SUBROUTINE dbl_result
+  END SUBROUTINE mecca_dbl_result
 
 
 
 ! ---------------------------------------------------------------------------
 
-  SUBROUTINE dbl_finish
+  SUBROUTINE mecca_dbl_finish
 
 ! {$CONF_LIST} [%    CALL #_finish%]
 
@@ -155,7 +156,7 @@ CONTAINS
     print *,'dbl_finish: passed'
 #endif 
 
-  END SUBROUTINE dbl_finish
+  END SUBROUTINE mecca_dbl_finish
 
 
 

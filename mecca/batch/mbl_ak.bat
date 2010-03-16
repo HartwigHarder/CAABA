@@ -4,6 +4,7 @@
 # when it is run in batch mode (i.e. not interactive).
 
  set apn          = 1                 # number of aerosol phases [0...99, default=0]
+ set gaseqnfile   = gas_mim2.eqn
  set rplfile      = mbl               # replacement file
  set wanted       = "Tr && (G || (Aa && Mbl)) && \!I" # Minimum MBL-chem, no I
  set mcfct        = n                 # Monte-Carlo factor?
@@ -19,5 +20,5 @@
                                       # kp4: 0/1/2/3/q; kpp: y/n/q
  set deltmpkp4    = y                 # delete temporary kp4 files
  set latex        = y                 # latex list of reactions
- set graphviz     = n                 # graphviz plots
+ set graphviz     = n                 # graphviz plots?
  set deltmp       = y                 # delete temporary xmecca files?

@@ -404,8 +404,8 @@
 <H4105b_a##> CH3OH_a##    = CH3OH           : {%TrAraSc}         k_exb(##,ind_CH3OH); {&&}
 
 // 2C (#H4200-#H42nn)
-<H4200f_a##> CH3COOH      = CH3COOH_a##     : {%TrAraCScScm}     k_exf(##,ind_CH3COOH); {&&}
-<H4200b_a##> CH3COOH_a##  = CH3COOH         : {%TrAraCScScm}     k_exb(##,ind_CH3COOH); {&&}
+<H4200f_a##> CH3CO2H      = CH3CO2H_a##     : {%TrAraCScScm}     k_exf(##,ind_CH3CO2H); {&&}
+<H4200b_a##> CH3CO2H_a##  = CH3CO2H         : {%TrAraCScScm}     k_exb(##,ind_CH3CO2H); {&&}
 <H4201f_a##> CH3CHO       = CH3CHO_a##      : {%TrAraCSc}        k_exf(##,ind_CH3CHO); {&&}
 <H4201b_a##> CH3CHO_a##   = CH3CHO          : {%TrAraCSc}        k_exb(##,ind_CH3CHO); {&&}
 <H4202f_a##> PAN          = PAN_a##         : {%TrAraCSc}        k_exf(##,ind_PAN); {&&}
@@ -560,8 +560,8 @@
 <EQ40b_a##> Hp_a## + HCO3m_a##   = CO2_a##                : {%TrAa##MblScScm}   xaer(##)*testfac_CO2*1.E3*cvfac(##);
 <EQ41f_a##> HCOOH_a##            = Hp_a## + HCOOm_a##     : {%TrAa##ScScm}      xaer(##)*testfac_HCOOH* 1.8E-4; {@1.8E-4}{&153}
 <EQ41b_a##> Hp_a## + HCOOm_a##   = HCOOH_a##              : {%TrAa##ScScm}      xaer(##)*testfac_HCOOH* 1.E0*cvfac(##);
-<EQ42f_a##> CH3COOH_a##          = Hp_a## + CH3COOm_a##   : {%TrAraCScScm}      xaer(##)*testfac_CH3COOH*k_arr(8.75e+5,-46.,temp); {@1.75E-5}{$-46}
-<EQ42b_a##> Hp_a## + CH3COOm_a## = CH3COOH_a##            : {%TrAraCScScm}      xaer(##)*testfac_CH3COOH*5.0E10*cvfac(##);
+<EQ42f_a##> CH3CO2H_a##          = Hp_a## + CH3COOm_a##   : {%TrAraCScScm}      xaer(##)*testfac_CH3CO2H*k_arr(8.75e+5,-46.,temp); {@1.75E-5}{$-46}
+<EQ42b_a##> Hp_a## + CH3COOm_a## = CH3CO2H_a##            : {%TrAraCScScm}      xaer(##)*testfac_CH3CO2H*5.0E10*cvfac(##);
 
 {<EQ5nnn_a##> ------------------------ F -------------------------}{@\myhline}
 

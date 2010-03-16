@@ -41,24 +41,27 @@ MODULE {%CMODEL}_{%TAG}_box
 
 ! ----------------------------------------------------------------------------
 
-! output array: parameters: NSTEP, NSTEP_REQ, NREJCT, PEPTAD, NCOR2R (+5)
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+! output array: parameters: ISTEP, IREJCT, ISPAR, NDEREV, NREJCT, NCOR2R (+6)
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! tagged carbons: 2 isotopologues and 1 delta (+TC) = (NSPEC+1)*(2+1)
 !                 TC(regular),                      +1
 !                 d0TC(reg), d0TC(iso), d0D13CTC,   +3
-  REAL(dp)            :: I{%ATOM}OUT(({%NTSPEC}+1)*(2+1)+1+3+5)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+  REAL(dp)            :: I{%ATOM}OUT(({%NTSPEC}+1)*(2+1)+1+3+6)
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! tagged oxygen: 3 isotopologues and 3 deltas (+TO) = (NSPEC+1)*(3+3)
 !                TO(regular),                       +1
 !                d0TO(reg), d0TO(iso),
 !                d0D17TO, d0D18TO, d0DC17OTO        +5
-  REAL(dp)            :: I{%ATOM}OUT(({%NTSPEC}+1)*(3+3)+1+5+5)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+  REAL(dp)            :: I{%ATOM}OUT(({%NTSPEC}+1)*(3+3)+1+5+6)
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:A}
+  REAL(dp)            :: I{%ATOM}OUT(6)
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:A}
 
 ! -----------------------------------------------------------------------------
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! reference standart ratio for 13C, V-PDB
   REAL(dp), PARAMETER :: VPDB_13C     = 1123.72E-05_dp
 
@@ -67,13 +70,13 @@ MODULE {%CMODEL}_{%TAG}_box
 
 ! total budget verification
   REAL(dp)            :: TC0, D13CTC0
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! reference standart ratio for 17O, 18O, V-SMOW
   REAL(dp), PARAMETER :: VSMOW_17O    =  386.72E-06_dp  ! Assonov, 2003b, pc
   REAL(dp), PARAMETER :: VSMOW_18O    = 2005.20E-06_dp
 ! oxygen NMD isotopic fractionation parameter
-  REAL(dp), PARAMETER :: NMDF_O        = 0.528           ! ??
+  REAL(dp), PARAMETER :: NMDF_O        = 0.5281_dp      ! ??
 
 ! deltas-17-18 capital-17, plus for total
   REAL(dp)            :: D17O({%NTSPEC}), D18O({%NTSPEC}), DC17O({%NTSPEC}), &
@@ -81,18 +84,18 @@ MODULE {%CMODEL}_{%TAG}_box
 
 ! total budget verification
   REAL(dp)            :: TO0, D17OTO0, D18OTO0, DC17OTO0
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
 ! -----------------------------------------------------------------------------
 
   PUBLIC
   
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
   PRIVATE VPDB_13C
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-  PRIVATE VSMOW_17O, VSMOW_18O, NMDF_O
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
+  PRIVATE VSMOW_17O, VSMOW_18O ! , NMDF_O
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
   PUBLIC {%TAG}_x0
   PUBLIC {%TAG}_emis
@@ -121,7 +124,7 @@ CONTAINS
 
 ! initializing isotopologues concentration according to "regular"
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 
 ! {$x0} [%1%]  (%    D13C({%TAG}_#) = $%)
 
@@ -134,16 +137,16 @@ CONTAINS
     D13C(:) = D13C(:) / 1000.0_dp
 
   ! regular concentrations by 12C, 13C fractions from deltas:
-    I12C(:) = C({%RTIND}(:)) * isofrac2r(D13C(:), VPDB_13C, QT{%A}ATOM(:))
-    I13C(:) = C({%RTIND}(:)) * isofrac2f(D13C(:), VPDB_13C, QT{%A}ATOM(:))
+    I12C(:) = C({%RTIND}(:,0)) * isofrac2r(D13C(:), VPDB_13C, QT{%A}ATOM(:))
+    I13C(:) = C({%RTIND}(:,0)) * isofrac2f(D13C(:), VPDB_13C, QT{%A}ATOM(:))
 #endif
 #ifdef INIUNIT_FRACMIN
   ! 12C, 13C through fraction and regular species:
-    I12C(:) = C({%RTIND}(:)) * (1.0_dp - D13C(:))
-    I13C(:) = C({%RTIND}(:)) * D13C(:)
+    I12C(:) = C({%RTIND}(:,0)) * (1.0_dp - D13C(:))
+    I13C(:) = C({%RTIND}(:,0)) * D13C(:)
 #endif
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 
 ! {$x0} [%1%]  (%    D17O({%TAG}_#) = $%)
 
@@ -160,23 +163,31 @@ CONTAINS
     D18O(:) = D18O(:) / 1000.0_dp
 
   ! regular concentrations by 16O, 17O, 18O fractions from deltas:
-    I16O(:) = C({%RTIND}(:)) * &
+    I16O(:) = C({%RTIND}(:,0)) * &
       isofrac3r(D17O(:), VSMOW_17O, D18O(:), VSMOW_18O, QT{%ATOM}ATOM(:))
-    I17O(:) = C({%RTIND}(:)) * &
+    I17O(:) = C({%RTIND}(:,0)) * &
       isofrac3f(D17O(:), VSMOW_17O, D18O(:), VSMOW_18O, QT{%ATOM}ATOM(:))
-    I18O(:) = C({%RTIND}(:)) * &
+    I18O(:) = C({%RTIND}(:,0)) * &
       isofrac3f(D18O(:), VSMOW_18O, D17O(:), VSMOW_17O, QT{%ATOM}ATOM(:))
 #endif
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 #ifdef INIUNIT_FRACMIN
-  ! 16O, 17O, 18O through fractions and regular species:
-    I16O(:) = C({%RTIND}(:)) * (1.0_dp - (D17O(:) + D18O(:))
-    I17O(:) = C({%RTIND}(:)) * D17O(:)
-    I18O(:) = C({%RTIND}(:)) * D18O(:)
+  ! this is in the development phase, careful
+  ! getting values from the configuration setup
+! {$x0} [%1%]  (%    ISO{%A}({%TAG}_#,2) = $%)
+! {$x0} [%2%]  (%    ISO{%A}({%TAG}_#,3) = $%)
+! {$x0} [%3%]  (%    ISO{%A}({%TAG}_#,4) = $%)
+! {$x0} [%4%]  (%    ISO{%A}({%TAG}_#,5) = $%)
+
+  ! ISO{%A}(:,:) through fractions and regular species:
+    DO i = 2, {%NISO} 
+      ISO{%A}(:,i) = C({%RTIND}(:,0)) * ISO{%A}(:,i)
+    ENDDO
+    ISO{%A}(:,1) = C({%RTIND}(:,0)) * (1.0_dp - SUM(ISO{%A}(:,2:{%NISO})))
 #endif
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
 
 #ifdef NULL_TEST
-    ISO{%A}(:,1) = C({%RTIND}(:))
+    ISO{%A}(:,1) = C({%RTIND}(:,0))
     ISO{%A}(:,2:{%NISO}) = 0.0_dp
 #endif
 
@@ -192,14 +203,20 @@ CONTAINS
               T{%ATOM}_R, '/ tag: ',T{%ATOM}0,' )'
     ENDIF
     
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
     D13CTC0 = D13CTC
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
     D17OTO0 = D17OTO
     D18OTO0 = D18OTO
     DC17OTO0 = DC17OTO
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
+
+    CALL {%TAG}_initialize
+
+! #ifdef INT_KPP
+!     C(ind_AONE) = 1.0_dp
+! #endif
 
 #ifdef DEBUG
     print *,'{%TAG}_x0: passed'
@@ -223,28 +240,28 @@ CONTAINS
     IF ((ind_t .LT. 1) .OR. (ind_t .GT. {%NSPEC})) RETURN
 
   ! uncomment to manage emission only through {%TAG}
-!    C(RI{%ATOM}IND(ind_t)) = C(RI{%ATOM}IND(ind_t)) + amount 
+!    C(RI{%ATOM}IND(ind_t,0)) = C(RI{%ATOM}IND(ind_t,0)) + amount 
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
     I12C(ind_t) = I12C(ind_t) + amount * &
       isofrac2r(deltas(1) / 1000.0_dp, VPDB_13C, QT{%ATOM}ATOM(ind_t))
     I13C(ind_t) = I13C(ind_t) + amount * &
       isofrac2f(deltas(1) / 1000.0_dp, VPDB_13C, QT{%ATOM}ATOM(ind_t))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
     I16O(ind_t) = I16O(ind_t) + amount *  &
       isofrac3r(deltas(1) / 1000.0_dp, VSMOW_17O, &
                 deltas(2) / 1000.0_dp, VSMOW_18O, &
-		QT{%ATOM}ATOM(ind_t))
+                QT{%ATOM}ATOM(ind_t))
     I17O(ind_t) = I17O(ind_t) + amount *  &
       isofrac3f(deltas(1) / 1000.0_dp, VSMOW_17O, &
                 deltas(2) / 1000.0_dp, VSMOW_18O, &
-		QT{%ATOM}ATOM(ind_t))
+                QT{%ATOM}ATOM(ind_t))
     I18O(ind_t) = I18O(ind_t) + amount *  &
       isofrac3f(deltas(2) / 1000.0_dp, VSMOW_18O, &
                 deltas(1) / 1000.0_dp, VSMOW_17O, &
-		QT{%ATOM}ATOM(ind_t))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+                QT{%ATOM}ATOM(ind_t))
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
   END SUBROUTINE {%TAG}_emis
 
@@ -311,7 +328,7 @@ CONTAINS
     INTEGER      :: i
 
   ! deltas fot total {%ATOM} are included
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
   ! calculating new delta-13C values
 
     WHERE (I12C(:) .GT. 0.0_dp)
@@ -325,8 +342,8 @@ CONTAINS
     ELSE
       D13CTC = UNDEF
     ENDIF
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
   ! calculating new delta-17O, delta-18O, cap.delta-17O values
 
     WHERE (I16O(:) .GT. 0.0_dp)
@@ -344,7 +361,7 @@ CONTAINS
     ELSE
       D17OTO  = UNDEF; D18OTO  = UNDEF; DC17OTO = UNDEF
     ENDIF
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
   END SUBROUTINE {%TAG}_calcdeltas
   
@@ -361,15 +378,15 @@ CONTAINS
 
   ! getting from doubled to tagged
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! {$FUDGE} [%  I12C({%TAG}_#) = C(ind_I12#)%]
 ! {$FUDGE} [%  I13C({%TAG}_#) = C(ind_I13#)%]
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! {$FUDGE} [%  I16O({%TAG}_#) = C(ind_I16#)%]
 ! {$FUDGE} [%  I17O({%TAG}_#) = C(ind_I17#)%]
 ! {$FUDGE} [%  I18O({%TAG}_#) = C(ind_I18#)%]
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
   CALL {%TAG}_calctotals(C)
   CALL {%TAG}_calcdeltas
@@ -413,7 +430,7 @@ CONTAINS
 
     CALL open_output_file(ncid_{%TAG}, 'caaba_mecca_{%TAG}', &
       (/   &                            ! names of the tracers to be saved
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! {$TAG_SPECS} [%I12#%]
        , &
 ! {$TAG_SPECS} [%I13#%]
@@ -423,29 +440,29 @@ CONTAINS
 {$ELSA}       'TC_R', 'I12TC', 'I13TC', 'd13TC' &
        , &
 {$ELSA}       'd0TC_R', 'd0TC', 'd0D13TC' &
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! {$TAG_SPECS} [%I16#%]
        , &
 ! {$TAG_SPECS} [%I17#%]
        , &
 ! {$TAG_SPECS} [%I18#%]
        , &
-! {$TAG_SPECS} [%d17#%]
-       , &
 ! {$TAG_SPECS} [%d18#%]
+       , &
+! {$TAG_SPECS} [%d17#%]
        , &
 ! {$TAG_SPECS} [%DC17#%]
        , &
 {$ELSA}       'TO_R', 'I16TO', 'I17TO', 'I18TO', 'd18TO', 'd17TO', 'DC17TO' &
        , &
 {$ELSA}       'd0TO_R', 'd0TO', 'd0d18TO', 'd0d17TO', 'd0DC17TO' &
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
        , &                              ! - common part
-{$ELSA}       'NSTEP', 'NSTEP_REQ', 'NREJCT', 'PEPTAD', 'NCOR2R' &
+{$ELSA}       'ISTEP', 'IREJCT', 'ISPAR', 'NDEREV', 'NREJCT', 'NCOR2R' &
          &
        /), (/   &                       ! units
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! {$TAG_SPECS} [%mol/mol%]
        , &
 ! {$TAG_SPECS} [%mol/mol%]
@@ -455,8 +472,8 @@ CONTAINS
 {$ELSA}       'atoms', 'atoms', 'atoms', 'o/oo' &
        , &
 {$ELSA}       'atoms', 'atoms', 'o/oo' &
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! {$TAG_SPECS} [%mol/mol%]
        , &
 ! {$TAG_SPECS} [%mol/mol%]
@@ -472,12 +489,12 @@ CONTAINS
 {$ELSA}       'atoms', 'atoms', 'atoms', 'atoms', 'o/oo', 'o/oo', 'o/oo' &
        , &
 {$ELSA}       'atoms', 'atoms', 'o/oo', 'o/oo', 'o/oo' &
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
        , &                              ! - common part
          &
-{$ELSA}       'steps', 'steps', 'specs', 'reacs', 'specs' &
+{$ELSA}       'steps', 'steps', '?', 'calls', 'specs', 'frac' &
        /), (/   &                       ! captions
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! {$TAG_SPECS} [%@SR^1^2#%]
        , &
 ! {$TAG_SPECS} [%@SR^1^3#%]
@@ -487,8 +504,8 @@ CONTAINS
 {$ELSA}       '@SRTC_R (regular mech)', '@SRT^1^2C', '@SRT^1^3C', '@SGd@SR^1^3C(TC)' &
        , &
 {$ELSA}       '@SGD@SR_t_0(TC_R)', '@SGD@SR_t_0(TC_T)', '@SGD@SR_t_0(@SGd@SR^1^3C(TC_T)) ' &
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! {$TAG_SPECS} [%@SR^1^6#%]
        , &
 ! {$TAG_SPECS} [%@SR^1^7#%]
@@ -506,13 +523,14 @@ CONTAINS
        , &
 {$ELSA}       '@SGD@SR_t_0(TO_R)', '@SGD@SR_t_0(TO_T)', &
 {$ELSA}       '@SGD@SR_t_0(@SGd@SR^1^8O(TO_T))', '@SGD@SR_t_0(@SGd@SR^1^7O(TO_T))', '@SGD@SR_t_0(@SGD@SR^1^7O(TO_T))' &
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
        , &                              ! - common part
-{$ELSA}       '@AS# of calculation', &
-{$ELSA}       '@AS# of requested', &
-{$ELSA}       '@AS# of rejected', &
-{$ELSA}       '@AS# of pot. error. (PT/A diff.)', &
-{$ELSA}       '@ASfrac of corrected to regular' &
+{$ELSA}       '@ASI: # of iterations', &
+{$ELSA}       '@ASI: # of rejected iter.', &
+{$ELSA}       '@ASI: special param. (ISPAR)', &
+{$ELSA}       '@ASN: # of derivative evals.', &
+{$ELSA}       '@ASN: # of filtered', &
+{$ELSA}       '@AScorrected to regular ' &
        /) )
   
 #ifdef DEBUG
@@ -534,7 +552,7 @@ CONTAINS
     
     I{%A}OUT(:) = UNDEF
     
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
     I{%A}OUT(1+{%NTSPEC}*0:{%NTSPEC}*1) = I12C(:) / cair
     I{%A}OUT(1+{%NTSPEC}*1:{%NTSPEC}*2) = I13C(:) / cair
     WHERE ( D13C(:) /= UNDEF )
@@ -551,16 +569,16 @@ CONTAINS
     I{%A}OUT({%NTSPEC}*3+5) = TC_R-TC0                     ! d0TC_R   = TC_R - TC_R(t=0)
     I{%A}OUT({%NTSPEC}*3+6) = SUM(TC(:))-TC0               ! d0TC     = (T12C+T13C) - TC_R(t=0)
     I{%A}OUT({%NTSPEC}*3+7) = (D13CTC-D13CTC0) * 1000.0_dp ! d0D13CTC = D13CTC - D13CTC(t=0)   
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
     I{%A}OUT(1+{%NTSPEC}*0:{%NTSPEC}*1) = I16O(:) / cair
     I{%A}OUT(1+{%NTSPEC}*1:{%NTSPEC}*2) = I17O(:) / cair
     I{%A}OUT(1+{%NTSPEC}*2:{%NTSPEC}*3) = I18O(:) / cair
-    WHERE ( D17O(:) /= UNDEF )
-      I{%A}OUT(1+{%NTSPEC}*3:{%NTSPEC}*4) = D17O(:) * 1000.0_dp
-    ENDWHERE      
     WHERE ( D18O(:) /= UNDEF )
-      I{%A}OUT(1+{%NTSPEC}*4:{%NTSPEC}*5) = D18O(:) * 1000.0_dp
+      I{%A}OUT(1+{%NTSPEC}*3:{%NTSPEC}*4) = D18O(:) * 1000.0_dp
+    ENDWHERE      
+    WHERE ( D17O(:) /= UNDEF )
+      I{%A}OUT(1+{%NTSPEC}*4:{%NTSPEC}*5) = D17O(:) * 1000.0_dp
     ENDWHERE
     WHERE ( DC17O(:) /= UNDEF )
       I{%A}OUT(1+{%NTSPEC}*5:{%NTSPEC}*6) = DC17O(:) * 1000.0_dp
@@ -571,8 +589,8 @@ CONTAINS
     I{%A}OUT({%NTSPEC}*6+2) = T16O
     I{%A}OUT({%NTSPEC}*6+3) = T17O
     I{%A}OUT({%NTSPEC}*6+4) = T18O
-    I{%A}OUT({%NTSPEC}*6+5) = D17OTO * 1000.0_dp
-    I{%A}OUT({%NTSPEC}*6+6) = D18OTO * 1000.0_dp
+    I{%A}OUT({%NTSPEC}*6+5) = D18OTO * 1000.0_dp
+    I{%A}OUT({%NTSPEC}*6+6) = D17OTO * 1000.0_dp
     I{%A}OUT({%NTSPEC}*6+7) = DC17OTO * 1000.0_dp
 
   ! totals verification
@@ -581,18 +599,14 @@ CONTAINS
     I{%A}OUT({%NTSPEC}*6+10) = (D18OTO-D18OTO0) * 1000.0_dp   ! d0D18OTO  = D18OTO - D18OTO(t=0)
     I{%A}OUT({%NTSPEC}*6+11) = (D17OTO-D17OTO0) * 1000.0_dp   ! d0D18OTO  = D17OTO - D17OTO(t=0)
     I{%A}OUT({%NTSPEC}*6+12) = (DC17OTO-DC17OTO0) * 1000.0_dp ! d0DC17OTO = DC17OTO - DC18OTO(t=0)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
-    ! last 5 values are common parameters
-    IF ({%TAG}_NSTEP .EQ. 0) THEN
-      I{%A}OUT(UBOUND(I{%A}OUT)-4) = UNDEF
-      I{%A}OUT(UBOUND(I{%A}OUT)-2) = UNDEF
-    ELSE
-      I{%A}OUT(UBOUND(I{%A}OUT)-4) = REAL({%TAG}_NSTEP)
-      I{%A}OUT(UBOUND(I{%A}OUT)-2) = REAL({%TAG}_NREJCT)    
-    ENDIF
-    I{%A}OUT(UBOUND(I{%A}OUT)-3) = REAL({%TAG}_NSTEP_REQ)    
-    I{%A}OUT(UBOUND(I{%A}OUT)-1) = REAL({%TAG}_PEPTAD)    
+    ! last 6 values are common parameters
+    I{%A}OUT(UBOUND(I{%A}OUT)-5) = REAL({%TAG}_ISTEP)
+    I{%A}OUT(UBOUND(I{%A}OUT)-4) = REAL({%TAG}_IREJCT)    
+    I{%A}OUT(UBOUND(I{%A}OUT)-3) = {%TAG}_ISPAR
+    I{%A}OUT(UBOUND(I{%A}OUT)-2) = REAL({%TAG}_NDEREV)
+    I{%A}OUT(UBOUND(I{%A}OUT)-1) = REAL({%TAG}_NREJCT)
     
 #ifdef C2R_FILTER
     I{%A}OUT(UBOUND(I{%A}OUT)-0) = REAL({%TAG}_NCOR2R)    

@@ -1,5 +1,5 @@
 !****************************************************************************
-!                Time-stamp: <2008-09-24 14:38:51 joeckel>
+!                Time-stamp: <2010-03-05 09:19:50 joec_pa>
 !****************************************************************************
 
 ! Definitions of machine precision constants as Fortran PARAMETERs for MESSy
@@ -18,7 +18,7 @@ MODULE messy_main_constants_mem
   ! PUBLIC is already default
 
   CHARACTER(LEN=*), PARAMETER :: modstr = 'MESSy'
-  CHARACTER(LEN=*), PARAMETER :: modver = '2.3z'
+  CHARACTER(LEN=*), PARAMETER :: modver = '2.3zp'
 
   ! MACHINE PRECISION CONSTANTS
   INTEGER, PARAMETER :: sp = SELECTED_REAL_KIND(6,37)

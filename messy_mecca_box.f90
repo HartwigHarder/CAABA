@@ -1,4 +1,4 @@
-! Time-stamp: <2009-11-11 17:37:07 sander>
+! Time-stamp: <2010-03-11 17:06:17 sander>
 
 ! MECCA =  Module Efficiently Calculating the Chemistry of the Atmosphere
 
@@ -32,10 +32,10 @@ MODULE messy_mecca_box
   USE messy_mecca_kpp ! ind_*, update_rconst, kpp_integrate, APN
                       ! initialize_indexarrays, SPC_NAMES, EQN_NAMES,
                       ! EQN_TAGS, NSPEC, NREACT
-  USE messy_mecca_dbl_box,        ONLY: dbl_init, dbl_process,                &
-                                        dbl_result, dbl_finish
-  USE messy_mecca_tag_box,        ONLY: tag_init, tag_process,                &
-                                        tag_result, tag_finish
+  USE messy_mecca_dbl_box,        ONLY: mecca_dbl_init, mecca_dbl_postprocess,&
+                                        mecca_dbl_result, mecca_dbl_finish
+  USE messy_mecca_tag_box,        ONLY: mecca_tag_init, mecca_tag_process,    &
+                                        mecca_tag_result, mecca_tag_finish
 
   USE messy_main_constants_mem,   ONLY: N_A, rho_H2O, M_H2O, R_gas,          &
                                         OneDay, STRLEN_VLONG,                &
@@ -193,8 +193,8 @@ CONTAINS
     !mz_hr_20080226-
     CALL x0 ! initial gas phase mixing ratios
     IF (l_aero) CALL define_aerosol ! define radius, lwc, etc.
-    IF (l_tag)  CALL tag_init
-    IF (l_dbl)  CALL dbl_init
+    IF (l_tag)  CALL mecca_tag_init
+    IF (l_dbl)  CALL mecca_dbl_init
 
     ! ------------------------------------------------------------------------
 
@@ -595,10 +595,15 @@ CONTAINS
       CALL x0_free_trop
     CASE ('MBL')
       CALL x0_mbl
+    CASE ('MIM2')
+      CALL x0_mim2
     CASE ('OOMPH')
       CALL x0_oomph
     CASE ('STRATO')
-      CALL x0_strato
+      ! choose one:
+      !CALL x0_strato10
+      CALL x0_strato20
+      !CALL x0_meso
     CASE DEFAULT
       PRINT *, 'ERROR, init_scenario '//TRIM(init_scenario)//' is not defined'
       STOP
@@ -762,13 +767,26 @@ CONTAINS
       IF (ind_HCl      /= 0) c(ind_HCl)     =  40.E-12 * cair
       IF (ind_C3H7I    /= 0) c(ind_C3H7I)   =  1.0E-12 * cair
       IF (ind_CH3OH    /= 0) c(ind_CH3OH)   = 300.E-12 * cair
-      !IF (ind_ISOP    /= 0) c(ind_ISOP)    =  1.0E-09 * cair
+      !IF (ind_C5H8    /= 0) c(ind_C5H8)    =  1.0E-09 * cair
       IF (ind_Hg       /= 0) c(ind_Hg)      = 1.68E-13 * cair
 
       ! example for initializing aqueous-phase species:
       ! (the index must not be greater than APN)
       ! IF (ind_NH4p_a(2)  /=0) c(ind_NH4p_a(2))  = 300.E-12 * cair
     END SUBROUTINE x0_mbl
+
+    ! ------------------------------------------------------------------------
+
+    SUBROUTINE x0_mim2
+      IF (ind_O3       /= 0) c(ind_O3)      =  30.E-09 * cair
+      IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
+      IF (ind_NO2      /= 0) c(ind_NO2)     = 100.E-12 * cair
+      IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
+      IF (ind_CH4      /= 0) c(ind_CH4)     =  1.8E-06 * cair
+      IF (ind_CO       /= 0) c(ind_CO)      =  70.E-09 * cair
+      IF (ind_CO2      /= 0) c(ind_CO2)     = 350.E-06 * cair
+      IF (ind_C5H8     /= 0) c(ind_C5H8)    =  1.0E-09 * cair
+    END SUBROUTINE x0_mim2
 
     ! ------------------------------------------------------------------------
 
@@ -793,16 +811,16 @@ CONTAINS
       PRINT *, 'OOMPH init: marine background'
       IF (ind_ACETOL   /= 0) c(ind_ACETOL)  = 205.E-12 * cair ! 3rdgen
       !IF (ind_ACETOL   /= 0) c(ind_ACETOL)  = 250.E-12 * cair ! new
-      IF (ind_ACETP    /= 0) c(ind_ACETP)   =  0.74E-12 * cair ! 4Igen
-      !IF (ind_ACETP    /= 0) c(ind_ACETP)   =  0.7E-12 * cair ! 4gen
+      IF (ind_HYPERACET    /= 0) c(ind_HYPERACET)   =  0.74E-12 * cair ! 4Igen
+      !IF (ind_HYPERACET    /= 0) c(ind_HYPERACET)   =  0.7E-12 * cair ! 4gen
       !IF (ind_CH3CHO   /= 0) c(ind_CH3CHO)  = 100.E-12 * cair ! def(off)
       IF (ind_C3H7I    /= 0) c(ind_C3H7I)   =  0.6E-12 * cair ! 4Igen
       !IF (ind_C3H7I    /= 0) c(ind_C3H7I)   =  0.7E-12 * cair ! mod5
       IF (ind_CH3CHO   /= 0) c(ind_CH3CHO)  = 100.E-12 * cair ! 4gen
       IF (ind_CH3COCH3 /= 0) c(ind_CH3COCH3)= 100.E-12 * cair ! 4gen
-      IF (ind_CH3COCHO /= 0) c(ind_CH3COCHO)= 230.E-12 * cair ! 4Igen
-      !IF (ind_CH3COCHO /= 0) c(ind_CH3COCHO)= 280.E-12 * cair ! 3rdgen
-      !IF (ind_CH3COCHO /= 0) c(ind_CH3COCHO)= 340.E-12 * cair ! new
+      IF (ind_MGLYOX /= 0) c(ind_MGLYOX)= 230.E-12 * cair ! 4Igen
+      !IF (ind_MGLYOX /= 0) c(ind_MGLYOX)= 280.E-12 * cair ! 3rdgen
+      !IF (ind_MGLYOX /= 0) c(ind_MGLYOX)= 340.E-12 * cair ! new
       IF (ind_CH3I     /= 0) c(ind_CH3I)    =  1.24E-12 * cair ! 4Igen
       !IF (ind_CH3I     /= 0) c(ind_CH3I)    =  1.3E-12 * cair ! mod8
       IF (ind_CH3OH    /= 0) c(ind_CH3OH)   = 500.E-12 * cair ! 4gen
@@ -813,11 +831,11 @@ CONTAINS
       !IF (ind_CH3OOH   /= 0) c(ind_CH3OOH)  = 0.E-12 * cair ! 4Igentest
       IF (ind_CH3OOH   /= 0) c(ind_CH3OOH)  = 590.E-12 * cair ! 3rdgen
       !IF (ind_CH3OOH   /= 0) c(ind_CH3OOH)  = 530.E-12 * cair ! mod8
-      !IF (ind_CH3COOH  /= 0) c(ind_CH3COOH) = 0.E-09 * cair ! 4Igentest
-      IF (ind_CH3COOH  /= 0) c(ind_CH3COOH) = 1.34E-09 * cair ! 4Igen
-      !IF (ind_CH3COOH  /= 0) c(ind_CH3COOH) = 1.54E-09 * cair ! 4gen
-      !IF (ind_CH3COOH  /= 0) c(ind_CH3COOH) = 1.48E-09 * cair ! 3rdgen
-      !IF (ind_CH3COOH  /= 0) c(ind_CH3COOH) = 1.50E-09 * cair ! new
+      !IF (ind_CH3CO2H  /= 0) c(ind_CH3CO2H) = 0.E-09 * cair ! 4Igentest
+      IF (ind_CH3CO2H  /= 0) c(ind_CH3CO2H) = 1.34E-09 * cair ! 4Igen
+      !IF (ind_CH3CO2H  /= 0) c(ind_CH3CO2H) = 1.54E-09 * cair ! 4gen
+      !IF (ind_CH3CO2H  /= 0) c(ind_CH3CO2H) = 1.48E-09 * cair ! 3rdgen
+      !IF (ind_CH3CO2H  /= 0) c(ind_CH3CO2H) = 1.50E-09 * cair ! new
       IF (ind_CO       /= 0) c(ind_CO)      =  35.E-09 * cair ! 4Igen
       !IF (ind_CO       /= 0) c(ind_CO)      = 115.E-09 * cair ! 3rdgen, 4gen
       !IF (ind_CO       /= 0) c(ind_CO)      = 113.E-09 * cair ! mod6
@@ -847,7 +865,7 @@ CONTAINS
       IF (ind_ISOOH    /= 0) c(ind_ISOOH)   =  30.E-12 * cair ! 4Igen
       !IF (ind_ISOOH    /= 0) c(ind_ISOOH)   =  40.E-12 * cair ! new
       !IF (ind_ISOOH    /= 0) c(ind_ISOOH)   =  40.E-12 * cair ! new
-      IF (ind_ISOP     /= 0) c(ind_ISOP)    =  50.E-12 * cair ! new
+      IF (ind_C5H8     /= 0) c(ind_C5H8)    =  50.E-12 * cair ! new
       IF (ind_MVK      /= 0) c(ind_MVK)     = 130.E-12 * cair ! 4Igen
       !IF (ind_MVK      /= 0) c(ind_MVK)     = 160.E-12 * cair ! 3rdgen
       !IF (ind_MVK      /= 0) c(ind_MVK)     = 200.E-12 * cair ! new
@@ -871,10 +889,10 @@ CONTAINS
       IF (ind_O3       /= 0) c(ind_O3)      = 10.4E-09 * cair ! 4Igen
       !IF (ind_O3       /= 0) c(ind_O3)      = 10.0E-09 * cair ! 3rdgen
       !IF (ind_O3       /= 0) c(ind_O3)      = 10.6E-09 * cair ! mod6
-      IF (ind_PAA      /= 0) c(ind_PAA)     = 300.E-12 * cair ! 4Igen
-      !IF (ind_PAA      /= 0) c(ind_PAA)     = 460.E-12 * cair ! 4gen
-      !IF (ind_PAA      /= 0) c(ind_PAA)     = 390.E-12 * cair ! 3rdgen
-      !IF (ind_PAA      /= 0) c(ind_PAA)     = 420.E-12 * cair ! new
+      IF (ind_CH3CO3H      /= 0) c(ind_CH3CO3H)     = 300.E-12 * cair ! 4Igen
+      !IF (ind_CH3CO3H      /= 0) c(ind_CH3CO3H)     = 460.E-12 * cair ! 4gen
+      !IF (ind_CH3CO3H      /= 0) c(ind_CH3CO3H)     = 390.E-12 * cair ! 3rdgen
+      !IF (ind_CH3CO3H      /= 0) c(ind_CH3CO3H)     = 420.E-12 * cair ! new
       IF (ind_PAN      /= 0) c(ind_PAN)     =   2.E-12 * cair ! 4gen
       !IF (ind_PAN      /= 0) c(ind_PAN)     =   1.E-12 * cair ! new
       IF (ind_SO2      /= 0) c(ind_SO2)     = 135.E-12 * cair ! 4Igen
@@ -894,33 +912,34 @@ CONTAINS
     ! ------------------------------------------------------------------------
 
     ! mz_ab_20091111+
-    SUBROUTINE x0_strato
+    SUBROUTINE x0_strato20
 
       ! stratosphere, 20 hPa
       ! from scout02 (ProSECCO simulation)
+
       IF (ind_H        /= 0) c(ind_H)      =   1.E-12 * cair
       IF (ind_OH       /= 0) c(ind_OH)     =   1.E-16 * cair
       IF (ind_HO2      /= 0) c(ind_HO2)    =   1.E-15 * cair
       IF (ind_N        /= 0) c(ind_N)      =   1.E-12 * cair
       IF (ind_NO3      /= 0) c(ind_NO3)    =   1.E-12 * cair
       IF (ind_N2O5     /= 0) c(ind_N2O5)   =   1.E-10 * cair
-      IF (ind_HNO4     /= 0) c(ind_HNO4)   =   1.E-12 * cair
+      IF (ind_HNO4     /= 0) c(ind_HNO4)   =   1.E-10 * cair
       IF (ind_CL       /= 0) c(ind_CL)     =   1.E-21 * cair
       IF (ind_CLO      /= 0) c(ind_CLO)    =   1.E-15 * cair
       IF (ind_HOCl     /= 0) c(ind_HOCl)   =  40.E-12 * cair
-      IF (ind_CL2O2    /= 0) c(ind_CL2O2)  =   1.E-12 * cair
+      IF (ind_CL2O2    /= 0) c(ind_CL2O2)  =   1.E-13 * cair
       IF (ind_CL2      /= 0) c(ind_CL2)    =   1.E-13 * cair
       IF (ind_CH3O2    /= 0) c(ind_CH3O2)  =   1.E-12 * cair
       IF (ind_N2O      /= 0) c(ind_N2O)    =  1.3E-07 * cair
       IF (ind_CO       /= 0) c(ind_CO)     =  1.4E-08 * cair
-      IF (ind_CH3OOH   /= 0) c(ind_CH3OOH) =   1.E-12 * cair
-      IF (ind_ClNO3    /= 0) c(ind_ClNO3)  =   8.E-10 * cair
+      IF (ind_CH3OOH   /= 0) c(ind_CH3OOH) =  12.E-12 * cair
+      IF (ind_ClNO3    /= 0) c(ind_ClNO3)  =   6.E-10 * cair
       IF (ind_CFCl3    /= 0) c(ind_CFCl3)  =  1.4E-11 * cair
       IF (ind_CF2Cl2   /= 0) c(ind_CF2Cl2) =   1.E-12 * cair
       IF (ind_CH3CL    /= 0) c(ind_CH3CL)  =   1.E-12 * cair
       IF (ind_CCL4     /= 0) c(ind_CCL4)   =   1.E-12 * cair
       IF (ind_CH3CCL3  /= 0) c(ind_CH3CCL3)=   1.E-12 * cair
-      IF (ind_HNO3     /= 0) c(ind_HNO3)   =   6.E-09 * cair
+      IF (ind_HNO3     /= 0) c(ind_HNO3)   =   5.E-09 * cair
       IF (ind_H2O      /= 0) c(ind_H2O)    =   1.E-12 * cair
       IF (ind_O3P      /= 0) c(ind_O3P)    =   9.E-34 * cair
       IF (ind_O1D      /= 0) c(ind_O1D)    =   1.E-16 * cair
@@ -929,14 +948,118 @@ CONTAINS
       IF (ind_NO       /= 0) c(ind_NO)     =   1.E-24 * cair
       IF (ind_NO2      /= 0) c(ind_NO2)    =   1.E-09 * cair
       IF (ind_CH4      /= 0) c(ind_CH4)    =  1.8E-06 * cair
-      IF (ind_HCHO     /= 0) c(ind_HCHO)   =   1.E-11 * cair
+      IF (ind_HCHO     /= 0) c(ind_HCHO)   =   7.E-11 * cair
+      IF (ind_CO       /= 0) c(ind_CO)     =  70.E-09 * cair
+      IF (ind_CO2      /= 0) c(ind_CO2)    = 350.E-06 * cair
+      IF (ind_H2O2     /= 0) c(ind_H2O2)   = 450.E-12 * cair
+      IF (ind_HCl      /= 0) c(ind_HCl)    = 400.E-12 * cair
+      ! additional for mecca
+      IF (ind_SO2      /= 0) c(ind_SO2)    =   0. * cair
+      IF (ind_O2       /= 0) c(ind_O2)     = 210.E-03 * cair
+      IF (ind_N2       /= 0) c(ind_N2)     = 780.E-03 * cair
+
+    END SUBROUTINE x0_strato20
+    ! mz_ab_20091111-
+
+    ! ------------------------------------------------------------------------
+
+    ! mz_ab_20091111+
+    SUBROUTINE x0_strato10
+
+      ! stratosphere, 10 hPa
+      IF (ind_H        /= 0) c(ind_H)      =   1.E-16 * cair
+      IF (ind_OH       /= 0) c(ind_OH)     =   1.E-16 * cair
+      IF (ind_HO2      /= 0) c(ind_HO2)    =   1.E-15 * cair
+      IF (ind_N        /= 0) c(ind_N)      =   1.E-12 * cair
+      IF (ind_NO3      /= 0) c(ind_NO3)    =   1.E-12 * cair
+      IF (ind_N2O5     /= 0) c(ind_N2O5)   =   1.E-10 * cair
+      IF (ind_HNO4     /= 0) c(ind_HNO4)   =   1.5E-10 * cair
+      IF (ind_CL       /= 0) c(ind_CL)     =   1.E-21 * cair
+      IF (ind_CLO      /= 0) c(ind_CLO)    =   1.E-15 * cair
+      IF (ind_HOCl     /= 0) c(ind_HOCl)   =  40.E-12 * cair
+      IF (ind_CL2O2    /= 0) c(ind_CL2O2)  =   1.E-13 * cair
+      IF (ind_CL2      /= 0) c(ind_CL2)    =   1.E-13 * cair
+      IF (ind_CH3O2    /= 0) c(ind_CH3O2)  =   1.E-12 * cair
+      IF (ind_N2O      /= 0) c(ind_N2O)    =  1.3E-07 * cair
+      IF (ind_CO       /= 0) c(ind_CO)     =  1.4E-08 * cair
+      IF (ind_CH3OOH   /= 0) c(ind_CH3OOH) =  12.E-12 * cair
+      IF (ind_ClNO3    /= 0) c(ind_ClNO3)  =   6.E-10 * cair
+      IF (ind_CFCl3    /= 0) c(ind_CFCl3)  =  1.4E-11 * cair
+      IF (ind_CF2Cl2   /= 0) c(ind_CF2Cl2) =   1.E-12 * cair
+      IF (ind_CH3CL    /= 0) c(ind_CH3CL)  =   1.E-12 * cair
+      IF (ind_CCL4     /= 0) c(ind_CCL4)   =   1.E-12 * cair
+      IF (ind_CH3CCL3  /= 0) c(ind_CH3CCL3)=   1.E-12 * cair
+      IF (ind_HNO3     /= 0) c(ind_HNO3)   =   5.E-09 * cair
+      IF (ind_H2O      /= 0) c(ind_H2O)    = 4.251E-06 * cair
+      IF (ind_O3P      /= 0) c(ind_O3P)    =   9.E-34 * cair
+      IF (ind_O1D      /= 0) c(ind_O1D)    =   1.E-16 * cair
+      IF (ind_H2       /= 0) c(ind_H2)     =   5.E-07 * cair
+      IF (ind_O3       /= 0) c(ind_O3)     =   8.E-06 * cair
+      IF (ind_NO       /= 0) c(ind_NO)     =   1.E-24 * cair
+      IF (ind_NO2      /= 0) c(ind_NO2)    =   1.E-09 * cair
+      IF (ind_CH4      /= 0) c(ind_CH4)    =  1.8E-06 * cair
+      IF (ind_HCHO     /= 0) c(ind_HCHO)   =   7.E-11 * cair
       IF (ind_CO       /= 0) c(ind_CO)     =  70.E-09 * cair
       IF (ind_CO2      /= 0) c(ind_CO2)    = 350.E-06 * cair
       IF (ind_H2O2     /= 0) c(ind_H2O2)   = 180.E-12 * cair
       IF (ind_HCl      /= 0) c(ind_HCl)    = 400.E-12 * cair
+      ! additional for mecca
+      IF (ind_SO2      /= 0) c(ind_SO2)    =   0. * cair
       IF (ind_O2       /= 0) c(ind_O2)     = 210.E-03 * cair
       IF (ind_N2       /= 0) c(ind_N2)     = 780.E-03 * cair
-    END SUBROUTINE x0_strato
+
+    END SUBROUTINE x0_strato10
+    ! mz_ab_20091111-
+
+    ! ------------------------------------------------------------------------
+
+    ! mz_ab_20091111+
+    SUBROUTINE x0_meso
+
+      ! mesosphere, 0.01 hPa
+      IF (ind_H        /= 0) c(ind_H)      = 1.876E-07* cair
+      IF (ind_OH       /= 0) c(ind_OH)     = 1.240E-08* cair
+      IF (ind_HO2      /= 0) c(ind_HO2)    = 5.012E-09* cair
+      IF (ind_N        /= 0) c(ind_N)      = 2.114E-10* cair
+      IF (ind_NO3      /= 0) c(ind_NO3)    = 3.083E-21* cair
+      IF (ind_N2O5     /= 0) c(ind_N2O5)   = 9.072E-27* cair
+      IF (ind_HNO4     /= 0) c(ind_HNO4)   = 4.754E-18* cair
+      IF (ind_CL       /= 0) c(ind_CL)     = 8.001E-11* cair
+      IF (ind_CLO      /= 0) c(ind_CLO)    = 1.564E-13* cair
+      IF (ind_HOCl     /= 0) c(ind_HOCl)   = 7.015E-15* cair
+      IF (ind_CL2O2    /= 0) c(ind_CL2O2)  = 1.558E-25* cair
+      IF (ind_CL2      /= 0) c(ind_CL2)    = 1.E-13* cair ! ????
+      IF (ind_CH3O2    /= 0) c(ind_CH3O2)  = 1.E-12* cair! ????
+      IF (ind_N2O      /= 0) c(ind_N2O)    = 7.077E-11* cair
+      IF (ind_H2O2     /= 0) c(ind_H2O2)   = 1.685E-12* cair
+      IF (ind_CO       /= 0) c(ind_CO)     = 9.862E-07* cair
+      IF (ind_CH3OOH   /= 0) c(ind_CH3OOH) = 3.558E-13* cair
+      IF (ind_ClNO3    /= 0) c(ind_ClNO3)  = 1.460E-22* cair
+      IF (ind_CFCl3    /= 0) c(ind_CFCl3)  = 2.854E-38* cair
+      IF (ind_CF2Cl2   /= 0) c(ind_CF2Cl2) = 2.776E-17* cair
+      IF (ind_CH3CL    /= 0) c(ind_CH3CL)  = 2.212E-14* cair
+      IF (ind_CCL4     /= 0) c(ind_CCL4)   = 5.605E-45* cair
+      IF (ind_CH3CCL3  /= 0) c(ind_CH3CCL3)= 1.401E-44* cair
+      IF (ind_HNO3     /= 0) c(ind_HNO3)   = 2.084E-13* cair
+      IF (ind_H2O      /= 0) c(ind_H2O)    = 4.567E-06* cair
+      IF (ind_O3P      /= 0) c(ind_O3P)    = 5.350E-06* cair
+      IF (ind_O1D      /= 0) c(ind_O1D)    = 3.143E-14* cair
+      IF (ind_H2       /= 0) c(ind_H2)     = 1.310E-06* cair
+      IF (ind_O3       /= 0) c(ind_O3)     = 7.823E-08* cair
+      IF (ind_NO       /= 0) c(ind_NO)     = 2.454E-09* cair
+      IF (ind_NO2      /= 0) c(ind_NO2)    = 1.685E-12* cair
+      IF (ind_CH4      /= 0) c(ind_CH4)    = 1.113E-07* cair
+      IF (ind_HCHO     /= 0) c(ind_HCHO)   = 1.417E-12* cair
+      IF (ind_CO       /= 0) c(ind_CO)     = 9.862E-07* cair
+      IF (ind_CO2      /= 0) c(ind_CO2)    = 3.641E-04* cair
+      IF (ind_H2O2     /= 0) c(ind_H2O2)   = 1.169E-10* cair
+      IF (ind_HCl      /= 0) c(ind_HCl)    = 3.342E-09* cair
+      ! additional for mecca
+      IF (ind_SO2      /= 0) c(ind_SO2)    =   0. * cair
+      IF (ind_O2       /= 0) c(ind_O2)     = 210.E-03 * cair
+      IF (ind_N2       /= 0) c(ind_N2)     = 780.E-03 * cair
+
+    END SUBROUTINE x0_meso
     ! mz_ab_20091111-
 
     ! ------------------------------------------------------------------------
@@ -1038,10 +1161,10 @@ CONTAINS
       CALL check_range('after kpp: ',c(:))
     ENDIF
 
-    IF (l_dbl) CALL dbl_process
+    IF (l_dbl) CALL mecca_dbl_postprocess
     ! 1 for the # of steps to take:
-    IF (l_tag) CALL tag_process(time_step_len, 20, C, press, cair, temp)
-
+    IF (l_tag) CALL mecca_tag_process(time_step_len, C, press, cair, temp)
+    
     IF (l_steady_state_stop) THEN
       IF (steady_state_reached(c(:))) THEN
         PRINT *, 'steady-state reached at day = ', model_time/OneDay
@@ -1158,8 +1281,8 @@ CONTAINS
 
     CALL write_output_file(ncid_tracer, model_time, c/cair)
 
-    IF (l_tag) CALL tag_result(model_time)
-    IF (l_dbl) CALL dbl_result(model_time)
+    IF (l_tag) CALL mecca_tag_result(model_time)
+    IF (l_dbl) CALL mecca_dbl_result(model_time)
 
   END SUBROUTINE mecca_result
 
@@ -1171,8 +1294,8 @@ CONTAINS
 
     CALL close_file(ncid_tracer)
 
-    IF (l_tag) CALL tag_finish
-    IF (l_dbl) CALL dbl_finish
+    IF (l_tag) CALL mecca_tag_finish
+    IF (l_dbl) CALL mecca_dbl_finish
 
     DEALLOCATE(c0_HCO3m, c0_Clm, c0_Brm, c0_Im, c0_IO3m, c0_SO4mm, c0_HSO4m)
     DEALLOCATE(xaer, radius, lwc, csalt, c0_NH4p, c0_Nap, exchng)

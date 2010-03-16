@@ -18,7 +18,7 @@ MODULE messy_jval
 
   USE messy_main_constants_mem, ONLY: DP, k_B, HLINE2
   USE messy_main_tools,         ONLY: PTR_1D_ARRAY, PTR_3D_ARRAY
-  USE messy_main_timer,         ONLY: T_TIME_CONTROL, T_TIME_SERIES
+  USE messy_main_import_tseries,ONLY: t_tseries_ctrl, t_tseries_data
   USE messy_cmn_photol_mem      ! IP_MAX, ip_*, jname
 
   IMPLICIT NONE
@@ -36,11 +36,11 @@ MODULE messy_jval
   ! **************************************************************************
   ! --- TIME INTERPOLATION FOR SOLAR CYCLE ---
   ! time control
-  TYPE(T_TIME_CONTROL), SAVE, PUBLIC :: time_control     ! CTRL namelist
+  TYPE(t_tseries_ctrl), SAVE, PUBLIC :: time_control     ! CTRL namelist
   ! filename with solar cycle data
   CHARACTER(LEN=200),         PUBLIC :: c_solc_data = '' ! CTRL namelsit
   ! DATA
-  TYPE(T_TIME_SERIES), SAVE, PUBLIC :: tseries ! mz_pj_20071030
+  TYPE(t_tseries_data), SAVE, PUBLIC :: tseries ! mz_pj_20071030
   !
   ! SOLAR CYCLE DATA LINEARLY INTERPOLATED IN TIME
   REAL, SAVE, PUBLIC  :: r_sol = 0.5
@@ -2635,7 +2635,7 @@ CONTAINS
 
   SUBROUTINE jval_solar_time_control(status, YEAR, MONTH, DAY, HOUR, cdisse)
 
-    USE messy_main_timer, ONLY: get_tseries_data
+    USE messy_main_import_tseries, ONLY: get_tseries_data
 
     IMPLICIT NONE
 

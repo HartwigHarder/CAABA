@@ -4,6 +4,7 @@
 # when it is run in batch mode (i.e. not interactive).
 
  set apn          = 1                 # number of aerosol phases [0...99, default=0]
+ set gaseqnfile   = gas_mim2.eqn
  set rplfile      =                   # no replacements
  set wanted       = "\!Ara"
  set mcfct        = n                 # Monte-Carlo factor?
@@ -14,5 +15,5 @@
  set integr       = rosenbrock_posdef # integrator
  set decomp       = n                 # remove indirect indexing
  set latex        = y                 # latex list of reactions
- set graphviz     = y                 # graphviz plots
+ set graphviz     = y                 # graphviz plots?
  set deltmp       = y                 # delete temporary xmecca files?

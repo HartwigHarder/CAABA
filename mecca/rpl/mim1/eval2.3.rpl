@@ -1,0 +1,66 @@
+// -*- kpp -*- kpp mode for emacs
+
+// Author: Holger Tost
+
+// Syntax of this replacement file is similar to kpp syntax, but...
+// - Only the commands "#REPLACE" and "#ENDREPLACE" are allowed.
+// - Comments must start with "//", curly braces ("{}") cannot be used here.
+
+// known limitation:
+// - The reaction number (e.g. "<G9876>") in the input equation file
+//   (gas.eqn) must be the first (non-whitespace) item in the line. If it is
+//   preceded by a comment in curly braces, replace.awk will not be able to
+//   find it.
+
+// Apply by running xmecca1 or using:
+//gawk -f replace1.awk -v infile=gas.eqn.org -v outfile=gas.eqn gas.rpl
+
+// add new reactions, specify an empty reaction number
+
+// in 2.3z the NH3 mechanism was moved to gas.eqn
+
+#REPLACE <J8401>
+<a>  CH3I    + hv = CH3O2                 : {%TrGJ}     JX(ip_CH3I); {&&}
+#ENDREPLACE
+
+#REPLACE <>
+<J9002>  SF6 + hv = PROD                  : {%StGSJ}    JX(ip_SF6); {&&}
+#ENDREPLACE
+
+// verschlimmbesserte MIMvK Version:
+// <G4504> ISO2 + NO = .88 NO2 + .88 MVK + .88 HCHO + .88 HO2 + .12 ISON : {%TrGNC} 2.54E-12*EXP(360./temp); {&&1614}
+// replace by original MIM von Poeschl et al.:
+#REPLACE <G4504>
+<a> ISO2 + NO = .956 NO2 + .956 MVK + .956 HCHO + .956 HO2 + .044 ISON : {%TrGNC} 2.54E-12*EXP(360./temp); {&&1614}
+#ENDREPLACE
+
+// exclude C2H2 reactions (no source available !)
+#REPLACE <G4222>
+#ENDREPLACE
+
+#REPLACE <G6411>
+#ENDREPLACE
+
+#REPLACE <G7406>
+#ENDREPLACE
+
+// exclude C2H6 + Cl reaction for backward compatibility to M2E23_exp??
+// (this was introduced in 2.3z)
+#REPLACE <G6412>
+#ENDREPLACE
+
+// O3s diagnostic
+#REPLACE <>
+<G01Diag> O3s            = LO3s        : {%StTrG} k_O3s; {&&1714}
+#ENDREPLACE
+
+// Hg chemistry without Ox and HOx oxidation
+#REPLACE <G10100>
+#ENDREPLACE
+
+#REPLACE <G10200>
+#ENDREPLACE
+
+#REPLACE <G10201>
+#ENDREPLACE
+

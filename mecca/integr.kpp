@@ -2,12 +2,12 @@
 #INLINE F90_GLOBAL
   ! KPP info from xmecca:
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: &
-    mecca_spc_file     = '-rw------- 1 sander sander 21480 2010-02-22 17:50 mecca.spc', &
-    mecca_eqn_file     = '-rw------- 1 sander sander 23540 2010-02-22 17:50 mecca.eqn', &
-    mecca_spc_file_sum = '57839    21', &
-    mecca_eqn_file_sum = '05279    23', &
+    mecca_spc_file     = '-rw------- 1 sander sander 27226 2010-03-16 16:04 mecca.spc', &
+    mecca_eqn_file     = '-rw------- 1 sander sander 24935 2010-03-16 16:04 mecca.eqn', &
+    mecca_spc_file_sum = '52734    27', &
+    mecca_eqn_file_sum = '17546    25', &
     kppoption          = 'k', &
-    KPP_HOME           = '/home/sander/e2/messy_2.3z_rs/messy/tools/kpp', &
+    KPP_HOME           = '/home/sander/e2/messy_2.3zp_rs_mim2/messy/tools/kpp', &
     KPP_version        = '2.2.1_rs5', &
     integr             = 'rosenbrock_posdef'
 #ENDINLINE {above lines go to messy_mecca_kpp_global}

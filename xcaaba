@@ -1,5 +1,5 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-09-11 12:56:07 sander>
+# Time-stamp: <2010-03-08 11:05:28 sander>
 # Author: Rolf Sander, Max-Planck-Institute, Mainz, Germany
 # xcaaba = eXecute CAABA
 
@@ -20,7 +20,7 @@ unset xmecca
 ##############################################################################
 
 if ( "$1" == "" ) then
-  echo "\nYou can create a new chemical mechanism with xmecca."
+  echo "\nYou can create a new chemical mechanism with xmecca now."
   echo "This is necessary, e.g. if:"
   echo "a) you have changed any of the *.eqn, *.spc, or *.kpp files"
   echo "b) you want to select a different subset of the reaction mechanism"

@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------------
 
 # Author: Rolf Sander, Max-Planck-Institute, Mainz, Germany, 2003
-# Time-stamp: <2007-04-30 19:48:14 akerkweg>
+# Time-stamp: <2009-11-12 12:29:38 akerkweg>
 
 # tracdef.awk extracts all ind_XYZ from messy_mecca_kpp_Parameters.f90 and
 # inserts these species into messy_mecca_idt_e5.inc. For all ind_XYZ that are
@@ -9,10 +9,10 @@
 # messy_mecca_mr2c_e5.inc, and messy_mecca_trac_e5.inc, using the tracer info
 # in tracdef.tex.
 
-# 1) messy_mecca_idt_e5.inc:  the index declaration "INTEGER idt_XYZ"
-# 2) messy_mecca_c2mr_e5.inc: the conversion concentration -> mixing ratio
-# 3) messy_mecca_mr2c_e5.inc: the conversion mixing ratio -> concentration
-# 4) messy_mecca_trac_e5.inc: the "CALL new_tracer" command including all tracer
+# 1) messy_mecca_idt_si.inc:  the index declaration "INTEGER idt_XYZ"
+# 2) messy_mecca_c2mr_si.inc: the conversion concentration -> mixing ratio
+# 3) messy_mecca_mr2c_si.inc: the conversion mixing ratio -> concentration
+# 4) messy_mecca_trac_si.inc: the "CALL new_tracer" command including all tracer
 #                             properties as defined in tracdef.tex.
 
 # usage:
@@ -25,10 +25,10 @@
 
 BEGIN {
 # define names of output files
-idtfile     = "messy_mecca_idt_e5.inc"
-conc2mrfile = "messy_mecca_c2mr_e5.inc"
-mr2concfile = "messy_mecca_mr2c_e5.inc"
-tracfile    = "messy_mecca_trac_e5.inc"
+idtfile     = "messy_mecca_idt_si.inc"
+conc2mrfile = "messy_mecca_c2mr_si.inc"
+mr2concfile = "messy_mecca_mr2c_si.inc"
+tracfile    = "messy_mecca_trac_si.inc"
 # write header line
 dontedit = "! -*- f90 -*- this file was created by xmecca, do not edit!"
 print dontedit > idtfile

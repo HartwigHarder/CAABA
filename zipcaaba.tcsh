@@ -1,6 +1,10 @@
 #! /bin/tcsh -f
-# Time-stamp: <2009-08-28 12:30:16 sander>
+# Time-stamp: <2010-03-06 14:55:45 sander>
 # zipcaaba: create a zip file of caaba code
+
+# if the current directory is only a link, the following cd command
+# will jump into the real directory:
+cd `/bin/pwd`
 
 if ( "$1" == "" ) then
   echo "This script shoud be used via the Makefile, e.g.:"
@@ -27,9 +31,12 @@ if ( "$1" == "zipall" ) then
   else 
   zip -ory $zipfile $dirname \
     -x '*~' -x '*.mod' -x '*.exe' -x '*.o' -x '*.a' -x $dirname/'caaba_*.nc' \
-    -x '*.old' -x '*.zip' -x '*.tar' -x '*/tmp/*' \
+    -x '*.log' -x '*.old' -x '*/ferret.jnl' -x '*.zip' -x '*.tar' \
     -x '*.ps' -x '*.dat' -x '*/Makefile.m' -x $dirname/'output/?*' \
-    -x $dirname/'temporaryfile*'
+    -x '*/tmp_*' \
+    -x '*.aux' -x '*.bbl' -x '*.toc' -x '*.blg' \
+    -x $dirname/'temporaryfile*' \
+    -x '*/tmp/*' 
 endif
 
 echo "\nThe zipfile has been created:"

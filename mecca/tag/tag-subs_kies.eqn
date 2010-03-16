@@ -1,0 +1,1447 @@
+#SG: based on CAABA 2.4d reactions/species list
+
+// ------------------------------- gas.eqn -----------------------------------
+// Time-stamp: <2008-06-04 19:31:48 sander>
+// ---------------------------------------------------------------------------
+
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, get it from:
+// http://www.gnu.org/copyleft/gpl.html
+
+// ---------------------------------------------------------------------------
+
+// This file contains all gas-phase reactions of the MECCA chemistry module.
+// Use the script 'xmecca' to select reactions and run kpp.
+// The syntax of reaction labels in *.eqn file is explained in the supplement
+// of our paper in Atmos. Chem. Phys. 5, 445-450 (2005)
+
+// Authors:
+// - Rolf von Kuhlmann:
+//   - Tropospheric hydrocarbon chemistry nmhc8.eqn from MATCH
+// - Stefanie Meilinger (Nov 2002):
+//   - Stratospheric heterogeneous chemistry
+//   - Stratospheric Br chemistry from the Mainz Chemical Box Model
+//   - Gas-phase reaction rates updated to JPL2000
+// - Astrid Kerkweg (2003):
+//   - Mbl halogen reactions from MISTRA (von Glasow et al. 2002) added
+// - Rolf Sander (2002-2008):
+//   - Stratospheric gas-phase chemistry ECHAM4CHEM (Steil et al. 1998) added
+//   - Reaction mechanisms merged, sorted, labeled, and maintained
+//   - Gas-phase reaction rates updated to JPL2003
+
+// ---------------------------------------------------------------------------
+
+#INLINE F90_GLOBAL
+  ! from gas.eqn:
+  REAL :: k_HO2_HO2, k_NO3_NO2, k_NO2_HO2, k_HNO3_OH, k_CH3OOH_OH, k_PA_NO2, &
+          k_PAN_M, k_PrO2_HO2, k_PrO2_NO, k_PrO2_CH3O2, k_ClO_ClO, k_BrO_NO2, &
+          k_I_NO2, k_DMS_OH
+  ! ALL PHASES:
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: cair    ! c(air) (wet) [mcl/cm^3]
+!KPPPP_DIRECTIVE vector variable definition end
+  ! AEROSOL ONLY:
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: xaer(APN)
+  REAL(dp) :: cvfac(APN)    ! unit conversion factor
+  REAL(dp) :: lwc(APN)      ! liquid water content
+  REAL(dp) :: k_exf(APN,NSPEC) = 0.
+  REAL(dp) :: k_exb(APN,NSPEC) = 0.
+  REAL(dp) :: k_exf_N2O5(APN)  = 0.
+  REAL(dp) :: k_exf_ClNO3(APN) = 0.
+  REAL(dp) :: k_exf_BrNO3(APN) = 0.
+!KPPPP_DIRECTIVE vector variable definition end
+  INTEGER, PUBLIC  :: xnom7sulf = 1 ! = 1-xm7sulf
+
+  ! ip_* = index of photolysis
+  INTEGER, PUBLIC, PARAMETER :: &
+    ip_O2       =  1, ip_O3P      =  2, ip_O1D      =  3, ip_H2O2     =  4, &
+    ip_NO2      =  5, ip_NO2O     =  6, ip_NOO2     =  7, ip_N2O5     =  8, &
+    ip_HNO3     =  9, ip_HNO4     = 10, ip_PAN      = 11, ip_HONO     = 12, &
+    ip_CH3OOH   = 13, ip_COH2     = 14, ip_CHOH     = 15, ip_CH3CO3H      = 16, &
+    ip_CH3CHO   = 17, ip_CH3COCH3 = 18, ip_MGLYOX = 19, ip_HOCl     = 20, &
+    ip_OClO     = 21, ip_Cl2O2    = 22, ip_ClNO3    = 23, ip_ClNO2    = 24, &
+    ip_Cl2      = 25, ip_BrO      = 26, ip_HOBr     = 27, ip_BrCl     = 28, &
+    ip_BrNO3    = 29, ip_BrNO2    = 30, ip_Br2      = 31, ip_CCl4     = 32, &
+    ip_CH3Cl    = 33, ip_CH3CCl3  = 34, ip_CFCl3    = 35, ip_CF2Cl2   = 36, &
+    ip_CH3Br    = 37, ip_CF2ClBr  = 38, ip_CF3Br    = 39, ip_CH3I     = 40, &
+    ip_C3H7I    = 41, ip_CH2ClI   = 42, ip_CH2I2    = 43, ip_IO       = 44, &
+    ip_HOI      = 45, ip_I2       = 46, ip_ICl      = 47, ip_IBr      = 48, &
+    ip_INO2     = 49, ip_INO3     = 50, ip_SO2      = 51, ip_SO3      = 52, &
+    ip_OCS      = 53, ip_CS2      = 54, ip_H2O      = 55, ip_N2O      = 56, &
+    ip_NO       = 57, ip_CO2      = 58, ip_HCl      = 59, ip_CHCl2Br  = 60, &
+    ip_CHClBr2  = 61, ip_CH2ClBr  = 62, ip_CH2Br2   = 63, ip_CHBr3    = 64, &
+    ip_SF6      = 65, ip_NO3NOO   = 66, ip_ClONO2   = 67, ip_MACR     = 68, &
+    ip_MVK      = 69, ip_GLYOX    = 70, ip_HOCH2CHO = 71, ip_CH4      = 72
+  ! IP_MAX is set to the highest ip_* value from the definitions above:
+  INTEGER, PUBLIC, PARAMETER :: IP_MAX = 72
+  CHARACTER(LEN=9), PUBLIC, PARAMETER, DIMENSION(IP_MAX) :: jname = (/ &
+    'O2       ', 'O3P      ', 'O1D      ', 'H2O2     ', &
+    'NO2      ', 'NO2O     ', 'NOO2     ', 'N2O5     ', &
+    'HNO3     ', 'HNO4     ', 'PAN      ', 'HONO     ', &
+    'CH3OOH   ', 'COH2     ', 'CHOH     ', 'CH3CO3H      ', &
+    'CH3CHO   ', 'CH3COCH3 ', 'MGLYOX ', 'HOCl     ', &
+    'OClO     ', 'Cl2O2    ', 'ClNO3    ', 'ClNO2    ', &
+    'Cl2      ', 'BrO      ', 'HOBr     ', 'BrCl     ', &
+    'BrNO3    ', 'BrNO2    ', 'Br2      ', 'CCl4     ', &
+    'CH3Cl    ', 'CH3CCl3  ', 'CFCl3    ', 'CF2Cl2   ', &
+    'CH3Br    ', 'CF2ClBr  ', 'CF3Br    ', 'CH3I     ', &
+    'C3H7I    ', 'CH2ClI   ', 'CH2I2    ', 'IO       ', &
+    'HOI      ', 'I2       ', 'ICl      ', 'IBr      ', &
+    'INO2     ', 'INO3     ', 'SO2      ', 'SO3      ', &
+    'OCS      ', 'CS2      ', 'H2O      ', 'N2O      ', &
+    'NO       ', 'CO2      ', 'HCl      ', 'CHCl2Br  ', &
+    'CHClBr2  ', 'CH2ClBr  ', 'CH2Br2   ', 'CHBr3    ', &
+    'SF6      ', 'NO3NOO   ', 'ClONO2   ', 'MACR     ', &
+    'MVK      ', 'GLYOX    ', 'HOCH2CHO ', 'CH4      '  &
+    /)
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: jx(IP_MAX) = 0.
+!KPPPP_DIRECTIVE vector variable definition end
+
+  ! iht_ = index of troposheric heterogeneous reactions 
+  INTEGER, PARAMETER, PUBLIC :: &
+    iht_N2O5      =  1, iht_HNO3      =  2
+  INTEGER, PARAMETER, PUBLIC :: IHT_MAX = 2
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: khet_Tr(IHT_MAX) = 0.
+!KPPPP_DIRECTIVE vector variable definition end
+  ! ihs_ = index of stratospheric heterogeneous reactions
+  ! (must be the same as in messy_msbm.f90!)
+  INTEGER, PARAMETER :: &
+    ihs_N2O5_H2O  =  1, ihs_HOCl_HCl  =  2, ihs_ClNO3_HCl =  3, &
+    ihs_ClNO3_H2O =  4, ihs_N2O5_HCl  =  5, ihs_ClNO3_HBr =  6, &
+    ihs_BrNO3_HCl =  7, ihs_HOCl_HBr  =  8, ihs_HOBr_HCl  =  9, &
+    ihs_HOBr_HBr  = 10, ihs_BrNO3_H2O = 11
+  INTEGER, PARAMETER, PUBLIC :: IHS_MAX = 11
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL(dp) :: khet_St(IHS_MAX) = 0.
+!KPPPP_DIRECTIVE vector variable definition end
+
+  ! Parameters included for acid-base equilibria calculation
+  ! used to enable the double use of the aqueous.eqn for liquid 
+  ! and aerosol phase.
+  REAL(dp), PARAMETER :: &
+    testfac_HO2   = 1.e5_dp, testfac_HONO   = 1.e5_dp, &
+    testfac_HNO3  = 1.e7_dp, testfac_HNO4   = 1.e5_dp, &
+    testfac_HCOOH = 1.e5_dp, testfac_SO2    = 1.e9_dp, &
+    testfac_HSO3m = 1.e9_dp, testfac_HSO4m  = 1.e7_dp, &
+    testfac_NH3   = 1.e7_dp, testfac_H2O    = 1.e9_dp, &
+    testfac_CO2   = 1.e5_dp, testfac_HCl    = 1.e2_dp, &
+    testfac_HBr   = 1.e6_dp,                           &
+    testfac_HOCl  = 1.e2_dp, testfac_HOBr   = 1.e2_dp, &
+    testfac_ICl   = 1.e2_dp, testfac_IBr    = 1.e2_dp, &
+    testfac_IClBr = 1.e2_dp, testfac_H2SO4  = 1.e7_dp
+#ENDINLINE {above lines go to messy_mecca_kpp_global}
+
+#INLINE F90_RCONST
+  USE messy_main_constants_mem ! atm2Pa, N_A, R_gas
+  ! end of USE statements
+  !
+  ! start of executable statements
+  ! define some rate constants here if the expressions are too long
+  ! for kpp or if they are used more than once
+  k_HO2_HO2    = (1.5E-12*EXP(19./temp)+1.7E-33*EXP(1000./temp)*cair)* &
+                 (1.+1.4E-21*EXP(2200./temp)*C(ind_H2O))
+  k_NO3_NO2    = k_3rd(temp,cair,2.0E-30,4.4,1.4E-12,0.7,0.6)
+  k_NO2_HO2    = k_3rd(temp,cair,2.0E-31,3.4,2.9E-12,1.1,0.6)
+  k_HNO3_OH    = 2.4E-14*EXP(460./temp) + 1./ &
+                 ( 1./(6.5E-34*EXP(1335./temp)*cair) + &
+                 1./(2.7E-17*EXP(2199./temp)) )
+  k_CH3OOH_OH  = 3.8E-12*EXP(200./temp)
+  k_PA_NO2     = k_3rd(temp,cair,9.7E-29,5.6,9.3E-12,1.5,0.6)
+  k_PAN_M      = k_PA_NO2/9.0E-29*EXP(-14000./temp)
+  k_PrO2_HO2   = 1.9E-13*EXP(1300./temp)
+  k_PrO2_NO    = 2.7E-12*EXP(360./temp)
+  k_PrO2_CH3O2 = 9.46E-14*EXP(431./temp)
+  k_ClO_ClO    = k_3rd_iupac(temp,cair,2.0E-32,4.0,1.0E-11,0.0,0.45)
+  ! JPL: k_ClO_ClO   = k_3rd(temp,cair,1.6E-32,4.5,2.0E-12,2.4,0.6)
+  k_BrO_NO2    = k_3rd_iupac(temp,cair,4.7E-31,3.1,1.8E-11,0.0,0.4)
+  ! JPL: k_BrO_NO2   = k_3rd(temp,cair,5.2E-31,3.2,6.9E-12,2.9,0.6)
+  k_I_NO2      = k_3rd_iupac(temp,cair,3.0E-31,1.0,6.6E-11,0.0,0.63)
+  ! for numerical reasons, the expression is multiplied by 1e30/1e30
+  k_DMS_OH     = 1.E-9*EXP(5820./temp)*C(ind_O2)/ &
+                 (1.E30+5.*EXP(6280./temp)*C(ind_O2))
+#ENDINLINE {above lines go into the SUBROUTINES UPDATE_RCONST and UPDATE_PHOTO}
+
+#INLINE F90_RATES
+  ELEMENTAL REAL(dp) FUNCTION k_SIV_H2O2 (k_298,tdep,cHp,temp)
+    ! special rate function for S(IV) + H2O2
+    REAL,     INTENT(IN) :: k_298 ! k at T = 298.15K
+    REAL,     INTENT(IN) :: tdep  ! temperature dependence
+    REAL(dp), INTENT(IN) :: cHp   ! c(H+)
+    REAL(dp), INTENT(IN) :: temp  ! temperature
+    INTRINSIC :: EXP
+    k_SIV_H2O2 = k_298 * EXP(tdep*(1._dp/temp-3.3540E-3_dp)) &
+      * cHp / (cHp+0.1_dp)
+  END FUNCTION k_SIV_H2O2
+
+  ELEMENTAL REAL(dp) FUNCTION k_3rd_iupac(temp,cair,k0_300K,n,kinf_300K,m,fc)
+    ! IUPAC three body reaction formula (www.iupac-kinetic.ch.cam.ac.uk)
+
+    INTRINSIC :: LOG10
+
+    REAL(dp), INTENT(IN) :: temp      ! temperature [K]
+    REAL(dp), INTENT(IN) :: cair      ! air concentration [molecules/cm3]
+    REAL,     INTENT(IN) :: k0_300K   ! low pressure limit at 300 K
+    REAL,     INTENT(IN) :: n         ! exponent for low pressure limit
+    REAL,     INTENT(IN) :: kinf_300K ! high pressure limit at 300 K
+    REAL,     INTENT(IN) :: m         ! exponent for high pressure limit
+    REAL,     INTENT(IN) :: fc        ! broadening factor (e.g. 0.45 or 0.6...)
+    REAL                 :: nu        ! N
+    REAL                 :: zt_help, k0_T, kinf_T, k_ratio
+
+    zt_help = 300._dp/temp
+    k0_T    = k0_300K   * zt_help**(n) * cair ! k_0   at current T
+    kinf_T  = kinf_300K * zt_help**(m)        ! k_inf at current T
+    k_ratio = k0_T/kinf_T
+    nu      = 0.75-1.27*LOG10(fc)
+    k_3rd_iupac = k0_T/(1._dp+k_ratio)* &
+      fc**(1._dp/(1._dp+(LOG10(k_ratio)/nu)**2))
+
+  END FUNCTION k_3rd_iupac
+
+  ELEMENTAL REAL(dp) FUNCTION k_limited (k3rd,cHp)
+    ! diffusion limitation caps 3rd order rate coefficients
+    REAL(dp), INTENT(IN) :: k3rd  ! 3rd order rate coefficient
+    REAL(dp), INTENT(IN) :: cHp   ! c(H+)
+    REAL(dp), PARAMETER  :: DiffLimit = 1E10 ! diffusion limitation [M-1s-1]
+    INTRINSIC :: EXP
+    k_limited = 1._dp / ( 1._dp/k3rd + cHp/DiffLimit)
+  END FUNCTION k_limited
+#ENDINLINE {above lines go into MODULE messy_mecca_kpp_Rates}
+
+// ---------------------------------------------------------------------------
+
+#EQUATIONS
+
+{<G1nnn> ------------------------------- O -------------------------}
+
+// O only (#G10nn)
+<G1000>  O2   + O1D      = O3P + O2    : {%StTrG} 3.3E-11*EXP(55./temp); {&1945}
+<G1001>  O2   + O3P {+M} = O3          : {%StTrG} 6.E-34*((temp/300.)**(-2.4))*cair; {&1945}
+<G1002>  O3   + O1D      = 2 O2        : {%StG}   1.2E-10; {&&1945}
+<G1003>  O3   + O3P      = 2 O2        : {%StG}   8.E-12*EXP(-2060./temp); {&1945}
+
+{<G2nnn> ------------------------------- H -------------------------}{@\myhline}
+
+// H + O (#G21nn)
+<G2100>  H    + O2 {+M}  = HO2         : {%StTrG} k_3rd(temp,cair,4.4E-32,1.3,4.7E-11,0.2,0.6); {&1945}
+<G2101>  H    + O3       = OH + O2     : {%StG}   1.4E-10*EXP(-470./temp); {&1945}
+<G2102>  H2   + O1D      = H + OH      : {%StG}   1.1E-10; {&1945}
+<G2103>  OH   + O3P      = H + O2      : {%StG}   2.2E-11*EXP(120./temp); {&1945}
+<G2104>  OH   + O3       = HO2 + O2    : {%StTrG} 1.7E-12*EXP(-940./temp); {&1945}
+<G2105>  OH   + H2       = H2O + H     : {%StTrG} 2.8E-12*EXP(-1800./temp); {&1945}
+<G2106>  HO2  + O3P      = OH + O2     : {%StG}   3.E-11*EXP(200./temp); {&1945}
+<G2107>  HO2  + O3       = OH + 2 O2   : {%StTrG} 1.E-14*EXP(-490./temp); {&1945}
+<G2108a> HO2  + H        = 2 OH        : {%StG}   7.2E-11; {&1945}
+<G2108b> HO2  + H        = H2 + O2     : {%StG}   6.9E-12; {&1945}
+<G2108c> HO2  + H        = O3P + H2O   : {%StG}   1.6E-12; {&1945}
+<G2109>  HO2  + OH       = H2O + O2    : {%StTrG} 4.8E-11*EXP(250./temp); {&1945}
+<G2110>  HO2  + HO2      = H2O2 + O2   : {%StTrG} k_HO2_HO2; {&&1599, 165}
+<G2111>  H2O  + O1D      = 2 OH        : {%StTrG} 1.63E-10*EXP(60./temp); {&1945}
+<G2112>  H2O2 + OH       = H2O + HO2   : {%StTrG} 1.8E-12; {&1945}
+
+{<G3nnn> ------------------------------- N -------------------------}{@\myhline}
+
+// N + O (#G31nn)
+<G3100>  N    + O2       = NO + O3P    : {%StGN}   1.5E-11*EXP(-3600./temp); {&1945}
+<G3101>  N2   + O1D      = O3P + N2    : {%StTrG}  2.15E-11*EXP(110./temp); {&1945}
+<G3102a> N2O  + O1D      = 2 NO        : {%StGN}   6.7E-11*EXP(20./temp); {&1945}
+<G3102b> N2O  + O1D      = N2 + O2     : {%StGN}   4.7E-11*EXP(20./temp); {&1945}
+<G3103>  NO   + O3       = NO2 + O2    : {%StTrGN} 3.E-12*EXP(-1500./temp); {&1945}
+<G3104>  NO   + N        = O3P + N2    : {%StGN}   2.1E-11*EXP(100./temp); {&1945}
+<G3105>  NO2  + O3P      = NO + O2     : {%StGN}   5.1E-12*EXP(210./temp); {&1945}
+<G3106>  NO2  + O3       = NO3 + O2    : {%StTrGN} 1.2E-13*EXP(-2450./temp); {&1945}
+<G3107>  NO2  + N        = N2O + O3P   : {%StGN}   5.8E-12*EXP(220./temp); {&1945}
+<G3108>  NO3  + NO       = 2 NO2       : {%StTrGN} 1.5E-11*EXP(170./temp); {&1945}
+<G3109>  NO3  + NO2 {+M} = N2O5        : {%StTrGN} k_NO3_NO2; {&&1945}
+<G3110>  N2O5       {+M} = NO2 + NO3   : {%StTrGN} k_NO3_NO2/(2.7E-27*EXP(11000./temp)); {&&1945}
+
+// N + H (#G32nn)
+<G3200>  NO   + OH {+M}  = HONO        : {%TrG}    k_3rd(temp,cair,7.0E-31,2.6,3.6E-11,0.1,0.6); {&1945}
+<G3201>  NO   + HO2      = NO2   + OH  : {%StTrGN} 3.5E-12*EXP(250./temp); {&1945}
+<G3202>  NO2  + OH  {+M} = HNO3        : {%StTrGN} k_3rd(temp,cair,1.8E-30,3.0,2.8E-11,0.,0.6); {&1945}
+<G3203>  NO2  + HO2 {+M} = HNO4        : {%StTrGN} k_NO2_HO2; {&&1945}
+<G3204>  NO3  + HO2      = NO2 + OH + O2 : {%TrGN} 3.5E-12; {&1945}
+<G3205>  HONO + OH       = NO2 + H2O   : {%TrG}    1.8E-11*EXP(-390./temp); {&1945}
+<G3206>  HNO3 + OH       = H2O   + NO3 : {%StTrGN} k_HNO3_OH; {&&1945}
+<G3207>  HNO4       {+M} = NO2   + HO2 : {%StTrGN} k_NO2_HO2/(2.1E-27*EXP(10900./temp)); {&&1945}
+<G3208>  HNO4 + OH       = NO2   + H2O : {%StTrGN} 1.3E-12*EXP(380./temp); {&1945}
+
+{<G4nnn> ------------------------------- C -------------------------}{@\myhline}
+
+// 1C (#G41nn)
+
+<G4100>  CH4     + O1D     = .75 CH3O2 + .75 OH + .25 HCHO + .4 H + .05 H2 : {%StG}    1.5E-10; {&1945}
+// Atkinson et al., Sander et al. 2006 JPL
+ G4100  O2 = CH3O2
+ G4100 O1D =       OH HCHO
+// KIE: Saueressig [2001]
+
+// G4101-4111 section is done with O transfer based on Weston [2001]
+
+<G4101>  CH4     + OH {+O2}= CH3O2 + H2O      : {%StTrG}  1.85E-20*EXP(2.82*log(temp)-987./temp); {&&1627}
+// KIE: Saueressig [2001]
+
+<G4102>  CH3OH   + OH      = HCHO + HO2        : {%TrG}    2.9E-12*EXP(-345./temp); {&1945}
+<G4103>  CH3O2   + HO2     = CH3OOH + O2       : {%StTrG}  4.1E-13*EXP(750./temp); {&&1945}
+<G4104>  CH3O2   + NO      = HCHO + NO2 + HO2  : {%StTrGN} 2.8E-12*EXP(300./temp); {&1945}
+<G4105>  CH3O2   + NO3     = HCHO + HO2 + NO2  : {%TrGN}   1.3E-12; {&1207}
+<G4106a> CH3O2   + CH3O2   = 2 HCHO + 2 HO2    : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+1./26.2*EXP(1130./temp)); {&1945}
+<G4106b> CH3O2   + CH3O2   = HCHO + CH3OH + O2 : {%StTrG}  9.5E-14*EXP(390./temp)/(1.+26.2*EXP(-1130./temp)); {&1945}
+<G4107>  CH3OOH  + OH      = .7 CH3O2 + .3 HCHO + .3 OH + H2O : {%StTrG} k_CH3OOH_OH; {&&1945}
+<G4108>  HCHO    + OH      = CO + H2O + HO2    : {%StTrG}  9.52E-18*EXP(2.03*log(temp)+636./temp); {&1634}
+<G4109>  HCHO    + NO3     = HNO3 + CO + HO2   : {%TrGN}   3.4E-13*EXP(-1900./temp); {&&1945}
+<G4110>  CO      + OH      = H + CO2           : {%StTrG}  1.57E-13 + cair*3.54E-33; {&1628}
+// KIE (13C, 17O, 18O): Stevens, Roeckmann
+
+<G4111>  HCOOH   + OH      = HO2               : {%TrG}    4.0E-13; {&1945}
+
+// 2C (#G42nn)
+
+// OK
+<G4200>  C2H6    + OH      = C2H5O2 + H2O         : {%TrGC}   1.49E-17*temp*temp*EXP(-499./temp); {&1627}
+         C2H6    + OH + O2 = C2H5O2 + H2O
+ G4200 OH = H2O
+ G4200 O2 = C2H5O2
+// Anderson et al. [2004] through Stein & Rudolph [2007]: KIE(13C) = 1+8.59E-3 +- 2.00E-3
+
+// C?
+// O - OK with some considerations (Domenico)
+<G4201>  C2H4    + O3      = HCHO + .22 HO2 + .12 OH + .23 CO + .54 HCOOH + .1 H2 : {%TrGC} 1.2E-14*EXP(-2630./temp); {&&1945}
+ G4201  O3 = HCHO     OH CO 1 HCOOH    CO2 1 H2O2
+ G4201  O2 =      HO2
+ G4201 H2O =                1 HCOOH        1 H2O2
+// Iannone, etal. [2003]: KIE(13C) = 1+18.85E-3 +- 2.80E-3
+
+// C - composition transfer warning! : C2H4 + OH product is lumped to 2/3 of LHOC3H6O2
+// O - OK, OH is lost; 
+<G4202>  C2H4    + OH {+M} = .6666667 LHOC3H6O2    : {%TrGC}   k_3rd(temp,cair,1.0E-28,4.5,8.8E-12,0.85,0.6); {&1945}
+// OXYGEN
+ G4202   O2 = LHOC3H6O2
+// CARBON
+ G4202 C2H4 = ? LHOC3H6O2
+
+// OK
+<G4203>  C2H5O2    + HO2     = C2H5OOH              : {%TrGC}   7.5E-13*EXP(700./temp); {&1945}
+//       C2H5O2  + HO2     = C2H6O2 + O2
+ G4203 C2H5O2 = C2H5OOH
+ G4203  HO2 = O2
+
+// OK
+<G4204>  C2H5O2    + NO      = CH3CHO + HO2 + NO2 : {%TrGNC}  2.6E-12*EXP(365./temp); {&1945}
+//       C2H5O2  + NO      = C2H4O + HO2 + NO2
+ G4204 C2H5O2 = 0.5 NO2 CH3CHO
+ G4204   NO = 0.5 NO2 
+ G4204   O2 =         HO2
+
+// OK, O2 is missing on the RS
+<G4205>  C2H5O2    + NO3     = CH3CHO + HO2 + NO2 : {%TrGNC}  2.3E-12; {&1207}
+//       C2H5O2  + NO3     = C2H4O  + HO2 + NO2 + O2
+ G4205 C2H5O2 = CH3CHO           O2
+ G4205  NO3 =        NO2       O2
+ G4205   O2 =            HO2
+
+// MCM-explained O, C transfer
+// missing O2 on th RS?
+// lost oxygen from both educts -> to where?
+// sub for C!
+<G4206>  C2H5O2    + CH3O2   = .75 HCHO + HO2 + .75 CH3CHO + .25 CH3OH {+.25EtOH} : {%TrGC} 1.6E-13*EXP(195./temp); {&&}
+//       C2H5O2  + CH3O2   = .75 HCHO + HO2 + .75 CH3CHO + .25 CH3OH {+.25EtOH} + O2?
+// OXYGEN
+ G4206  C2H5O2 = CH3CHO EtOH   O2
+ G4206 CH3O2 = HCHO CH3OH    O2
+ G4206    O2 = HO2
+// CARBON
+ G4206  C2H5O2 = CH3CHO EtOH
+ G4206 CH3O2 = HCHO CH3OH
+
+// C2H5O2 breaks to CH3CHO + OH in 70% of cases
+// OK
+<G4207>  C2H5OOH   + OH      = .3 C2H5O2 + .7 CH3CHO + .7 OH       : {%TrGC} k_CH3OOH_OH; {&&}
+//       C2H6O2  + OH      = .3 C2H5O2 + .7 C2H4O + .7 OH + H2O
+ G4207 C2H5OOH = C2H5O2 CH3CHO OH
+ G4207    OH = H2O
+
+// OK
+<G4208>  CH3CHO  + OH      = CH3CO3 + H2O           : {%TrGC}   4.4E-12*EXP(365./temp); {&1759}
+//       C2H4O   + OH      = C2H3O3 + H2O
+ G4208     OH = H2O
+ G4208 CH3CHO = 1 CH3CO3
+ G4208     O2 = 2 CH3CO3
+
+// OK
+<G4209>  CH3CHO  + NO3     = CH3CO3 + HNO3          : {%TrGNC}  1.4E-12*EXP(-1900./temp); {&1945}
+//       C2H5O   + NO3     = C2H3O3 + HNO3
+ G4209    NO3 = HNO3
+ G4209 CH3CHO = 1 CH3CO3
+ G4209     O2 = 2 CH3CO3
+
+// OK
+<G4210>  CH3CO2H + OH {+O2}= CH3O2 + CO2 +H2O   : {%TrGC}   4.2E-14*EXP(855./temp); {&1759}
+//       C2H4O2  + OH {+O2}= CH3O2 + CO2 +H2O
+ G4210 CH3CO2H = CO2
+ G4210      OH = H2O
+ G4210      O2 = CH3O2
+
+// OK: MCM
+<G4211a> CH3CO3      + HO2     = CH3CO3H                : {%TrGC}   4.3E-13*EXP(1040./temp)/(1.+1./37.*EXP(660./temp)); {&1613}
+<G4211a> C2H3O3  + HO2     = C2H4O3 + O2
+ G4211a  CH3CO3 = CH3CO3H
+ G4211a HO2 = O2
+
+// OK: MCM
+<G4211b> CH3CO3      + HO2     = CH3CO2H + O3       : {%TrGC}   4.3E-13*EXP(1040./temp)/(1.+37.*EXP(-660./temp)); {&1613}
+<G4211b> C2H3O3  + HO2     = C2H4O2 + O3
+ G4211b HO2 = 2 O3
+ G4211b  CH3CO3 = 1 O3 CH3CO2H
+// -- ozone signature (reg? MIF?) dilution with 2/3 HO2 and 1/3 CH3CO3
+
+// OK
+<G4212>  CH3CO3      + NO      = CH3O2 + NO2        : {%TrGNC}  8.1E-12*EXP(270./temp); {&1613}
+         C2H3O3  + NO      = CH3O2 + NO2 + CO2
+ G4212 CH3CO3 = 0.5 NO2       CO2
+ G4212 NO = 0.5 NO2
+ G4212 O2 =         CH3O2
+
+// OK
+<G4213>  CH3CO3      + NO2     = PAN                : {%TrGNC}  k_PA_NO2; {&1945}
+         C2H3O3  + NO2     = C2H3O5N
+
+// C: OK
+// O: OK
+<G4214>  CH3CO3      + NO3     = CH3O2 + NO2        : {%TrGNC}  4.E-12; {&1617}
+         C2H3O3  + NO3     = CH3O2 + NO2 + CO2 + O2
+ G4214  CH3CO3 =         CO2 0.5 O2
+ G4214 NO3 = NO2         0.5 O2
+ G4214  O2 = CH3O2
+
+// OK
+// MCM-explained O, C transfer
+// sub for C!
+<G4215a> CH3CO3      + CH3O2   = HCHO + HO2 + CH3O2 + CO2      : {%TrGC} 0.9*2.E-12*EXP(500./temp); {&1945}
+//       C2H3O3  + CH3O2   = HCHO + HO2 + CH3O2 + CO2
+// OXYGEN
+ G4215a    CH3CO3 = CO2
+ G4215a CH3O2 = HCHO
+ G4215a    O2 = CH3O2 HO2            ; CH3CO3 -> CH3* + CO2 -> CH3* + AIR O2 -> CH3O2
+// CARBON
+ G4215a    CH3CO3 = CH3O2 CO2
+ G4215a CH3O2 = HCHO
+
+// OK
+// MCM-explained O, C transfer
+// sub for C!
+// missing 2 O on the RS
+<G4215b> CH3CO3      + CH3O2   = CH3CO2H + HCHO                : {%TrGC} 0.1*2.E-12*EXP(500./temp); {&1555}
+//       C2H3O3  + CH3O2   = C2H4O2  + CH2O
+// OXYGEN
+ G4215b    CH3CO3 = CH3CO2H
+ G4215b CH3O2 = HCHO
+// CARBON
+ G4215b    CH3CO3 = CH3CO2H CO2
+ G4215b CH3O2 = HCHO
+
+// assumption: HO2 from air O2, CO2 oxygen is from CH3CO3 and C2H5O2
+<G4216>  CH3CO3      + C2H5O2    = .82 CH3O2 + CH3CHO + .82 HO2 + .18 CH3CO2H : {%TrGC} 4.9E-12*EXP(211./temp); {&&1207, 1632}
+         C2H3O3  + C2H5O2  = .82 CH3O2 + CH3CHO + .82 HO2 + .18 CH3CO2H
+//                           + .82 CO2
+// OXYGEN
+ G4216   CH3CO3 = CH3CO2H CH3O2    1 CO2  ; (+H -O)   (-O -C)
+ G4216 C2H5O2 = CH3CHO           1 CO2  ;      (-H -O)
+ G4216   O2 = HO2                     ; CH3CO3 -> CH3* + CO2 -> CH3* + AIR O2 -> CH3O2
+// CARBON
+ G4216   CH3CO3 = CH3CO2H CH3O2    CO2
+ G4216 C2H5O2 = CH3CHO
+
+// OK
+<G4217>  CH3CO3      + CH3CO3      = 2 CH3O2 + 2 CO2 + O2          : {%TrGC} 2.5E-12*EXP(500./temp); {&1613}
+         C2H3O3  + C2H3O3  = 2 CH3O2 + 2 CO2 + O2
+
+// OK
+<G4218>  CH3CO3H     + OH      = CH3CO3                 : {%TrGC}   k_CH3OOH_OH; {&&}
+         C2H4O3  + OH      = C2H3O3 + H2O
+ G4218 CH3CO3H = CH3CO3
+ G4218  OH = H2O
+
+// OK: WITH DOMENICO'S PERMISSION
+// TRICKY
+<G4219>  NACA    + OH      = NO2 + HCHO + CO    : {%TrGNC}  5.6E-12*EXP(270./temp); {&&}
+         C2H3O4N + OH      = HCHO + NO2 + CO
+ G4219 NACA = NO2 HCHO CO
+ G4219   OH = H2O
+         
+// OK: WITH DOMENICO'S PERMISSION
+// TRICKY
+<G4220>  PAN     + OH      = HCHO + NO2         : {%TrGNC}  2.E-14; {&&}
+         C2H3O5N + OH      = HCHO + NO2 + H2O + CO
+ G4220 PAN = HCHO NO2   CO
+ G4220  OH = H2O
+
+// OK
+<G4221>  PAN     {+M}      = CH3CO3 + NO2           : {%TrGNC}  k_PAN_M; {&&1945}
+         C2H3O5N             C2H3O3 + NO2
+
+// ?????
+// FAIRLY UNCERTAIN
+// SUBJECT TO CHANGE
+// NO DOMENICO'S PERMISSION
+<G4222>  C2H2    + OH      = CH3O2              : {%TrGC} k_3rd(temp,cair,5.5e-30,0.0,8.3e-13,-2.,0.6); {&1945}
+//                           + H2O? + CO?
+ G4222 O2 = CH3O2
+// should be 13C KIE for ETHINE=acetylene
+
+// 3C (#G43nn)
+
+// OK
+<G4300>  C3H8    + OH      = .82 IC3H7O2 + .18 C2H5O2 + H2O     : {%TrGC} 1.65E-17*temp*temp*EXP(-87./temp); {&1627}
+ G4300 OH = H2O
+ G4300 O2 = IC3H7O2 C2H5O2
+// Rudolph, Czuba [2005]: KIE(13C) = 1+3.44E-3 +- 0.26E-3 >> propane
+
+// OK (Domenico)
+// similar to 4201
+// assuming C transfer only from C3H6
+<G4301>  C3H6    + O3      = .57 HCHO + .47 CH3CHO + .33 OH + .26 HO2 + .07 CH3O2 + .06 C2H5O2 + .23 CH3CO3 + .04 MGLYOX + .06 CH4 + .31 CO + .22 HCOOH + .03 CH3OH                  : {%TrGC} 6.5E-15*EXP(-1900./temp); {&&1945}
+ G4301  O3 = HCHO CH3CHO OH     C2H5O2 1 CH3CO3 MGLYOX CO HCOOH
+ G4301  O2 =                HO2 C2H5O2 2 CH3CO3 MGLYOX          CH3O2 CH3OH
+ G4301 H20 =                                          HCOOH
+// Iannone, etal. [2003]: KIE(13C) = 1+9.49E-3 +- 2.47E-3
+
+// OK: MCM
+// LHOC3H6O2        = 3C + 7H + 3O     ; {@CH_3CH(O_2)CH_2OH} {hydroxyperoxyradical from propene+OH}
+// similar to G4202 - LHOC3H6O2 is something lumped
+<G4302>  C3H6    + OH {+M} = LHOC3H6O2            : {%TrGC}   k_3rd(temp,cair,8.E-27,3.5,3.E-11,0.,0.5); {&1207}
+ G4302 O2 = LHOC3H6O2
+// Rudolph, Czuba [2005]: KIE(13C) = 1+11.70E-3 +- 0.19E-3 >> propene
+
+// OK
+// just composition
+<G4303>  C3H6    + NO3     = LC4H9NO3              : {%TrGNC}  4.6E-13*EXP(-1155./temp); {&1207}
+
+// OK
+<G4304>  IC3H7O2    + HO2     = IC3H7OOH             : {%TrGC}   k_PrO2_HO2; {&&964}
+         C3H7O2  + HO2     = C3H8O2 + O2?
+ G4304 IC3H7O2 = IC3H7OOH
+ G4304  HO2 = O2
+
+// OK
+// similar to G4204
+<G4305>  IC3H7O2    + NO      = .96 CH3COCH3 + .96 HO2 + .96 NO2 + .04 IC3H7NO3                  : {%TrGNC} k_PrO2_NO; {&&1207}
+         C3H7O2  + NO      = .96 C3H6O    + .96 HO2 + .96 NO2 + .04 C3H7ONO2
+ G4305 IC3H7O2 = 0.5 NO2 IC3H7NO3 CH3COCH3
+ G4305   NO = 0.5 NO2
+ G4305   O2 =         HO2
+
+// OK, WITH DOMENICO'S PERMISSION
+<G4306>  IC3H7O2    + CH3O2   = CH3COCH3 + .8 HCHO + .8 HO2 + .2 CH3OH                  : {%TrGC} k_PrO2_CH3O2; {&1632}
+         C3H7O2  + CH3O2   = C3H6O    + .8 (HCHO + HO2)  + .2 (CH3OH + O2? + ?)
+//               4C 10H 4O = 4C 4O ?H
+// OXYGEN
+ G4306  IC3H7O2 = CH3COCH3
+ G4306 CH3O2 = HCHO CH3OH
+ G4306    O2 = HO2
+// CARBON
+ G4306  IC3H7O2 = CH3COCH3
+ G4306 CH3O2 = HCHO CH3OH
+
+// OK
+// most probably IC3H7OOH -O-> OH
+<G4307>  IC3H7OOH   + OH      = .3 IC3H7O2 + .7 CH3COCH3 + .7 OH  : {%TrGC} k_CH3OOH_OH; {&&}
+         C3H8O2  + OH      = .3 C3H7O2 + .7 (C3H4O + OH)
+//                3C 9H 2O = 30% (3C 7H 2O + 2H?) + 70% (3C 7H 2O + 2H?)
+ G4307 IC3H7OOH = IC3H7O2 CH3COCH3 OH
+ G4307    OH = H2O
+
+// OK
+// "LHOC3H6O2" = CH3-CH(OO)-CH2OH = C3H7O3
+<G4308>  LHOC3H6O2  + HO2     = LHOC3H6OOH           : {%TrGC}   6.5E-13*EXP(650./temp); {&803}
+//                           + O2
+ G4308 LHOC3H6O2 = LHOC3H6OOH
+ G4308    HO2 = O2
+
+// OK
+// "LHOC3H6O2" = CH3-CH(OO)-CH2OH = C3H7O3
+<G4309>  LHOC3H6O2  + NO      = .98 CH3CHO + .98 HCHO + .98 HO2 + .98 NO2 + .02 LC4H9NO3                  : {%TrGNC} 4.2E-12*EXP(180./temp); {&&803}
+ G4309 LHOC3H6O2 = 0.5 NO2 CH3CHO HCHO LC4H9NO3
+ G4309     NO = 0.5 NO2
+ G4309     O2 =         HO2
+
+// OK
+// "LHOC3H6OOH" has 3 oxygen atoms
+<G4310>  LHOC3H6OOH + OH      = .5 LHOC3H6O2 + .5 ACETOL + .5 OH + H2O                  : {%TrGC} 3.8E-12*EXP(200./temp); {&803}
+ G4310 LHOC3H6OOH = LHOC3H6O2 ACETOL OH
+ G4310      OH = H2O
+
+// OK
+<G4311>  CH3COCH3 + OH     = CH3COCH2O2 + H2O      : {%TrGC}   1.33E-13+3.82E-11*EXP(-2000./temp); {&1945}
+ G4311 CH3COCH3 = 1 CH3COCH2O2
+ G4311       O2 = 2 CH3COCH2O2
+ G4311       OH = H2O
+
+// OK, HO2 -> O2 is not accounted
+<G4312>  CH3COCH2O2  + HO2     = HYPERACET             : {%TrGC}   8.6E-13*EXP(700./temp); {&1613}
+//                           + O2
+ G4312 CH3COCH2O2 = HYPERACET
+ G4312    HO2 = O2
+
+// OK
+<G4313>  CH3COCH2O2  + NO      = NO2 + CH3CO3 + HCHO   : {%TrGNC}  2.9E-12*EXP(300./temp); {&1945}
+ G4313 CH3COCH2O2 = 0.5 NO2 HCHO 1 CH3CO3
+ G4313     NO = 0.5 NO2
+ G4313     O2 =              2 CH3CO3
+
+// OK, FROM DOMENICO'S PERMISSION
+// RO2 + RO2
+<G4314>  CH3COCH2O2  + CH3O2   = .5 MGLYOX + .5 CH3OH + .3 CH3CO3 + .8 HCHO + .3 HO2 + .2 ACETOL                  : {%TrGC} 7.5E-13*EXP(500./temp); {&1613}
+// OXYGEN
+ G4314 CH3COCH2O2 = MGLYOX 1 CH3CO3 0.3 HCHO ACETOL
+ G4314  CH3O2 = CH3OH         0.5 HCHO
+ G4314     O2 =          2 CH3CO3                 HO2
+// CARBON
+ G4314 CH3COCH2O2 = MGLYOX CH3CO3 HCHO ACETOL
+ G4314  CH3O2 = CH3OH
+
+// OK
+<G4315>  HYPERACET   + OH      = .3 CH3COCH2O2 + .7 MGLYOX + .7 OH   : {%TrGC} k_CH3OOH_OH; {&&}
+         C3H6O3  + OH      = .3 C3H5O3 + .7 (C3H4O2 + OH) + H2O
+ G4315 HYPERACET = CH3COCH2O2 + MGLYOX + OH
+ G4315    OH = H2O
+
+// OK
+<G4316>  ACETOL  + OH      = MGLYOX + HO2    : {%TrGC}   2.15E-12*EXP(305./temp); {&2156}
+                             + H2O
+ G4316 ACETOL = MGLYOX
+ G4316     O2 = HO2
+ G4316     OH = H2O
+
+// OK
+<G4317>  MGLYOX + OH     = CH3CO3 + CO           : {%TrGC}   8.4E-13*EXP(830./temp); {&1616}
+//                    + O2 = + H2O
+ G4317 MGLYOX = 1 CH3CO3 CO
+ G4317       O2 = 2 CH3CO3
+ G4317       OH = H2O
+
+// OK
+<G4318>  MPAN    + OH      = ACETOL + NO2      : {%TrGNC}  3.2E-11; {&1629}
+//                           + H2O
+ G4318 MPAN = ACETOL NO2
+ G4318   OH = H2O
+
+// OK
+// ??? CHECK SPC: 5O = 4O + 2O
+// only decomposition
+<G4319>  MPAN    {+M}      = MVKO2 + NO2       : {%TrGNC}  k_PAN_M; {&&}
+
+// OK
+<G4320>  IC3H7NO3  + OH      = CH3COCH3 + NO2    : {%TrGNC}  6.2E-13*EXP(-230./temp); {&1207}
+//                           + H2O
+ G4320 IC3H7NO3 = CH3COCH3 NO2
+ G4320     OH = H2O
+ 
+// 4C (#G44nn)
+
+// OK
+// assumed O2 -> LC4H9O2
+<G4400>  NC4H10   + OH      = LC4H9O2 + H2O      : {%TrGC}   1.81E-17*temp*temp*EXP(114./temp); {&1627}
+ G4400 O2 = LC4H9O2
+ G4400 OH = H2O
+
+// Rudolph, Czuba [2005]: KIE(13C) = 1+2.84E-3 +- 0.17E-3 >> n-butane
+
+// ?????
+//  RO2 + RO2
+<G4401>  LC4H9O2  + CH3O2   = .88 MEK + .68 HCHO + 1.23 HO2 + .12 CH3CHO + .12 C2H5O2 + .18 CH3OH                  : {%TrGC} k_PrO2_CH3O2; {&&}
+         LC4H9O2    CH3O2   =   C4H8O       CH2O                  C2H4O        C2H5O2      CH4O
+// OXYGEN
+ G4401 LC4H9O2 = MEK CH3CHO C2H5O2
+ G4401  CH3O2 = HCHO CH3OH
+ G4401     O2 = HO2
+// CARBON
+ G4401 LC4H9O2 = MEK CH3CHO C2H5O2
+ G4401  CH3O2 = HCHO CH3OH
+
+// OK
+<G4402>  LC4H9O2  + HO2     = LC4H9OOH           : {%TrGC}   k_PrO2_HO2; {&&}
+//                           + O2
+ G4402 LC4H9O2 = LC4H9OOH
+ G4402    HO2 = O2
+
+// OK
+<G4403>  LC4H9O2  + NO      = .84 NO2 + .56 MEK + .56 HO2 + .28 C2H5O2 + .84 CH3CHO + .16 LC4H9NO3 : {%TrGNC} k_PrO2_NO; {&&}
+ G4403 LC4H9O2 = 1 NO2     MEK      CH3CHO 2 LC4H9NO3
+ G4403     NO = 1 NO2                     1 LC4H9NO3
+ G4403     O2 =       HO2     C2H5O2
+
+// OK
+<G4404>  LC4H9OOH + OH      = .15 LC4H9O2 + .85 MEK + .85 OH + .85 H2O                  : {%TrGC} k_CH3OOH_OH; {&&}
+//                                                           1.0 H2O
+//       4C                      4C           4C
+//       2O                      2O           1O
+ G4404 LC4H9OOH = LC4H9O2 MEK OH
+ G4404      OH = H2O
+
+// OK
+// analogy to G4201, G4301
+<G4405>  MVK     + O3      = .45 HCOOH + .9 MGLYOX + .1 CH3CO3 + .19 OH + .22 CO + .32 HO2                  : {%TrGC} .5*(1.36E-15*EXP(-2112./temp)+7.51E-16*EXP(-1521./temp)); {&1614}
+//        1O       3O                       2O            3O
+//        4C                                3C            2C
+ G4405 MVK = MGLYOX 1 CH3CO3
+ G4405  O3 = MGLYOX      HCOOH OH CO
+ G4405  O2 = HO2      2 CH3CO3
+ G4405 H2O =               HCOOH
+
+// OK
+<G4406>  MVK     + OH      = MVKO2             : {%TrGC}   .5*(4.1E-12*EXP(452./temp)+1.9E-11*EXP(175./temp)); {&1614}
+//        1O                 4O
+ G4406 MVK = 1 MVKO2
+ G4406  OH = 1 MVKO2
+ G4406  O2 = 2 MVKO2
+
+// OK
+<G4407>  MVKO2   + HO2     = MVKOOH            : {%TrGC}   1.82E-13*EXP(1300./temp); {&1614}
+//                           + O2
+ G4407 MVKO2 = MVKOOH
+ G4407   HO2 = O2
+
+// OK
+<G4408>  MVKO2   + NO      = NO2 + .25 CH3CO3 + .25 ACETOL + .75 HCHO + .25 CO + .75 HO2 + .5 MGLYOX : {%TrGNC} 2.54E-12*EXP(360./temp); {&1614}
+//       C4H7O4    NO        NO2   25% (C2H3O3 + C2H6O2 + CO) + 75% (HCHO + HO2) + 5%? (MGLYOX + CO2?)
+ G4408 MVKO2 = 1 NO2     1 CH3CO3 ACETOL HCHO CO MGLYOX
+ G4408    NO = 1 NO2
+ G4408    O2 =       HO2 2 CH3CO3
+
+// OK
+// CHECK SPC: 5O = 4O + 2O
+// only composition?
+<G4409>  MVKO2   + NO2     = MPAN              : {%TrGNC}  .25*k_3rd(temp,cair,9.7E-29,5.6,9.3E-12,1.5,0.6); {&&1614}
+//          4O      2O       5O
+// !!! careful here, assumed that all MVK02 oxygen is transferred to MPAN, plus one NO2 oxygen atom is captured
+ G4409 MVKO2 = 4 MPAN
+ G4409   NO2 = 1 MPAN
+
+// OK
+<G4410>  MVKO2   + CH3O2   = .5 MGLYOX + .375 ACETOL + .125 CH3CO3 + 1.125 HCHO + .875 HO2 + .125 CO + .25 CH3OH                  : {%TrGC} 2.E-12; {&1612}
+// OXYGEN
+ G4410 MVKO2 = MGLYOX ACETOL 1 CH3CO3 0.875 HCHO CO
+ G4410 CH3O2 =                      0.25  HCHO    CH3OH
+ G4410    O2 =                 2 CH3CO3                     HO2
+// CARBON
+ G4410 MVKO2 = MGLYOX ACETOL CH3CO3 0.875 HCHO CO
+ G4410 CH3O2 =                    0.25  HCHO    CH3OH
+
+// OK
+// decomposition
+<G4411>  MVKO2   + MVKO2   = ACETOL + MGLYOX + .5 CO + .5 HCHO + HO2                  : {%TrGC} 2.E-12; {&1614}
+
+// OK
+// H is abstracted by OH to H2O
+<G4412>  MVKOOH  + OH      = MVKO2             : {%TrGC}   3.E-11; {&1614}
+//                           + H2O
+ G4412 MVKOOH = MVKO2
+ G4412     OH = H2O
+ 
+// OK
+<G4413>  MEK     + OH      = LMEKO2             : {%TrGC}   1.3E-12*EXP(-25./temp); {&1207}
+//       1O                  3O      + H2O
+ G4413 MEK = 1 LMEKO2
+ G4413  OH =         H2O
+ G4413  O2 = 2 LMEKO2
+
+// OK
+// H is abstracted from HO2
+<G4414>  LMEKO2   + HO2     = LMEKOOH            : {%TrGC}   k_PrO2_HO2; {&&}
+//                           (+H) from HO2     + O2 ?
+ G4414 LMEKO2 = LMEKOOH
+ G4414   HO2 = O2
+
+// OK ???? CH3CO3
+// composition / decomposition channels
+<G4415>  LMEKO2   + NO      = .985 CH3CHO + .985 CH3CO3 + .985 NO2 + .015 LC4H9NO3                  : {%TrGNC} k_PrO2_NO; {&&}
+//       4C                       2C            2C
+//       3O                       1O            3O
+ G4415 LMEKO2 = 1 NO2 CH3CHO 1 CH3CO3 3 LC4H9NO3
+ G4415    NO = 1 NO2             1 LC4H9NO3
+ G4415    O2 =              2 CH3CO3
+
+// OK
+// OH changes its signature
+<G4416>  LMEKOOH  + OH      = .8 BIACET + .8 OH + .2 LMEKO2  : {%TrGC} k_CH3OOH_OH; {&&}
+//                           + H2O
+//       4C                     4C               4C
+//       3O                     2O               3O
+//       8H                     6H               9H
+ G4416 LMEKOOH = BIACET LMEKO2 OH
+ G4416     OH = H2O
+
+// OK
+<G4417>  LC4H9NO3    + OH      = MEK + NO2 + H2O   : {%TrGNC}  1.7E-12; {&&1207}
+ G4417 LC4H9NO3 = MEK NO2
+ G4417   OH = H2O
+
+// 5C (#G45nn)
+
+// O: OK (Domenico)
+<G4500>  C5H8  + O3        = .28 HCOOH + .65 MVK + .1 MVKO2  + .1 CH3CO3 + .14 CO + .58 HCHO + .09 H2O2 + .08 CH3O2 + .25 OH + .25 HO2                  : {%TrGC} 7.86E-15*EXP(-1913./temp); {&1614}
+                                                  v=(1-0.3*0.27) FROM DOMENICO
+ G4500  O3 = 1 HCOOH MVK 1 MVKO2 1 CH3CO3 CO 0.081 HCHO 1 H2O2       OH
+ G4500  O2 =             2 MVKO2 2 CH3CO3    0.919 HCHO        CH3O2    HO2
+ G4500 H2O = 1 HCOOH                                1 H2O2
+// Iannone, etal. [2003]: KIE(13C) = 1+6.05E-3 +- 0.99E-3
+
+// OK
+// MCM: composition only assumed
+<G4501>  C5H8  + OH        = ISO2              : {%TrGC}   2.54E-11*EXP(410./temp); {&1614}
+ G4501 O2 = 2 ISO2
+ G4501 OH = 1 ISO2
+// Rudolph, Czuba [2005]: KIE(13C) = 1+6.94E-3 +- 0.80E-3 >> isoprene
+
+// OK
+// MCM: composition only assumed
+<G4502>  C5H8  + NO3       = ISON              : {%TrGNC}  3.03E-12*EXP(-446./temp); {&1614}
+ G4502  O2 = 2 ISON
+ G4502 NO3 = 3 ISON
+
+// OK
+// H is abstracted from HO2
+<G4503>  ISO2  + HO2       = ISOOH             : {%TrGC}   2.22E-13*EXP(1300./temp); {&&1630}
+//                           + O2
+ G4503 ISO2 = ISOOH
+ G4503  HO2 = O2
+
+// OK
+// one O is taken from ISO2 to NO -> NO2
+<G4504>  ISO2  + NO        = .88 NO2 + .88 MVK + .88 HCHO + .88 HO2 + .12 ISON                  : {%TrGNC} 2.54E-12*EXP(360./temp); {&&1614}
+//                                                                    .044 according to Domenico's estimation
+//         3O    1O              2O        1O        1O         2O        4O
+//         5C                              4C        1C                   5C
+ G4504 ISO2 = 1 NO2 HCHO MVK 3 ISON
+ G4504   NO = 1 NO2          1 ISON
+ G4504   O2 = HO2
+
+// OK
+<G4505>  ISO2  + CH3O2     = .5 MVK + 1.25 HCHO + HO2 + .25 MGLYOX + .25 ACETOL + .25 CH3OH                  : {%TrGC} 2.E-12; {&1612}
+// OXYGEN
+ G4505  ISO2 = MVK 4 HCHO MGLYOX ACETOL
+ G4505 CH3O2 =     1 HCHO                 CH3OH
+ G4505    O2 = HO2
+// CARBON
+ G4505  ISO2 = MVK 4 HCHO MGLYOX ACETOL
+ G4505 CH3O2 =     1 HCHO                 CH3OH
+
+// OK
+<G4506>  ISO2  + ISO2      = 2 MVK + HCHO + HO2 : {%TrGC}  2.E-12; {&1614}
+//                           + CO2?
+//       C5      C5        = 2 C4    1C  
+//       3O      3O        = 2 1O    1O     +2O(air)
+ G4506 ISO2 = MVK HCHO
+ G4506   O2 = HO2
+ 
+// OK
+<G4507>  ISOOH + OH        = MVK + OH          : {%TrGC}   1.E-10; {&1614}
+//                           + H2O
+ G4507 ISOOH = OH MVK
+ G4507    O2 = H2O
+
+// OK
+<G4508>  ISON  + OH        = ACETOL + NACA     : {%TrGNC}  1.3E-11; {&1614}
+//                           + H2O
+ G4508 ISON = ACETOL NACA
+ G4508   OH = H2O
+
+{<G5nnn> ------------------------------- F -------------------------}
+
+{<G6nnn> ------------------------------- Cl ------------------------}{@\myhline}
+
+// Cl + O (#G61nn)
+<G6100>  Cl + O3         = ClO + O2    : {%StTrGCl}       2.8E-11*EXP(-250./temp); {&1845}
+<G6101>  ClO + O3P       = Cl + O2     : {%StGCl}         2.5E-11*EXP(110./temp); {&1845}
+<G6102a> ClO + ClO       = Cl2 + O2    : {%StTrGCl}       1.0E-12*EXP(-1590./temp); {&1845}
+<G6102b> ClO + ClO       = 2 Cl + O2   : {%StTrGCl}       3.0E-11*EXP(-2450./temp); {&1845}
+<G6102c> ClO + ClO       = Cl + OClO   : {%StTrGCl}       3.5E-13*EXP(-1370./temp); {&1845}
+<G6102d> ClO + ClO {+M}  = Cl2O2       : {%StTrGCl}       k_ClO_ClO; {&1845}
+<G6103>  Cl2O2 {+M}      = ClO + ClO   : {%StTrGCl}       k_ClO_ClO/(9.3E-28*EXP(8835./temp)); {&&1845, 1945}
+
+// Cl + H (#G62nn)
+<G6200>  Cl + H2         = HCl + H     : {%StGCl}         3.9E-11*EXP(-2310./temp); {&1845}
+<G6201a> Cl + HO2        = HCl + O2    : {%StGCl}         4.4E-11-7.5E-11*EXP(-620./temp); {&1845}
+<G6201b> Cl + HO2        = ClO + OH    : {%StGCl}         7.5E-11*EXP(-620./temp); {&1845}
+<G6202>  Cl + H2O2       = HCl + HO2   : {%StTrGCl}       1.1E-11*EXP(-980./temp); {&1845}
+<G6203>  ClO + OH        = .94 Cl + .94 HO2 + .06 HCl + .06 O2 : {%StGCl} 7.3E-12*EXP(300./temp); {&1845}
+<G6204>  ClO + HO2       = HOCl        : {%StTrGCl}       2.2E-12*EXP(340./temp); {&1845}
+<G6205>  HCl + OH        = Cl  + H2O   : {%StTrGCl}       1.7E-12*EXP(-230./temp); {&1845}
+<G6206>  HOCl+ OH        = ClO + H2O   : {%StGCl}         3.0E-12*EXP(-500./temp); {&1945}
+
+// Cl + N (#G63nn)
+<G6300>  ClO   + NO       = NO2 + Cl   : {%StTrGNCl}      6.2E-12*EXP(295./temp); {&1845}
+<G6301>  ClO   + NO2 {+M} = ClNO3      : {%StTrGNCl}      k_3rd_iupac(temp,cair,1.6E-31,3.4,7.E-11,0.,0.4); {&1845}
+<G6302>  ClNO3            = ClO + NO2  : {%TrGCl}         6.918E-7*exp(-10909./temp)*cair; {&1059}
+// exchange ?
+<G6303>  ClNO3 + O3P      = ClO + NO3  : {%StGNCl}        4.5E-12*EXP(-900./temp); {&1845}
+// exchange ?
+<G6304>  ClNO3 + Cl       = Cl2 + NO3  : {%StTrGNCl}      6.2E-12*EXP(145./temp); {&1845}
+
+// Cl + C (#G64nn)
+// OK
+<G6400>  Cl      + CH4    = HCl + CH3O2       : {%StTrGCl}       6.6E-12*EXP(-1240./temp); {&1759}
+ G6400 O2 = CH3O2
+// KIE: Saueressig [1995], temp. dep. KIE(13C)=1.065-1.074 @ 297-223K
+
+// OK
+<G6401>  Cl      + HCHO   = HCl + CO + HO2    : {%StTrGCl}       8.1E-11*EXP(-34./temp); {&1759}
+ G6401 HCHO = CO
+ G6401   O2 = HO2
+// Feilberg et al. [2004]: KIE(13C) = 1.058 +- 0.007
+
+<G6402>  Cl      + CH3OOH = HCHO + HCl + OH   : {%StTrGCl}       5.9E-11; {&&1759}
+<G6403>  ClO     + CH3O2  = HO2 + Cl + HCHO   : {%StTrGCl}       3.3E-12*EXP(-115./temp); {&1945}
+<G6404>  CCl4    + O1D    = ClO + 3 Cl {+...} : {%StGCl}         3.3E-10; {&1945}
+<G6405>  CH3Cl   + O1D    = OH + Cl {+...}    : {%StGCl}         1.65E-10; {&&}
+<G6406>  CH3Cl   + OH     = H2O + Cl {+...}   : {%StGCl}         2.4E-12*EXP(-1250./temp); {&1945}
+<G6407>  CH3CCl3 + O1D    = OH + 3 Cl {+...}  : {%StGCCl}        3.E-10; {&&}
+<G6408>  CH3CCl3 + OH     = H2O + 3 Cl {+...} : {%StTrGCCl}      1.64E-12*EXP(-1520./temp); {&1945}
+<G6409>  Cl      + C2H4   = .6666667 LHOC3H6O2 + HCl : {%TrGCCl}    k_3rd_iupac(temp,cair,1.85E-29,3.3,6.0E-10,0.0,0.4); {&1759}
+
+// OK ?
+// where oxygen is lost to?
+<G6410>  Cl      + CH3CHO = HCl + CH3CO3          : {%TrGCCl}        7.9e-11; {&&1759}
+
+// OK
+<G6411>  C2H2    + Cl     = CH3O2 + HCl       : {%TrGCCl}        k_3rd_iupac(temp,cair,6.1e-30,3.0,2.0e-10,0.,0.6); {&1759}
+ G4611 O2 = CH3O2
+
+// Cl + F (#G65nn)
+<G6500>  CF2Cl2  + O1D    = ClO + Cl {+...}   : {%StGFCl}        1.4E-10; {&1945}
+<G6501>  CFCl3   + O1D    = ClO + 2 Cl {+...} : {%StGFCl}        2.3E-10; {&1945}
+
+{<G7nnn> ------------------------------- Br ------------------------}{@\myhline}
+
+// Br + O (#G71nn)
+<G7100>  Br   + O3       = BrO + O2       : {%StTrGBr}   1.7E-11*EXP(-800./temp); {&1845}
+<G7101>  BrO  + O3P      = Br + O2        : {%StGBr}     1.9E-11*EXP(230./temp); {&1845}
+<G7102a> BrO  + BrO      = 2 Br + O2      : {%StTrGBr}   2.7E-12; {&1845}
+<G7102b> BrO  + BrO      = Br2 + O2       : {%StTrGBr}   2.9E-14*EXP(840./temp); {&1845}
+
+// Br + H (#G72nn)
+<G7200>  Br   + HO2      = HBr + O2       : {%StTrGBr}   7.7E-12*EXP(-450./temp); {&1845}
+<G7201>  BrO  + HO2      = HOBr + O2      : {%StTrGBr}   4.5E-12*EXP(500./temp); {&1845}
+<G7202>  HBr  + OH       = Br  + H2O      : {%StTrGBr}   6.7E-12*EXP(155./temp); {&1845}
+<G7203>  HOBr + O3P      = OH  + BrO      : {%StGBr}     1.2E-10*EXP(-430./temp); {&1845}
+<G7204>  Br2  + OH       = HOBr + Br      : {%StTrGBr}   2.0E-11*EXP(240./temp); {&1845}
+
+// Br + N (#G73nn)
+<G7300>  Br   + BrNO3    = Br2 + NO3      : {%TrGBr}     4.9E-11; {&1054}
+<G7301>  BrO  + NO       = Br  + NO2      : {%StTrGNBr}  8.7E-12*EXP(260./temp); {&1845}
+<G7302>  BrO  + NO2 {+M} = BrNO3          : {%StTrGNBr}  k_BrO_NO2; {&&1845}
+<G7303>  BrNO3           = BrO + NO2      : {%TrGBr}     k_BrO_NO2/(5.44E-9*exp(14192./temp)*1.E6*R_gas*temp/(atm2Pa*N_A)); {&&1054, 1845}
+
+// Br + C (#G74nn)
+
+<G7400>  Br   + HCHO     = HBr + CO + HO2 : {%StTrGBr}   7.7E-12*EXP(-580./temp); {&1759}
+// Feilberg et al. [2004]: KIE(13C) = 1.13 +- 0.01
+
+<G7401>  Br   + CH3OOH   = CH3O2 + HBr    : {%TrGBr}     2.66E-12*EXP(-1610./temp); {&233}
+<G7402a> BrO  + CH3O2    = HOBr + HCHO    : {%TrGBr}     0.8/1.1*5.7E-12; {&822}
+<G7402b> BrO  + CH3O2    = Br + HCHO + HO2: {%TrGBr}     0.3/1.1*5.7E-12; {&822}
+<G7403>  CH3Br + OH      = H2O + Br       : {%StTrGBr}   2.35E-12*EXP(-1300./temp); {&1945}
+<G7404>  Br   + C2H4     = .6666667 LHOC3H6O2 + HBr : {%TrGCBr} 2.8E-13*EXP(224./temp)/(1.+1.13E+24*EXP(-3200./temp)/C(ind_O2)); {&1759}
+<G7405>  Br   + CH3CHO   = HBr + CH3CO3       : {%TrGCCl}    1.8e-11*EXP(-460./temp); {&1759}
+<G7406>  Br   + C2H2     = CH3O2 + HBr    : {%TrGCBr}    6.35e-15*EXP(440./temp); {&1759}
+<G7407>  CHBr3  + OH = H2O + 3 Br {+CH3O2} : {%TrGBr}    1.35E-12*EXP(-600./temp); {&&1945}
+<G7408>  CH2Br2 + OH = H2O + 2 Br {+CH3O2} : {%TrGBr}    2.0E-12*EXP(-840./temp);  {&&1945}
+
+// Br + F (#G75nn)
+
+// Br + Cl (#G76nn)
+<G7600>  Br   + BrCl     = Br2  + Cl      : {%TrGBrCl}   3.3E-15; {&233}
+<G7601>  Br   + Cl2      = BrCl + Cl      : {%TrGClBr}   1.1E-15; {&233}
+<G7602>  Br2  + Cl       = BrCl + Br      : {%TrGClBr}   1.2E-10; {&233}
+<G7603a> BrO  + ClO      = Br   + OClO    : {%StTrGClBr} 1.6E-12*EXP(430./temp); {&1845}
+<G7603b> BrO  + ClO      = Br   + Cl + O2 : {%StTrGClBr} 2.9E-12*EXP(220./temp); {&1845}
+<G7603c> BrO  + ClO      = BrCl + O2      : {%StTrGClBr} 5.8E-13*EXP(170./temp); {&1845}
+<G7604>  BrCl + Cl       = Br   + Cl2     : {%TrGClBr}   1.5E-11; {&233}
+<G7605>  CHCl2Br + OH = H2O + Br   {+CH3O2} : {%TrGBr} 2.0E-12*EXP(-840./temp); {&&}
+<G7606>  CHClBr2 + OH = H2O + 2 Br {+CH3O2} : {%TrGBr} 2.0E-12*EXP(-840./temp); {&&}
+<G7607>  CH2ClBr + OH = H2O + Br   {+CH3O2} : {%TrGBr} 2.4E-12*EXP(-920./temp); {&&1945}
+
+{<G8nnn> ------------------------------- I -------------------------}{@\myhline}
+
+// I + O (#G81nn)
+<G8100>  I     + O3    = IO + O2           : {%TrGI}   2.1E-11*EXP(-830./temp); {&1845}
+//<G8101> deleted I2O2          = 2 IO              : {%TrGI}   20.; {&&}
+<G8102>  OIO   + OIO   = IPART             : {%TrGI}   5.E-11; {&&1456}
+<G8103>  IO    + IO    = .38 OIO + 1.62 I + .62 O2 : {%TrGI} 5.4E-11*EXP(180./temp); {&&1845}
+//qqq Crowley: <G8103>  IO    + IO  = OIO + I                : {%TrGI} 5.4E-11*EXP(180./temp); {&1845}
+//qqq Bremen:  <G8103>  IO    + IO  = .8 OIO + 1.2 I + .2 O2 : {%TrGI} 5.4E-11*EXP(180./temp); {&1845}
+//qqq test this: <G8104>  OIO   + IO    = IPART             : {%TrGI}   1.2E-10; {&2152}
+// I + H (#G82nn)
+<G8200>  I     + HO2   = HI  + O2          : {%TrGI}   1.5E-11*EXP(-1090./temp); {&1845}
+
+//
+<G8201>  IO    + HO2   = HOI + O2          : {%TrGI}   1.4E-11*EXP(540./temp); {&1845}
+ G8201  IO = HOI
+ G8201 HO2 = O2
+
+<G8202>  HI    + OH    = I   + H2O         : {%TrGI}   1.6E-11*EXP(440./temp); {&1845}
+<G8203>  OIO   + OH    = HIO3              : {%TrGI}   2.2E-10*EXP(243./temp); {&1788}
+<G8204>  I2    + OH    = HOI + I           : {%TrGI}   2.1E-10; {&1845}
+// I + N (#G83nn)
+<G8300>  I + NO2 {+M}  = INO2              : {%TrGI}   k_I_NO2; {&&1845}
+<G8301>  I     + NO3   = IO + NO2          : {%TrGI}   1.E-10; {&2244}
+<G8302>  IO    + NO    = I  + NO2          : {%TrGI}   7.15E-12*EXP(300./temp); {&1845}
+<G8303>  IO + NO2 {+M} = INO3              : {%TrGI}   k_3rd_iupac(temp,cair,7.7E-31,5.,1.6E-11,0.,0.4); {&1845}
+
+//
+<G8304>  OIO   + NO    = NO2 + IO          : {%TrGI}   1.1E-12*EXP(542./temp); {&1845}
+ G8304 OIO = IO NO2
+ G8304  NO =    NO2
+
+<G8305>  INO2          = I + NO2           : {%TrGI}   k_I_NO2/(3.7E-7*exp(9568./temp)*1.E6*R_gas*temp/(atm2Pa*N_A)); {&&1644, 1845}
+<G8306>  INO3          = IO + NO2          : {%TrGI}   0.; {&&}
+<G8307>  I2    + NO3   = I + INO3          : {%TrGI}   1.5E-12; {&1845}
+
+//
+<G8308>  IO    + NO3   = OIO + NO2         : {%TrGI}   1.E-11; {&2244}
+ G8308  IO = OIO
+ G8308 NO3 = OIO NO2
+
+// I + C (#G84nn)
+// ? H2O missing?
+<G8400>  C3H7I + OH    = CH3O2 + I         : {%TrGI}   1.2E-12; {&1503}
+ G8400 O2 = CH3O2
+ G8400 OH = H2O
+
+// ?
+<G8401>  CH3O2 + IO    = .4 I + .6 OIO + HCHO + HO2 : {%TrGI} 2.E-12; {&&2079, 2089}
+ G8401 CH3O2 =     HCHO OIO
+ G8401    IO =          OIO
+ G8401    O2 = HO2
+
+// ?
+<G8402>  CH3I + NO3 {+O2} = HNO3 + HCHO + IO : {%TrGI} 3.4E-17; {&&94}
+ G8402  O2 =      HCHO IO
+ G8402 NO3 = HNO3
+ 
+//qqq test this: <G8402>  CH3I + NO3 {+O2} = HNO3 + HCHO + IO : {%TrGI} 4.1E-13; {&&2087}
+// I + F (#G85nn)
+// I + Cl (#G86nn)
+<G8600>  IO    + ClO   = .2 ICl + .25 Cl + .55 OClO + .8 I + .45 O2 : {%TrGClI} 4.7E-12*EXP(280./temp); {&1845} {products: 20% ICl+O2, 25% I+Cl+O2, 55% I+OClO}
+// I + Br (#G87nn)
+<G8700>  I     + BrO   = IO + Br           : {%TrGBrI} 1.2E-11; {&1945}
+<G8701>  IO    + BrO   = Br + .8 OIO + .2 I + .2 O2 : {%TrGBrI} 1.5E-11*EXP(510./temp); {&&1845}
+{<G9nnn> ------------------------------- S -------------------------}{@\myhline}
+
+// S + O (#G91nn)
+//<G9100>  SO + O2        = SO2 + O3P           : {%StGS} 1.25e-13*exp(-2190/temp); {&1945}
+//<G9101>  SO + O3        = SO2 + O2            : {%StGS} 3.4e-12*exp(-1100/temp); {&1945}
+//<G9102>  S  + O2        = SO + O3P            : {%StGS} 2.3e-12; {&1555}
+
+// S + H (#G92nn)
+// ?
+<G9200>  SO2    + OH    = H2SO4 + HO2         : {%TrStGS}   k_3rd(temp,cair,3.3E-31,4.3,1.6E-12,0.,0.6); {&1945}
+// [ "Introduction to Atmospheric Chemistry", Daniel J. Jacob, Princeton University Press, Princeton, 1999 ]
+ G9200 SO2 = 2 H2SO4
+ G9200  OH = 1 H2SO4
+ G9200 H2O = 1 H2SO4
+ G9200  O2 = HO2
+
+//<G9201>  SH + O2        = OH + SO             : {%StGS} 4.e-19; {&1555} {upper limit}
+
+// S + N (#G93nn)
+
+// S + C (#G94nn)
+// ?
+<G9400a> DMS    + OH    = CH3SO2 + HCHO       : {%TrGS}   1.13E-11*EXP(-253./temp); {&&1610}
+//       CH3SCH3          CH3SO2 + CH2O
+ 9400a O2 = CH3SO2 HCHO
+//9400a OH = H2O
+
+// H-abstraction channel (right in Seinfeld&Pandis, p269)
+<G9400b> DMS    + OH    = DMSO + HO2          : {%TrGS}   k_DMS_OH; {&&1610}
+ G9400b OH =      HO2
+ G9400b O2 = DMSO HO2
+
+// OH-addition channel (left in Seinfeld&Pandis, p269)
+<G9401>  DMS    + NO3   = CH3SO2 + HNO3 + HCHO  {-O3}: {%TrGNS} 1.9E-13*EXP(520./temp); {&1610}
+ G9401 NO3 = HNO3
+ G9401  O2 =      CH3SO2 HCHO
+
+; // ???
+; // 2 channels: 60% SO2     HCHO CH3O2
+; //             40% CH3SO3H HCHO       HO2
+; // J. Phys. Chem. A, Vol. 107, No. 30, 2003 Kukui et al.: DMSO + OH -> CH3 + CH3S(O)OH
+; //                                                        CH3S(O)OH + OH -> CH3 + SO2 + H2O
+; // see also Seinfeld&Pandis
+; <G9402>  DMSO   + OH    = .6 SO2 +  HCHO + .6 CH3O2 + .4 HO2 + .4 CH3SO3H : {%TrGS} 1.E-10; {&746}
+ G9402   OH = SO2            CH3SO3H
+ G9402 DMSO = SO2            CH3SO3H
+ G9402   O2 = CH3O2 HCHO HO2 CH3SO3H
+
+// ?
+<G9403>  CH3SO2         = SO2 + CH3O2         : {%TrGS}   1.9E13*EXP(-8661./temp); {&749}
+ G9403 CH3SO2 = SO2
+ G9403     O2 = CH3O2
+ 
+// ?
+<G9404>  CH3SO2 + O3    = CH3SO3              : {%TrGS}   3.E-13; {&749}
+ G9404 CH3SO2 = 2 CH3SO3
+ G9404     O3 = 1 CH3SO3
+
+// ?
+<G9405>  CH3SO3 + HO2   = CH3SO3H             : {%TrGS}   5.E-11; {&749}
+ G9405 CH3SO3 = CH3SO3H
+// G9405 HO2 = O2
+
+//<G9406>  OCS + OH       = SH + CO2            : {%StGS} 1.1e-13*exp(-1200./temp); {&&1555}
+//<G9407>  OCS + O3P      = CO + SO             : {%StGS} 2.1e-11*exp(-2200./temp); {&&1555}
+
+// S + F (#G95nn)
+
+// S + Cl (#G96nn)
+<G9600>  DMS + Cl       = CH3SO2 + HCl + HCHO : {%TrGSCl} 3.3E-10; {&1610}
+ G9600 O2 =
+
+// S + Br (#G97nn)
+<G9700>  DMS + Br       = CH3SO2 + HBr + HCHO : {%TrGSBr} 9.E-11*EXP(-2386./temp); {&299}
+ G9700 O2 =
+
+<G9701>  DMS + BrO      = DMSO + Br           : {%TrGSBr} 2.54E-14*EXP(850./temp); {&932}
+
+// S + I (#G98nn)
+//wrong: <G9800>  DMS + IO       = DMSO + I            : {%TrGSI}  1.2E-16*EXP(2230./temp); {&1598}
+<G9800>  DMS + IO       = DMSO + I            : {%TrGSI}  3.2E-13*EXP(-925./temp); {&2080}
+
+{<G10nnn> ------------------------------- Hg ------------------------}{@\myhline}
+
+// Hg + O (#G101nn)
+<G10100>  Hg + O3       = HgO + O2            : {%TrGHg}  8.43E-17*EXP(-1407./temp); {&2253}
+
+// Hg + H (#G102nn)
+<G10200>  Hg + OH       = HgO + H             : {%TrGHg}   3.55E-14*EXP(294./temp); {&2252}
+<G10201>  Hg + H2O2     = HgO + H2O           : {%TrGHg}   8.5E-19; {&&2248}
+
+// Hg + Cl (#G106nn)
+<G10600>  Hg + Cl       = HgCl                : {%TrGHgCl} 1.0E-11; {&2246}
+<G10601>  Hg + Cl2      = HgCl2               : {%TrGHgCl} 2.6E-18; {&2246}
+
+// Hg + Br (#G107nn)
+<G10700>  Hg + Br       = HgBr                : {%TrGHgBr} 3.0E-13; {&2282}
+<G10701>  HgBr + Br     = HgBr2               : {%TrGHgBr} 3.0E-12; {&2273}
+<G10702>  Hg + Br2      = HgBr2               : {%TrGHgBr} 9.0E-17; {&2246} 
+<G10703>  Hg + BrO      = HgO + Br            : {%TrGHgBr} 1.0E-15; {&2261}
+<G10704>  HgBr + BrO    = BrHgOBr             : {%TrGHgBr} 3.0E-12; {&2273}
+<G10705>  HgCl + BrO    = ClHgOBr             : {%TrGHgClBr} 3.0E-12; {&2273}
+<G10706>  HgBr + Cl     = ClHgBr              : {%TrGHgClBr} 3.0E-12; {&2273}
+<G10707>  HgCl + Br     = ClHgBr              : {%TrGHgClBr} 3.0E-12; {&2273} 
+
+// ------------------------------- hv ------------------------
+
+{<J1nnn> ------------------------------- O -------------------------}
+
+// O only (#J10nn)
+<J1000>  O2      + hv = O3P + O3P  : {%StTrGJ} jx(ip_O2); {&&}
+<J1001a> O3      + hv = O1D        : {%StTrGJ} jx(ip_O1D); {&&}
+<J1001b> O3      + hv = O3P        : {%StTrGJ} jx(ip_O3P); {&&}
+
+{<J2nnn> ------------------------------- H -------------------------}{@\myhline}
+
+// H + O (#J21nn)
+<J2100>  H2O     + hv = H + OH     : {%StGJ}   jx(ip_H2O); {&&}
+<J2101>  H2O2    + hv = 2 OH       : {%StTrGJ} jx(ip_H2O2); {&&}
+
+{<J3nnn> ------------------------------- N -------------------------}{@\myhline}
+
+// N + O (#J31nn)
+<J3100>  N2O     + hv = O1D        : {%StGNJ}   jx(ip_N2O); {&&}
+<J3101>  NO2     + hv = NO + O3P   : {%StTrGNJ} jx(ip_NO2); {&&}
+<J3102>  NO      + hv = N + O3P    : {%StGNJ}   jx(ip_NO); {&&}
+<J3103a> NO3     + hv = NO2 + O3P  : {%StTrGNJ} jx(ip_NO2O); {&&}
+<J3103b> NO3     + hv = NO         : {%StTrGNJ} jx(ip_NOO2); {&&}
+<J3104a> N2O5    + hv = NO2 + NO3  : {%StTrGNJ} jx(ip_N2O5); {&&}
+<J3104b> N2O5    + hv = NO + O3P + NO3  : {%StGNJ} jx(ip_NO3NOO); {&&}
+
+// N + H (#J32nn)
+<J3200>  HONO    + hv = NO + OH    : {%TrGJ}    jx(ip_HONO); {&&}
+<J3201>  HNO3    + hv = NO2 + OH   : {%StTrGNJ} jx(ip_HNO3); {&&}
+<J3202>  HNO4    + hv = .667 NO2 + .667 HO2 + .333 NO3 + .333 OH : {%StTrGNJ} jx(ip_HNO4); {&&}
+
+{<J4nnn> ------------------------------- C -------------------------}{@\myhline}
+
+// 1C (#J41nn)
+<J4100>  CH3OOH  + hv = HCHO + OH + HO2            : {%StTrGJ} jx(ip_CH3OOH); {&&}
+// [Weston, 2001]: CH3OOH + hv -> CH3O + OH
+//                 CH3O   + O2 -> HCHO + HO2
+ J4100 CH3OOH = OH HCHO
+ J4100     O2 = HO2
+
+<J4101a> HCHO    + hv = H2 + CO                    : {%StTrGJ} jx(ip_COH2); {&&}
+// Feilberg et al. [2005]: KIE(13C) = 1-106.0E-3 +- 0.71E-3
+
+<J4101b> HCHO    + hv = H + CO + HO2               : {%StTrGJ} jx(ip_CHOH); {&&}
+// [Weston, 2001]: HCHO + hv -> H + HCO
+//                 HCO  + O2 -> CO  + HO2  : k ~ E-12
+//                 HCO  + OH -> CO  + H2O  : k ~ E-10     // [OH]<<[O2], thus neglected in MECCA (?)
+ J4101b HCHO = CO
+ J4101b   O2 = HO2
+// Feilberg et al. [2005]: KIE(13C) = 1-106.0E-3 +- 0.71E-3
+
+<J4102>  CO2     + hv = CO + O3P                   : {%StGJ}   jx(ip_CO2); {&&}
+<J4103>  CH4     + hv = CO + 0.31 H + 0.69 H2 + 1.155 H2O : {%StGJ} jx(ip_CH4); {&&}
+
+// 2C (#J42nn)
+//
+<J4200>  C2H5OOH   + hv = CH3CHO + HO2 + OH          : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+ J4200 C2H5OOH = CH3CHO OH
+ J4200    O2 = HO2
+
+//
+<J4201>  CH3CHO  + hv = CH3O2 + HO2 + CO           : {%TrGCJ}  jx(ip_CH3CHO); {&&}
+ J4201 CH3CHO = CO
+ J4201     O2 = CH3O2 HO2
+
+//
+<J4202>  CH3CO3H     + hv = CH3O2 + OH                 : {%TrGCJ}  jx(ip_CH3CO3H); {&&}
+ J4202 CH3CO3H = OH
+ J4202  O2 = CH3O2
+
+// straight transfer
+<J4203>  NACA    + hv = NO2 + HCHO + CO            : {%TrGNCJ} 0.19*jx(ip_CHOH); {&&}
+
+//
+<J4204>  PAN     + hv = .6 CH3CO3 + .6 NO2 + .4 CH3O2 + .4 NO3 + .4 CO2 : {%TrGNCJ} jx(ip_PAN); {&&}
+ J4204 PAN = CH3CO3 NO2 NO3 CO2
+ J4204  O2 = CH3O2
+
+// 3C (#J43nn)
+//
+<J4300>  IC3H7OOH    + hv = CH3COCH3 + HO2 + OH       : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+ J4300 IC3H7OOH = CH3COCH3 OH
+ J4300    O2 = HO2
+
+//
+<J4301>  CH3COCH3 + hv = CH3CO3 + CH3O2                : {%TrGCJ}  jx(ip_CH3COCH3); {&&}
+ J4301 CH3COCH3 = 1 CH3CO3
+ J4301       O2 = 2 CH3CO3 CH3O2
+
+//
+<J4302>  ACETOL   + hv = CH3CO3 + HCHO + HO2           : {%TrGCJ}  0.074*jx(ip_CHOH); {&&}
+ J4302 ACETOL = 1 CH3CO3 HCHO
+ J4302     O2 = 2 CH3CO3      HO2
+
+// 
+<J4303>  MGLYOX + hv = CH3CO3 + CO + HO2             : {%TrGCJ}  jx(ip_MGLYOX); {&&}
+ J4303 MGLYOX = 1 CH3CO3 CO
+ J4303       O2 = 2 CH3CO3    HO2
+
+//
+<J4304>  HYPERACET    + hv = CH3CO3 + HO2 + OH             : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+//                       + HCHO
+ J4304 HYPERACET = 1 CH3CO3 OH
+ J4304    O2 = 2 CH3CO3    HO2
+
+// straight transfer
+<J4305>  MPAN     + hv = ACETOL + NO2              : {%TrGNCJ} jx(ip_PAN); {&&}
+
+//
+<J4306>  IC3H7NO3   + hv = CH3COCH3 + NO2 + HO2      : {%TrGNCJ} 3.7*jx(ip_PAN); {&&}
+ J4306 IC3H7NO3 = CH3COCH3 NO2
+ J4306     O2 = HO2
+ 
+// 4C (#J44nn)
+
+//
+<J4400>  LC4H9OOH + hv = OH + .67 MEK + .67 HO2 + .33 C2H5O2 + .33 CH3CHO : {%TrGCJ} jx(ip_CH3OOH); {&&}
+ J4400 LC4H9OOH = OH MEK CH3CHO
+ J4400      O2 = HO2 C2H5O2
+
+//
+<J4401>  MVK     + hv = CH3CO3 + HCHO + CO + HO2       : {%TrGCJ}  0.019*jx(ip_COH2)+.015*jx(ip_MGLYOX); {&&}
+ J4401 MVK = 1 CH3CO3 CO
+ J4401  O2 = 2 CH3CO3    HCHO HO2
+
+//
+<J4402>  MVKOOH  + hv = OH + .5 MGLYOX + .25 ACETOL + .75 HCHO + .75 HO2 + .25 CH3CO3 + .25 CO : {%TrGCJ} jx(ip_CH3OOH); {&&}
+ J4402 MVKOOH = OH MGLYOX ACETOL 1 HCHO 1 CH3CO3 CO
+ J4402     O2 = HO2                1 HCHO 2 CH3CO3
+
+//
+<J4403>  MEK     + hv = CH3CO3 + C2H5O2                  : {%TrGCJ}  0.42*jx(ip_CHOH); {&&}
+ J4403 MEK = 1 CH3CO3
+ J4403  O2 = 2 CH3CO3 C2H5O2
+
+//
+<J4404>  LMEKOOH  + hv = CH3CO3 + CH3CHO + OH           : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+ J4404 LMEKOOH = 1 CH3CO3 CH3CHO OH
+ J4404     O2 = 2 CH3CO3
+
+//
+<J4405>  BIACET  + hv = 2 CH3CO3                       : {%TrGCJ}  2.15*jx(ip_MGLYOX); {&&}
+ J4405 BIACET = 1 CH3CO3
+ J4405     O2 = 2 CH3CO3
+
+//
+<J4406>  LC4H9NO3    + hv = NO2 + .67 MEK + .67 HO2 + .33 C2H5O2 + .33 CH3CHO : {%TrGNCJ} 3.7*jx(ip_PAN); {&&}
+ J4406 LC4H9NO3 = NO2 MEK          CH3CHO
+ J4406   O2 =         HO2 C2H5O2
+
+// 5C (#J45nn)
+
+//
+<J4500>  ISOOH   + hv = MVK + HCHO + HO2 + OH      : {%TrGCJ}  jx(ip_CH3OOH); {&&}
+ J4500 ISOOH = MVK HCHO OH
+ J4500    O2 = HO2
+
+<J4501>  ISON    + hv = MVK + HCHO + NO2 + HO2     : {%TrGNCJ} 3.7*jx(ip_PAN); {&&}
+ J4501 ISON = MVK HCHO NO2
+ J4501   O2 = HO2
+
+{<J5nnn> ------------------------------- F -------------------------}
+
+{<J6nnn> ------------------------------- Cl ------------------------}{@\myhline}
+
+// Cl only (#J60nn)
+<J6000>  Cl2     + hv = Cl + Cl             : {%StTrGClJ}   jx(ip_Cl2); {&&}
+
+// Cl + O (#J61nn)
+<J6100>  Cl2O2   + hv = 2 Cl                : {%StTrGClJ}   1.4*jx(ip_Cl2O2); {&&}
+<J6101>  OClO    + hv = ClO + O3P           : {%StTrGClJ}   jx(ip_OClO); {&&}
+
+// Cl + H (#J62nn)
+<J6200>  HCl     + hv = Cl + H              : {%StGClJ}     jx(ip_HCl); {&&}
+<J6201>  HOCl    + hv = OH + Cl             : {%StTrGClJ}   jx(ip_HOCl); {&&}
+
+// Cl + N (#J63nn)
+<J6300>  ClNO2   + hv = Cl + NO2            : {%TrGNClJ}    jx(ip_ClNO2); {&&}
+<J6301a> ClNO3   + hv = Cl + NO3            : {%StTrGNClJ}  jx(ip_ClNO3); {&&}
+<J6301b> ClNO3   + hv = ClO + NO2           : {%StTrGNClJ}  jx(ip_ClONO2); {&&}
+
+// Cl + C (#J64nn)
+<J6400>  CH3Cl   + hv = Cl + CH3O2          : {%StGClJ}     jx(ip_CH3Cl); {&&}
+ J6400 O2 =
+
+<J6401>  CCl4    + hv = 4 Cl                : {%StGClJ}     jx(ip_CCl4); {&&}
+<J6402>  CH3CCl3 + hv = 3 Cl                : {%StGCClJ}    jx(ip_CH3CCl3); {&&}
+
+// Cl + F (#J65nn)
+<J6500>  CFCl3   + hv = 3 Cl                : {%StGFClJ}    jx(ip_CFCl3); {&&}
+<J6501>  CF2Cl2  + hv = 2 Cl                : {%StGFClJ}    jx(ip_CF2Cl2); {&&}
+
+{<J7nnn> ------------------------------- Br ------------------------}{@\myhline}
+
+// Br only (#J70nn)
+<J7000>  Br2     + hv = Br + Br             : {%StTrGBrJ}   jx(ip_Br2); {&&}
+
+// Br + O (#J71nn)
+<J7100>  BrO     + hv = Br + O3P            : {%TrGBrJ}     jx(ip_BrO); {&&}
+
+// Br + H (#J72nn)
+<J7200>  HOBr    + hv = Br + OH             : {%StTrGBrJ}   jx(ip_HOBr); {&&}
+
+// Br + N (#J73nn)
+<J7300>  BrNO2   + hv = Br + NO2            : {%TrGNBrJ}    jx(ip_BrNO2); {&&}
+<J7301>  BrNO3   + hv = 0.29 Br + 0.29 NO3 + 0.71 BrO + 0.71 NO2 : {%StTrGNBrJ}  jx(ip_BrNO3); {&&}
+
+// Br + C (#J74nn)
+<J7400>  CH3Br   + hv = Br + CH3O2          : {%StGBrJ}   jx(ip_CH3Br); {&&}
+ J7400 O2 =
+
+<J7401>  CH2Br2  + hv = 2 Br {+CH3O2}       : {%TrGBrJ}     jx(ip_CH2Br2); {&&}
+<J7402>  CHBr3   + hv = 3 Br {+CH3O2}       : {%TrGBrJ}     jx(ip_CHBr3); {&&}
+
+// Br + F (#J75nn)
+<J7500>  CF3Br   + hv = Br                  : {%StGFBrJ}    jx(ip_CF3Br); {&&}
+
+// Br + Cl (#J76nn)
+<J7600>  BrCl    + hv = Br + Cl             : {%StTrGClBrJ} jx(ip_BrCl); {&&}
+<J7601>  CF2ClBr + hv = Br + Cl             : {%StGFBrJ}    jx(ip_CF2ClBr); {&&}
+<J7602>  CH2ClBr + hv = Br + Cl   {+CH3O2}  : {%TrGClBrJ}   jx(ip_CH2ClBr); {&&}
+<J7603>  CHCl2Br + hv = Br + 2 Cl {+CH3O2}  : {%TrGClBrJ}   jx(ip_CHCl2Br); {&&}
+<J7604>  CHClBr2 + hv = 2 Br + Cl {+CH3O2}  : {%TrGClBrJ}   jx(ip_CHClBr2); {&&}
+
+{<J8nnn> ------------------------------- I -------------------------}{@\myhline}
+
+// I only (#J80nn)
+<J8000>  I2      + hv = I + I               : {%TrGIJ}      jx(ip_I2); {&&}
+
+// I + O (#J81nn)
+<J8100>  IO      + hv = I + O3P             : {%TrGIJ}      jx(ip_IO); {&&}
+// deleted: <J8101>  I2O2    + hv = 2 I                 : {%TrGIJ}      9.* jx(ip_Cl2O2); {&&}
+
+// I + H (#J82nn)
+<J8200>  HOI     + hv = I + OH              : {%TrGIJ}      jx(ip_HOI); {&&}
+
+// I + N (#J83nn)
+<J8300>  INO2    + hv = I + NO2             : {%TrGNIJ}     jx(ip_INO2); {&&}
+<J8301>  INO3    + hv = I + NO3             : {%TrGNIJ}     jx(ip_INO3); {&&}
+
+// I + C (#J84nn)
+<J8400>  CH2I2   + hv = 2 I + 2 HO2 + CO    : {%TrGIJ}      jx(ip_CH2I2); {&&}
+ J8400 O2 =
+
+<J8401>  CH3I    + hv = I + CH3O2           : {%TrGIJ}      jx(ip_CH3I); {&&}
+ J8401 O2 =
+
+<J8402>  C3H7I   + hv = I + CH3O2           : {%TrGIJ}      jx(ip_C3H7I); {&&}
+ J8402 O2 =
+ 
+<J8403>  CH2ClI  + hv = I + Cl + 2 HO2 + CO : {%TrGIClJ}    jx(ip_CH2ClI); {&&}
+ J8403 O2 =
+
+// I + Cl (#J86nn)
+<J8600>  ICl     + hv = I + Cl              : {%TrGClIJ}    jx(ip_ICl); {&&}
+
+// I + Br (#J87nn)
+<J8700>  IBr     + hv = I + Br              : {%TrGBrIJ}    jx(ip_IBr); {&&}
+
+{<J9nnn> ------------------------------- S -------------------------}
+//<J9000>  OCS  + hv = CO + S                 : {%StGSJ}      jx(ip_OCS); {&&}
+//<J9001>  SO2 + hv = SO +  S                 : {%StGSJ}      jx(ip_SO2); {&&}
+//<J9002>  SF6 + hv = PROD                    : {%StGSJ}      jx(ip_SF6); {&&}
+
+{<HETnnn> ------------------------------ HET ------------------------}
+
+// heterogeneous reactions - from Mainz Chemical Box Model
+
+// N (#HET200-#HET2nn)
+<HET200> N2O5 + H2O  = 2 HNO3       : {%StHetN}     khet_St(ihs_N2O5_H2O);  {&&}
+// mz_pj_20070209+: changed for budgeting (SCAV) according to mz_ht_20070209
+// <HET201> N2O5        = PROD         : {%TrHetN}     khet_Tr(iht_N2O5);      {&&}
+// <HET202> HNO3        = PROD         : {%TrHetN}     khet_Tr(iht_HNO3);      {&&}
+<HET201> N2O5        = 2 NO3m_cs + 2 Hp_cs : {%TrHetN}     khet_Tr(iht_N2O5);      {&&}
+<HET202> HNO3        = NO3m_cs + Hp_cs : {%TrHetN}     khet_Tr(iht_HNO3);      {&&}
+// mz_pj_20070209-
+
+// Cl  + O (#HET410-#HET419)
+<HET410> HOCl  + HCl = Cl2 + H2O    : {%StHetCl}    khet_St(ihs_HOCl_HCl);  {&&}
+
+// Cl  + N (#HET420-#HET429)
+<HET420> ClNO3 + HCl = Cl2 + HNO3   : {%StHetNCl}   khet_St(ihs_ClNO3_HCl); {&&}
+<HET421> ClNO3 + H2O = HOCl + HNO3  : {%StHetNCl}   khet_St(ihs_ClNO3_H2O); {&&}
+<HET422> N2O5  + HCl = ClNO2 + HNO3 : {%StHetNCl}   khet_St(ihs_N2O5_HCl);  {&&}
+
+// Br + O (#HET510-#HET519)
+<HET510> HOBr  + HBr = Br2 + H2O    : {%StHetBr}    khet_St(ihs_HOBr_HBr);  {&&}
+
+// Br + N (#HET520-#HET529)
+<HET520> BrNO3 + H2O = HOBr + HNO3  : {%StHetNBr}   khet_St(ihs_BrNO3_H2O); {&&}
+ HET520 BrNO3 = HNO3
+ HET520   H2O = HOBr
+
+// Br + Cl (#HET540-#HET549)
+<HET540> ClNO3 + HBr = BrCl + HNO3  : {%StHetNClBr} khet_St(ihs_ClNO3_HBr); {&&}
+<HET541> BrNO3 + HCl = BrCl + HNO3  : {%StHetNClBr} khet_St(ihs_BrNO3_HCl); {&&}
+<HET542> HOCl  + HBr = BrCl + H2O   : {%StHetClBr}  khet_St(ihs_HOCl_HBr);  {&&}
+<HET543> HOBr  + HCl = BrCl + H2O   : {%StHetClBr}  khet_St(ihs_HOBr_HCl);  {&&}
+
+// ---------------------------------------------------------------------------

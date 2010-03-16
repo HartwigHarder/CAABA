@@ -5,6 +5,7 @@
 # when it is run in batch mode (i.e. not interactive).
 
  set apn          = 0                 # number of aerosol phases [0...99, default=0]
+ set gaseqnfile   = gas_mim2.eqn
  set rplfile      =                   # no replacements
  # eval:
  set wanted = "((Tr && G && \!Cl && \!Br && \!I) || (St && \!Het)) && \!Hg"
@@ -17,5 +18,5 @@
  set decomp       = n                 # remove indirect indexing
                                       # kp4: 0/1/2/3/q; kpp: y/n/q
  set latex        = n                 # latex list of reactions
- set graphviz     = n                 # graphviz plots
+ set graphviz     = n                 # graphviz plots?
  set deltmp       = y                 # delete temporary xmecca files?

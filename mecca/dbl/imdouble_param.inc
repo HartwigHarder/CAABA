@@ -9,7 +9,9 @@
 ! [Gromov, MPIC, 2007-2008]
 ! ==============================================================================
 
-#define xDEBUG
+#define DEBUG
+
+#define xNULL_TEST
 #define xZERO_TEST
 
 ! {$CONF_LIST} [%\#define {%DBL}%]

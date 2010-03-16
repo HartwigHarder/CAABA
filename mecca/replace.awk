@@ -25,7 +25,12 @@ system("cp " infile " " eqnfile)
 if (match($0, "^#REPLACE[ 	]*<([A-Za-z0-9_]*)>", arr) != 0) {
   # #REPLACE command was found and the reaction number, i.e. the 
   # "([A-Za-z0-9]+)" part of the above regexp, is stored in arr[1].
-  system("echo -n > " rplfile) # create empty file
+#  op_pj_20091023+
+#  system("echo -n > " rplfile) # create empty file
+#  system("rm -f " rplfile"; touch "rplfile) # create empty file
+#  system("echo > " rplfile) # create empty file
+system("echo -n | sed \"s|-n||g\" > " rplfile) # create empty file
+#  op_pj_20091023-
   getline
   # loop until #ENDREPLACE is found:
   while (match($0, "^#ENDREPLACE") == 0) {

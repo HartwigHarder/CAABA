@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Initialize.f90
-! Time                 : Mon Feb 22 17:50:46 2010
-! Working directory    : /home/sander/e2/messy_2.3z_rs/messy/mbm/caaba/mecca
+! Time                 : Tue Mar 16 16:04:25 2010
+! Working directory    : /home/sander/e2/messy_2.3zp_rs_mim2/messy/mbm/caaba/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 

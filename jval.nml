@@ -16,7 +16,7 @@
 ! NOTE:
 !   - time_control must be 'constant' (default) unless you have the data file
 !     (see c_solc_data) available
-!   - if 170.0 on 3rd position => r_sol = 0.5               mz_hr_20080617
+!   - if 170.0 on 3rd position => r_sol = 0.5
  time_control = 'constant'  , 0, 170.0,           0,    0,  0
 !time_control = 'stationary', 0,   0.0,          10, 1995,  0
 !time_control = 'transient',  1,   0.0,           0,    0,  0

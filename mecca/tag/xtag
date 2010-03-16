@@ -1,25 +1,44 @@
 #! /bin/tcsh -f
 #
-# [Gromov, MPI-C Mainz, 2007-2008]
+# [Gromov, MPI-C Mainz, 2007-2009]
 #
 # script to tag MECCA kinetic chemistry mechanism
 #
+# parameters:
+# ($1) - normal mode (any value) or zero configuration (give "zero")
+# ($2) - optional batchfile param from xmecca
+#
 # steps:
+# 0 cleanup to zero
 # 1 choose desired configuration(s)
 # 2 tag using imtag
-# 3 link generated modules to the base module dir
+# 3 link generated modules to the corresponding dirs
 
 # --------------------------------------------------------------------------
 # VARIABLES
 # --------------------------------------------------------------------------
 
 # paths are relative
-set eqnfiledir   = ".."                # where equation file is located
-set f90box       = "../.."             # where f90-file links should go to
-#                                      # (BOX ONLY !!!)
-set f90smcl      = "../smcl"           # where f90-file links should go to
-set fpc_call  = "fpc -l -viwnh -B "
+set bindir       = "../../../../../bin"          # batch files location
+set batchdir     = "../batch"          # batch files location
+set meccadir     = ".."                # where MECCA + equation/species files are located
+set f90smcl      = "../smcl"           # where f90-files should go to
+set f90box       = "../.."             #                        -- BOX ONLY
+set f90si        = "../../../../smil"                           # -- SI ONLY
+set box2tag      = "mecca/tag"         # relative path from box to tag
+set smcl2tag     = "../tag"            #         - " -      smcl to tag
+set si2tag       = "../mbm/caaba/mecca/tag" # - " -      si to dbl
+set fpc_call     = "fpc -l -viwnh -B"  # fpc compiler call
 set do_recompile = "false"             # set to "true" to recompile the executable(s)
+set do_kpp       = "false"             # defines if kpp is used as the integrator
+
+# detecting ECHAM5/MESSy
+if ( -d ../../../../smil ) then
+  set bm3d
+endif
+
+# just to initialize to zero configuration and exit
+if ( "$1" == "zero" ) goto setzero
 
 # --------------------------------------------------------------------------
 # BATCH INFO TO BE READ HERE
@@ -28,10 +47,10 @@ set do_recompile = "false"             # set to "true" to recompile the executab
 if ( "$1" != "" ) then
   # type batchfile with or without extension .bat:
   set batchfile = `basename $1 .bat`.bat
-  if ( -f ../batch/$batchfile ) then
+  if ( -f $batchdir/$batchfile ) then
     echo "\nusing batchfile: $batchfile" # | tee -a ../$logfile
     set batch
-    source ../batch/$batchfile
+    source $batchdir/$batchfile
   else
     echo "ERROR: $batchfile does not exist"
     exit 1
@@ -42,101 +61,78 @@ endif
 # BEGINNING, LINKING FILES, INITIALIZING CONFs
 # --------------------------------------------------------------------------
 
+setzero:
+
 echo ""
 echo "[ XTAG: script to tag selected MECCA kinetic chemistry mechanism ]"
 echo "  (note: no aerosol-phase chemistry supported so far)"
 echo ""
 
+# --------------------------------------------------------------------------
+echo "initializing configuration(s) setup..."
+
 # linking mecca.eqn & mecca.spc to current folder
-ln -fs $eqnfiledir/mecca.eqn ./mecca.eqn
-ln -fs $eqnfiledir/mecca.spc ./mecca.spc
-# tracerc definition file
-ln -fs $eqnfiledir/gas.tex ./gas.tex
+ln -fs $meccadir/mecca.eqn ./mecca.eqn
+ln -fs $meccadir/mecca.spc ./mecca.spc
+# tracer definitions file
+ln -fs $meccadir/gas.tex ./gas.tex
 
+# cleaning files
+rm -f *.log
+rm -f messy_mecca_tag*.f90 messy_mecca_tag*.inc messy_mecca_tag*.dot
+rm -f messy_mecca_tag*.spc messy_mecca_tag*.eqn messy_mecca_tag*.kpp messy_mecca_tag*.tex
+rm -f $f90box/messy_mecca_tag*.f90 $f90box/messy_mecca_tag*.inc
+rm -f $f90smcl/messy_mecca_tag*.f90 $f90smcl/messy_mecca_tag*.inc
 
-# cleaning setup with default "empty" configuration
-rm -fv *.log
-rm -fv messy_mecca_tag*.f90 messy_mecca_tag*.inc messy_mecca_tag*.dot
-rm -fv messy_mecca_tag*.spc messy_mecca_tag*.eqn
-rm -fv $f90box/messy_mecca_tag*.f90 $f90box/messy_mecca_tag*.inc
-rm -fv $f90smcl/messy_mecca_tag*.f90 $f90smcl/messy_mecca_tag*.inc
+# default empty "zero" configuration
 cp -f  messy_mecca_tag_box.f90-zero $f90box/messy_mecca_tag_box.f90
+cp -f  messy_mecca_tag_parameters.inc-zero messy_mecca_tag_parameters.inc
+ln -fs --target-directory=$f90smcl $smcl2tag/messy_mecca_tag_parameters.inc
+ln -fs --target-directory=$f90box  $box2tag/messy_mecca_tag_parameters.inc
 
-echo "configuration(s) setup initialized"
-echo ""
-
-# --------------------------------------------------------------------------
-# SELECTION OF DESIRED ATOM
-# --------------------------------------------------------------------------
-
-# default configuration
-set defcfg = "c"
-
-echo "please, choose the tagging configuration:"
-echo "c: isotopic carbon (IC)"
-echo "o: isotopic oxygen (IO)"
-# echo "i: isoprene fraction (FISOP)"
-# echo "z: ozone fraction (O3F) /test/"
-# echo "[c/o/i/z, q=quit, default=$defcfg]"
-
-if (! ${?batch}) then
-  echo "[c, q=quit, default=$defcfg]"
-  set inputstring = "$<"
-else
-  echo "selected configuration from batch (tagcfg) is: $tagcfg"
-  echo ""
-  set inputstring = $tagcfg
+# in ECHAM5/MESSy setup
+if (${?bm3d}) then
+  rm -fv $f90si/messy_mecca_tag*.f90 $f90si/messy_mecca_tag*.inc
+  cp -f  messy_mecca_tag_si.f90-zero $f90si/messy_mecca_tag_si.f90
+  ln -fs --target-directory=$f90si $si2tag/messy_mecca_tag_parameters.inc
 endif
 
-if ( "$inputstring" == "q" ) exit 1
-if ( "$inputstring" == "" ) set inputstring = $defcfg
-switch ("$inputstring")
-case "c":
-  set cfg = "IC"   
-  breaksw
-case "o": 
-  set cfg = "IO"
-  breaksw
-#case "i": 
-#  set cfg = "FISOP"
-#  breaksw
-# case "z":
-#   set cfg = "O3F"   
-#   breaksw
-default:
-  echo "sorry, selected configuration is not in the list. exiting"
-  echo ""
-  exit 1
-#  set cfg = "$inputstring"
-  breaksw
-endsw
-
-echo "[ configuration: $cfg ]"
+echo "done"
 echo ""
+
+# just to initialize to zero configuration and exit
+if ( "$1" == "zero" ) exit 0
+
+# --------------------------------------------------------------------------
+if ("$do_recompile" == "true") then
+  echo "recompiling imtag executable..."
+  echo "(see compile.log for details)"
+  rm ./imtag.exe
+  if ("$do_kpp" == "true") set fpc_call = "$fpc_call -dCRT_INTEQN"
+  $fpc_call imtag -oimtag.exe > compile.log
+  if ("$status" != "0") then
+    echo "not done"
+    echo "--- listing compile.log ---"
+    cat compile.log
+    exit 1
+  endif
+  echo "done"
+  echo ""
+endif
+
+# --------------------------------------------------------------------------
+# SELECTION OF DESIRED CONFIGURATION(S)
+# --------------------------------------------------------------------------
+
+# invoking configuration selection script
+source ./xselectcfg
+if ("$?" != "0") exit 1
 
 # --------------------------------------------------------------------------
 # TAGGING
 # --------------------------------------------------------------------------
 
-# ----- this interactive part is switched off so far
-#echo ""
-#echo "would you like to tag selected mechanism? [y/n/q, default=y]:"
-#set inputstring = "$<"
-#if ( "$inputstring" == "q" ) exit 1
-#if ( "$inputstring" == "" ) set inputstring = "y"
-#switch ("$inputstring")
-#case "y":
-#  set do_tag = "true"
-#  breaksw
-#case "n":
-#  set do_tag = "false"
-#  breaksw
-#default:
-#  echo "unknown option. exiting"
-#  exit 1
-#  breaksw
-#endsw
-
+# these params left from older versions, keeping so far
 set do_tag = "true"
 
 if ("$do_tag" == "true") then
@@ -144,50 +140,154 @@ if ("$do_tag" == "true") then
   # --------------------------------------------------------------------------
   # run imtag - tagging
 
-  if ("$do_recompile" == "true") then
-     rm ./imtag
-     $fpc_call imtag
-  endif
-
   echo ">>> tagging with imtag >>>"
   echo ""
 
-  set imtag = "tag_"$cfg
-
-  ./imtag mecca.spc mecca.eqn tag$cfg.cfg > tag$cfg-imtag.log
+  $bindir/imtag.exe mecca.spc mecca.eqn $cfglist | tee -a imtag.log
   set exitstatus = "$status"
 
-  cat tag$cfg-imtag.log
   echo "exit status from imtag is: $exitstatus"
+  echo ""
   if ( "$exitstatus" != "0" ) then
-    echo "please, see the tag$cfg-imtag.log file"
+    echo "please, see the imtag.log file"
     exit
   endif
 
-  # applying changes to mecca.eqn & .spc
-  cat messy_mecca_tag.eqn > $eqnfiledir/mecca.eqn
-  cat messy_mecca_tag.spc > $eqnfiledir/mecca.spc
+  # ----- integration with KPP -------------------------------------------------
+  if ("$do_kpp" == "true") then
+
+    echo ">>> tagging integrator is specified to be KPP\n"
+
+    # define path to KPP (via pwd command to resolve symbolic links):
+    setenv KPP_HOME "`cd ../kpp;pwd`"
   
-  # linking generated code to xbox directory
+    # - choosing integrator -- borrowed from xmecca ----------------------------
+    set defaultintegr = "rosenbrock_mz"
+    cd $KPP_HOME/int
+    echo "Available KPP integrators:"
+    set inn      = "0"
+    set allfiles = *.f90
+    set allfiles = `echo $allfiles | sed 's|\.f90||g'` # delete suffix .f90
+    foreach i ($allfiles) # list all possibilities
+      @ inn=$inn + 1
+      echo "$inn) $allfiles[$inn]"
+    end
+    echo "The Rosenbrock integrators with automatic time-step control are"
+    echo "strongly recommended for their ability to cope with stiff sets of"
+    echo "differential equations. If you choose another integrator, do so at"
+    echo "your own risk\!"
+    echo "Choose an integrator [q=quit, default=$defaultintegr]:"
+
+    # uncomment for BM!
+    if (! ${?batch}) then
+      set inputstring = "$<"
+    else
+      echo "selected default in the batch mode"
+      echo ""
+      set inputstring = ""
+    endif
+
+    if ( "$inputstring" == "q" ) exit 1
+    if (($inputstring <= $#allfiles) && ($inputstring >= 1)) then
+      set integr = "$allfiles[$inputstring]"
+      echo "You selected: $inputstring) $integr" | tee -a imtag-kpp.log
+    else
+      set integr = "$defaultintegr"
+      echo "Default selection: $integr" | tee -a imtag-kpp.log
+    endif
+    cd -
+
+    set integrfile = messy_mecca_tag_$cfg\_kpp_integr.kpp
+    echo "#INTEGRATOR $integr" >! $integrfile
+
+    echo "#INLINE F90_GLOBAL"                                    >> $integrfile
+    echo "  ! KPP info from xmecca:"                             >> $integrfile
+    echo "  CHARACTER(LEN=*), PUBLIC, PARAMETER :: &"            >> $integrfile
+    echo "    KPP_HOME           = '$KPP_HOME', &"               >> $integrfile
+    echo "    integr             = '$integr'"                    >> $integrfile
+    echo "#ENDINLINE {above lines go to messy_mecca_kpp_global}" >> $integrfile
+
+    # - running KPP ------------------------------------------------------------
+
+    echo "hold on, we're..."
+    # calling kpp to produce integration system
+    echo "\nRunning KPP. Please wait..."
+    $KPP_HOME/bin/kpp messy_mecca_tag_$cfg\_kpp.kpp | tee -a imtag-kpp.log
+    set exitstatus = "$status"
+    echo "exit status from KPP is: $exitstatus"
+    if ( "$exitstatus" != "0" ) exit 1
+  
+    echo "\npostprocessing kpp files..."
+  
+    # resolving precision definition issues
+    set precref = tag_$cfg\_kpp_Precision
+  # sed -i 's|'$precref'|kpp_Precision|1' messy_mecca_tag_$cfg\_kpp*
+    set deprecfiles = (messy_mecca_tag_$cfg\_kpp*)
+    foreach deprec ($deprecfiles)
+      sed 's|'$precref'|kpp_Precision|1' $deprec > xtag.tmp
+      mv xtag.tmp $deprec
+    end
+    rm messy_mecca_tag_$cfg\_kpp_Precision.f90
+
+  # TEMPORARY: ratio calculation
+  # sed -i 's|_RCONST|_RATIOS|1' messy_mecca_tag_$cfg\_kpp_Integrator*
+  # sed -i 's|_RATIOS()|_RATIOS(Y)|1' messy_mecca_tag_$cfg\_kpp_Integrator*
+
+    # de-capitating (i mean, ...lizing)
+    set decapitates = (messy_mecca_tag*kpp*.f90) #  messy_mecca_tag*.inc)
+    foreach decap ($decapitates)
+      set decapfile = `echo "$decap" | tr '[A-Z]' '[a-z]'`
+      mv $decap $decapfile
+    end
+
+  # TEMPORARY: addint unity species to the fixed list
+  # echo "#SETFIX AONE;\n" >> ../messy_mecca_kpp.kpp
+
+  endif
+
+  # ----- distributiong files to the directories -------------------------------
+
+  # applying changes to the regular mecca.eqn & .spc
+  cat messy_mecca_tag.eqn > $meccadir/mecca.eqn
+  cat messy_mecca_tag.spc > $meccadir/mecca.spc
+
+  # linking generated code to smcl/xbox directories
   set tagfiles = (messy_mecca_tag*.f90 messy_mecca_tag*.inc)
   foreach tagfile ($tagfiles)
-    set isinc = $tagfile:e
+
     set base = `basename $tagfile .f90`
-    set isbox = `echo $base | awk '{print substr($1,length($1)-2,3)}'`
-    if ( "$isbox" == "box" ) then
-       set destdir = $f90box
-    else
-       set destdir = $f90smcl
-    endif 
-    if ( "$isinc" == "inc" ) then
-       set destdir = "$f90box $f90smcl"
-    endif
-    foreach dd ($destdir)
-      if (-e $dd/$tagfile) then
-         rm -f $dd/$tagfile
+   #set isbox = `echo $base | awk '{print substr($1,length($1)-2,3)}'`
+
+    set isbox = `echo $tagfile "_box." | awk '{print index($1,$2)}'`
+    set issi = `echo $tagfile "_si." | awk '{print index($1,$2)}'`
+    set fext = $tagfile:e
+
+    # default directory (smcl), or dedicated box/si
+    set destdir = $f90smcl
+    if ( "$isbox" != "0" ) set destdir = $f90box
+    if ( "$issi" != "0" ) then
+      if (${?bm3d}) then
+        set destdir = $f90si
+      else
+        set destdir = ""
       endif
-      mv -f $tagfile $dd/.
-      ln -s $dd/$tagfile .
+    endif
+
+    foreach ddir ($destdir)
+      if ( "$fext" == "inc" ) then
+        # linking include files to all dirs, not copying
+        ln -fs --target-directory=$f90smcl $smcl2tag/$tagfile
+        ln -fs --target-directory=$f90box $box2tag/$tagfile
+        if (${?bm3d}) ln -fs --target-directory=$f90si $si2tag/$tagfile
+      else
+        # copying to destination, linking back to tag
+        if ("$destdir" != "") then
+          if (-e $ddir/$tagfile) rm -f $ddir/$tagfile
+          mv -f $tagfile $ddir/.
+          ln -s $ddir/$tagfile .
+          echo linking $tagfile from $ddir
+        endif
+      endif  
     end
   end
 
@@ -199,4 +299,3 @@ endif
 echo ""
 echo "all done --> returning"
 echo ""
-

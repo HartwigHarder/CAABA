@@ -1,5 +1,5 @@
 !*****************************************************************************
-!                Time-stamp: <2009-08-10 11:56:58 sander>
+!                Time-stamp: <2010-03-11 17:03:21 sander>
 !*****************************************************************************
 
 ! SAPPHO = Simplified And Parameterized PHOtolysis rates
@@ -73,7 +73,7 @@ CONTAINS
       CALL photo_ff
     !qqq todo: CASE ('FREE_TROP')
       !qqq todo: CALL photo_free_trop
-    CASE ('','OOMPH','MBL')
+    CASE ('','OOMPH','MBL','MIM2')
       CALL photo_mbl
     !qqq todo: CASE ('STRATO')
       !qqq todo: CALL photo_strato

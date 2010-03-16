@@ -31,12 +31,13 @@ MODULE messy_mecca_tag_box
 
   IMPLICIT NONE
 
-  PUBLIC tag_emis
-  PUBLIC tag_process     ! substitutes _calctotals, _calcdeltas, _calcfractions
-  PUBLIC tag_resetPTs
-  PUBLIC tag_init
-  PUBLIC tag_result
-  PUBLIC tag_finish
+  PUBLIC mecca_tag_emis
+  PUBLIC mecca_tag_prepare
+  PUBLIC mecca_tag_process
+  PUBLIC mecca_tag_resetPTs
+  PUBLIC mecca_tag_init
+  PUBLIC mecca_tag_result
+  PUBLIC mecca_tag_finish
 
 ! ==============================================================================
 
@@ -44,11 +45,16 @@ CONTAINS
 
 ! ------------------------------------------------------------------------------
 
-  SUBROUTINE tag_emis
+  SUBROUTINE mecca_tag_emis
     IMPLICIT NONE
-  END SUBROUTINE tag_emis
+  END SUBROUTINE mecca_tag_emis
   
-  SUBROUTINE tag_process(TSL, nstep, C, press, cair, temp)
+  SUBROUTINE mecca_tag_prepare(C)
+    IMPLICIT NONE
+    REAL(dp), INTENT(IN)  :: C(:)
+  END SUBROUTINE mecca_tag_prepare
+
+  SUBROUTINE mecca_tag_process(TSL, C, press, cair, temp)
 
     USE messy_main_constants_mem, ONLY: dp
 
@@ -60,26 +66,25 @@ CONTAINS
     REAL(dp), INTENT(IN)  :: cair
     REAL(dp), INTENT(IN)  :: temp  
     REAL(dp), INTENT(IN) :: TSL      ! TSL = times_step_len value    
-    INTEGER, INTENT(IN)  :: nstep
 
-  END SUBROUTINE tag_process
+  END SUBROUTINE mecca_tag_process
   
-  SUBROUTINE tag_resetPTs
+  SUBROUTINE mecca_tag_resetPTs
     IMPLICIT NONE
-  END SUBROUTINE tag_resetPTs
+  END SUBROUTINE mecca_tag_resetPTs
 
-  SUBROUTINE tag_init
+  SUBROUTINE mecca_tag_init
     IMPLICIT NONE
-  END SUBROUTINE tag_init
+  END SUBROUTINE mecca_tag_init
 
-  SUBROUTINE tag_result(model_time)
+  SUBROUTINE mecca_tag_result(model_time)
     IMPLICIT NONE
     REAL(dp), INTENT(IN) :: model_time
-  END SUBROUTINE tag_result
+  END SUBROUTINE mecca_tag_result
 
-  SUBROUTINE tag_finish
+  SUBROUTINE mecca_tag_finish
     IMPLICIT NONE
-  END SUBROUTINE tag_finish
+  END SUBROUTINE mecca_tag_finish
 
 
 END MODULE messy_mecca_tag_box

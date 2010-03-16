@@ -54,7 +54,7 @@ SAY unit = [($unit)]
 LET factor = conv
 
 ! SET verbosity (higher values of v produce more plots)
-LET v = 1
+LET v = 5
 
 !-------------------------------------------------------------------------------
 
@@ -135,6 +135,11 @@ IF `v GE 1` THEN GO _plot_($dim) N2O5
 IF `v GE 1` THEN GO _plot_($dim) HONO
 IF `v GE 1` THEN GO _plot_($dim) HNO3
 IF `v GE 2` THEN GO _plot_($dim) HNO4
+IF `v GE 4` THEN GO _plot_($dim) NH2
+IF `v GE 4` THEN GO _plot_($dim) HNO
+IF `v GE 4` THEN GO _plot_($dim) NHOH
+IF `v GE 4` THEN GO _plot_($dim) NH2O
+IF `v GE 4` THEN GO _plot_($dim) NH2OH
 ! 1C
 IF `v GE 3` THEN GO _plot_($dim) CH4
 IF `v GE 2` THEN GO _plot_($dim) CH3OH
@@ -148,42 +153,42 @@ IF `v GE 3` THEN GO _plot_($dim) CO2
 IF `v GE 1` THEN GO _plot_($dim) C2H6
 IF `v GE 1` THEN GO _plot_($dim) C2H4
 IF `v GE 1` THEN GO _plot_($dim) C2H2
-IF `v GE 2` THEN GO _plot_($dim) EtO2
-IF `v GE 2` THEN GO _plot_($dim) EtOOH
+IF `v GE 2` THEN GO _plot_($dim) C2H5O2
+IF `v GE 2` THEN GO _plot_($dim) C2H5OOH
 IF `v GE 1` THEN GO _plot_($dim) CH3CHO
-IF `v GE 2` THEN GO _plot_($dim) CH3COOH
-IF `v GE 2` THEN GO _plot_($dim) PA
-IF `v GE 2` THEN GO _plot_($dim) PAA
+IF `v GE 2` THEN GO _plot_($dim) CH3CO2H
+IF `v GE 2` THEN GO _plot_($dim) CH3CO3
+IF `v GE 2` THEN GO _plot_($dim) CH3CO3H
 IF `v GE 2` THEN GO _plot_($dim) NACA
 IF `v GE 2` THEN GO _plot_($dim) PAN
 ! 3C
 IF `v GE 2` THEN GO _plot_($dim) C3H8
 IF `v GE 2` THEN GO _plot_($dim) C3H6
-IF `v GE 2` THEN GO _plot_($dim) PrO2
-IF `v GE 2` THEN GO _plot_($dim) PrOOH
-IF `v GE 2` THEN GO _plot_($dim) C3H6O2
-IF `v GE 2` THEN GO _plot_($dim) C3H6OOH
+IF `v GE 2` THEN GO _plot_($dim) IC3H7O2
+IF `v GE 2` THEN GO _plot_($dim) IC3H7OOH
+IF `v GE 2` THEN GO _plot_($dim) LHOC3H6O2
+IF `v GE 2` THEN GO _plot_($dim) LHOC3H6OOH
 IF `v GE 2` THEN GO _plot_($dim) CH3COCH3
-IF `v GE 2` THEN GO _plot_($dim) ACETO2
-IF `v GE 2` THEN GO _plot_($dim) ACETP
+IF `v GE 2` THEN GO _plot_($dim) CH3COCH2O2
+IF `v GE 2` THEN GO _plot_($dim) HYPERACET
 IF `v GE 2` THEN GO _plot_($dim) ACETOL
-IF `v GE 2` THEN GO _plot_($dim) CH3COCHO
-IF `v GE 2` THEN GO _plot_($dim) MPAN
-IF `v GE 2` THEN GO _plot_($dim) PrONO2
+IF `v GE 2` THEN GO _plot_($dim) MGLYOX
+IF `v GE 2` THEN GO _plot_($dim) IC3H7NO3
 ! 4C
-IF `v GE 2` THEN GO _plot_($dim) C4H10
-IF `v GE 2` THEN GO _plot_($dim) C4H9O2
-IF `v GE 2` THEN GO _plot_($dim) C4H9OOH
+IF `v GE 2` THEN GO _plot_($dim) NC4H10
+IF `v GE 2` THEN GO _plot_($dim) LC4H9O2
+IF `v GE 2` THEN GO _plot_($dim) LC4H9OOH
 IF `v GE 2` THEN GO _plot_($dim) MVK
 IF `v GE 2` THEN GO _plot_($dim) MVKO2
 IF `v GE 2` THEN GO _plot_($dim) MVKOOH
 IF `v GE 2` THEN GO _plot_($dim) MEK
-IF `v GE 2` THEN GO _plot_($dim) MEKO2
-IF `v GE 2` THEN GO _plot_($dim) MEKOOH
-IF `v GE 2` THEN GO _plot_($dim) MeCOCO
-IF `v GE 2` THEN GO _plot_($dim) ONIT
+IF `v GE 2` THEN GO _plot_($dim) LMEKO2
+IF `v GE 2` THEN GO _plot_($dim) LMEKOOH
+IF `v GE 2` THEN GO _plot_($dim) BIACET
+IF `v GE 2` THEN GO _plot_($dim) LC4H9NO3
+IF `v GE 2` THEN GO _plot_($dim) MPAN
 ! 5C
-IF `v GE 2` THEN GO _plot_($dim) ISOP
+IF `v GE 2` THEN GO _plot_($dim) C5H8
 IF `v GE 2` THEN GO _plot_($dim) ISO2
 IF `v GE 2` THEN GO _plot_($dim) ISOOH
 IF `v GE 2` THEN GO _plot_($dim) ISON
@@ -192,10 +197,10 @@ IF `v GE 1` THEN GO _plot_($dim) Clx
 IF `v GE 1` THEN GO _plot_($dim) Cl
 IF `v GE 1` THEN GO _plot_($dim) Cl2
 IF `v GE 1` THEN GO _plot_($dim) ClO
-IF `v GE 2` THEN GO _plot_($dim) OClO
-IF `v GE 2` THEN GO _plot_($dim) Cl2O2
 IF `v GE 1` THEN GO _plot_($dim) HCl
 IF `v GE 1` THEN GO _plot_($dim) HOCl
+IF `v GE 2` THEN GO _plot_($dim) Cl2O2
+IF `v GE 2` THEN GO _plot_($dim) OClO
 IF `v GE 2` THEN GO _plot_($dim) ClNO2
 IF `v GE 1` THEN GO _plot_($dim) ClNO3
 IF `v GE 2` THEN GO _plot_($dim) CCl4
@@ -213,6 +218,14 @@ IF `v GE 1` THEN GO _plot_($dim) HOBr
 IF `v GE 2` THEN GO _plot_($dim) BrNO2
 IF `v GE 1` THEN GO _plot_($dim) BrNO3
 IF `v GE 1` THEN GO _plot_($dim) BrCl
+IF `v GE 4` THEN GO _plot_($dim) CH3Br
+IF `v GE 4` THEN GO _plot_($dim) CF3Br
+IF `v GE 4` THEN GO _plot_($dim) CF2ClBr
+IF `v GE 4` THEN GO _plot_($dim) CHCl2Br
+IF `v GE 4` THEN GO _plot_($dim) CHClBr2
+IF `v GE 4` THEN GO _plot_($dim) CH2ClBr
+IF `v GE 4` THEN GO _plot_($dim) CH2Br2
+IF `v GE 4` THEN GO _plot_($dim) CHBr3
 ! I
 IF `v GE 1` THEN GO _plot_($dim) Ix
 ! let iod = 'I' ! must be renamed because i is also longitude
@@ -234,13 +247,19 @@ IF `v GE 2` THEN GO _plot_($dim) CH2ClI
 IF `v GE 1` THEN GO _plot_($dim) IBr
 IF `v GE 1` THEN GO _plot_($dim) IPART
 ! S
+
+IF `v GE 4` THEN GO _plot_($dim) S
+IF `v GE 4` THEN GO _plot_($dim) SO
 IF `v GE 1` THEN GO _plot_($dim) SO2
+IF `v GE 4` THEN GO _plot_($dim) SH
 IF `v GE 1` THEN GO _plot_($dim) H2SO4
 IF `v GE 2` THEN GO _plot_($dim) CH3SO3H
 IF `v GE 1` THEN GO _plot_($dim) DMS
 IF `v GE 1` THEN GO _plot_($dim) DMSO
 IF `v GE 2` THEN GO _plot_($dim) CH3SO2
 IF `v GE 2` THEN GO _plot_($dim) CH3SO3
+IF `v GE 4` THEN GO _plot_($dim) OCS
+IF `v GE 4` THEN GO _plot_($dim) SF6
 
 ! Hg
 IF `v GE 1` THEN GO _plot_($dim) Hg

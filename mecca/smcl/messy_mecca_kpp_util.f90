@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Util.f90
-! Time                 : Mon Feb 22 17:50:46 2010
-! Working directory    : /home/sander/e2/messy_2.3z_rs/messy/mbm/caaba/mecca
+! Time                 : Tue Mar 16 16:04:25 2010
+! Working directory    : /home/sander/e2/messy_2.3zp_rs_mim2/messy/mbm/caaba/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -202,18 +202,18 @@ SUBROUTINE Shuffle_user2kpp ( V_USER, V )
 
   V(12) = V_USER(1)
   V(5) = V_USER(2)
-  V(27) = V_USER(3)
+  V(26) = V_USER(3)
   V(7) = V_USER(4)
   V(9) = V_USER(5)
-  V(25) = V_USER(6)
+  V(28) = V_USER(6)
   V(29) = V_USER(7)
   V(19) = V_USER(8)
   V(8) = V_USER(9)
   V(2) = V_USER(11)
   V(1) = V_USER(12)
-  V(28) = V_USER(13)
+  V(27) = V_USER(13)
   V(30) = V_USER(14)
-  V(26) = V_USER(15)
+  V(25) = V_USER(15)
   V(6) = V_USER(16)
   V(17) = V_USER(17)
   V(18) = V_USER(18)
@@ -223,12 +223,11 @@ SUBROUTINE Shuffle_user2kpp ( V_USER, V )
   V(14) = V_USER(22)
   V(20) = V_USER(23)
   V(13) = V_USER(24)
-  V(3) = V_USER(25)
+  V(24) = V_USER(25)
   V(10) = V_USER(26)
-  V(24) = V_USER(27)
-  V(16) = V_USER(28)
-  V(23) = V_USER(29)
-  V(11) = V_USER(30)
+  V(16) = V_USER(27)
+  V(3) = V_USER(28)
+  V(11) = V_USER(29)
       
 END SUBROUTINE Shuffle_user2kpp
 
@@ -254,18 +253,18 @@ SUBROUTINE Shuffle_kpp2user ( V, V_USER )
 
   V_USER(1) = V(12)
   V_USER(2) = V(5)
-  V_USER(3) = V(27)
+  V_USER(3) = V(26)
   V_USER(4) = V(7)
   V_USER(5) = V(9)
-  V_USER(6) = V(25)
+  V_USER(6) = V(28)
   V_USER(7) = V(29)
   V_USER(8) = V(19)
   V_USER(9) = V(8)
   V_USER(11) = V(2)
   V_USER(12) = V(1)
-  V_USER(13) = V(28)
+  V_USER(13) = V(27)
   V_USER(14) = V(30)
-  V_USER(15) = V(26)
+  V_USER(15) = V(25)
   V_USER(16) = V(6)
   V_USER(17) = V(17)
   V_USER(18) = V(18)
@@ -275,12 +274,11 @@ SUBROUTINE Shuffle_kpp2user ( V, V_USER )
   V_USER(22) = V(14)
   V_USER(23) = V(20)
   V_USER(24) = V(13)
-  V_USER(25) = V(3)
+  V_USER(25) = V(24)
   V_USER(26) = V(10)
-  V_USER(27) = V(24)
-  V_USER(28) = V(16)
-  V_USER(29) = V(23)
-  V_USER(30) = V(11)
+  V_USER(27) = V(16)
+  V_USER(28) = V(3)
+  V_USER(29) = V(11)
       
 END SUBROUTINE Shuffle_kpp2user
 

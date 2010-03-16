@@ -29,16 +29,22 @@
 #  E-mail: sandu@cs.vt.edu
 #
 #######################################################################################
-# mz_pj_20080123+
 SYSTEM := $(shell uname)
 include ../Makefile.defs.$(SYSTEM)
-#include ../Makefile.defs
-# mz_pj_20080123-
 
 BISON=bison -d 
 CFLAGS=`cat ../cflags`
 
 all: kpp
+
+# list the configuration:
+.PHONY: list
+list:
+	@echo "SYSTEM       = $(SYSTEM)"
+	@echo "CC           = $(CC)"
+	@echo "FLEX         = $(FLEX)"
+	@echo "FLEX_LIB_DIR = $(FLEX_LIB_DIR)"
+	@echo "CC_FLAGS     = $(CC_FLAGS)"
 
 .c.o:
 	@echo "  "$(CC) $(CC_FLAGS) $(CFLAGS) -c $*.c

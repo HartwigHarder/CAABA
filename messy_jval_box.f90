@@ -1,11 +1,11 @@
 !*****************************************************************************
-!                Time-stamp: <2009-09-11 12:31:22 sander>
+!                Time-stamp: <2010-03-11 16:55:02 sander>
 !*****************************************************************************
 
 ! JVAL = calculation of J-VALues (photolysis rate coefficients)
 
 ! Authors:
-! Rolf Sander,          MPICH, 2007-2009
+! Rolf Sander,          MPICH, 2007-...
 ! Andreas Baumgaertner, MPICH, 2009: photo_strato with 90 levels added
 
 !*****************************************************************************
@@ -36,6 +36,7 @@ MODULE messy_jval_box
   !       lookup, lookup_io, aerosol_data, jvalues, lp, modstr
 
   IMPLICIT NONE
+  PRIVATE
 
   INTEGER :: ncid_jval
 
@@ -56,8 +57,6 @@ MODULE messy_jval_box
   LOGICAL :: l_heating
   INTEGER :: pbllev           ! number of levels in pbl
 
-  PRIVATE
-
   PUBLIC :: jval_init   ! initialize J-values
   PUBLIC :: jval_physc  ! calculate J values
   PUBLIC :: jval_result
@@ -69,8 +68,8 @@ CONTAINS
 
   SUBROUTINE jval_init
 
-    USE messy_main_timer, ONLY: read_tseries_data
-    USE caaba_mem,        ONLY: photo_scenario
+    USE messy_main_import_tseries, ONLY: read_tseries_data ! mz_pj_20071029
+    USE caaba_mem,                 ONLY: photo_scenario
 
     IMPLICIT NONE
 
@@ -106,7 +105,7 @@ CONTAINS
       !qqq todo: CALL photo_ff
     !qqq todo: CASE ('FREE_TROP')
       !qqq todo: CALL photo_free_trop
-    CASE ('','OOMPH','MBL')
+    CASE ('','MBL','MIM2','OOMPH')
       CALL photo_mbl
     CASE ('STRATO')
       CALL photo_strato
@@ -376,7 +375,7 @@ CONTAINS
 
   SUBROUTINE jval_finish
 
-    USE messy_main_timer, ONLY: clean_tseries_data
+    USE messy_main_import_tseries, ONLY: clean_tseries_data ! mz_pj_20071029
 
     IMPLICIT NONE
 

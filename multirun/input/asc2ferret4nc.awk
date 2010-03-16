@@ -1,6 +1,6 @@
 # generate a ferret skript to convert ascii data to netcdf data
 # the netcdf file will be overwritten if it exists already!
-# usage : gawk -f asc2ferret4ncdf ASCIIFILE.ASC > FERRETSKRIPTNAME
+# usage : gawk -f asc2ferret4ncdf ASCIIFILE.DAT > FERRETSKRIPTNAME
 #         ferret -batch -script FERRETSKRIPTNAME
 #
 # Hartwig Harder Jul 2008
@@ -21,7 +21,7 @@ BEGIN {
   }
 
   fnameDataCounter=1;
-  fnameData=(fnameBase[1] "_" fnameDataCounter ".asc");
+  fnameData=(fnameBase[1] "_" fnameDataCounter ".dat");
   fnameScript=(fnameBase[1] ".jnl");
   # print ">" fnameData "<";
 
@@ -65,14 +65,14 @@ BEGIN {
   for (i=1; i<NF; i++) {
     printf "%s", $i  >> fnameScript;
     if ( ((i)% UseCol)==0) { # we need to generate one load statement for each set of Variables
-      printf "\" %s\n\n", (fnameBase[1] "_"fnameDataCounter ".asc")  >> fnameScript;
+      printf "\" %s\n\n", (fnameBase[1] "_"fnameDataCounter ".dat")  >> fnameScript;
       fnameDataCounter++; # next data block
       printf "file/skip=1/type=numeric/format=delimited/delimiter=\"\\b\"/grid=t_grid/VARIABLES=\""  >> fnameScript;
     } else {
       printf "," >> fnameScript;
     }
   }
-  printf "%s\" %s\n",$i, (fnameBase[1] "_" fnameDataCounter ".asc")   >> fnameScript;
+  printf "%s\" %s\n",$i, (fnameBase[1] "_" fnameDataCounter ".dat")   >> fnameScript;
 
   # generate save to netcdf command in the form save/FILE=FILENAME.nc name1,name2,...
   printf "\n!!! now save data\n" >> fnameScript;
@@ -93,14 +93,14 @@ BEGIN {
 
   # setup header for individual data files:
   fnameDataCounter=1;
-  fnameData=(fnameBase[1] "_" fnameDataCounter ".asc");
+  fnameData=(fnameBase[1] "_" fnameDataCounter ".dat");
   printf ""  > fnameData;
   for (i=1; i<=NF; i++) {
     printf "%15s ", $i >>fnameData;
     if ( ((i)% UseCol)==0) { # we need to generate a new file
       printf "\n" >> fnameData;
       fnameDataCounter++; # next data block
-      fnameData=(fnameBase[1] "_" fnameDataCounter ".asc");
+      fnameData=(fnameBase[1] "_" fnameDataCounter ".dat");
     }
   }
   printf "\n" >> fnameData;
@@ -109,7 +109,7 @@ BEGIN {
 
 {
   fnameDataCounter=1;
-  fnameData=(fnameBase[1] "_" fnameDataCounter ".asc");
+  fnameData=(fnameBase[1] "_" fnameDataCounter ".dat");
   printf ""  > fnameData;
   for (i=1; i<=NF; i++) {
     if ($i=="NaN")
@@ -119,7 +119,7 @@ BEGIN {
     if ( ((i)% UseCol)==0) { # we need to address a new file
       printf "\n" >> fnameData; # finish line in old one
       fnameDataCounter++; # next data block
-      fnameData=(fnameBase[1] "_" fnameDataCounter ".asc");
+      fnameData=(fnameBase[1] "_" fnameDataCounter ".dat");
     }
   }
   printf "\n" >> fnameData;

@@ -11,19 +11,20 @@ messy_e4chem_box.o: messy_e4chem.o messy_jval.o messy_main_constants_mem.o
 messy_e4chem_box.o: messy_main_tools.o
 messy_jval.o: messy_jval_jvpp.inc
 messy_jval.o: messy_cmn_photol_mem.o messy_main_constants_mem.o
-messy_jval.o: messy_main_timer.o messy_main_tools.o
+messy_jval.o: messy_main_import_tseries.o messy_main_tools.o
 messy_jval_box.o: caaba_io.o caaba_mem.o messy_cmn_photol_mem.o messy_jval.o
-messy_jval_box.o: messy_main_constants_mem.o messy_main_timer.o
+messy_jval_box.o: messy_main_constants_mem.o messy_main_import_tseries.o
 messy_jval_box.o: messy_main_tools.o
 messy_main_blather.o: messy_main_constants_mem.o
 messy_main_control_cb.o: caaba_mem.o messy_e4chem_box.o messy_jval_box.o
 messy_main_control_cb.o: messy_main_constants_mem.o messy_main_timer.o
 messy_main_control_cb.o: messy_mecca_box.o messy_readj_box.o messy_sappho_box.o
 messy_main_control_cb.o: messy_semidep_box.o messy_traject_box.o
+messy_main_import_tseries.o: messy_main_blather.o messy_main_constants_mem.o
+messy_main_import_tseries.o: messy_main_timer.o
 messy_main_rnd.o: messy_main_constants_mem.o messy_main_rnd_lux.o
 messy_main_rnd.o: messy_main_rnd_mtw.o messy_main_tools.o
-messy_main_timer.o: messy_main_blather.o messy_main_constants_mem.o
-messy_main_timer.o: messy_main_tools.o
+messy_main_timer.o: messy_main_constants_mem.o messy_main_tools.o
 messy_main_tools.o: messy_main_blather.o messy_main_constants_mem.o
 messy_mecca.o: messy_main_constants_mem.o messy_main_rnd.o messy_main_tools.o
 messy_mecca.o: messy_mecca_kpp.o

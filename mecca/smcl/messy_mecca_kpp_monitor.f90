@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Monitor.f90
-! Time                 : Mon Feb 22 17:50:46 2010
-! Working directory    : /home/sander/e2/messy_2.3z_rs/messy/mbm/caaba/mecca
+! Time                 : Tue Mar 16 16:04:25 2010
+! Working directory    : /home/sander/e2/messy_2.3zp_rs_mim2/messy/mbm/caaba/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -34,8 +34,8 @@ MODULE messy_mecca_kpp_Monitor
      'CH3OOH                          ','HONO                            ','HNO3                            ', &
      'H2O                             ','NH2O                            ','HNO                             ', &
      'NH2                             ','HCHO                            ','CH3O2                           ', &
-     'OH                              ','NO3                             ','O3                              ', &
-     'NO                              ','HO2                             ','NO2                             ', &
+     'NO3                             ','O3                              ','NO                              ', &
+     'OH                              ','HO2                             ','NO2                             ', &
      'O2                              ','N2                              ','CO2                             ' /)
 
   INTEGER, DIMENSION(1) :: LOOKAT
@@ -45,7 +45,7 @@ MODULE messy_mecca_kpp_Monitor
      '   O1D + O2 --> O3P + O2                                                                            ', &
      '   O3P + O2 --> O3                                                                                  ', &
      '     H + O2 --> HO2                                                                                 ', &
-     '    OH + O3 --> HO2 + O2                                                                            ', &
+     '    O3 + OH --> HO2 + O2                                                                            ', &
      '    H2 + OH --> H + H2O                                                                             ', &
      '   O3 + HO2 --> OH + 2 O2                                                                           ', &
      '   OH + HO2 --> H2O + O2                                                                            ', &
@@ -58,7 +58,7 @@ MODULE messy_mecca_kpp_Monitor
      '   NO3 + NO --> 2 NO2                                                                               ', &
      '  NO3 + NO2 --> N2O5                                                                                ', &
      '       N2O5 --> NO3 + NO2                                                                           ', &
-     '    OH + NO --> HONO                                                                                ', &
+     '    NO + OH --> HONO                                                                                ', &
      '   NO + HO2 --> OH + NO2                                                                            ', &
      '   OH + NO2 --> HNO3                                                                                ', &
      '  HO2 + NO2 --> HNO4                                                                                ', &
@@ -89,8 +89,8 @@ MODULE messy_mecca_kpp_Monitor
      'CH3O2 + HO2 --> CH3OOH + O2                                                                         ', &
      ' CH3O2 + NO --> HCHO + HO2 + NO2                                                                    ', &
      'CH3O2 + NO3 --> HCHO + HO2 + NO2                                                                    ', &
-     '    2 CH3O2 --> 2 HCHO + 2 HO2                                                                      ', &
-     '    2 CH3O2 --> CH3OH + HCHO + O2                                                                   ', &
+     '      CH3O2 --> HCHO + HO2                                                                          ', &
+     '      CH3O2 --> 0.5 CH3OH + 0.5 HCHO + 0.5 O2                                                       ', &
      'CH3OOH + OH --> H2O + 0.3 HCHO + 0.7 CH3O2 + 0.3 OH                                                 ', &
      '  HCHO + OH --> CO + H2O + HO2                                                                      ', &
      ' HCHO + NO3 --> CO + HNO3 + HO2                                                                     ', &
@@ -105,9 +105,9 @@ MODULE messy_mecca_kpp_Monitor
      '        NO3 --> NO                                                                                  ' /)
   CHARACTER(LEN=100), PARAMETER, DIMENSION(7) :: EQN_NAMES_2 = (/ &
      '       N2O5 --> NO3 + NO2                                                                           ', &
-     '       HONO --> OH + NO                                                                             ', &
+     '       HONO --> NO + OH                                                                             ', &
      '       HNO3 --> OH + NO2                                                                            ', &
-     '       HNO4 --> 0.333 OH + 0.333 NO3 + 0.667 HO2 + 0.667 NO2                                        ', &
+     '       HNO4 --> 0.333 NO3 + 0.333 OH + 0.667 HO2 + 0.667 NO2                                        ', &
      '     CH3OOH --> HCHO + OH + HO2                                                                     ', &
      '       HCHO --> H2 + CO                                                                             ', &
      '       HCHO --> H + CO + HO2                                                                        ' /)

@@ -34,7 +34,7 @@ zip:
 zipall:
 	./zipcaaba.tcsh zipall
 
-# forcheck
+# forcheck:
 .PHONY: check
 check:
 	-forchk -rigor -cond -f95 -obs -ff -decl -ext -intr -spec -ancmpl -anprg -anref -shcom -shinc -shmod -shprg -shref -shsrc -shsub -inf -plen 25 -pwid 132 *.f90 /soft/ECHAM5/lib/netcdf90.flb >& forcheck.log
@@ -54,7 +54,8 @@ TAGS:
 	 etags -l fortran $$F90FILES $$INCFILES $$NMLFILES \
            -lnone $$TEXFILES $$KPPFILES1 $$KPPFILES2 $$KPPFILES3 $$XSCRIPTS
 
-# check files
+# list the configuration:
+.PHONY: list
 list:
 	@echo "SRCS           = $(SRCS)"
 	@echo "OUTPUT         = $(OUTPUT)"
@@ -67,7 +68,6 @@ list:
 	@echo "NETCDF_INCLUDE = $(NETCDF_INCLUDE)"
 	@echo "NETCDF_LIB     = $(NETCDF_LIB)"
 
-# this command is executed by "gmake clean"
 clean:
 	rm -f depend.mk.old *.o *.mod *.log *~
 

@@ -4,6 +4,7 @@
 # when it is run in batch mode (i.e. not interactive).
 
  set apn          = 0                 # number of aerosol phases [0...99, default=0]
+ set gaseqnfile   = gas_mim2.eqn
  set rplfile      =                   # no replacements
  set wanted       = "Tr && G && \!C && \!S && \!Cl && \!Br && \!I && \!Hg" # 6) Troposphere, Minimum chemistry
  set mcfct        = n                 # Monte-Carlo factor?

@@ -38,9 +38,9 @@
  CO2_a##        = IGNORE; {@CO_2\aq}         {carbon dioxide}
 
 {2C}
- CH3COOH_a##    = IGNORE; {@CH_3COOH\aq}     {acetic acid}
+ CH3CO2H_a##    = IGNORE; {@CH_3COOH\aq}     {acetic acid}
  PAN_a##        = IGNORE; {@PAN\aq}          {peroxyacetylnitrate}
- EtO2_a##       = IGNORE; {@C_2H_5O_2\aq}    {ethylperoxy radical}
+ C2H5O2_a##     = IGNORE; {@C_2H_5O_2\aq}    {ethylperoxy radical}
  CH3CHO_a##     = IGNORE; {@CH_3CHO\aq}      {acetaldehyde}
 
 {3C}

@@ -24,8 +24,8 @@ echo "inputfile = $1"
 
 set fname      = "$1"
 set tmpFname   = "inputfile.nc"
-set sum_asc    = "sum.asc"
-set header_asc = "header.asc"
+set sum_dat    = "sum.dat"
+set header_dat = "header.dat"
 
 set OneShot = 0
 # current line number in netcdf file 
@@ -39,8 +39,8 @@ if ( $OneShot > 0 ) then
   set line = $OneShot
 endif
 
-if ( -e $sum_asc )    rm $sum_asc
-if ( -e $header_asc ) rm $header_asc
+if ( -e $sum_dat )    rm $sum_dat
+if ( -e $header_dat ) rm $header_dat
 
 set ret = (`ncks -O -d T_AX,$line $fname $tmpFname`) # read first line
 
@@ -95,8 +95,8 @@ while (${#ret} == 0)
     @ MaxTime--
     printf "%4d) Running CAABA for %s (MaxTime=%d)\n" $line $fname:t $MaxTime
     if ( $MaxTime > 5 ) then
-      ncks -H -d time,$MaxTime ../caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "%g ",'$TimeGPS' }{if (NF>4) printf "%g ",$15} END {print}' >> $sum_asc
-      ncks -H -d time,$MaxTime ../caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "TimeGPS[99999] "}{if (NF>4) printf "%s ",$13} END {print}' >> $header_asc
+      ncks -H -d time,$MaxTime ../caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "%g ",'$TimeGPS' }{if (NF>4) printf "%g ",$15} END {print}' >> $sum_dat
+      ncks -H -d time,$MaxTime ../caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "TimeGPS[99999] "}{if (NF>4) printf "%s ",$13} END {print}' >> $header_dat
       # ncks -A -d time,$MaxTime ../caaba_mecca.nc caaba_mecca_all.nc
       # ncks -A -d time,$MaxTime ../caaba_messy.nc caaba_messy_all.nc
     else
@@ -128,7 +128,7 @@ else
 endif
 echo "the output files are:"
 cp -p ../caaba_*.nc ../caaba.log ../nml/multirun/caaba.nml $dirname
-cp -p $sum_asc $header_asc $dirname
+cp -p $sum_dat $header_dat $dirname
 ls -l $dirname
 echo $hline
 

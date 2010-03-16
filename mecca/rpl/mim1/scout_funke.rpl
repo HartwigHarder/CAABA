@@ -1,0 +1,333 @@
+// -*- kpp -*- kpp mode for emacs
+
+// Syntax of this replacement file is similar to kpp syntax, but...
+// - Only the commands "#REPLACE" and "#ENDREPLACE" are allowed.
+// - Comments must start with "//", curly braces ("{}") cannot be used here.
+
+// known limitation:
+// - The reaction number (e.g. "<G9876>") in the input equation file
+//   (gas.eqn) must be the first (non-whitespace) item in the line. If it is
+//   preceded by a comment in curly braces, replace.awk will not be able to
+//   find it.
+
+// Apply by running xmecca1 or using:
+//gawk -f replace1.awk -v infile=gas.eqn.org -v outfile=gas.eqn gas.rpl
+
+// replacements:
+#REPLACE<G4301>
+<a> C3H6    + O3      = .57 HCHO + .47 CH3CHO + .33 OH + .26 HO2 + .07 CH3O2 + .06 C2H5O2 + .23 CH3CO3 + .06 CH4 + .31 CO + .22 HCOOH + .03 CH3OH                  : {%TrGC} 6.5E-15*EXP(-1900./temp); {&&1555}
+#ENDREPLACE
+#REPLACE<G4302>
+<a> C3H6    + OH {+M} = .98 CH3CHO + .98 HCHO : {%TrGC}   k_3rd(temp,cair,8.E-27,3.5,3.E-11,0.,0.5); {&1207}
+#ENDREPLACE
+
+#REPLACE<G4312> 
+<a>   CH3COCH2O2  + HO2     = CH3CO3                : {%TrGC}   8.6E-13*EXP(700./temp); {&1613}
+#ENDREPLACE
+#REPLACE<G4314> 
+<a> CH3COCH2O2  + CH3O2   = .5 CH3OH + CH3CO3 + .8 HCHO + .3 HO2  : {%TrGC} 7.5E-13*EXP(500./temp); {&1613}
+#ENDREPLACE
+
+#REPLACE<G4400> 
+<a>  NC4H10   + OH      = 0.8 CH3CO3 + .85 CH3CHO + .1 HCHO : {%TrGC}   1.81E-17*temp*temp*EXP(114./temp); {&1627}
+#ENDREPLACE
+
+
+
+// add new reactions, specify an empty reaction number
+#REPLACE <>
+<J9002>  SF6 + hv = PROD                    : {%StGSJ}    JX(ip_SF6); {&&}
+#ENDREPLACE
+
+
+
+
+// delete reactions
+
+//<G01Diag> O3s            = LO3s        : {%DiagG} k_O3s; {&&1714}
+// #REPLACE<G01Diag>
+// #ENDREPLACE
+
+// <G4201>  C2H4    + O3      = HCHO + .22 HO2 + .12 OH + .23 CO + .54 HCOOH + .1 H2 : {%TrGC} 1.2E-14*EXP(-2630./temp); {&&1555}
+#REPLACE<G4201> 
+#ENDREPLACE
+
+// <G4202>  C2H4    + OH {+M} = .6666667 LHOC3H6O2    : {%TrGC}   k_3rd(temp,cair,1.E-28,0.8,8.8E-12,0.,0.6); {&1555}
+#REPLACE<G4202> 
+#ENDREPLACE
+
+// <G4219>  NACA    + OH      = NO2 + HCHO + CO    : {%TrGNC}  5.6E-12*EXP(270./temp); {&&}
+#REPLACE<G4219>
+#ENDREPLACE
+
+// <G4300>  C3H8    + OH      = .82 PrO2 + .18 C2H5O2 + H2O     : {%TrGC} 1.65E-17*temp*temp*EXP(-87./temp); {&1627}
+#REPLACE<G4300> 
+#ENDREPLACE
+
+// <G4303>  C3H6    + NO3     = LC4H9NO3              : {%TrGNC}  4.6E-13*EXP(-1155./temp); {&1207}
+#REPLACE<G4303> 
+#ENDREPLACE
+
+// <G4304>  PrO2    + HO2     = IC3H7OOH             : {%TrGC}   k_PrO2_HO2; {&&964}
+#REPLACE<G4304> 
+#ENDREPLACE
+
+// <G4305>  PrO2    + NO      = .96 CH3COCH3 + .96 HO2 + .96 NO2 + .04 IC3H7NO3                  : {%TrGNC} k_PrO2_NO; {&&1207}
+#REPLACE<G4305> 
+#ENDREPLACE
+
+// <G4306>  PrO2    + CH3O2   = CH3COCH3 + .8 HCHO + .8 HO2 + .2 CH3OH                  : {%TrGC} k_PrO2_CH3O2; {&1632}
+#REPLACE<G4306> 
+#ENDREPLACE
+
+// <G4307>  IC3H7OOH   + OH      = .3 PrO2 + .7 CH3COCH3 + .7 OH  : {%TrGC} k_CH3OOH_OH; {&&}
+#REPLACE<G4307> 
+#ENDREPLACE
+
+// <G4308>  LHOC3H6O2  + HO2     = LHOC3H6OOH           : {%TrGC}   6.5E-13*EXP(650./temp); {&803}
+#REPLACE<G4308> 
+#ENDREPLACE
+
+// <G4309>  LHOC3H6O2  + NO      = .98 CH3CHO + .98 HCHO + .98 HO2 + .98 NO2 + .02 LC4H9NO3                  : {%TrGNC} 4.2E-12*EXP(180./temp); {&&803}
+#REPLACE<G4309> 
+#ENDREPLACE
+
+// <G4310>  LHOC3H6OOH + OH      = .5 LHOC3H6O2 + .5 ACETOL + .5 OH + H2O                  : {%TrGC} 3.8E-12*EXP(200./temp); {&803}
+#REPLACE<G4310> 
+#ENDREPLACE
+
+// <G4315>  HYPERACET   + OH      = .3 CH3COCH2O2 + .7 MGLYOX + .7 OH   : {%TrGC} k_CH3OOH_OH; {&&}
+#REPLACE<G4315> 
+#ENDREPLACE
+
+// <G4316>  ACETOL  + OH      = MGLYOX + HO2        : {%TrGC}   3.E-12; {&1207}
+#REPLACE<G4316> 
+#ENDREPLACE
+
+// <G4317>  MGLYOX + OH     = CH3CO3 + CO           : {%TrGC}   8.4E-13*EXP(830./temp); {&1616}
+#REPLACE<G4317> 
+#ENDREPLACE
+
+// <G4318>  MPAN    + OH      = ACETOL + NO2      : {%TrGNC}  3.2E-11; {&1629}
+#REPLACE<G4318> 
+#ENDREPLACE
+
+// <G4319>  MPAN    {+M}      = MVKO2 + NO2       : {%TrGNC}  k_PAN_M; {&&}
+#REPLACE<G4319> 
+#ENDREPLACE
+
+// <G4320>  IC3H7NO3  + OH      = CH3COCH3 + NO2    : {%TrGNC}  6.2E-13*EXP(-230./temp); {&1207}
+#REPLACE<G4320> 
+#ENDREPLACE
+
+
+// <G4401>  LC4H9O2  + CH3O2   = .88 MEK + .68 HCHO + 1.23 HO2 + .12 CH3CHO + .12 C2H5O2 + .18 CH3OH                  : {%TrGC} k_PrO2_CH3O2; {&&}
+#REPLACE<G4401> 
+#ENDREPLACE
+
+// <G4402>  LC4H9O2  + HO2     = LC4H9OOH           : {%TrGC}   k_PrO2_HO2; {&&}
+#REPLACE<G4402> 
+#ENDREPLACE
+
+//<G4403>  LC4H9O2  + NO      = .84 NO2 + .56 MEK + .56 HO2 + .28 C2H5O2 + .84 CH3CHO + .16 LC4H9NO3 : {%TrGNC} k_PrO2_NO; {&&}
+#REPLACE<G4403> 
+#ENDREPLACE
+
+// <G4404>  LC4H9OOH + OH      = .15 LC4H9O2 + .85 MEK + .85 OH + .85 H2O                  : {%TrGC} k_CH3OOH_OH; {&&}
+#REPLACE<G4404> 
+#ENDREPLACE
+
+// <G4405>  MVK     + O3      = .45 HCOOH + .9 MGLYOX + .1 CH3CO3 + .19 OH + .22 CO + .32 HO2                  : {%TrGC} .5*(1.36E-15*EXP(-2112./temp)+7.51E-16*EXP(-1521./temp)); {&1614}
+#REPLACE<G4405> 
+#ENDREPLACE
+
+// <G4406>  MVK     + OH      = MVKO2             : {%TrGC}   .5*(4.1E-12*EXP(452./temp)+1.9E-11*EXP(175./temp)); {&1614}
+#REPLACE<G4406> 
+#ENDREPLACE
+
+// <G4407>  MVKO2   + HO2     = MVKOOH            : {%TrGC}   1.82E-13*EXP(1300./temp); {&1614}
+#REPLACE<G4407> 
+#ENDREPLACE
+
+// <G4408>  MVKO2   + NO      = NO2 + .25 CH3CO3 + .25 ACETOL + .75 HCHO + .25 CO + .75 HO2 + .5 MGLYOX : {%TrGNC} 2.54E-12*EXP(360./temp); {&1614}
+#REPLACE<G4408> 
+#ENDREPLACE
+
+// <G4409>  MVKO2   + NO2     = MPAN              : {%TrGNC}  .25*k_3rd(temp,cair,9.7E-29,5.6,9.3E-12,1.5,0.6); {&&1614}
+#REPLACE<G4409> 
+#ENDREPLACE
+
+// <G4410>  MVKO2   + CH3O2   = .5 MGLYOX + .375 ACETOL + .125 CH3CO3 + 1.125 HCHO + .875 HO2 + .125 CO + .25 CH3OH                  : {%TrGC} 2.E-12; {&1612}
+#REPLACE<G4410> 
+#ENDREPLACE
+
+// <G4411>  MVKO2   + MVKO2   = ACETOL + MGLYOX + .5 CO + .5 HCHO + HO2                  : {%TrGC} 2.E-12; {&1614}
+#REPLACE<G4411> 
+#ENDREPLACE
+
+// <G4412>  MVKOOH  + OH      = MVKO2             : {%TrGC}   3.E-11; {&1614}
+#REPLACE<G4412> 
+#ENDREPLACE
+
+// <G4413>  MEK     + OH      = LMEKO2             : {%TrGC}   1.3E-12*EXP(-25./temp); {&1207}
+#REPLACE<G4413> 
+#ENDREPLACE
+
+// <G4414>  LMEKO2   + HO2     = LMEKOOH            : {%TrGC}   k_PrO2_HO2; {&&}
+#REPLACE<G4414> 
+#ENDREPLACE
+
+// <G4415>  LMEKO2   + NO      = .985 CH3CHO + .985 CH3CO3 + .985 NO2 + .015 LC4H9NO3                  : {%TrGNC} k_PrO2_NO; {&&}
+#REPLACE<G4415> 
+#ENDREPLACE
+
+// <G4416>  LMEKOOH  + OH      = .8 BIACET + .8 OH + .2 LMEKO2  : {%TrGC} k_CH3OOH_OH; {&&}
+#REPLACE<G4416> 
+#ENDREPLACE
+
+// <G4417>  LC4H9NO3    + OH      = MEK + NO2 + H2O   : {%TrGNC}  1.7E-12; {&&1207}
+#REPLACE<G4417> 
+#ENDREPLACE
+
+
+// <G4500>  C5H8  + O3        = .28 HCOOH + .65 MVK + .1 MVKO2  + .1 CH3CO3 + .14 CO + .58 HCHO + .09 H2O2 + .08 CH3O2 + .25 OH + .25 HO2                  : {%TrGC} 7.86E-15*EXP(-1913./temp); {&1614}
+#REPLACE<G4500> 
+#ENDREPLACE
+
+// <G4501>  C5H8  + OH        = ISO2              : {%TrGC}   2.54E-11*EXP(410./temp); {&1614}
+#REPLACE<G4501> 
+#ENDREPLACE
+
+// <G4502>  C5H8  + NO3       = ISON              : {%TrGNC}  3.03E-12*EXP(-446./temp); {&1614}
+#REPLACE<G4502> 
+#ENDREPLACE
+
+//<G4503>  ISO2  + HO2       = ISOOH             : {%TrGC}   2.22E-13*EXP(1300./temp); {&&1630}
+#REPLACE<G4503> 
+#ENDREPLACE
+
+// <G4504>  ISO2  + NO        = .88 NO2 + .88 MVK + .88 HCHO + .88 HO2 + .12 ISON                  : {%TrGNC} 2.54E-12*EXP(360./temp); {&&1614}
+#REPLACE<G4504> 
+#ENDREPLACE
+
+// <G4505>  ISO2  + CH3O2     = .5 MVK + 1.25 HCHO + HO2 + .25 MGLYOX + .25 ACETOL + .25 CH3OH                  : {%TrGC} 2.E-12; {&1612}
+#REPLACE<G4505> 
+#ENDREPLACE
+
+// <G4506>  ISO2  + ISO2      = 2 MVK + HCHO + HO2 : {%TrGC}  2.E-12; {&1614}
+#REPLACE<G4506> 
+#ENDREPLACE
+
+// <G4507>  ISOOH + OH        = MVK + OH          : {%TrGC}   1.E-10; {&1614}
+#REPLACE<G4507> 
+#ENDREPLACE
+
+// <G4508>  ISON  + OH        = ACETOL + NACA     : {%TrGNC}  1.3E-11; {&1614}
+#REPLACE<G4508> 
+#ENDREPLACE
+
+
+// <G7102a> BrO  + BrO      = Br + Br        : {%StTrGBr}   2.4E-12*EXP(40./temp); {&1555}
+#REPLACE<G7102a> 
+#ENDREPLACE
+
+// <G7102b> BrO  + BrO      = Br2            : {%StTrGBr}   2.8E-14*EXP(869./temp); {&1555}
+#REPLACE<G7102b> 
+#ENDREPLACE
+
+
+// <J4203>  NACA    + hv = NO2 + HCHO + CO            : {%TrGNCJ} 0.19*JX(ip_CHOH); {&&}
+#REPLACE<J4203>
+#ENDREPLACE
+
+
+// <J4300>  IC3H7OOH    + hv = CH3COCH3 + HO2 + OH       : {%TrGCJ}  JX(ip_CH3OOH); {&&}
+#REPLACE<J4300>
+#ENDREPLACE
+
+// <J4302>  ACETOL   + hv = CH3CO3 + HCHO + HO2           : {%TrGCJ}  0.074*JX(ip_CHOH); {&&}
+#REPLACE<J4302> 
+#ENDREPLACE
+
+// <J4303>  MGLYOX + hv = CH3CO3 + CO + HO2             : {%TrGCJ}  JX(ip_MGLYOX); {&&}
+#REPLACE<J4303> 
+#ENDREPLACE
+
+// <J4304>  HYPERACET    + hv = CH3CO3 + HO2 + OH             : {%TrGCJ}  JX(ip_CH3OOH); {&&}
+#REPLACE<J4304>
+#ENDREPLACE
+
+// <J4305>  MPAN     + hv = ACETOL + NO2              : {%TrGNCJ} JX(ip_PAN); {&&}
+#REPLACE<J4305> 
+#ENDREPLACE
+
+// <J4306>  IC3H7NO3   + hv = CH3COCH3 + NO2 + HO2      : {%TrGNCJ} 3.7*JX(ip_PAN); {&&}
+#REPLACE<J4306> 
+#ENDREPLACE
+
+// <J4400>  LC4H9OOH + hv = OH + .67 MEK + .67 HO2 + .33 C2H5O2 + .33 CH3CHO : {%TrGCJ} JX(ip_CH3OOH); {&&}
+#REPLACE<J4400> 
+#ENDREPLACE
+
+// <J4401>  MVK     + hv = CH3CO3 + HCHO + CO + HO2       : {%TrGCJ}  0.019*JX(ip_COH2)+.015*JX(ip_MGLYOX); {&&}
+#REPLACE<J4401> 
+#ENDREPLACE
+
+// <J4402>  MVKOOH  + hv = OH + .5 MGLYOX + .25 ACETOL + .75 HCHO + .75 HO2 + .25 CH3CO3 + .25 CO : {%TrGCJ} JX(ip_CH3OOH); {&&}
+#REPLACE<J4402> 
+#ENDREPLACE
+
+// <J4403>  MEK     + hv = CH3CO3 + C2H5O2                  : {%TrGCJ}  0.42*JX(ip_CHOH); {&&}
+#REPLACE<J4403> 
+#ENDREPLACE
+
+// <J4404>  LMEKOOH  + hv = CH3CO3 + CH3CHO + OH           : {%TrGCJ}  JX(ip_CH3OOH); {&&}
+#REPLACE<J4404> 
+#ENDREPLACE
+
+// <J4405>  BIACET  + hv = 2 CH3CO3                       : {%TrGCJ}  2.15*JX(ip_MGLYOX); {&&}
+#REPLACE<J4405>  
+#ENDREPLACE
+
+// <J4406>  LC4H9NO3    + hv = NO2 + .67 MEK + .67 HO2 + .33 C2H5O2 + .33 CH3CHO : {%TrGNCJ} 3.7*JX(ip_PAN); {&&}
+#REPLACE<J4406> 
+#ENDREPLACE
+
+// <J4500>  ISOOH   + hv = MVK + HCHO + HO2 + OH      : {%TrGCJ}  JX(ip_CH3OOH); {&&}
+#REPLACE<J4500>
+#ENDREPLACE
+
+// <J4501>  ISON    + hv = MVK + HCHO + NO2 + HO2     : {%TrGNCJ} 3.7*JX(ip_PAN); {&&}
+#REPLACE<J4501>  
+#ENDREPLACE
+
+
+
+// <J7000>  Br2     + hv = Br + Br             : {%StTrGBrJ}   JX(ip_Br2); {&&}
+#REPLACE<J7000>  
+#ENDREPLACE
+
+
+// <PSC510> HOBr  + HBr = Br2 + H2O   : {%StPscBr}    khet_HOBr_HBr;  {&&}
+// #REPLACE<PSC510>  
+// #ENDREPLACE
+
+// <PSC540> ClNO3 + HBr = BrCl + HNO3 : {%StPscNClBr} khet_ClNO3_HBr; {&&}
+// #REPLACE<PSC540>  
+// #ENDREPLACE
+
+// <PSC542> HOCl  + HBr = BrCl + H2O  : {%StPscClBr}  khet_HOCl_HBr;  {&&}
+// #REPLACE<PSC542>  
+// #ENDREPLACE
+
+// This mechanism tests Funke et al 2008: Reaction
+// N+NO2 = N2O+O (G3107 R4) is extended by two additional branches (R6), (R7)
+
+
+#REPLACE <G3107>
+<a> NO2  + N  = N2O + O3P   : {%StGN}   0.5  *5.8E-12*EXP(220./temp); {&1945, 2286}
+<b> NO2  + N  = NO + NO     : {%StGN}   0.25 *5.8E-12*EXP(220./temp); {&2286}
+<c> NO2  + N  = N2 + O2     : {%StGN}   0.25 *5.8E-12*EXP(220./temp); {&2286}
+#ENDREPLACE
+
+

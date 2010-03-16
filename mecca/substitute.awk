@@ -14,7 +14,12 @@
 # ----------------------------------------------------------------------------
 
 BEGIN {
-system("echo -n > " outfile) # create empty file
+#  op_pj_20091023+
+#system("echo -n > " outfile) # create empty file
+#system("rm -f " outfile"; touch "outfile) # create empty file
+#system("echo > " outfile) # create empty file
+system("echo -n | sed \"s|-n||g\" > " outfile) # create empty file
+#  op_pj_20091023-
 status = -1
 }
 

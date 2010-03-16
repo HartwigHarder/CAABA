@@ -20,15 +20,15 @@
 
 ! {$CONF_PARAM}
 
-! - integration scheme ---------------------------------------------------------
-
-! define in cfg with INT_LINMAX, INT_SIMEULER, INT_CASHKARP params
-
 ! -----------------------------------------------------------------------------
 
 MODULE {%CMODEL}_{%TAG}
 
   USE messy_mecca_kpp ! dp, nreact, nspec, ind_*, ...
+
+#ifdef INT_KPP
+  USE messy_mecca_{%TAG}_kpp_Parameters
+#endif
 
 #ifdef INTERFLOW
 ! in case of inter-configuration molecules flow calculation (default) 
@@ -41,7 +41,7 @@ MODULE {%CMODEL}_{%TAG}
   IMPLICIT NONE
 
 ! here constants and tracers are to be defined
-! {$TRAC_DECL} [%ind_#%] <-- boxmodel syntax  (%{%TAG}_#%) <-- isotracers syntax
+! {$TRAC_DECL} [%{%TAG}_#%]
 
 ! index used for substitution of isotopic fraction of total {%ATOM}
   INTEGER, PARAMETER :: ind_tT{%ATOM} = {%NTSPEC}+1
@@ -63,12 +63,13 @@ MODULE {%CMODEL}_{%TAG}
 ! concentrations of isotopologues
   REAL(dp)           :: ISO{%ATOM}({%NTSPEC},{%NISO})
 
+! total {%ATOM} in the tagged system
   REAL(dp)           :: T{%ATOM}({%NISO})
 
-! total {%ATOM} (atoms) of the regular composition
+! total {%ATOM} (atoms) of the regular mechanism
   REAL(dp)           :: T{%ATOM}_R
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 ! 12C 13C tagged species arrays
   REAL(dp)           :: I12C({%NTSPEC})
   REAL(dp)           :: I13C({%NTSPEC})
@@ -79,8 +80,8 @@ MODULE {%CMODEL}_{%TAG}
   REAL(dp)           :: T12C, T13C
     EQUIVALENCE( T12C, T{%ATOM}(1) )
     EQUIVALENCE( T13C, T{%ATOM}(2) )
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ................................................................ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 ! 16O 17O 18O tagged species arrays
   REAL(dp)           :: I16O({%NTSPEC})
   REAL(dp)           :: I17O({%NTSPEC})
@@ -94,18 +95,18 @@ MODULE {%CMODEL}_{%TAG}
     EQUIVALENCE( T16O, T{%ATOM}(1) )
     EQUIVALENCE( T17O, T{%ATOM}(2) )
     EQUIVALENCE( T18O, T{%ATOM}(3) )
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
 ! fractions (operative), +1 for T{%ATOM}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
   REAL(dp)           :: F12C({%NTSPEC}+1), &
                         F13C({%NTSPEC}+1)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
   REAL(dp)           :: F16O({%NTSPEC}+1), &
                         F17O({%NTSPEC}+1), &
                         F18O({%NTSPEC}+1)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
 ! -----------------------------------------------------------------------------
 
@@ -113,33 +114,33 @@ MODULE {%CMODEL}_{%TAG}
 
 ! treshold value: below it species stops to sink to the others (but can receive)
 !                                         x * mean cair
-  REAL(dp), PARAMETER :: THRES = 1.0E-40_dp * 2.5047E+19_dp
+  REAL(dp), PARAMETER :: THRES_LOW = 1.0E-16_dp * 2.5047E+19_dp
 
-! last "process" run steps count, requested steps count
-  INTEGER             :: {%TAG}_NSTEP, {%TAG}_NSTEP_REQ
+! integrator performance parameters
+! # of taken, rejected steps + special parameter
+  INTEGER             :: {%TAG}_ISTEP, {%TAG}_IREJCT
+  REAL(dp)            :: {%TAG}_ISPAR
 
-! # of "rejected" species (under threshold)
-  INTEGER             :: {%TAG}_NREJCT
+! # of derivative evaluations & "rejected" species (under threshold to cut)
+  INTEGER             :: {%TAG}_NREJCT, {%TAG}_NDEREV
   
-! # of potential error due to PTs vs. A difference over 1 order of magnitude
-  INTEGER             :: {%TAG}_PEPTAD
-
 ! fraction of "corrected to regular" species (diagnostic) & filter threshold
-  REAL(dp)            :: {%TAG}_NCOR2R
+  INTEGER             :: {%TAG}_NCOR2R
   REAL(dp), PARAMETER :: THRES_C2R = 1.0E-3_dp ! (max. ratio tag/reg allowed)
 
 ! -----------------------------------------------------------------------------
 
   PUBLIC
 
-  PRIVATE zerodiv
+!  PRIVATE zerodiv
 
-  PRIVATE THRES, THRES_C2R
+  PRIVATE THRES_LOW, THRES_C2R
 
 #ifndef INTERFLOW
   PRIVATE flow
 #endif
 
+  PUBLIC {%TAG}_initialize
   PUBLIC {%TAG}_update_kie
   PUBLIC {%TAG}_flow_calc
   PUBLIC {%TAG}_integrate
@@ -153,15 +154,26 @@ CONTAINS
 
 ! -----------------------------------------------------------------------------
 
-  ELEMENTAL REAL(dp) FUNCTION zerodiv(what,by)
-    ! safe division which gives zero when division by zero is performed
-    REAL(dp), INTENT(IN) :: what, by   ! operands
-    IF (by .EQ. 0.0_dp) THEN
-      zerodiv = 0.0_dp
-    ELSE
-      zerodiv = what/by
-    ENDIF
-  END FUNCTION zerodiv
+  SUBROUTINE {%TAG}_initialize
+
+#ifdef INT_KPP
+    USE messy_mecca_kpp_global, ONLY: RC => C
+    USE messy_mecca_{%TAG}_kpp_global, ONLY: KC => C, atol, rtol
+    USE messy_mecca_{%TAG}_kpp_initialize, ONLY: initialize
+#endif
+
+    IMPLICIT NONE
+    
+#ifdef INT_KPP    
+    CALL initialize
+
+    KC(ind_UNITY) = 1.0_dp
+
+    rtol(:) = 1E-3_dp  ! relative tolerance
+    atol(:) = 1E1_dp   ! absolute tolerance
+#endif
+
+  END SUBROUTINE {%TAG}_initialize
 
 
 
@@ -185,6 +197,10 @@ CONTAINS
 
 ! {$KIE_CALC}  [%C(ind_PT#)%]    <-- boxmodel syntax
   
+  ! ===== calculation of the rates for isotope exchange =======================
+
+! {$IEX_CALC}  [%C(ind_PT#)%]    <-- boxmodel syntax
+
   END SUBROUTINE {%TAG}_update_kie
 
 
@@ -202,7 +218,7 @@ CONTAINS
     REAL(dp), INTENT(IN)  :: C(:), TSL
 
 #ifndef INTERFLOW
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>CASE:REMARK}
+->>- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>CASE:REMARK}
 ! remark on use of FLOW_CALC directive:
 ! in [% %] braces: an expression gives the reaction production (molec./int.step)
 ! # - reaction abbreviature, $ - internal tagging no., refer to TRPT{%ATOM}IND()
@@ -212,7 +228,7 @@ CONTAINS
 ! ex.: 
 ! {$FLOW_CALC}  [%C(ind_PT#)%]
 ! {$FLOW_CALC}  [A(TRPT{%ATOM}IND($,2))%]
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<CASE:REMARK}
+-<<- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CASE:REMARK}
 ! {$FLOW_CALC}  [%C(ind_PT#)%]    <-- boxmodel optim.
 #endif
 
@@ -222,10 +238,21 @@ CONTAINS
 
 ! main subroutine of isotopic exchange calculation
 
-  SUBROUTINE {%TAG}_integrate(TSL, nstep, C, press, cair, temp)
+  SUBROUTINE {%TAG}_integrate(TSL, C, press, cair, temp)
 
 ! turned off so far due to incompatibility with CAABA variables management
 !   USE messy_mecca_kpp, ONLY: A, SPC_NAMES, EQN_TAGS
+
+#ifdef INT_KPP
+
+#ifndef INT_KPP_ADJ
+    USE messy_mecca_{%TAG}_kpp_integrator, ONLY: integrate
+#else
+    USE messy_mecca_{%TAG}_kpp_integrator, ONLY: integrate_adj
+#endif
+    USE messy_mecca_{%TAG}_kpp_global, ONLY: KC => C, atol, var
+    USE messy_mecca_{%TAG}_kpp_rates, ONLY: update_rconst !, update_ratios
+#endif
 
     IMPLICIT NONE
 
@@ -241,59 +268,84 @@ CONTAINS
     REAL(dp), INTENT(IN) :: TSL
   
   ! number of steps to take ( = nsteps from integrator? )
-    INTEGER, INTENT(IN)  :: nstep
+  ! old now, added for compatibility
+    INTEGER  :: nstep = 20
 
-    REAL(dp) :: tot
+    INTEGER  :: n, s, k
 
-#ifdef INT_LINMAX
-    INTEGER  :: n, s, k, nok, nbad
+#ifndef INT_KPP
+
+    REAL(dp) :: tot, tmp
+
+#ifdef INT_USEJAC
   ! jacobians
-    REAL(dp) :: J({%NTSPEC},{%NTSPEC},{%NISO})
-  ! weights
-    REAL(dp) :: Z({%NTSPEC})
-  ! fractions
-    REAL(dp) :: F({%NTSPEC},{%NISO})
-  ! atomic content
-    REAL(dp) :: IA({%NTSPEC}), &
-                IR({%NTSPEC},2:{%NISO}), &
-                IAR({%NTSPEC},2:{%NISO})
-    REAL(dp) :: delta, comp
-    INTEGER  :: steps
+    REAL(dp) :: J({%NSPEC},{%NSPEC},{%NISO})
+    REAL(dp) :: Z({%NSPEC})
 #endif
 
+  ! tagging compartment type
+    TYPE TCOMP 
+      REAL(dp) :: A({%NSPEC},1:{%NISO}), &
+                  R({%NSPEC},2:{%NISO})
+    END TYPE TCOMP
+
+  ! isotope exchange calculation & derivatives
+    REAL(dp) :: RIEX(NIXREAC,2:{%NISO})
+    REAL(dp) :: DIEX({%NSPEC},2:{%NISO})
+
+  ! atomic fractions
+    TYPE (TCOMP) :: F
+
+  ! atomic content
+    TYPE (TCOMP) :: I, I0
+
 #ifdef INT_SIMEULER
-    INTEGER  :: n, s, nok, nbad
-    REAL(dp) :: part, delta, done
+    INTEGER  :: steps
+    INTEGER  :: nok, nbad
+    REAL(dp) :: delta, delta_last, done             ! time control
+    REAL(dp) :: maxerr, drR, dr0, drE               ! error control
     LOGICAL  :: reject, reject_last
-    REAL(dp) :: ISAVE({%NTSPEC},{%NISO}), IDER({%NTSPEC},{%NISO})
-    REAL(dp), PARAMETER :: CLOSE_FAC = 0.2_dp, FAR_FAC = 2.0_dp
+    REAL(dp), PARAMETER :: RTOL = 1E-2              ! tolerance
+    REAL(dp), PARAMETER :: CLOSE_FAC = 0.9_dp, FAR_FAC = 1.1_dp
+    REAL(dp), PARAMETER :: PSHRNK = -0.25_dp, PGROW = -0.2_dp
+  ! temporary
+    TYPE (TCOMP) :: ID, IR
+#endif
+
+#ifdef INT_CG1
+  ! parameters
+    INTEGER  :: CG1_MAXTRY = 100
+    REAL(dp) :: CG1_MAXSTEP
+    REAL(dp) :: CG1_SIMREG = 0.5_dp
+    REAL(dp) :: CG1_PRKLAM = 0.99_dp
+    REAL(dp) :: TOL = 1E4
+  ! operative        
+    INTEGER  :: steps, steps2damp, niter
+    REAL(dp) :: delta, delta_prev, dk, done, last_first
+    REAL(dp) :: rc, rd, lev
+    LOGICAL  :: damp, p_damp
+  ! temporary
+    TYPE (TCOMP) :: IP, ID, IT
+#endif
+    
+#ifdef INT_LINMAX
+    REAL(dp) :: delta, comp
+    INTEGER  :: steps
 #endif
 
 #ifdef INT_CASHKARP
     INTEGER  :: n, nok, nbad
 #endif
 
-  ! ===========================================================================
+#else
 
-  ! some diagnostic checks
-  ! turned off so far due to incompatibility with CAABA variables management
+    INTEGER  :: ISTATUS(20), IERR
+    REAL(dp) :: dt
 
-  ! checking A() and PTs correspondence
-!   {%TAG}_PEPTAD = 0
-!   DO n = 1, NT{%ATOM}REAC                                  v C is already scaled to TSL now!
-!     IF ( ( A(TRPT{%ATOM}IND(n,2)) / (C(TRPT{%ATOM}IND(n,1))/TSL) ) .LT.  0.1_dp ) THEN
-#ifdef DEBUG
-!       print *,'{%TAG}_process: A << PT: ',TRIM(EQN_TAGS(TRPT{%ATOM}IND(n,1)))
-#endif
-!       {%TAG}_PEPTAD = {%TAG}_PEPTAD + 1
-!     ENDIF
-!     IF ( ( A(TRPT{%ATOM}IND(n,2)) / (C(TRPT{%ATOM}IND(n,1))/TSL) ) .GT. 10.0_dp ) THEN
-#ifdef DEBUG
-!       print *,'{%TAG}_process: A >> PT: ',TRIM(EQN_TAGS(TRPT{%ATOM}IND(n,1)))
-#endif
-!       {%TAG}_PEPTAD = {%TAG}_PEPTAD + 1
-!     ENDIF
-!   ENDDO
+#endif    ! ifndef INT_KPP
+
+
+  ! = PREPARATION =============================================================
 
   ! ----- prepairing flow (if not INTERFLOW) ----------------------------------
 
@@ -302,299 +354,520 @@ CONTAINS
     CALL {%TAG}_flow_calc(C, TSL)
 #endif
     
-  ! warning: due to weighting, calculate KIE correcion after flow_calc
-
-  ! prepairing KIE correction values
+  ! ----- prepairing KIE correction values ------------------------------------
     CALL {%TAG}_update_kie(C, press, cair, temp)
 
-#ifdef INT_LINMAX
-! >>>>> LINEAR-MATRIX integration scheme >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+  ! ---------------------------------------------------------------------------
 
-  ! ----- setting up jacobians -----
+#ifndef INT_KPP
+
+  ! +++++ internal integration setup +++++
+#ifdef INT_USEJAC
+  ! ----- setting up major jacobian -----
 
   ! though weights are no longer used -- subject to remove!
-    CALL prepare_Z(0,1.0_dp)                  ! prepare weights:    type 0 1 2 3 4 5
-    CALL prepare_J(.FALSE.)                   ! prepare "major jacobian"
+    CALL prepare_Z(Z,0,1.0_dp)                  ! prepare weights:    type 0 1 2 3 4 5
+    CALL prepare_J(J,.FALSE.)                   ! prepare "major jacobian"
 
-  ! filling the minor matrices
+  ! ----- filling the minor matrices -----
     DO k = 2, {%NISO}
       J(:,:,k) = J(:,:,1)
     ENDDO
 
-  ! ----- accounting KIE -----
+  ! ----- accounting KIE in jacobians -----
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>!KIE:}
+  ! no KIE specified in this configuration
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<!KIE:}
 
-  ! prepairing "minor jacobian(s)"
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>CASE:REMARK}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>CASE:REMARK}
 ! remark on JAC_KIE usage:
 !
 ! [% %] - jacobian calculation expression for # - sinking, $ - receiving indices
 ! ~ - jacobian "upper" part, i.e. sum of flow(#_$)-kie_correction for current # and $
 !
 ! {$JAC_KIE I13C} [%    J(ind_t$, ind_t#) = zerodiv(~, Z(ind_t#))%]
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<CASE:REMARK}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-! {$JAC_KIE I12C} [%    J({%TAG}_$, {%TAG}_#, 1) = zerodiv(~, Z({%TAG}_#))%]
-! {$JAC_KIE I13C} [%    J({%TAG}_$, {%TAG}_#, 2) = zerodiv(~, Z({%TAG}_#))%]
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-! {$JAC_KIE I16O} [%    J({%TAG}_$, {%TAG}_#, 1) = zerodiv(~, Z({%TAG}_#))%]
-! {$JAC_KIE I17O} [%    J({%TAG}_$, {%TAG}_#, 2) = zerodiv(~, Z({%TAG}_#))%]
-! {$JAC_KIE I18O} [%    J({%TAG}_$, {%TAG}_#, 3) = zerodiv(~, Z({%TAG}_#))%]
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>!KIE:}
-  ! no KIE specified in this configuration
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<!KIE:}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CASE:REMARK}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
+! {$JAC_KIE I12C} [%    J({%TAG}_$, {%TAG}_#, 1) = ~%]
+! {$JAC_KIE I13C} [%    J({%TAG}_$, {%TAG}_#, 2) = ~%]
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
+! {$JAC_KIE I16O} [%    J({%TAG}_$, {%TAG}_#, 1) = ~%]
+! {$JAC_KIE I17O} [%    J({%TAG}_$, {%TAG}_#, 2) = ~%]
+! {$JAC_KIE I18O} [%    J({%TAG}_$, {%TAG}_#, 3) = ~%]
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
+#endif
 
-  ! ----- stepping -----
+! = INTEGRATION ================================================================
 
-  ! assessing values from the "major jacobian"
-
-    delta = 0.0_dp
-    DO n = 1, NTCSPEC
-!     comp = MAXVAL(J(n,:,1), MASK=(J(n,:,1) .GT. 0.0_dp)) / &
-!            MINVAL(J(n,:,1), MASK=(J(n,:,1) .GT. 0.0_dp))
-      comp = MAXVAL(J(n,:,1), MASK=(J(n,:,1) .GT. 0.0_dp)) / &
-             MINVAL(J(n,:,1), MASK=(J(n,:,1) .GT. 0.0_dp)) / C(TRPTIND(n))
-      IF (comp .GT. delta) delta = comp
+  ! repartitioning tracers: molecules to atoms
+  ! abundant in major
+    I%A(:,1) = ISO{%A}(:,1)
+    DO k = 2, {%NISO}  
+    ! rare in minor
+      I%R(:,k) = ISO{%A}(:,k) / {%NQATOM}(:)
+    ! abundant in minor
+      I%A(:,k) = ISO{%A}(:,k) - I%R(:,k)
     ENDDO
 
-  ! choosing the number of steps
-
-    steps = INT(2*1.0E5 * delta**2.71)
-!    steps = INT(5.0E3 * done)
-!    steps = 100000
-
-    IF (steps .LT. 10) steps = 10
-    IF (steps .GT. 10000) steps = 10000
-    
-    delta = TSL / steps
-
-  ! ----- integration loop -----
+  ! ----- performance parameters -----
+    {%TAG}_ISTEP = 0
+    {%TAG}_IREJCT = 0
 
     {%TAG}_NREJCT = 0
+    {%TAG}_NDEREV = 0
 
-    DO s = 1, steps 
-
-    ! getting the fractions of isotopologues
-      DO n = 1, {%NSPEC}
-        comp = SUM(ISO{%A}(n,:))              ! gettting total
-#ifdef OPT_LOW_FILTER
-        IF (comp .LT. THRES) THEN
-#else
-        IF (comp .EQ. 0.0_dp) THEN
-#endif
-          F(n,:) = 0.0_dp
-          tag_IC_NREJCT = tag_IC_NREJCT + 1
-        ELSE
-          F(n,:) = (ISOC(n,:) / comp)
-        ENDIF
-      ENDDO
-
-#ifndef ISO
-    ! advancing solution: for non-isotopic case
-      DO k = 1, {%NISO}
-        ISOC(:,k)  = ISOC(:,k) + delta * MATMUL(J(:,:,k),F(:,k))
-      ENDDO
-#else
-    ! scaling tracers: molecules to atoms
-    ! abundant
-      IA(:) = ISO{%A}(:,1)
-      DO k = 2, {%NISO}  
-      ! rare
-        IR(:,k) = ISO{%A}(:,k) / QT{%A}ATOM(:)
-      ! abundant in rare
-        IAR(:,k) = ISO{%A}(:,k) - IR(:,k)
-      ENDDO
-
-    ! advancing solution: isotopic transfer
-      IA(:) = IA(:) + delta * MATMUL(J(:,:,1),F(:,1))
-      DO k = 2, {%NISO}
-        IR(:,k)  = IR(:,k)  + delta * MATMUL(J(:,:,k),F(:,k))
-        IAR(:,k) = IAR(:,k) + delta * MATMUL(J(:,:,k),F(:,k))
-      ENDDO
-
-    ! scaling tracers: atoms to molecules
-    ! abundant  
-      ISO{%A}(:,1) = IA(:) + SUM(IAR(:,:),DIM=2) - SUM(IR(:,:),DIM=2) * (QT{%A}ATOM(:)-1)
-    ! rare
-      DO k = 2, {%NISO}  
-        ISO{%A}(:,k) = IR(:,k) * QT{%A}ATOM(:)
-      ENDDO
+#ifdef IEX
+  ! --- initializing IEX data arrays ---
+    DIEX(:,:) = 0.0_dp
+    RIEX(:,:) = 0.0_dp
 #endif
 
-    ! filtering negative concentrations 
-      DO n = 1, NTCSPEC
-        DO k = 1, NTCISO    
-          IF (ISOC(n,k) .LT. 0.0_dp) THEN
-          print *,'tag_IC_integrate: ',TRIM(SPC_NAMES(RTCIND(n))),', class #',k,&
-	          ' is negative = ',ISOC(n,k)
-          ISOC(n,k) = 0.0_dp
-          ENDIF
-	ENDDO
-      ENDDO
-      
-    ENDDO
-
-  ! ----- finalizing -----
-
-!    CALL {%TAG}_calcdeltas
-
-!    print *,' DD13,DC = ',D13C(ind_tCH3O2)-(C(ind_I13CH3O2)/C(ind_I12CH3O2)/VPDB_13C-1.0_dp)*1000.0_dp, &
-!            ' ',I12C(ind_tCH3O2)+I13C(ind_tCH3O2)-C(ind_CH3O2)
-
-    {%TAG}_NSTEP = steps
-    {%TAG}_NREJCT = {%TAG}_NREJCT / {%TAG}_NSTEP
-
-#ifdef KIE
-    ! necessary for KIE
-    CALL {%TAG}_correct2reg(C)
-#endif
-    
-! <<<<< LINEAR-MATRIX integration scheme <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#endif
-
+  ! ===== later works specified integrator =====
 
 #ifdef INT_SIMEULER
-! {$INCLUDE} <imtag_i=simeuler.inc>
+! {$xINCLUDE} <int/imtag-i_simeuler.inc.f90>
+#endif
+
+#ifdef INT_CG1
+! {$xINCLUDE} <int/imtag-i_cg1.inc.f90>
+#endif
+
+#ifdef INT_LINMAX
+! {$xINCLUDE} <int/imtag-i_linmax.inc.f90>
 #endif
 
 #ifdef INT_CASHKARP
-! >>>>> CASH-KARP RK integration scheme >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                                              
-  ! calling integrator                                                        
-    CALL rkckintegrate(ISO{%ATOM}, &                                          
-                       0.0_dp, 1.0_dp, 1.0E-7_dp, &                           
-                       1.0_dp/DBLE(nstep), 0.0_dp, &                          
-                       nok, nbad)                                             
-                                                                              
-  ! run-control parameters                                                    
-    {%TAG}_NSTEP = nok + nbad      ! # of integration steps made              
-                                                                              
-    ! # of rejected species (approx.: C-K takes derivatives 6 times per step) 
-    IF ( {%TAG}_NSTEP /= 0 ) THEN                                             
-      {%TAG}_NREJCT = {%TAG}_NREJCT / ( {%TAG}_NSTEP * 6 )                    
-    ELSE                                                                      
-      {%TAG}_NREJCT = 0                                                       
-    ENDIF                                                                     
-                                                                              
-! <<<<< CASH-KARP RK integration scheme <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+! {$xINCLUDE} <int/imtag-i_cashkarp-call.inc.f90>
 #endif
+
+  ! scaling tracers: atoms to molecules
+  ! abundant
+    ISO{%A}(:,1) = I%A(:,1)
+  ! rare
+    DO k = 2, {%NISO}
+      ISO{%A}(:,k) = I%R(:,k) * {%NQATOM}(:)
+    ENDDO
+
+  ! estimating ave # of species "rejected" in derivative calculations
+    {%TAG}_NREJCT = {%TAG}_NREJCT / {%TAG}_NDEREV
+  
+  ! +++++ internal integration setup +++++
+
+#else
+
+  ! +++++ integration with KPP +++++
+
+  ! filling {%TAG} KPP operational array with concentrations
+    DO k = 1, {%NISO}
+      KC({%RTIND}(:,k)) = ISO{%A}(:,k)
+    ENDDO
+
+    WHERE (VAR .GT. 0.0_dp)
+      atol(:) = var(:)*1E2
+    ELSEWHERE
+      atol(:) = 1E2
+    ENDWHERE
+
+    CALL update_rconst
+!   CALL update_ratios(VAR)
+
+  ! advancing solution
+    dt = TSL
+#ifndef INT_KPP_ADJ
+    CALL integrate(0.0_dp, dt, ISTATUS_U=ISTATUS, IERR_U=IERR)
+#else
+    CALL integrate_adj( 1, KC, KC, 0._dp, dt, atol, rtol, ISTATUS_U=ISTATUS, IERR_U=IERR)
+#endif
+    
+  ! flushing back from KPP
+    DO k = 1, {%NISO}
+      ISO{%A}(:,k) = KC({%RTIND}(:,k))
+    ENDDO
+  
+  ! diagnostic    
+    {%TAG}_ISTEP = ISTATUS(4)
+    {%TAG}_IREJCT = ISTATUS(5)
+    
+    {%TAG}_NDEREV = ISTATUS(1)    ! # of function calls
+    {%TAG}_ISPAR = ISTATUS(2)     ! # of jacobian calls
+
+    {%TAG}_NREJCT = 0
+
+  ! +++++ integration with KPP +++++
+
+#endif    ! ifndef INT_KPP
+
+  ! ----- finishing -----
+
+! #ifdef KIE
+  ! necessary for KIE
+    CALL {%TAG}_correct2reg(C)
+! #endif
 
   ! CALL {%TAG}_correct2reg(C)
   ! CALL {%TAG}_calctotals(C)
   ! CALL {%TAG}_calcdeltas
 
-  ! run-control parameters                                                    
-    {%TAG}_NSTEP_REQ = nstep       ! # of requested steps                     
-
 #ifdef DEBUG
-    print *,'{%TAG}_integrate: passed, req: ',{%TAG}_NSTEP_REQ, &
-                                    ', steps: ', {%TAG}_NSTEP, &
-                                    ', rej: ', {%TAG}_NREJCT
+    print *,'{%TAG}_integrate: passed, derev: ',{%TAG}_NDEREV, &
+                                    ', steps: ', {%TAG}_ISTEP, &
+                                    ', i-rej: ', {%TAG}_IREJCT, &
+                                    ', n-rej: ', {%TAG}_NREJCT
 #endif 
+
+#ifndef INT_KPP
 
   CONTAINS
 
   ! ----------------------------------------------------------------------------
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>CASE:REMARK}
+    SUBROUTINE ifracs_atom(AC,AF)
+
+    ! returns atomic content fractions
+
+      IMPLICIT NONE
+
+    ! in: atomic content
+      TYPE (TCOMP), INTENT(INOUT) :: AC
+    ! out: atomic fractions
+      TYPE (TCOMP), INTENT(INOUT) :: AF
+
+    ! getting the fractions of isotopologues
+      DO n = 1, {%NTSPEC}
+        tot = SUM(AC%A(n,:))+SUM(AC%R(n,:))              ! gettting total
+#ifdef OPT_LOW_FILTER
+        IF (tot .LT. THRES_LOW) THEN
+#else
+        IF (tot .EQ. 0.0_dp) THEN
+#endif
+          AF%A(n,:) = 0.0_dp
+          AF%R(n,:) = 0.0_dp
+          {%TAG}_NREJCT = {%TAG}_NREJCT + 1
+        ELSE
+          AF%A(n,:) = AC%A(n,:) / tot
+          AF%R(n,:) = AC%R(n,:) / tot
+        ENDIF
+      ENDDO
+
+    END SUBROUTINE ifracs_atom
+
+  ! ----------------------------------------------------------------------------
+
+    SUBROUTINE iderivs_atom(C,D,F)
+
+    ! returns atomic content derivative
+    ! exact kinetic solution
+    ! using either jacobian (MATMUL) or sparse equivalent
+
+      IMPLICIT NONE
+
+    ! in: atomic content
+      TYPE (TCOMP), INTENT(INOUT) :: C
+
+    ! out: atomic content derivative
+      TYPE (TCOMP), INTENT(INOUT) :: D
+
+    ! fractions calculated on the way
+      TYPE (TCOMP), INTENT(INOUT) :: F
+
+    ! updating atomic fractions   [F in the head of integrate]
+      CALL ifracs_atom(C,F)
+
+    ! calculating regular transfer derivative
+#ifdef INT_USEJAC
+    ! using full jacobian algebra
+
+    ! minor isotopologues: kinetic transfer { + isotope exchange }
+      DO k = 2, {%NISO}
+      ! rare in minor
+        D%R(:,k) = ( MATMUL(J(:,:,k),F%R(:,k)) )
+      ! abundant in minor
+        D%A(:,k) = ( MATMUL(J(:,:,k),F%A(:,k)) )
+      ENDDO
+
+    ! abundant isotopologues
+      D%A(:,1) = MATMUL(J(:,:,1),F%A(:,1))
+#else
+    ! using sparse jacobian algebra
+    
+->>- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>CASE:REMARK}
 ! remark on use of the $DERIVS directive:
 !
-! {$DERIVS_ImA} [%dest(#)%] = (%sum(#)%) + {%delta%} * <%frac(#)%> last
+! {$DERIVS_ImA}^ [%dest(#)%] = (%variable(sink($)%) * <%flow_expr(~)%>
 !
 ! where
 ! A - atom
 ! m - mass
 ! # - replaced with the species indices (ind_tXXX)
 ! and funny braces containing expressions with:
-! [% %] - name of the destination variable (left drom =)
-! (% %) - name of the variable to sum with (1st right from =)
-! <% %> - name of the corresponding fraction variable (multiplied by flow())
-! {% %} - name of the step variable (multiplied by sum of all flows()
-! "!" character in funny braces cancels usage of sum and step variables
-! last - means that this last isotopologue derivative is calculated as 
-!        difference of already known and total derivative of the species (flow)
+! [% %] - sample for the destination variable (left drom =), # - tag dest. index
+! (% %) - sample for the right side, $ - sinking index
+! <% %> - sample for flow-expression ~
+! ^ character denotes that abundant atom in minor isotopologue is being proc.
 !
 ! examples:
-! [%I12C(#)%]         = (%I12C(#)%)         + {%H%} * <%F12C(#)%>         or
-! [%ISOC(#,1)%]       = (%ISOC(#,1)%)       + {%H%} * <%FRAC(#,1)%>       or                                         
-! [%IC(#+{%NTSPEC})%] = (%IC(#+{%NTSPEC})%) + {%H(1-#)%} * <%FC(#+{%NTSPEC})%> 
-! etc.
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<CASE:REMARK}
+! [%I12C({%TAG}_#)%]         = (%delta * F12C({%TAG}_$) * %) <%( ~ )%>         or
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CASE:REMARK}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
+    ! calculating 12C 13C isotopologues derivatives
 
-    SUBROUTINE iderivs(t,IVI,IDO)
+    ! major isotopologues
 
-    ! Subroutine iderivs returns isotopologues derivatives in IDO(), using 
-    ! the starting values from IVI(), PTs and flow() at the moment t (which
-    ! actually is not used)
+! {$DERIVS_I12C}  [%       D%A({%TAG}_#,1)%] = (%F%A({%TAG}_$,1) * %) <%~%> 
 
-      IMPLICIT NONE
+    ! minor isotopologues: rare atom transfer
 
-      INTRINSIC SUM
+! {$DERIVS_I13C}  [%       D%R({%TAG}_#,2)%] = (%F%R({%TAG}_$,2) * %) <%~%> 
+
+    ! minor isotopologues: abundant atom transfer
+
+! {$DERIVS_I13C}^ [%       D%A({%TAG}_#,2)%] = (%F%A({%TAG}_$,2) * %) <%~%>
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
+    ! calculating 16O 17O 18O isotopologues derivatives
+
+    ! major isotopologues: 16O
+
+! {$DERIVS_I16O}  [%       D%A({%TAG}_#,1)%] = (%F%A({%TAG}_$,1) * %) <%~%> 
+
+    ! minor isotopologues: 17O rare atom transfer
+
+! {$DERIVS_I17O}  [%       D%R({%TAG}_#,2)%] = (%F%R({%TAG}_$,2) * %) <%~%> 
+
+    ! minor isotopologues: 17O abundant atom transfer
+
+! {$DERIVS_I17O}^ [%       D%A({%TAG}_#,2)%] = (%F%A({%TAG}_$,2) * %) <%~%>
+
+    ! minor isotopologues: 18O rare atom transfer
+
+! {$DERIVS_I18O}  [%       D%R({%TAG}_#,3)%] = (%F%R({%TAG}_$,3) * %) <%~%> 
+
+    ! minor isotopologues: 18O abundant atom transfer
+
+! {$DERIVS_I18O}^ [%       D%A({%TAG}_#,3)%] = (%F%A({%TAG}_$,3) * %) <%~%>
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
+
+#endif
+
+    ! calculating isotope exchange derivative
+#ifdef IEX
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
+! {$IEX_PROC I13C} [%      RIEX(&,2)%]   (%~*F%R({%TAG}_#,2) * F%A({%TAG}_$,1)%)   <%      DIEX({%TAG}_#,2)%>
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
+! {$IEX_PROC I17O} [%      RIEX(&,2)%]   (%~*F%R({%TAG}_#,2) * F%A({%TAG}_$,1)%)   <%      DIEX({%TAG}_#,2)%>
+! {$IEX_PROC I18O} [%      RIEX(&,3)%]   (%~*F%R({%TAG}_#,3) * F%A({%TAG}_$,1)%)   <%      DIEX({%TAG}_#,3)%>
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
+
+    ! accounting in total derivative
+      DO k = 2, {%NISO}
+         DO n = 1, NIXSPEC
+         ! rare in minor
+           D%R(IXSIND(n),k) = D%R(IXSIND(n),k) + DIEX(IXSIND(n),k)
+         ! abundant in minor
+           D%A(IXSIND(n),k) = D%A(IXSIND(n),k) - DIEX(IXSIND(n),k)
+         ENDDO
+      ENDDO
+#endif
+
+    ! redirection of the abundant atom excess
+      D%A(:,1) = D%A(:,1) + SUM(D%A(:,2:{%NISO}),DIM=2)
+
+    ! abundant atom in minor isotopologues
+      DO k = 2, {%NISO}
+        D%A(:,k) = D%R(:,k) * ({%NQATOM}(:)-1)
+      ENDDO
+
+    ! redirecting abundand atom to construct valid minor isotopologues
+      D%A(:,1) = D%A(:,1) - SUM(D%A(:,2:{%NISO}),DIM=2)
       
-      REAL(dp), INTENT(IN)  :: t 
-      REAL(dp), INTENT(IN)  :: IVI({%NTSPEC},{%NISO})
-      REAL(dp), INTENT(OUT) :: IDO({%NTSPEC},{%NISO})
-  
-      REAL(dp)              :: tot
-      INTEGER               :: i
+    ! performance: counting derivative calculations #
+      {%TAG}_NDEREV = {%TAG}_NDEREV + 1
 
-      ! getting the fractions of isotopologues
-        DO i = 1, {%NTSPEC}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-          tot = SUM(IVI(i,:))    ! summing spec 
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-          IF (tot .LT. THRES) THEN
-!         IF (tot .NE. 0.0_dp) THEN
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-            F12C(i) = 0.0_dp; F13C(i) = 0.0_dp
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-            F16O(i) = 0.0_dp; F17O(i) = 0.0_dp; F18O(i) = 0.0_dp
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
-            {%TAG}_NREJCT = {%TAG}_NREJCT + 1
-          ELSE
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-            F12C(i) = (IVI(i,1) / tot)
-            F13C(i) = (IVI(i,2) / tot)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-            F16O(i) = (IVI(i,1) / tot)
-            F17O(i) = (IVI(i,2) / tot)
-            F18O(i) = (IVI(i,3) / tot)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
-          ENDIF
-        ENDDO
-
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-      ! calculating 12C 13C isotopologues derivatives
-
-! {$DERIVS_I12C} [%IDO({%TAG}_#,1)%] = (%!%) + {%!%} * <%F12C({%TAG}_#)%> 
-                                         
-! {$DERIVS_I13C} [%IDO({%TAG}_#,2)%] = (%!%) + {%!%} * <%F13C({%TAG}_#)%> last
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-      ! calculating 16O 17O 18O isotopologues derivatives
-
-! {$DERIVS_I16O} [%IDO({%TAG}_#,1)%] = (%!%) + {%!%} * <%F16O({%TAG}_#)%> 
-                                         
-! {$DERIVS_I17O} [%IDO({%TAG}_#,2)%] = (%!%) + {%!%} * <%F17O({%TAG}_#)%> 
-
-! {$DERIVS_I18O} [%IDO({%TAG}_#,3)%] = (%!%) + {%!%} * <%F18O({%TAG}_#)%> last
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
-
-    END SUBROUTINE iderivs
+    END SUBROUTINE iderivs_atom
 
   ! ----------------------------------------------------------------------------
 
-#ifdef INT_LINMAX
-! >>>>> LINEAR-MATRIX integration scheme >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    SUBROUTINE iratios_atom(AC,AF)
 
-    SUBROUTINE prepare_Z(akind,stepping)
+    ! returns isotopic ratios from the atomic content
+
+      IMPLICIT NONE
+
+    ! in: atomic content
+      TYPE (TCOMP), INTENT(INOUT) :: AC
+    ! out: atomic fractions
+      TYPE (TCOMP), INTENT(INOUT) :: AF
+
+    ! getting the fractions of isotopologues
+      DO n = 1, {%NTSPEC}
+        tot = SUM(AC%A(n,:))           ! total abundant
+#ifdef OPT_LOW_FILTER
+        IF (tot .LT. THRES_LOW) THEN
+#else
+        IF (tot .EQ. 0.0_dp) THEN
+#endif
+          AF%A(n,:) = 0.0_dp
+          AF%R(n,:) = 0.0_dp
+          {%TAG}_NREJCT = {%TAG}_NREJCT + 1
+        ELSE
+          AF%R(n,:) = AC%R(n,:) / tot  ! isotopic ratio
+        ENDIF
+      ENDDO
+
+    END SUBROUTINE iratios_atom
+
+  ! ----------------------------------------------------------------------------
+
+    SUBROUTINE iderivs_ratio(C,D,F)
+
+    ! returns atomic content derivative 
+    ! ratio approximation solution
+    ! using sparse equivalent
+
+      IMPLICIT NONE
+
+    ! in: atomic content
+      TYPE (TCOMP), INTENT(INOUT) :: C
+
+    ! out: atomic content derivative
+      TYPE (TCOMP), INTENT(INOUT) :: D
+
+    ! fractions calculated on the way
+      TYPE (TCOMP), INTENT(INOUT) :: F
+
+    ! ratios for the approximation
+      TYPE (TCOMP)                :: R
+
+    ! getting atomic ractios   [F in the head of integrate]
+      CALL iratios_atom(C,R)
+
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
+    ! calculating 12C 13C isotopologues derivatives
+
+    ! calculating regular transfer derivative
+    
+! {$DERIVS_I12C}  [%       R%A({%TAG}_#,1)%] = (%%) <%~%> 
+
+    ! new ratios
+
+! {$DERIVS_I13C}  [%       D%R({%TAG}_#,2)%] = (%R%R({%TAG}_$,2) * D%A({%TAG}_$,1)%) <%%> 
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+
+    ! converting ratios to the atoms
+
+      DO k = 2, {%NISO}
+        WHERE ( D%A(:,1) .NE. 0.0_dp )
+        ! rare atom in minor isotopologues
+          D%R(:,k) = 1.0_dp / ( 1.0_dp / D%R(:,k) + 1.0_dp / R%A(:,1) )
+        ELSEWHERE
+          D%R(:,k) = 0.0_dp
+        ENDWHERE
+      ! abundant atom in minor isotopologues
+        D%A(:,k) = D%R(:,k) * ({%NQATOM}(:)-1)
+      ENDDO
+
+    ! major isotopologue
+      D%A(:,1) = D%R(:,2) / R%A(:,1)
+
+    ! redirecting abundand atom to construct valid minor isotopologues
+      D%A(:,1) = D%A(:,1) - SUM(D%A(:,2:{%NSPEC}),DIM=2)
+      
+    ! performance: counting derivative calculations #
+      {%TAG}_NDEREV = {%TAG}_NDEREV + 1
+
+    ! redirecting abundand atom to construct valid minor isotopologues
+      D%A(:,1) = D%A(:,1) - SUM(D%A(:,2:{%NISO}),DIM=2)
+      
+    ! performance: counting derivative calculations #
+      {%TAG}_NDEREV = {%TAG}_NDEREV + 1
+
+    END SUBROUTINE iderivs_ratio
+
+  ! ----------------------------------------------------------------------------
+
+#ifdef INT_CG1
+
+    SUBROUTINE step_CG1(u0,delta,un)
+    
+      IMPLICIT NONE
+      
+    ! in: atomic content
+      TYPE (TCOMP), INTENT(INOUT) :: u0
+    ! step
+      REAL(dp), INTENT(IN)        :: delta
+    ! out: CG1 step solution
+      TYPE (TCOMP), INTENT(INOUT) :: un
+      
+    ! internal: resudials
+      REAL(dp)                    :: r0, r1
+
+    ! internal: temporary
+      TYPE (TCOMP)                :: us
+
+      niter = 1
+      
+    ! largest eigenvalue
+      lev = 1
+
+    ! damping
+      damp = .FALSE.
+    
+    ! getting first discrete resudial(u0,u0,delta)
+      CALL iderivs_atom(u0,us,F)
+      r0 = MAX( MAXVAL( -us%A ), MAXVAL( -us%R ) )
+      
+    ! remove (niter .EQ. 1) to have make solve i little more intelligent
+
+      us = u0
+
+      DO WHILE ((r0 .GT. TOL) .OR. (niter .EQ. 1))
+      
+      ! making iteration
+        CALL iderivs_atom(u0,us,F)
+        
+        un%A = u0%A + delta * us%A
+        un%R = u0%R + delta * us%R
+        
+      ! computing discrete resudial
+        us%A = 0.5_dp * (u0%A + un%A)
+        us%R = 0.5_dp * (u0%R + un%R)
+        r1 = MAX( MAXVAL( (un%A-u0%A)/delta - us%A ), &
+                  MAXVAL( (un%R-u0%R)/delta - us%R ) )
+
+      ! largest eigenvalue
+        IF (r0 .GT. 0) THEN
+          lev = 2.0_dp * ( r1/r0 ) / delta
+        ELSE
+          lev = 1.0_dp
+        ENDIF
+        
+      ! do not continue if iterations do not converge
+        IF ( ((r1 .GT. r0) .AND. (r1 .GT. TOL)) .OR. (niter .GT. 10) ) THEN
+          damp = .TRUE.
+          EXIT
+        ENDIF
+
+      ! updating iterations count and new resudial        
+        niter = niter + 1
+        r0 = r1
+        
+      ENDDO
+
+    END SUBROUTINE step_CG1
+#endif
+
+  ! ---------------------------------------------------------------------------
+
+#ifdef INT_USEJAC
+    SUBROUTINE prepare_Z(Z,akind,stepping)
 
       IMPLICIT NONE
       
       INTRINSIC SUM
+      
+      REAL(dp), INTENT(INOUT) :: Z({%NSPEC})
 
       INTEGER, INTENT(in) :: akind           ! "weighting": fractions of current & already calculated budgets
       REAL(dp), INTENT(in) :: stepping       ! # of steps
@@ -606,13 +879,13 @@ CONTAINS
       CASE (1)
         Z(:) = SUM(ISO{%A}(:,:),DIM=2)
       CASE (2)
-        Z(:) = 0.75_dp * SUM(ISO{%A}(:,:),DIM=2) + 0.25_dp * C({%RTIND}(:))
+        Z(:) = 0.75_dp * SUM(ISO{%A}(:,:),DIM=2) + 0.25_dp * C({%RTIND}(:,0))
       CASE DEFAULT     ! or 3
-        Z(:) = 0.5_dp * (SUM(ISO{%A}(:,:),DIM=2) + C({%RTIND}(:)))
+        Z(:) = 0.5_dp * (SUM(ISO{%A}(:,:),DIM=2) + C({%RTIND}(:,0)))
       CASE (4)
-        Z(:) = 0.25_dp * SUM(ISO{%A}(:,:),DIM=2) + 0.75_dp * C({%RTIND}(:))
+        Z(:) = 0.25_dp * SUM(ISO{%A}(:,:),DIM=2) + 0.75_dp * C({%RTIND}(:,0))
       CASE (5)
-        Z(:) = C({%RTIND}(:))
+        Z(:) = C({%RTIND}(:,0))
       END SELECT
       
       Z(:) = Z(:) * stepping
@@ -621,11 +894,13 @@ CONTAINS
     
   ! ---------------------------------------------------------------------------
 
-    SUBROUTINE prepare_J(do_inv)
+    SUBROUTINE prepare_J(J,pre_inv)
 
       IMPLICIT NONE
       
-      LOGICAL, INTENT(in) :: do_inv          ! do a preparation for a further J inversion? 
+      REAL(dp), INTENT(INOUT) :: J({%NSPEC},{%NSPEC},{%NISO})
+      
+      LOGICAL, INTENT(in) :: pre_inv         ! do a preparation for a further J inversion? 
                                              !   i.e. J = (I - J/stepping)    -> ^(-1)
       INTEGER :: n
 
@@ -633,20 +908,20 @@ CONTAINS
 
       ! weights (Z) should be defined by this moment
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>CASE:REMARK}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>CASE:REMARK}
 ! remark on JAC_CALC usage:
 !
 ! [% %] - jacobian calculation expression for # - sinking, $ - receiving indices
 ! ~ - jacobian "upper" part, i.e. sum of flow(#_$) for current # and $
 !
 ! {$JAC_CALC} [%      J(ind_t$, ind_t#) = zerodiv(~, Z(ind_t#))%]
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<CASE:REMARK}
-! {$JAC_CALC} [%      J({%TAG}_$,{%TAG}_#,1) = zerodiv(~,Z({%TAG}_#))%]
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CASE:REMARK}
+! {$JAC_CALC} [%      J({%TAG}_$,{%TAG}_#,1) = ~%]
       
-      IF (do_inv) THEN          ! (do_inv .EQ. .TRUE.) removed due to g95 problems
+      IF (pre_inv) THEN      ! (do_inv .EQ. .TRUE.) removed due to g95 problems
       ! inverting coeffs
         J(:,:,1) = -J(:,:,1)    
-      ! adding E to M
+      ! adding E to J
         DO n = 1, {%NTSPEC}
           J(n,n,1) = J(n,n,1) + 1.0_dp
         ENDDO
@@ -654,15 +929,19 @@ CONTAINS
       ENDIF
 
     END SUBROUTINE prepare_J
+#endif
 
-! {$INCLUDE} <imtag_i=linealg.inc>
+  ! ---------------------------------------------------------------------------
 
-! <<<<< LINEAR-MATRIX integration scheme <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#ifdef INT_LINMAX
+! {$INCLUDE} <int/imtag-i_linealg.inc.f90>
 #endif
     
 #ifdef INT_CASHKARP
-! {$INCLUDE} <imtag_i=cashkarp_rk.inc>
+! {$INCLUDE} <int/imtag-i_cashkarp.inc.f90>
 #endif
+
+#endif    ! ifndef INT_KPP
 
   END SUBROUTINE {%TAG}_integrate
 
@@ -686,17 +965,17 @@ CONTAINS
     T{%ATOM}(1) = SUM(SUM(ISO{%ATOM}(:,:),DIM=2)*QT{%ATOM}ATOM(:)) - SUM(T{%ATOM}(2:{%NISO}))
 
   ! total {%ATOM} atoms quantity from the regular mechanism
-    T{%ATOM}_R = SUM(C({%RTIND}(:))*QT{%ATOM}ATOM(:))
+    T{%ATOM}_R = SUM(C({%RTIND}(:,0))*QT{%ATOM}ATOM(:))
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 !***    T13C = SUM(I13C(:))
 !    T12C = SUM(I12C(1:{%NTSPEC})*QT{%ATOM}ATOM(:))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 !    T16O = SUM(I16O(1:{%NTSPEC})*QT{%ATOM}ATOM(:))
 !    T17O = SUM(I17O(1:{%NTSPEC})*QT{%ATOM}ATOM(:))
 !    T18O = SUM(I18O(1:{%NTSPEC})*QT{%ATOM}ATOM(:))
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:O}
 
 #ifdef DEBUG
     print *,'{%TAG}_calctotals: passed'
@@ -719,58 +998,32 @@ CONTAINS
     ! I/O
     REAL(dp), INTENT(IN)  :: C(:)
 
-    INTEGER        :: i
+    INTEGER        :: n
     CHARACTER(100) :: specs
-    REAL(dp) :: tot
+    REAL(dp)       :: tot, corr
     
     specs = ""
     {%TAG}_NCOR2R = 0
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-    DO i = 1, {%NTSPEC}
-      tot = ( I12C(i) + I13C(i) )
+    DO n = 1, {%NSPEC}
+      tot = SUM(ISO{%A}(n,:))
       IF (tot .EQ. 0.0_dp) THEN
-        specs = TRIM(specs)//" "//TRIM(SPC_NAMES({%RTIND}(i)))
-        I12C(i) = 0.0_dp
-        I13C(i) = 0.0_dp
-      ELSE
-#ifdef OPT_C2R_FILTER
-        IF ( (tot/C({%RTIND}(i))) .GT. THRES_C2R) THEN
+        ISO{%A}(n,:) = 0.0_dp
+#ifdef DEBUG
+        specs = TRIM(specs)//" "//TRIM(SPC_NAMES({%RTIND}(n,0)))
 #endif
-          I12C(i) = ( C({%RTIND}(i)) * I12C(i) ) / tot
-          I13C(i) = ( C({%RTIND}(i)) * I13C(i) ) / tot
-          {%TAG}_NCOR2R = {%TAG}_NCOR2R + 1
-#ifdef OPT_C2R_FILTER
-        ENDIF
-#endif 
-      ENDIF
-
-    ENDDO
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-    DO i = 1, {%NTSPEC}
-      tot = ( I16O(i) + I17O(i) + I18O(i) )
-      IF (tot .EQ. 0.0_dp) THEN
-        specs = TRIM(specs)//" "//TRIM(SPC_NAMES({%RTIND}(i)))
-        I16O(i) = 0.0_dp
-        I17O(i) = 0.0_dp
-        I18O(i) = 0.0_dp
       ELSE
+        corr = C({%RTIND}(n,0)) / tot
 #ifdef OPT_C2R_FILTER
-        IF ( (tot/C({%RTIND}(i))) .GT. THRES_C2R) THEN
+        IF ( corr .GT. THRES_C2R ) THEN
 #endif
-          I16O(i) = ( C({%RTIND}(i)) * I16O(i) ) / tot
-          I17O(i) = ( C({%RTIND}(i)) * I17O(i) ) / tot
-          I18O(i) = ( C({%RTIND}(i)) * I18O(i) ) / tot
-#ifdef OPT_C2R_FILTER
-        ENDIF
-#endif 
+        ISO{%A}(n,:) = ISO{%A}(n,:) * corr
+        {%TAG}_NCOR2R = {%TAG}_NCOR2R + 1
       ENDIF
     ENDDO
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
 
-  ! getting a fraction of corrected specs
-    {%TAG}_NCOR2R = {%TAG}_NCOR2R / {%NTSPEC}
+  ! getting a fraction of corrected specs?
+  ! {%TAG}_NCOR2R = {%TAG}_NCOR2R / {%NTSPEC}
 
 #ifdef DEBUG
     IF (LEN(TRIM(specs)) .GT. 0) THEN
@@ -799,12 +1052,7 @@ CONTAINS
 
     INTEGER  :: i
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:C}
-      C({%RTIND}(:)) = I12C(:) + I13C(:)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ATOM:O}
-      C({%RTIND}(:)) = I16O(:) + I17O(:) + I18O(:)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:O}
+    C({%RTIND}(:,0)) = SUM(ISO{%A}(:,:),DIM=2)
 
 #ifdef DEBUG
     print *,'{%TAG}_correct2iso: working'
@@ -816,10 +1064,14 @@ CONTAINS
 
 ! - some cfg cheks ------------------------------------------------------------
 
-#ifndef INT_LINMAX
+#ifndef INT_KPP
 #ifndef INT_SIMEULER
+#ifndef INT_LINMAX
 #ifndef INT_CASHKARP
+#ifndef INT_CG1
  FATAL: no integration method choosed
+#endif
+#endif
 #endif
 #endif
 #endif

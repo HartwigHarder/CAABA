@@ -823,7 +823,8 @@ CONTAINS
     !
     ! D. Salmond, CRAY (UK), August 1991, original code
 
-    USE messy_main_constants_mem, ONLY: rd, rv, tmelt, cpd => cp_air
+    USE messy_main_constants_mem, ONLY: rd, rv, tmelt, cpd => cp_air &
+                                      , alv, als ! op_pj_20100209
 
     IMPLICIT NONE
     INTRINSIC :: EXP, LOG
@@ -840,10 +841,12 @@ CONTAINS
     REAL(dp), PARAMETER :: zavi4 =    -1.3198825_dp
     REAL(dp), PARAMETER :: zavi5 =    -0.49382577_dp   
     
-    REAL(dp), PARAMETER :: alv   = 2.5008e6_dp ! latent heat for
-    !                                          ! vaporisation in J/kg
-    REAL(dp), PARAMETER :: als   = 2.8345e6_dp ! latent heat for
-    !                                          ! sublimation in J/kg
+! op_pj_20100209+
+!!$    REAL(dp), PARAMETER :: alv   = 2.5008e6_dp ! latent heat for
+!!$    !                                          ! vaporisation in J/kg
+!!$    REAL(dp), PARAMETER :: als   = 2.8345e6_dp ! latent heat for
+!!$    !                                          ! sublimation in J/kg
+! op_pj_20100209-
     ! Constants used for computation of saturation mixing ratio
     ! over liquid water (*c_les*) or ice(*c_ies*)
     REAL(dp),PARAMETER :: c3les = 17.269_dp           ! 

@@ -1,6 +1,6 @@
 ******************************************************************************
 **                               CAABA history                              **
-**                  Time-stamp: <2010-02-22 17:49:24 sander>                **
+**                  Time-stamp: <2010-03-16 16:05:56 sander>                **
 ******************************************************************************
 
 Previous versions are available as zip files at:
@@ -11,7 +11,126 @@ new versions are created with: ncv <VERSION>
 ******************************************************************************
 
 The next version will be:
-caaba_2.5o (2010)
+caaba_2.6b (2010)
+
+******************************************************************************
+
+caaba_2.6 (2010-03-16)
+
+CHANGES by Domenico Taraborrelli and Rolf Sander:
+- new isoprene oxidation MIM2 from ACP, 9, 2751-2777, 2009
+- new batch file mim2.bat, new namelist file caaba_mim2.nml, and new
+  'MIM2' scenarios for testing MIM2
+- new species added to gas.spc, xxxg.jnl, and _kppvarg.jnl
+- implementation based on gas_MIM2_20080816_dt.eqn,
+  gas_MIM2_20080816_dt.spc, gas-v1.1_labeled.eqn (2009-06-22 22:28),
+  and complex_k_MCM.txt (2009-03-10 17:42)
+- new parameterization for RO2 + R'O2 reactions
+- new oxidation scheme for acetone
+- new oxidation scheme for C2H4 (oxidation by OH and O3)
+- C1-chemistry not copied from MIM2 (but RO2+R'O2 adjusted to new
+  parameterization)
+- obsolete species (kept in gas.spc for MIM1):
+  NACA, ISON, ISO2, ISOOH, LHOC3H6O2, LHOC3H6OOH, MVKO2, MVKOOH
+- lumped species now all start with "L"
+- reaction numbers changed because MPAN is C4, not C3:
+  G4318 --> G4418
+  G4319 --> G4419
+  J4305 --> J4407
+- some reactions were already included in MECCA. In these cases, the
+  products were updated to MIM2 but the MECCA rate coefficient was
+  kept (instead of using the MCM value)
+- product ONIT neglected in G4415
+- J-values for MIM2 reactions are now based on available J-values from JVAL:
+   0.074*jx(ip_CHOH)                for ACETOL, CO2H3CO3H, and HO12CO3C4
+   0.074*jx(ip_CHOH)+jx(ip_CH3OOH)  for C59OOH and LMVKOHABOOH
+   0.5*jx(ip_CH3COCHO)              for BIACETOH
+   0.5*jx(ip_MVK)                   for HCOC5
+   3.7*jx(ip_PAN)                   for ISOPBNO3, ISOPDNO3, and LISOPACNO3
+   3.7*jx(ip_PAN)+0.074*jx(ip_CHOH) for NOA
+   jx(ip_CH3COCHO)                  for HCOCO2H, HOCH2COCO2H, and HOCH2COCHO
+   jx(ip_CH3OOH)                    for many ROOH
+   jx(ip_CH3OOH)+0.074*jx(ip_CHOH)  for HYPERACET
+   jx(ip_CH3OOH)+jx(ip_HOCH2CHO)    for HCOCO3H
+   jx(ip_GLYOX)                     for GLYOX
+   jx(ip_HOCH2CHO)                  for HOCH2CHO, MACROOH, and MACROH
+   jx(ip_MACR)                      for MACR, NC4CHO, and LHC4ACCHO
+   jx(ip_MVK)                       for MVK and MVKOH
+- gas.tex:
+  - new species added
+  - MPAN corrected (C4 not C3)
+
+CHANGES by Patrick Joeckel and Rolf Sander:
+- xmecca chooses between gas_mim1.eqn and gas_mim2.eqn. This choice is
+  also added to batch files.
+- *.rpl files are now in rpl/mim1 and rpl/mim2
+- KPP species renamed according to MCM in gas.spc, gas.eqn, gas.tex,
+  aqueous.spc, aqueous.eqn, aqueous.tex, graphviz/*.spc:
+  PAA      --> CH3CO3H
+  CH3COCHO --> MGLYOX
+  EtO2     --> C2H5O2
+  EtOOH    --> C2H5OOH
+  PA       --> CH3CO3
+  CH3COOH  --> CH3CO2H
+  PrO2     --> IC3H7O2
+  ONIT     --> LC4H9NO3
+  PrOOH    --> IC3H7OOH
+  PrONO2   --> IC3H7NO3
+  ACETO2   --> CH3COCH2O2
+  ACETP    --> HYPERACET
+  C4H10    --> NC4H10
+  C4H9O2   --> LC4H9O2
+  C4H9OOH  --> LC4H9OOH
+  MEKO2    --> LMEKO2
+  MEKOOH   --> LMEKOOH
+  MeCOCO   --> BIACET
+  ISOP     --> C5H8 (also in messy_semidep_box.f90)
+  C3H6O2   --> LHOC3H6O2
+  C3H6OOH  --> LHOC3H6OOH
+- kpp/src/Makefile: new target "list" shows settings made in
+  Makefile.defs (e.g. FLEX_LIB_DIR)
+- multirun/input/asc2ferret4nc.awk and multirun/loopcaaba.tcsh: data
+  files renamed from *.asc to *.dat
+- photolysis names changed according to MCM in messy_cmn_photol_mem.f90,
+  messy_jval_jvpp.inc:
+  PAA      --> CH3CO3H
+  CH3COCHO --> MGLYOX
+
+CHANGES by Sergey Gromov:
+- updates for TAG and DBL
+
+CHANGES by Rolf Sander:
+- xmecca: number of selections (wanted*) reduced to 5. For all other
+  purposes, a batch file should be created.
+- new file: LICENSE
+- "St"-label added to J(BrO)
+- zipcaaba.tcsh: some more (e.g. *.log) files are excluded now
+
+CHANGES by Hartwig Harder:
+- MECCA: replacement file oomph_o3_flux.rpl added
+
+CHANGES by Patrick Joeckel:
+- gas.eqn: comment to remove factor 1.4 on Cl2O2 photolysis channel in
+  case alternative jval_cal_cl2o2_new is used (as in MECCA1)
+- MECCA/kpp: enable creation of mechanisms on IBM Power6 (AIX);
+  modified files: replace.awk, substitute.awk, xmecca, Makefile.defs.AIX
+- G4403: bugfix: yield of CH3CHO is 0.28 instead of 0.84 (as in MECCA1)
+
+CHANGES by Astrid Kerkweg and Patrick Joeckel:
+- messy_main_constants_mem.f90, messy_main_timer.f90,
+  messy_main_tools.f90: updates
+- updates according to IMPORT_TSERIES
+  - messy_jval_box.f90: USE statements changed
+  - new link to messy_main_import_tseries.f90
+
+CHANGES by Andreas Baumgaertner:
+- messy_mecca_box.f90: x0_strato* updated
+- new batch-files: chem_eval2.3.bat and e4chem.bat
+- messy_e4chem_box.f90 updated
+- E4CHEM solver included, only compiled via Makefile.m (not in box model)
+- ncv: exclude E4CHEM files from zip
+- main.mk: ADDEFS preprocessor directive to include compiling of E4CHEM via
+  Makefile.m (with 'gmake mbm')
 
 ******************************************************************************
 
@@ -113,7 +232,7 @@ CHANGES by Hartwig Harder and Rolf Sander:
   - the tcsh scripts multirun.tcsh and loopcaaba.tcsh are called via
     xcaaba but can also be called directly
   - input *.txt and *.nc files are in multirun/input/
-  - output files header.asc, sum.asc, ...) are stored in
+  - output files header.dat, sum.dat, ...) are stored in
     output/multirun/*/
   - gmake zip now only excludes *.nc files in base directory (but not in
     multirun/input/)

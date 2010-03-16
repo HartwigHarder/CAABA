@@ -10,86 +10,159 @@ subgraph species {
 node[shape=oval,
   color=yellow,
   style="filled"];
-ACETO2
 ACETOL
-ACETP
 C3H6
-C3H6O2
-C3H6OOH
+C3H7I
 C3H8
+CH3COCH2O2
 CH3COCH3
-CH3COCHO
-PrO2
-PrOOH
+HOCH2COCHO
+HOCH2COCO2H
+HYPERACET
+HYPROPO2
+HYPROPO2H
+IC3H7NO3
+IC3H7O2
+IC3H7OOH
+LHOC3H6O2
+MGLYOX
+NOA
+PR2O2HNO3
+PRONO3BO2
 }
-ACETO2 -> ACETOL [label = "CH3O2 (G4314)"];
-ACETO2 -> ACETP [label = "HO2 (G4312)"];
-ACETO2 -> CH3COCHO [label = "CH3O2 (G4314)"];
-ACETO2 -> CH3OH [label = "CH3O2 (G4314)"];
-ACETO2 -> HCHO [label = "CH3O2 (G4314)"];
-ACETO2 -> HCHO [label = "NO (G4313)"];
-ACETO2 -> PA [label = "CH3O2 (G4314)"];
-ACETO2 -> PA [label = "NO (G4313)"];
-ACETOL -> CH3COCHO [label = "OH (G4316)"];
+ACETOL -> CH3CO3 [label = "hv (J4302)"];
 ACETOL -> HCHO [label = "hv (J4302)"];
-ACETOL -> PA [label = "hv (J4302)"];
-ACETP -> ACETO2 [label = "OH (G4315)"];
-ACETP -> CH3COCHO [label = "OH (G4315)"];
-ACETP -> PA [label = "hv (J4304)"];
-C2H4 -> C3H6O2 [label = "Br (G7404)"];
-C2H4 -> C3H6O2 [label = "Cl (G6409)"];
-C2H4 -> C3H6O2 [label = "OH (G4202)"];
-C3H6 -> C3H6O2 [label = "OH (G4302)"];
+ACETOL -> MGLYOX [label = "OH (G4316)"];
+C2H4 -> LHOC3H6O2 [label = "Br (G7404)"];
+C2H4 -> LHOC3H6O2 [label = "Cl (G6409)"];
 C3H6 -> CH3CHO [label = "O3 (G4301)"];
-C3H6 -> CH3COCHO [label = "O3 (G4301)"];
+C3H6 -> CH3CO2H [label = "O3 (G4301)"];
 C3H6 -> CH3O2 [label = "O3 (G4301)"];
-C3H6 -> CH3OH [label = "O3 (G4301)"];
 C3H6 -> CH4 [label = "O3 (G4301)"];
 C3H6 -> CO [label = "O3 (G4301)"];
-C3H6 -> EtO2 [label = "O3 (G4301)"];
+C3H6 -> CO2 [label = "O3 (G4301)"];
 C3H6 -> HCHO [label = "O3 (G4301)"];
 C3H6 -> HCOOH [label = "O3 (G4301)"];
-C3H6 -> PA [label = "O3 (G4301)"];
-C3H6O2 -> C3H6OOH [label = "HO2 (G4308)"];
-C3H6O2 -> CH3CHO [label = "NO (G4309)"];
-C3H6O2 -> HCHO [label = "NO (G4309)"];
-C3H6OOH -> ACETOL [label = "OH (G4310)"];
-C3H6OOH -> C3H6O2 [label = "OH (G4310)"];
-C3H8 -> EtO2 [label = "OH (G4300)"];
-C3H8 -> PrO2 [label = "OH (G4300)"];
-CH3COCH3 -> ACETO2 [label = "OH (G4311)"];
+C3H6 -> HYPROPO2 [label = "OH (G4302)"];
+C3H6 -> PRONO3BO2 [label = "NO3 (G4303)"];
+C3H7I -> CH3O2 [label = "OH (G8400)"];
+C3H7I -> CH3O2 [label = "hv (J8402)"];
+C3H8 -> C2H5O2 [label = "OH (G4300)"];
+C3H8 -> CO2 [label = "OH (G4300)"];
+C3H8 -> IC3H7O2 [label = "OH (G4300)"];
+C59O2 -> ACETOL [label = " (G4561)"];
+C59O2 -> ACETOL [label = "NO (G4563)"];
+C59O2 -> ACETOL [label = "NO3 (G4564)"];
+C59OOH -> ACETOL [label = "hv (J4516)"];
+C5H8 -> C3H6 [label = "O3 (G4500)"];
+CH3COCH2O2 -> ACETOL [label = " (G4314)"];
+CH3COCH2O2 -> CH3CO3 [label = " (G4314)"];
+CH3COCH2O2 -> CH3CO3 [label = "NO (G4313)"];
+CH3COCH2O2 -> CH3CO3 [label = "NO3 (G4321)"];
+CH3COCH2O2 -> HCHO [label = " (G4314)"];
+CH3COCH2O2 -> HCHO [label = "NO (G4313)"];
+CH3COCH2O2 -> HCHO [label = "NO3 (G4321)"];
+CH3COCH2O2 -> HYPERACET [label = "HO2 (G4312)"];
+CH3COCH2O2 -> MGLYOX [label = " (G4314)"];
+CH3COCH3 -> CH3CO3 [label = "hv (J4301)"];
+CH3COCH3 -> CH3COCH2O2 [label = "OH (G4311)"];
 CH3COCH3 -> CH3O2 [label = "hv (J4301)"];
-CH3COCH3 -> PA [label = "hv (J4301)"];
-CH3COCHO -> CO [label = "OH (G4317)"];
-CH3COCHO -> CO [label = "hv (J4303)"];
-CH3COCHO -> PA [label = "OH (G4317)"];
-CH3COCHO -> PA [label = "hv (J4303)"];
-CH3O2 -> ACETOL [label = "ACETO2 (G4314)"];
-CH3O2 -> ACETOL [label = "ISO2 (G4505)"];
-CH3O2 -> ACETOL [label = "MVKO2 (G4410)"];
-CH3O2 -> CH3COCH3 [label = "PrO2 (G4306)"];
-CH3O2 -> CH3COCHO [label = "ACETO2 (G4314)"];
-CH3O2 -> CH3COCHO [label = "ISO2 (G4505)"];
-CH3O2 -> CH3COCHO [label = "MVKO2 (G4410)"];
-ISO2 -> ACETOL [label = "CH3O2 (G4505)"];
-ISO2 -> CH3COCHO [label = "CH3O2 (G4505)"];
-MPAN -> ACETOL [label = "OH (G4318)"];
-MPAN -> ACETOL [label = "hv (J4305)"];
-MVK -> CH3COCHO [label = "O3 (G4405)"];
-MVKO2 -> ACETOL [label = "CH3O2 (G4410)"];
-MVKO2 -> ACETOL [label = "MVKO2 (G4411)"];
-MVKO2 -> ACETOL [label = "NO (G4408)"];
-MVKO2 -> CH3COCHO [label = "CH3O2 (G4410)"];
-MVKO2 -> CH3COCHO [label = "MVKO2 (G4411)"];
-MVKO2 -> CH3COCHO [label = "NO (G4408)"];
-MVKOOH -> ACETOL [label = "hv (J4402)"];
-MVKOOH -> CH3COCHO [label = "hv (J4402)"];
-PrO2 -> CH3COCH3 [label = "CH3O2 (G4306)"];
-PrO2 -> CH3COCH3 [label = "NO (G4305)"];
-PrO2 -> CH3OH [label = "CH3O2 (G4306)"];
-PrO2 -> HCHO [label = "CH3O2 (G4306)"];
-PrO2 -> PrOOH [label = "HO2 (G4304)"];
-PrOOH -> CH3COCH3 [label = "OH (G4307)"];
-PrOOH -> CH3COCH3 [label = "hv (J4300)"];
-PrOOH -> PrO2 [label = "OH (G4307)"];
+CO2H3CHO -> MGLYOX [label = "hv (J4418)"];
+CO2H3CO3 -> MGLYOX [label = " (G4451)"];
+CO2H3CO3 -> MGLYOX [label = "NO (G4453)"];
+CO2H3CO3 -> MGLYOX [label = "NO3 (G4454)"];
+CO2H3CO3H -> MGLYOX [label = "hv (J4409)"];
+HOCH2COCHO -> CO [label = "NO3 (G4334)"];
+HOCH2COCHO -> CO [label = "OH (G4333)"];
+HOCH2COCHO -> CO [label = "hv (J4311)"];
+HOCH2COCHO -> HOCH2CO3 [label = "NO3 (G4334)"];
+HOCH2COCHO -> HOCH2CO3 [label = "OH (G4333)"];
+HOCH2COCHO -> HOCH2CO3 [label = "hv (J4311)"];
+HOCH2COCO2H -> CO2 [label = "OH (G4335)"];
+HOCH2COCO2H -> CO2 [label = "hv (J4308)"];
+HOCH2COCO2H -> HOCH2CO3 [label = "OH (G4335)"];
+HOCH2COCO2H -> HOCH2CO3 [label = "hv (J4308)"];
+HYPERACET -> CH3CO3 [label = "hv (J4304)"];
+HYPERACET -> CH3COCH2O2 [label = "OH (G4315a)"];
+HYPERACET -> HCHO [label = "hv (J4304)"];
+HYPERACET -> MGLYOX [label = "OH (G4315b)"];
+HYPROPO2 -> CH3CHO [label = " (G4322)"];
+HYPROPO2 -> CH3CHO [label = "NO (G4324)"];
+HYPROPO2 -> CH3CHO [label = "NO3 (G4325)"];
+HYPROPO2 -> HCHO [label = " (G4322)"];
+HYPROPO2 -> HCHO [label = "NO (G4324)"];
+HYPROPO2 -> HCHO [label = "NO3 (G4325)"];
+HYPROPO2 -> HYPROPO2H [label = "HO2 (G4323)"];
+HYPROPO2H -> ACETOL [label = "OH (G4326b)"];
+HYPROPO2H -> CH3CHO [label = "hv (J4309)"];
+HYPROPO2H -> HCHO [label = "hv (J4309)"];
+HYPROPO2H -> HYPROPO2 [label = "OH (G4326a)"];
+IC3H7NO3 -> CH3COCH3 [label = "OH (G4320)"];
+IC3H7NO3 -> CH3COCH3 [label = "hv (J4306)"];
+IC3H7O2 -> CH3COCH3 [label = " (G4306)"];
+IC3H7O2 -> CH3COCH3 [label = "NO (G4305)"];
+IC3H7O2 -> IC3H7NO3 [label = "NO (G4305)"];
+IC3H7O2 -> IC3H7OOH [label = "HO2 (G4304)"];
+IC3H7OOH -> CH3COCH3 [label = "OH (G4307)"];
+IC3H7OOH -> CH3COCH3 [label = "hv (J4300)"];
+IC3H7OOH -> IC3H7O2 [label = "OH (G4307)"];
+LC578O2 -> ACETOL [label = " (G4546)"];
+LC578O2 -> ACETOL [label = "NO (G4548)"];
+LC578O2 -> ACETOL [label = "NO3 (G4549)"];
+LC578O2 -> MGLYOX [label = " (G4546)"];
+LC578O2 -> MGLYOX [label = "NO (G4548)"];
+LC578O2 -> MGLYOX [label = "NO3 (G4549)"];
+LC578OOH -> ACETOL [label = "hv (J4512)"];
+LC578OOH -> MGLYOX [label = "hv (J4512)"];
+LHC4ACCHO -> ACETOL [label = "O3 (G4544)"];
+LHC4ACCHO -> ACETOL [label = "hv (J4511)"];
+LHC4ACCHO -> MGLYOX [label = "O3 (G4544)"];
+LHC4ACCO2H -> ACETOL [label = "OH (G4556)"];
+LHC4ACCO3 -> ACETOL [label = " (G4551)"];
+LHC4ACCO3 -> ACETOL [label = "NO (G4553)"];
+LHC4ACCO3 -> ACETOL [label = "NO3 (G4555)"];
+LHC4ACCO3H -> ACETOL [label = "hv (J4513)"];
+LHMVKABO2 -> MGLYOX [label = " (G4437)"];
+LHMVKABO2 -> MGLYOX [label = "NO (G4439)"];
+LHMVKABO2 -> MGLYOX [label = "NO3 (G4440)"];
+LHMVKABOOH -> MGLYOX [label = "hv (J4416)"];
+LMEKOOH -> CH3COCH2O2 [label = "OH (G4416)"];
+LMVKOHABO2 -> HOCH2COCHO [label = " (G4444)"];
+LMVKOHABO2 -> HOCH2COCHO [label = "NO (G4446)"];
+LMVKOHABO2 -> HOCH2COCHO [label = "NO3 (G4447)"];
+LMVKOHABOOH -> HOCH2COCHO [label = "hv (J4408)"];
+LNISO3 -> NOA [label = "NO (G4540)"];
+LNISO3 -> NOA [label = "NO3 (G4541)"];
+LNISOOH -> NOA [label = "hv (J4510)"];
+MACR -> MGLYOX [label = "O3 (G4422)"];
+MACRO2 -> ACETOL [label = " (G4429)"];
+MACRO2 -> ACETOL [label = "NO (G4431)"];
+MACRO2 -> ACETOL [label = "NO3 (G4432)"];
+MACROH -> ACETOL [label = "OH (G4434)"];
+MACROH -> ACETOL [label = "hv (J4414)"];
+MACROOH -> ACETOL [label = "hv (J4412)"];
+MACROOH -> ACETOL [label = "hv (J4413)"];
+MGLYOX -> CH3CO3 [label = "NO3 (G4331)"];
+MGLYOX -> CH3CO3 [label = "OH (G4317)"];
+MGLYOX -> CH3CO3 [label = "hv (J4303)"];
+MGLYOX -> CO [label = "NO3 (G4331)"];
+MGLYOX -> CO [label = "OH (G4317)"];
+MGLYOX -> CO [label = "hv (J4303)"];
+MPAN -> ACETOL [label = "OH (G4418)"];
+MVK -> C3H6 [label = "hv (J4401)"];
+MVK -> MGLYOX [label = "O3 (G4405)"];
+MVKOH -> HOCH2COCHO [label = "O3 (G4443)"];
+MVKOH -> HOCH2COCO2H [label = "O3 (G4443)"];
+NC4CHO -> MGLYOX [label = "O3 (G4537)"];
+NC4CHO -> NOA [label = "O3 (G4537)"];
+NC4CHO -> NOA [label = "hv (J4509)"];
+NOA -> CH3CO3 [label = "hv (J4307)"];
+NOA -> HCHO [label = "hv (J4307)"];
+NOA -> MGLYOX [label = "OH (G4332)"];
+PR2O2HNO3 -> NOA [label = "OH (G4330b)"];
+PR2O2HNO3 -> NOA [label = "hv (J4310)"];
+PR2O2HNO3 -> PRONO3BO2 [label = "OH (G4330a)"];
+PRONO3BO2 -> NOA [label = "NO (G4328)"];
+PRONO3BO2 -> NOA [label = "NO3 (G4329)"];
+PRONO3BO2 -> PR2O2HNO3 [label = "HO2 (G4327)"];
 }

@@ -29,11 +29,8 @@
 #
 #######################################################################################
 
-# mz_rs_20090910+
 SYSTEM := $(shell uname)
 include Makefile.defs.$(SYSTEM)
-#include Makefile.defs
-# mz_rs_20090910-
 
 all: setup kpp
 

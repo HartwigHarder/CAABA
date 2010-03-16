@@ -1,4 +1,4 @@
-! Time-stamp: <2009-08-04 17:52:20 sander>
+! Time-stamp: <2010-03-11 17:07:58 sander>
 
 ! SEMIDEP = Simplified EMIssion and DEPosition
 
@@ -74,6 +74,8 @@ CONTAINS
       !qqq todo: CALL emission_strato
     CASE ('MBL')
       CALL emission_mbl
+    CASE ('MIM2')
+      CALL emission_mim2
     CASE ('')
       CALL emission_default
     CASE DEFAULT
@@ -120,6 +122,13 @@ CONTAINS
 
     !-------------------------------------------------------------------------
 
+    SUBROUTINE emission_mim2
+      IF (ind_O3     /= 0) c(ind_O3)     = c(ind_O3)     + 5.E10 * fct ! ref0203, p. 6699
+      IF (ind_NO     /= 0) c(ind_NO)     = c(ind_NO)     + 5.0E9 * fct
+    END SUBROUTINE emission_mim2
+    
+    !-------------------------------------------------------------------------
+
     SUBROUTINE emission_ff
       IF (ind_NO     /= 0) c(ind_NO)     = c(ind_NO)     + 1.0E8 * fct
     END SUBROUTINE emission_ff
@@ -136,8 +145,8 @@ CONTAINS
       !IF (ind_DMS    /= 0) c(ind_DMS)    = c(ind_DMS)    + 2.55E9 * fct ! 4GEN
       !IF (ind_DMS    /= 0) c(ind_DMS)    = c(ind_DMS)    + 3.5E9 * fct ! 3rd gen
       !IF (ind_DMS    /= 0) c(ind_DMS)    = c(ind_DMS)    + 2.0E9 * fct
-      IF (ind_ISOP   /= 0) c(ind_ISOP)   = c(ind_ISOP)   + 5._dp * N_A/(5._dp*MC+8._dp*MH) * fct3 * fct ! 4Igen
-      !IF (ind_ISOP   /= 0) c(ind_ISOP)   = c(ind_ISOP)   + 4.25_dp * N_A/(5_dp*MC+8_dp*MH) * fct3 * fct ! 4gen
+      IF (ind_C5H8   /= 0) c(ind_C5H8)   = c(ind_C5H8)   + 5._dp * N_A/(5._dp*MC+8._dp*MH) * fct3 * fct ! 4Igen
+      !IF (ind_C5H8   /= 0) c(ind_C5H8)   = c(ind_C5H8)   + 4.25_dp * N_A/(5_dp*MC+8_dp*MH) * fct3 * fct ! 4gen
       IF (ind_NH3    /= 0) c(ind_NH3)    = c(ind_NH3)    + 1.0E9 * fct
       IF (ind_NO     /= 0) c(ind_NO)     = c(ind_NO)     + 0.1E9 * fct
       !IF (ind_PO3    /= 0) c(ind_PO3)    = c(ind_PO3)    + 5.E10 * fct
@@ -176,6 +185,8 @@ CONTAINS
       !qqq todo: CALL photo_strato
     CASE ('OOMPH','MBL')
       CALL drydep_mbl
+    CASE ('MIM2')
+      CALL drydep_mim2
     CASE ('')
       CALL drydep_default
     CASE DEFAULT
@@ -198,33 +209,49 @@ CONTAINS
 
     SUBROUTINE drydep_mbl
       ! default values for mbl:
-      IF (ind_O3      /= 0) c(ind_O3)      = (1.-fct*0.04) * c(ind_O3)
-      IF (ind_H2O2    /= 0) c(ind_H2O2)    = (1.-fct*0.5)  * c(ind_H2O2)
-      IF (ind_NH3     /= 0) c(ind_NH3)     = (1.-fct*0.1)  * c(ind_NH3)
-      IF (ind_NO2     /= 0) c(ind_NO2)     = (1.-fct*0.1)  * c(ind_NO2)
-      IF (ind_N2O5    /= 0) c(ind_N2O5)    = (1.-fct*1.0)  * c(ind_N2O5)
-      IF (ind_HNO3    /= 0) c(ind_HNO3)    = (1.-fct*2.0)  * c(ind_HNO3)
-      !IF (ind_CH3OH   /= 0) c(ind_CH3OH)   = (1.-fct*0.08) * c(ind_CH3OH) ! 4GEN, Jacob2005
-      IF (ind_CH3OOH  /= 0) c(ind_CH3OOH)  = (1.-fct*0.1)  * c(ind_CH3OOH)
-      IF (ind_HCHO    /= 0) c(ind_HCHO)    = (1.-fct*0.5)  * c(ind_HCHO)
-      IF (ind_HCOOH   /= 0) c(ind_HCOOH)   = (1.-fct*1.0)  * c(ind_HCOOH)
-      !IF (ind_CH3COCH3 /= 0) c(ind_CH3COCH3) = (1.-fct*0.1) * c(ind_CH3COCH3) ! 4GEN, Jacob2005
-      IF (ind_HCl     /= 0) c(ind_HCl)     = (1.-fct*2.0)  * c(ind_HCl)
-      IF (ind_HOCl    /= 0) c(ind_HOCl)    = (1.-fct*1.0)  * c(ind_HOCl)
-      IF (ind_ClNO3   /= 0) c(ind_ClNO3)   = (1.-fct*1.0)  * c(ind_ClNO3)
-      IF (ind_HBr     /= 0) c(ind_HBr)     = (1.-fct*2.0)  * c(ind_HBr)
-      IF (ind_HOBr    /= 0) c(ind_HOBr)    = (1.-fct*1.0)  * c(ind_HOBr)
-      IF (ind_BrNO3   /= 0) c(ind_BrNO3)   = (1.-fct*1.0)  * c(ind_BrNO3)
-      IF (ind_I2O2    /= 0) c(ind_I2O2)    = (1.-fct*1.0)  * c(ind_I2O2)
-      IF (ind_HI      /= 0) c(ind_HI)      = (1.-fct*1.0)  * c(ind_HI)
-      IF (ind_HOI     /= 0) c(ind_HOI)     = (1.-fct*1.0)  * c(ind_HOI)
-      IF (ind_INO2    /= 0) c(ind_INO2)    = (1.-fct*1.0)  * c(ind_INO2)
-      IF (ind_INO3    /= 0) c(ind_INO3)    = (1.-fct*1.0)  * c(ind_INO3)
-      IF (ind_SO2     /= 0) c(ind_SO2)     = (1.-fct*0.5)  * c(ind_SO2)
-      IF (ind_H2SO4   /= 0) c(ind_H2SO4)   = (1.-fct*2.0)  * c(ind_H2SO4)
-      IF (ind_CH3SO3H /= 0) c(ind_CH3SO3H) = (1.-fct*1.0)  * c(ind_CH3SO3H)
-      IF (ind_DMSO    /= 0) c(ind_DMSO)    = (1.-fct*1.0)  * c(ind_DMSO)
+      IF (ind_O3       /= 0) c(ind_O3)       = (1.-fct*0.04) * c(ind_O3)
+      IF (ind_H2O2     /= 0) c(ind_H2O2)     = (1.-fct*0.5)  * c(ind_H2O2)
+      IF (ind_NH3      /= 0) c(ind_NH3)      = (1.-fct*0.1)  * c(ind_NH3)
+      IF (ind_NO2      /= 0) c(ind_NO2)      = (1.-fct*0.1)  * c(ind_NO2)
+      IF (ind_N2O5     /= 0) c(ind_N2O5)     = (1.-fct*1.0)  * c(ind_N2O5)
+      IF (ind_HNO3     /= 0) c(ind_HNO3)     = (1.-fct*2.0)  * c(ind_HNO3)
+      !IF (ind_CH3OH    /= 0) c(ind_CH3OH)    = (1.-fct*0.08) * c(ind_CH3OH) ! 4GEN, Jacob2005
+      IF (ind_CH3OOH   /= 0) c(ind_CH3OOH)   = (1.-fct*0.1)  * c(ind_CH3OOH)
+      IF (ind_HCHO     /= 0) c(ind_HCHO)     = (1.-fct*0.5)  * c(ind_HCHO)
+      IF (ind_HCOOH    /= 0) c(ind_HCOOH)    = (1.-fct*1.0)  * c(ind_HCOOH)
+      !IF (ind_CH3COCH3 /= 0) c(ind_CH3COCH3) = (1.-fct*0.1)  * c(ind_CH3COCH3) ! 4GEN, Jacob2005
+      IF (ind_HCl      /= 0) c(ind_HCl)      = (1.-fct*2.0)  * c(ind_HCl)
+      IF (ind_HOCl     /= 0) c(ind_HOCl)     = (1.-fct*1.0)  * c(ind_HOCl)
+      IF (ind_ClNO3    /= 0) c(ind_ClNO3)    = (1.-fct*1.0)  * c(ind_ClNO3)
+      IF (ind_HBr      /= 0) c(ind_HBr)      = (1.-fct*2.0)  * c(ind_HBr)
+      IF (ind_HOBr     /= 0) c(ind_HOBr)     = (1.-fct*1.0)  * c(ind_HOBr)
+      IF (ind_BrNO3    /= 0) c(ind_BrNO3)    = (1.-fct*1.0)  * c(ind_BrNO3)
+      IF (ind_I2O2     /= 0) c(ind_I2O2)     = (1.-fct*1.0)  * c(ind_I2O2)
+      IF (ind_HI       /= 0) c(ind_HI)       = (1.-fct*1.0)  * c(ind_HI)
+      IF (ind_HOI      /= 0) c(ind_HOI)      = (1.-fct*1.0)  * c(ind_HOI)
+      IF (ind_INO2     /= 0) c(ind_INO2)     = (1.-fct*1.0)  * c(ind_INO2)
+      IF (ind_INO3     /= 0) c(ind_INO3)     = (1.-fct*1.0)  * c(ind_INO3)
+      IF (ind_SO2      /= 0) c(ind_SO2)      = (1.-fct*0.5)  * c(ind_SO2)
+      IF (ind_H2SO4    /= 0) c(ind_H2SO4)    = (1.-fct*2.0)  * c(ind_H2SO4)
+      IF (ind_CH3SO3H  /= 0) c(ind_CH3SO3H)  = (1.-fct*1.0)  * c(ind_CH3SO3H)
+      IF (ind_DMSO     /= 0) c(ind_DMSO)     = (1.-fct*1.0)  * c(ind_DMSO)
     END SUBROUTINE drydep_mbl
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE drydep_mim2
+      IF (ind_O3       /= 0) c(ind_O3)       = (1.-fct*0.04) * c(ind_O3)
+      IF (ind_H2O2     /= 0) c(ind_H2O2)     = (1.-fct*0.5)  * c(ind_H2O2)
+      IF (ind_NH3      /= 0) c(ind_NH3)      = (1.-fct*0.1)  * c(ind_NH3)
+      IF (ind_NO2      /= 0) c(ind_NO2)      = (1.-fct*0.1)  * c(ind_NO2)
+      IF (ind_N2O5     /= 0) c(ind_N2O5)     = (1.-fct*1.0)  * c(ind_N2O5)
+      IF (ind_HNO3     /= 0) c(ind_HNO3)     = (1.-fct*2.0)  * c(ind_HNO3)
+      IF (ind_CH3OH    /= 0) c(ind_CH3OH)    = (1.-fct*0.08) * c(ind_CH3OH)
+      IF (ind_CH3OOH   /= 0) c(ind_CH3OOH)   = (1.-fct*0.1)  * c(ind_CH3OOH)
+      IF (ind_HCHO     /= 0) c(ind_HCHO)     = (1.-fct*0.5)  * c(ind_HCHO)
+      IF (ind_HCOOH    /= 0) c(ind_HCOOH)    = (1.-fct*1.0)  * c(ind_HCOOH)
+      IF (ind_CH3COCH3 /= 0) c(ind_CH3COCH3) = (1.-fct*0.1)  * c(ind_CH3COCH3)
+    END SUBROUTINE drydep_mim2
 
     !-------------------------------------------------------------------------
 

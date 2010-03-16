@@ -1,4 +1,4 @@
-! Time-stamp: <2009-08-31 17:43:57 sander>
+! Time-stamp: <2010-03-11 16:50:30 sander>
 
 ! CAABA = Chemistry As A Boxmodel Application
 
@@ -6,7 +6,7 @@
 ! calculations for emission, deposition, and photolysis
 
 ! Authors:
-! Rolf Sander, MPICH, Mainz, 2003-2009
+! Rolf Sander, MPICH, Mainz, 2003-2010
 ! Hella Riede, MPICH, Mainz, 2007
 
 ! This program is free software; you can redistribute it and/or
@@ -74,11 +74,11 @@ CONTAINS
     INTEGER, INTENT(IN)  :: iou        ! I/O unit
     ! local:
     CHARACTER(LEN=*), PARAMETER :: substr = 'caaba_read_nml'
-    INTEGER, PARAMETER :: MAX_SCENARIOS = 7
+    INTEGER, PARAMETER :: MAX_SCENARIOS = 8
     CHARACTER(LEN=12), PARAMETER, DIMENSION(MAX_SCENARIOS) :: &
       list_of_scenarios = (/ &
-      '            ', 'MBL         ', 'FF_ARCTIC   ', 'FF_ANTARCTIC', &
-      'OOMPH       ', 'FREE_TROP   ', 'STRATO      ' /)
+      '            ', 'FF_ANTARCTIC', 'FF_ARCTIC   ', 'FREE_TROP   ', &
+      'MBL         ', 'MIM2        ', 'OOMPH       ', 'STRATO      ' /)
     LOGICAL :: l_init_scenario_ok     = .FALSE.
     LOGICAL :: l_photo_scenario_ok    = .FALSE.
     LOGICAL :: l_emission_scenario_ok = .FALSE.

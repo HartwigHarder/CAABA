@@ -1,38 +1,52 @@
 #! /bin/tcsh -f
 #
-# [Gromov, MPI-C Mainz, 2007-2008]
+# [Gromov, MPI-C Mainz, 2007-2009]
 #
 # script to double MECCA kinetic chemistry mechanism
 #
 # steps:
-# 1 choose desired configuration(s)
-# 2 double using imdouble
-# 3 link generated modules to the base module dir
+# initialize (zero-setup)
+# choose desired configuration(s)
+# double using imdouble
+# link generated modules to the corresponding dirs
 
 # --------------------------------------------------------------------------
 # VARIABLES
 # --------------------------------------------------------------------------
 
 # paths are relative
+set bindir       = "../../../../../bin"          # batch files location
 set batchdir     = "../batch"          # batch files location
-set eqnfiledir   = ".."                # where equation file is located
-set f90box       = "../.."             # where f90-file links should go to
-#                                      # (BOX ONLY !!!)
+set meccadir     = ".."                # where MECCA + equation/species files are located
+set f90smcl      = "../smcl"           # where f90-files should go to
+set f90box       = "../.."             #                        -- BOX ONLY
+set f90si        = "../../../../smil"                           # -- SI ONLY
 set xtagdir      = "../tag"            # tagging directory (shared files !)
-set fpc_call     = "fpc -l -viwnh -B " # pascal compiler call
+set box2dbl      = "mecca/dbl"         # relative path from box to dbl
+set smcl2dbl     = "../dbl"            #        - " -       smcl to dbl
+set si2dbl       = "../mbm/caaba/mecca/dbl" #        - " -       si to dbl
+set fpc_call     = "fpc -l -viwnh -B"  # fpc compiler call
 set do_recompile = "false"             # set to "true" to recompile the executable(s)
+
+# detecting ECHAM5/MESSy
+if ( -d ../../../../smil ) then
+  set bm3d
+endif
+
+# just to initialize to zero configuration and exit
+if ( "$1" == "zero" ) goto setzero
 
 # --------------------------------------------------------------------------
 # BATCH INFO TO BE READ HERE
 # --------------------------------------------------------------------------
 
-if ( "$1" != "" ) then
+if ( "$2" != "" ) then
   # type batchfile with or without extension .bat:
-  set batchfile = `basename $1 .bat`.bat
-  if ( -f ../batch/$batchfile ) then
+  set batchfile = `basename $2 .bat`.bat
+  if ( -f $batchdir/$batchfile ) then
     echo "\nusing batchfile: $batchfile" # | tee -a ../$logfile
     set batch
-    source ../batch/$batchfile
+    source $batchdir/$batchfile
   else
     echo "ERROR: $batchfile does not exist"
     exit 1
@@ -43,17 +57,21 @@ endif
 # BEGINNING, LINKING FILES, INITIALIZING CONFs
 # --------------------------------------------------------------------------
 
+setzero:
+
 echo ""
 echo "[ XDBL: script to double selected MECCA kinetic chemistry mechanism ]"
 echo "  (note: no aerosol-phase chemistry supported so far)"
 echo ""
 
-# linking mecca.eqn & mecca.spc to current folder
-ln -fs $eqnfiledir/mecca.eqn ./mecca.eqn
-ln -fs $eqnfiledir/mecca.spc ./mecca.spc
+# --------------------------------------------------------------------------
+echo "initializing configuration(s) setup..."
 
-# linking tracers definition file
-ln -fs $eqnfiledir/gas.tex ./gas.tex
+# linking mecca.eqn & mecca.spc to current folder
+ln -fs $meccadir/mecca.eqn ./mecca.eqn
+ln -fs $meccadir/mecca.spc ./mecca.spc
+# linking tracer definitions file
+ln -fs $meccadir/gas.tex ./gas.tex
 
 # cleaning setup with default "empty" configuration
 rm -fv *.cfg *.kie *.log
@@ -64,154 +82,125 @@ foreach cfgfile ($cfgfiles)
   ln -fs $cfgfile .
 end
 
-# */
-
-# cleaning setup with default "empty" configuration
+# cleaning files
 rm -fv *.log
-rm -fv messy_mecca_dbl*.f90 messy_mecca_dbl*.inc
-rm -fv messy_mecca_dbl*.spc messy_mecca_dbl*.eqn
+rm -fv messy_mecca_dbl*.f90 messy_mecca_dbl*.inc messy_mecca_dbl*.spc messy_mecca_dbl*.eqn messy_mecca_dbl*.tex
 rm -fv $f90box/messy_mecca_dbl*.f90 $f90box/messy_mecca_dbl*.inc
+rm -fv $f90smcl/messy_mecca_dbl*.f90 $f90smcl/messy_mecca_dbl*.inc
+
+# default empty "zero" configuration
 cp -f  messy_mecca_dbl_box.f90-zero $f90box/messy_mecca_dbl_box.f90
+cp -f  messy_mecca_dbl_parameters.inc-zero messy_mecca_dbl_parameters.inc
+ln -fs --target-directory=$f90smcl $smcl2dbl/messy_mecca_dbl_parameters.inc
+ln -fs --target-directory=$f90box  $box2dbl/messy_mecca_dbl_parameters.inc
 
-echo "configuration(s) setup initialized"
-echo ""
-
-# --------------------------------------------------------------------------
-# SELECTION OF DESIRED CONFIGURATION
-# --------------------------------------------------------------------------
-
-# default configuration
-set defcfg = "c"
-
-echo "please, choose the tagging configuration:"
-echo "c: isotopic carbon (IC)"
-echo "o: isotopic oxygen (IO)"
-# echo "i: isoprene fraction (FISOP)"
-echo "z: ozone fraction (O3F) /test/"
-# echo "[c/o/i/z, q=quit, default=$defcfg]"
-
-if (! ${?batch}) then
-  echo "[c/o/z, q=quit, default=$defcfg]"
-  set inputstring = "$<"
-else
-  echo "selected configuration from batch (tagcfg) is: $tagcfg"
-  echo ""
-  set inputstring = $tagcfg
+# in ECHAM5/MESSy setup
+if (${?bm3d}) then
+  rm -fv $f90si/messy_mecca_dbl*.f90 $f90si/messy_mecca_dbl*.inc
+  cp -f  messy_mecca_dbl_si.f90-zero $f90si/messy_mecca_dbl_si.f90
+  ln -fs --target-directory=$f90si $si2dbl/messy_mecca_dbl_parameters.inc
 endif
 
-if ( "$inputstring" == "q" ) exit 1
-if ( "$inputstring" == "" ) set inputstring = $defcfg
-switch ("$inputstring")
-case "c":
-  set cfg = "IC"   
-  breaksw
-case "o": 
-  set cfg = "IO"
-  breaksw
-#case "i": 
-#  set cfg = "FISOP"
-#  breaksw
-case "z":
-  set cfg = "O3F"   
-  breaksw
-case "x":
-  set cfg = "X"
-  echo "oh, you know the secret option: eXtra = C+O in one bottle!"   
-  breaksw
-default:
-  echo "sorry, selected configuration is not in the list. exiting"
-  echo ""
-  exit 1
-#  set cfg = "$inputstring"
-  breaksw
-endsw
-
-echo "[ configuration: $cfg ]"
+echo "done"
 echo ""
+
+# just to initialize to zero configuration and exit
+if ( "$1" == "zero" ) exit 0
+
+# --------------------------------------------------------------------------
+if ("$do_recompile" == "true") then
+  echo "recompiling imdouble executable..."
+  echo "(see compile.log for details)"
+  rm ./imdouble.exe
+  $fpc_call imdouble -oimdouble.exe > compile.log
+  if ("$status" != "0") then
+    echo "not done"
+    echo "--- listing compile.log ---"
+    cat compile.log
+    exit 1
+  endif
+  echo "done"
+  echo ""
+endif
+
+# --------------------------------------------------------------------------
+# SELECTION OF DESIRED CONFIGURATION(S)
+# --------------------------------------------------------------------------
+
+# invoking configuration selection script
+source ${xtagdir}/xselectcfg
+if ("$?" != "0") exit 1
 
 # --------------------------------------------------------------------------
 # DOUBLING
 # --------------------------------------------------------------------------
 
-# ----- this interactive part is switched off so far
-#echo ""
-#echo "would you like to double selected mechanism? [y/n/x/q, x=explicit doubling, default=y]:"
-#echo "would you like to double selected mechanism? [y/n/q, default=y]:"
-#set inputstring = "$<"
-#if ( "$inputstring" == "q" ) exit 1
-#if ( "$inputstring" == "" ) set inputstring = "y"
-#switch ("$inputstring")
-#case "x":
-#  set do_dbl = "true"
-#  set do_expl = "true"
-#  breaksw
-#case "y":
-#  set do_dbl = "true"
-#  set do_expl = "false"
-#  breaksw
-#case "n":
-#  set do_dbl = "false"
-#  set do_expl = "false"
-#  breaksw
-#default:
-#  echo "unknown option. exiting"
-#  exit 1
-#  breaksw
-#endsw
-
+# these params left from older versions, keeping so far
 set do_dbl = "true"
 set do_expl = "false"
 
 if ("$do_dbl" == "true") then
 
-  # --------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
   # run imdouble - doubling
-
-  if ("$do_recompile" == "true") then
-     rm ./imdouble
-     if ("$do_exp" == "true") then
-       $fpc_call -dDBL_EXPL imdouble -o imdouble-expl
-       # make a link to an explicit doubling executable
-       ln -fs imdouble-expl imdouble
-     else
-       $fpc_call imdouble -o imdouble-impl
-       # make a link to an implicit doubling executable
-       ln -fs imdouble-impl imdouble
-     endif
-  endif
 
   echo ">>> doubling with imdouble >>>"
   echo ""
 
-  set imdouble = "dbl_"$cfg
+  $bindir/imdouble.exe mecca.spc mecca.eqn $cfglist | tee -a imdouble.log
+  set exitstatus = "$status"
 
-  if ("$cfg" == "X") then
-    ./imdouble mecca.spc mecca.eqn tagIC.cfg tagIO.cfg > tag$cfg-imdouble.log
-    set exitstatus = "$status"
-  else
-    ./imdouble mecca.spc mecca.eqn tag$cfg.cfg > tag$cfg-imdouble.log
-    set exitstatus = "$status"
-  endif
-
-  cat tag$cfg-imdouble.log
   echo "exit status from imdouble is: $exitstatus"
+  echo ""
   if ( "$exitstatus" != "0" ) then
-    echo "please, see the tag$cfg-imdouble.log file"
+    echo "please, see the imdouble.log file"
     exit
   endif
 
+  # ----- distributing files to the directories --------------------------------
+
   # applying changes to mecca.eqn & .spc
-  cat messy_mecca_dbl.eqn > $eqnfiledir/mecca.eqn
-  cat messy_mecca_dbl.spc > $eqnfiledir/mecca.spc
+  cat messy_mecca_dbl.eqn > $meccadir/mecca.eqn
+  cat messy_mecca_dbl.spc > $meccadir/mecca.spc
   
-  # linking generated code to mecca-smcl directory
+  # linking generated code to smcl/xbox directories
   set dblfiles = (messy_mecca_dbl*.f90 messy_mecca_dbl*.inc)
   foreach dblfile ($dblfiles)
-    if (-e $f90box/$dblfile) then
-       rm -f $f90box/$dblfile
+
+    set base = `basename $dblfile .f90`
+   #set isbox = `echo $base | awk '{print substr($1,length($1)-2,3)}'`
+
+    set isbox = `echo $dblfile "_box." | awk '{print index($1,$2)}'`
+    set issi = `echo $dblfile "_si." | awk '{print index($1,$2)}'`
+    set fext = $dblfile:e
+
+    # default directory (smcl), or dedicated box/si
+    set destdir = $f90smcl
+    if ( "$isbox" != "0" ) set destdir = $f90box
+    if ( "$issi" != "0" ) then
+      if (${?bm3d}) then
+        set destdir = $f90si
+      else
+        set destdir = ""
+      endif
     endif
-    mv -f $dblfile $f90box/.
-    ln -s $f90box/$dblfile .
+
+    foreach ddir ($destdir)
+      if ( "$fext" == "inc" ) then
+        # linking include files to all dirs, not copying
+        ln -fs --target-directory=$f90smcl $smcl2dbl/$dblfile
+        ln -fs --target-directory=$f90box $box2dbl/$dblfile
+        if (${?bm3d}) ln -fs --target-directory=$f90si $si2dbl/$dblfile
+      else
+        # copying to destination, linking back to dbl
+        if ("$destdir" != "") then
+          if (-e $ddir/$dblfile) rm -f $ddir/$dblfile
+          mv -f $dblfile $ddir/.
+          ln -s $ddir/$dblfile .
+          echo linking $dblfile from $ddir
+        endif
+      endif  
+    end
   end
 
   echo ""
@@ -219,7 +208,12 @@ if ("$do_dbl" == "true") then
 
 endif
 
+# --------------------------------------------------------------------------
+# ALL DONE
+# --------------------------------------------------------------------------
+
+unsetenv $cfglist
+
 echo ""
 echo "all done --> returning"
 echo ""
-

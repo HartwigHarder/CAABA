@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Rates.f90
-! Time                 : Mon Feb 22 17:50:46 2010
-! Working directory    : /home/sander/e2/messy_2.3z_rs/messy/mbm/caaba/mecca
+! Time                 : Tue Mar 16 16:04:25 2010
+! Working directory    : /home/sander/e2/messy_2.3zp_rs_mim2/messy/mbm/caaba/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -242,11 +242,8 @@ SUBROUTINE Update_RCONST ( )
                  ( 1./(6.5E-34*EXP(1335./temp)*cair) + &
                  1./(2.7E-17*EXP(2199./temp)) )
   k_CH3OOH_OH  = 3.8E-12*EXP(200./temp)
-  k_PA_NO2     = k_3rd(temp,cair,9.7E-29,5.6,9.3E-12,1.5,0.6)
-  k_PAN_M      = k_PA_NO2/9.0E-29*EXP(-14000./temp)
-  k_PrO2_HO2   = 1.9E-13*EXP(1300./temp)
-  k_PrO2_NO    = 2.7E-12*EXP(360./temp)
-  k_PrO2_CH3O2 = 9.46E-14*EXP(431./temp)
+  k_CH3CO3_NO2 = k_3rd(temp,cair,9.7E-29,5.6,9.3E-12,1.5,0.6)
+  k_PAN_M      = k_CH3CO3_NO2/9.0E-29*EXP(-14000./temp)
   k_ClO_ClO    = k_3rd_iupac(temp,cair,2.0E-32, &
                  4.0,1.0E-11,0.0,0.45)
   ! JPL: k_ClO_ClO   = k_3rd(temp,cair,1.6E-32,4.5,2.0E-12,2.4,0.6)
@@ -259,11 +256,43 @@ SUBROUTINE Update_RCONST ( )
   ! mz_pj_20080812+
   k_O3s = (1.7E-12*EXP(-940./temp)) * C(ind_OH) &  ! <G2104>
         + (1.E-14*EXP(-490./temp)) * C(ind_HO2) &  ! <G2107>
-        + JX(ip_O1D) * 2.2E-10 * C(ind_H2O) &      ! 
+        + jx(ip_O1D) * 2.2E-10 * C(ind_H2O) &      !
         / ( 3.2E-11*EXP(70./temp)*C(ind_O2)   &
            + 1.8E-11*EXP(110./temp)*C(ind_N2) &
            + 2.2E-10*C(ind_H2O) )
   ! mz_pj_20080812-
+  KRO2NO  = 2.54E-12*EXP(360./temp)
+  KRO2HO2 = 2.91E-13*EXP(1300./temp)
+  KAPHO2  = 4.30E-13*EXP(1040./temp) ! CH3CO3 + HO2
+  KAPNO   = 8.10E-12*EXP(270./temp)  ! CH3CO3 + NO
+  KRO2NO3 = 2.50E-12
+  KNO3AL  = 1.4E-12*EXP(-1900./temp)
+  RO2 = 0.
+  IF (ind_LISOPACO2>0)  RO2 = RO2 + C(ind_LISOPACO2)
+  IF (ind_ISOPBO2>0)    RO2 = RO2 + C(ind_ISOPBO2)
+  IF (ind_ISOPDO2>0)    RO2 = RO2 + C(ind_ISOPDO2)
+  IF (ind_NISOPO2>0)    RO2 = RO2 + C(ind_NISOPO2)
+  IF (ind_LHC4ACCO3>0)  RO2 = RO2 + C(ind_LHC4ACCO3)
+  IF (ind_LC578O2>0)    RO2 = RO2 + C(ind_LC578O2)
+  IF (ind_C59O2>0)      RO2 = RO2 + C(ind_C59O2)
+  IF (ind_LNISO3>0)     RO2 = RO2 + C(ind_LNISO3)
+  IF (ind_CH3O2>0)      RO2 = RO2 + C(ind_CH3O2)
+  IF (ind_CH3CO3>0)     RO2 = RO2 + C(ind_CH3CO3)
+  IF (ind_C2H5O2>0)     RO2 = RO2 + C(ind_C2H5O2)
+  IF (ind_HOCH2CO3>0)   RO2 = RO2 + C(ind_HOCH2CO3)
+  IF (ind_HYPROPO2>0)   RO2 = RO2 + C(ind_HYPROPO2)
+  IF (ind_HCOCO3>0)     RO2 = RO2 + C(ind_HCOCO3)
+  IF (ind_CO2H3CO3>0)   RO2 = RO2 + C(ind_CO2H3CO3)
+  IF (ind_LHMVKABO2>0)  RO2 = RO2 + C(ind_LHMVKABO2)
+  IF (ind_MACO3>0)      RO2 = RO2 + C(ind_MACO3)
+  IF (ind_MACRO2>0)     RO2 = RO2 + C(ind_MACRO2)
+  IF (ind_LMVKOHABO2>0) RO2 = RO2 + C(ind_LMVKOHABO2)
+  IF (ind_PRONO3BO2>0)  RO2 = RO2 + C(ind_PRONO3BO2)
+  IF (ind_HOCH2CH2O2>0) RO2 = RO2 + C(ind_HOCH2CH2O2)
+  IF (ind_CH3COCH2O2>0) RO2 = RO2 + C(ind_CH3COCH2O2)
+  IF (ind_IC3H7O2>0)    RO2 = RO2 + C(ind_IC3H7O2)
+  IF (ind_LC4H9O2>0)    RO2 = RO2 + C(ind_LC4H9O2)
+  IF (ind_LMEKO2>0)     RO2 = RO2 + C(ind_LMEKO2)
 
 ! End INLINED RCONST
 
@@ -313,8 +342,8 @@ SUBROUTINE Update_RCONST ( )
   RCONST(44) = (4.1E-13*EXP(750./temp))
   RCONST(45) = (2.8E-12*EXP(300./temp))
 ! RCONST(46) = constant rate coefficient
-  RCONST(47) = (9.5E-14*EXP(390./temp)/(1.+1./26.2*EXP(1130./temp)))
-  RCONST(48) = (9.5E-14*EXP(390./temp)/(1.+26.2*EXP(-1130./temp)))
+  RCONST(47) = (2.*RO2*9.5E-14*EXP(390./temp)/(1.+1./26.2*EXP(1130./temp)))
+  RCONST(48) = (2.*RO2*9.5E-14*EXP(390./temp)/(1.+26.2*EXP(-1130./temp)))
   RCONST(49) = (k_CH3OOH_OH)
   RCONST(50) = (9.52E-18*EXP(2.03*log(temp)+636./temp))
   RCONST(51) = (3.4E-13*EXP(-1900./temp))

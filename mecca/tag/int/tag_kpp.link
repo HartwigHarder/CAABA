@@ -1,0 +1,20 @@
+->>- תתתתת following lines will not be included into eqn/f90 תתתתתת {>CASE:REM}
+
+// ----------------------------------------------------------------------------
+// This file contains necessary dependecies for tagging
+// to be included into the tag integration equation of the KPP
+//
+// [Gromov, MPICH, 2009]
+// ----------------------------------------------------------------------------
+
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CASE:REM}
+
+->>- +++++ following lines are included in case of tagging ++++++++ {>CASE:TAG}
+#INLINE F90_RCONST
+
+! link to the tagging driver/kinetic configuration
+  USE {%CMODEL}_tag_common
+! USE {%CMODEL}_{%TAG}
+  
+#ENDINLINE
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CASE:TAG}

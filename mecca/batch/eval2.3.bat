@@ -5,6 +5,7 @@
 # when it is run in batch mode (i.e. not interactive).
 
  set apn          = 0                 # number of aerosol phases [0...99, default=0]
+ set gaseqnfile   = gas_mim1.eqn
  set rplfile      = eval2.3           #
  # eval:
  set wanted       = "((Tr && (G || Het) && \!I) || St)"

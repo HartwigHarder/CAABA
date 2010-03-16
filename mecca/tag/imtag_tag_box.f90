@@ -30,11 +30,11 @@ MODULE {%CMODEL}_tag_box
 
   IMPLICIT NONE
 
-  PUBLIC tag_emis
-  PUBLIC tag_process
-  PUBLIC tag_init
-  PUBLIC tag_result
-  PUBLIC tag_finish
+  PUBLIC mecca_tag_emis
+  PUBLIC mecca_tag_process
+  PUBLIC mecca_tag_init
+  PUBLIC mecca_tag_result
+  PUBLIC mecca_tag_finish
 
 ! =============================================================================
 
@@ -42,7 +42,7 @@ CONTAINS
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE tag_x0
+  SUBROUTINE mecca_tag_x0
   
     IMPLICIT NONE
 
@@ -52,13 +52,13 @@ CONTAINS
     print *,'tag_x0: passed'
 #endif 
 
-  END SUBROUTINE tag_x0
+  END SUBROUTINE mecca_tag_x0
 
 
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE tag_emis
+  SUBROUTINE mecca_tag_emis
  
     IMPLICIT NONE
     
@@ -73,27 +73,26 @@ CONTAINS
     print *,'tag_emis: passed'
 #endif 
 
-  END SUBROUTINE tag_emis
+  END SUBROUTINE mecca_tag_emis
 
 
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE tag_process(TSL, nstep, C, press, cair, temp)
+  SUBROUTINE mecca_tag_process(TSL, C, press, cair, temp)
 
     IMPLICIT NONE
 
     ! I/O
-    REAL(dp), INTENT(IN) :: C(:)
+    REAL(dp), INTENT(INOUT) :: C(:)     ! INOUT is required for driver
     REAL(dp), INTENT(IN) :: press
     REAL(dp), INTENT(IN) :: cair
     REAL(dp), INTENT(IN) :: temp
     
     REAL(dp), INTENT(IN) :: TSL
-    INTEGER, INTENT(IN)  :: nstep
 
   ! call the kinetics driver to integrate all the configurations
-    CALL tag_integrate(TSL, nstep, C, press, cair, temp)
+    CALL tag_integrate(TSL, C, press, cair, temp)
 
   ! updating derived values for boxmodel
 ! {$CONF_LIST} [%    CALL #_calctotals(C)\n    CALL #_calcdeltas\n%]
@@ -102,17 +101,17 @@ CONTAINS
     print *,'tag_process: passed'
 #endif 
 
-  END SUBROUTINE tag_process
+  END SUBROUTINE mecca_tag_process
 
 
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE tag_init
+  SUBROUTINE mecca_tag_init
 
     IMPLICIT NONE
 
-    CALL tag_x0
+    CALL mecca_tag_x0
 
 ! {$CONF_LIST} [%    CALL #_init%]
 
@@ -120,13 +119,13 @@ CONTAINS
     print *,'tag_init: passed'
 #endif 
 
-  END SUBROUTINE tag_init
+  END SUBROUTINE mecca_tag_init
 
 
 
 ! -----------------------------------------------------------------------------
 
-  SUBROUTINE tag_result(model_time)
+  SUBROUTINE mecca_tag_result(model_time)
   
     IMPLICIT NONE
     
@@ -138,16 +137,13 @@ CONTAINS
     print *,'tag_result: passed'
 #endif 
 
-  ! initializing passive tracers
-    CALL tag_resetPTs(C)
-
-  END SUBROUTINE tag_result
+  END SUBROUTINE mecca_tag_result
 
 
 
 ! ---------------------------------------------------------------------------
 
-  SUBROUTINE tag_finish
+  SUBROUTINE mecca_tag_finish
 
 ! {$CONF_LIST} [%    CALL #_finish%]
 
@@ -155,7 +151,7 @@ CONTAINS
     print *,'tag_finish: passed'
 #endif 
 
-  END SUBROUTINE tag_finish
+  END SUBROUTINE mecca_tag_finish
 
 
 

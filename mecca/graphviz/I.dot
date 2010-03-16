@@ -10,5 +10,60 @@ subgraph species {
 node[shape=oval,
   color=yellow,
   style="filled"];
+C3H7I
+CH2ClI
+CH2I2
+CH3I
+HI
+HIO3
+HOI
+I
+I2
+IBr
+ICl
+INO2
+INO3
+IO
+OIO
 }
+C3H7I -> I [label = "OH (G8400)"];
+C3H7I -> I [label = "hv (J8402)"];
+CH2ClI -> I [label = "hv (J8403)"];
+CH2I2 -> I [label = "hv (J8400)"];
+CH3I -> I [label = "hv (J8401)"];
+CH3I -> IO [label = "NO3 (G8402)"];
+HI -> I [label = "OH (G8202)"];
+HOI -> I [label = "hv (J8200)"];
+I -> HI [label = "HO2 (G8200)"];
+I -> INO2 [label = "NO2 (G8300)"];
+I -> IO [label = "BrO (G8700)"];
+I -> IO [label = "NO3 (G8301)"];
+I -> IO [label = "O3 (G8100)"];
+I2 -> HOI [label = "OH (G8204)"];
+I2 -> I [label = "NO3 (G8307)"];
+I2 -> I [label = "OH (G8204)"];
+I2 -> I [label = "hv (J8000)"];
+I2 -> INO3 [label = "NO3 (G8307)"];
+IBr -> I [label = "hv (J8700)"];
+ICl -> I [label = "hv (J8600)"];
+INO2 -> I [label = " (G8305)"];
+INO2 -> I [label = "hv (J8300)"];
+INO3 -> I [label = "hv (J8301)"];
+INO3 -> IO [label = " (G8306)"];
+IO -> HOI [label = "HO2 (G8201)"];
+IO -> I [label = "BrO (G8701)"];
+IO -> I [label = "CH3O2 (G8401)"];
+IO -> I [label = "ClO (G8600)"];
+IO -> I [label = "DMS (G9800)"];
+IO -> I [label = "IO (G8103)"];
+IO -> I [label = "NO (G8302)"];
+IO -> I [label = "hv (J8100)"];
+IO -> ICl [label = "ClO (G8600)"];
+IO -> INO3 [label = "NO2 (G8303)"];
+IO -> OIO [label = "BrO (G8701)"];
+IO -> OIO [label = "CH3O2 (G8401)"];
+IO -> OIO [label = "IO (G8103)"];
+IO -> OIO [label = "NO3 (G8308)"];
+OIO -> HIO3 [label = "OH (G8203)"];
+OIO -> IO [label = "NO (G8304)"];
 }

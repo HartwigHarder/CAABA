@@ -1,0 +1,80 @@
+  ! ----- stepping -----
+
+    steps = 40                          ! # steps 
+    delta = TSL / DBLE(steps)                ! stepping
+    
+  ! ----- setting up jacobians -----
+
+  ! setup without inversion
+
+    CALL prepare_Z(0,TSL)                    ! prepare weights:    type 1 2 3 4 5
+    CALL prepare_J(.FALSE.)                  ! prepare "major jacobian"
+
+  ! filling the minor matrices
+    DO k = 2, NTCISO
+      J(:,:,k) = J(:,:,1)
+    ENDDO
+
+  ! ----- accounting KIE -----
+
+  ! prepairing "minor jacobian(s)"
+
+
+
+
+  ! ----- integration loop -----
+
+  ! preparing major and minor jac. matrices for integration
+
+  ! storing J(s,s) values
+    DO n = 1, NTCSPEC
+      ITAR(n,1:NTCISO) = J(n,n,1:NTCISO)
+    ENDDO
+
+  ! weighting elements to prevent stiffness problems
+!    DO n = 1, NTCSPEC
+ !     DO s = 1, NTCSPEC
+  !      J(n,s,1:NTCISO) = J(n,s,1:NTCISO) / (1.0_dp - delta * ITAR(s,1:NTCISO))
+   !   ENDDO
+    !ENDDO
+
+    DO nok = 1, steps
+
+
+    ! getting the fractions of isotopologues
+      DO n = 1, NTCSPEC
+        tot = SUM(ISOC(n,:))                 ! summing spec 
+        IF (tot .EQ. 0.0_dp) THEN
+          F12C(n) = 0.0_dp; F13C(n) = 0.0_dp
+          tag_IC_NREJCT = tag_IC_NREJCT + 1
+        ELSE
+          F12C(n) = (ISOC(n,1) / tot)
+          F13C(n) = (ISOC(n,2) / tot)
+        ENDIF
+      ENDDO
+
+    ! scaling tracers: molecules to atoms
+    ! abundant
+      ITA(:) = ISOC(:,1)
+      DO k = 2, NTCISO  
+      ! rare
+        ITR(:,k) = ISOC(:,k) / QTCATOM(:)
+      ! abundant in rare
+        ITAR(:,k) = ISOC(:,k) - ITR(:,k)
+      ENDDO
+
+    ! advancing solution
+      ITA(:) = ITA(:) + delta * MATMUL(J(:,:,1),F12C(1:NTCSPEC)*QTCATOM(:))
+
+      DO k = 2, NTCISO
+        ITR(:,k)  = ITR(:,k)  + delta * MATMUL(J(:,:,k),F13C(1:NTCSPEC))
+        ITAR(:,k) = ITAR(:,k) + delta * MATMUL(J(:,:,k),F13C(1:NTCSPEC)*(QTCATOM(:)-1))
+      ENDDO
+
+    ! scaling tracers: atoms to molecules
+    ! abundant  
+      ISOC(:,1) = ITA(:) + SUM(ITAR(:,:),DIM=2) - SUM(ITR(:,:),DIM=2) * (QTCATOM(:)-1)
+    ! rare
+      DO k = 2, NTCISO  
+        ISOC(:,k) = ITR(:,k) * QTCATOM(:)
+      ENDDO

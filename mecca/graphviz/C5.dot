@@ -10,29 +10,222 @@ subgraph species {
 node[shape=oval,
   color=yellow,
   style="filled"];
-ISO2
-ISOOH
-ISOP
+C59O2
+C59OOH
+C5H8
+HCOC5
+ISOPAOH
+ISOPBNO3
+ISOPBO2
+ISOPBOH
+ISOPBOOH
+ISOPDNO3
+ISOPDO2
+ISOPDOH
+ISOPDOOH
+LC578O2
+LC578OOH
+LC5PAN1719
+LHC4ACCHO
+LHC4ACCO2H
+LHC4ACCO3
+LHC4ACCO3H
+LISOPACNO3
+LISOPACO2
+LISOPACOOH
+LNISO3
+LNISOOH
+NC4CHO
+NISOPO2
+NISOPOOH
 }
-ISO2 -> ACETOL [label = "CH3O2 (G4505)"];
-ISO2 -> CH3COCHO [label = "CH3O2 (G4505)"];
-ISO2 -> CH3OH [label = "CH3O2 (G4505)"];
-ISO2 -> HCHO [label = "CH3O2 (G4505)"];
-ISO2 -> HCHO [label = "ISO2 (G4506)"];
-ISO2 -> HCHO [label = "NO (G4504)"];
-ISO2 -> ISOOH [label = "HO2 (G4503)"];
-ISO2 -> MVK [label = "CH3O2 (G4505)"];
-ISO2 -> MVK [label = "ISO2 (G4506)"];
-ISO2 -> MVK [label = "NO (G4504)"];
-ISOOH -> HCHO [label = "hv (J4500)"];
-ISOOH -> MVK [label = "OH (G4507)"];
-ISOOH -> MVK [label = "hv (J4500)"];
-ISOP -> CH3O2 [label = "O3 (G4500)"];
-ISOP -> CO [label = "O3 (G4500)"];
-ISOP -> HCHO [label = "O3 (G4500)"];
-ISOP -> HCOOH [label = "O3 (G4500)"];
-ISOP -> ISO2 [label = "OH (G4501)"];
-ISOP -> MVK [label = "O3 (G4500)"];
-ISOP -> MVKO2 [label = "O3 (G4500)"];
-ISOP -> PA [label = "O3 (G4500)"];
+C59O2 -> ACETOL [label = " (G4561)"];
+C59O2 -> ACETOL [label = "NO (G4563)"];
+C59O2 -> ACETOL [label = "NO3 (G4564)"];
+C59O2 -> C59OOH [label = "HO2 (G4562)"];
+C59O2 -> HOCH2CO3 [label = " (G4561)"];
+C59O2 -> HOCH2CO3 [label = "NO (G4563)"];
+C59O2 -> HOCH2CO3 [label = "NO3 (G4564)"];
+C59OOH -> ACETOL [label = "hv (J4516)"];
+C59OOH -> C59O2 [label = "OH (G4565)"];
+C59OOH -> HOCH2CO3 [label = "hv (J4516)"];
+C5H8 -> C3H6 [label = "O3 (G4500)"];
+C5H8 -> CH3CO3 [label = "O3 (G4500)"];
+C5H8 -> CH3O2 [label = "O3 (G4500)"];
+C5H8 -> CO [label = "O3 (G4500)"];
+C5H8 -> CO2 [label = "O3 (G4500)"];
+C5H8 -> HCHO [label = "O3 (G4500)"];
+C5H8 -> HCOOH [label = "O3 (G4500)"];
+C5H8 -> ISOPBO2 [label = "OH (G4501)"];
+C5H8 -> ISOPDO2 [label = "OH (G4501)"];
+C5H8 -> LHMVKABO2 [label = "O3 (G4500)"];
+C5H8 -> LISOPACO2 [label = "OH (G4501)"];
+C5H8 -> MACO2H [label = "O3 (G4500)"];
+C5H8 -> MACR [label = "O3 (G4500)"];
+C5H8 -> MVK [label = "O3 (G4500)"];
+C5H8 -> NISOPO2 [label = "NO3 (G4509)"];
+HCOC5 -> C59O2 [label = "OH (G4560)"];
+HCOC5 -> CH3CO3 [label = "hv (J4515)"];
+HCOC5 -> HCHO [label = "hv (J4515)"];
+HCOC5 -> HOCH2CO3 [label = "hv (J4515)"];
+ISOPAOH -> LHC4ACCHO [label = "OH (G4515)"];
+ISOPBNO3 -> CH3O2 [label = "hv (J4505)"];
+ISOPBNO3 -> HCHO [label = "OH (G4523)"];
+ISOPBNO3 -> HCHO [label = "hv (J4505)"];
+ISOPBNO3 -> MVK [label = "OH (G4523)"];
+ISOPBNO3 -> MVK [label = "hv (J4505)"];
+ISOPBNO3 -> MVKOH [label = "hv (J4505)"];
+ISOPBO2 -> CH3O2 [label = " (G4517)"];
+ISOPBO2 -> CH3O2 [label = "NO (G4519)"];
+ISOPBO2 -> CH3O2 [label = "NO3 (G4520)"];
+ISOPBO2 -> HCHO [label = " (G4517)"];
+ISOPBO2 -> HCHO [label = "NO (G4519)"];
+ISOPBO2 -> HCHO [label = "NO3 (G4520)"];
+ISOPBO2 -> ISOPBNO3 [label = "NO (G4519)"];
+ISOPBO2 -> ISOPBOH [label = " (G4517)"];
+ISOPBO2 -> ISOPBOOH [label = "HO2 (G4518)"];
+ISOPBO2 -> MVK [label = " (G4517)"];
+ISOPBO2 -> MVK [label = "NO (G4519)"];
+ISOPBO2 -> MVK [label = "NO3 (G4520)"];
+ISOPBO2 -> MVKOH [label = " (G4517)"];
+ISOPBO2 -> MVKOH [label = "NO (G4519)"];
+ISOPBO2 -> MVKOH [label = "NO3 (G4520)"];
+ISOPBOH -> CH3O2 [label = "OH (G4522)"];
+ISOPBOH -> HCHO [label = "OH (G4522)"];
+ISOPBOH -> MVK [label = "OH (G4522)"];
+ISOPBOH -> MVKOH [label = "OH (G4522)"];
+ISOPBOOH -> CH3O2 [label = "hv (J4504)"];
+ISOPBOOH -> HCHO [label = "hv (J4504)"];
+ISOPBOOH -> ISOPBO2 [label = "OH (G4521)"];
+ISOPBOOH -> MVK [label = "hv (J4504)"];
+ISOPBOOH -> MVKOH [label = "hv (J4504)"];
+ISOPDNO3 -> HCHO [label = "hv (J4507)"];
+ISOPDNO3 -> HCOC5 [label = "OH (G4530)"];
+ISOPDNO3 -> MACR [label = "hv (J4507)"];
+ISOPDO2 -> HCHO [label = " (G4524)"];
+ISOPDO2 -> HCHO [label = "NO (G4526)"];
+ISOPDO2 -> HCHO [label = "NO3 (G4527)"];
+ISOPDO2 -> HCOC5 [label = " (G4524)"];
+ISOPDO2 -> ISOPDNO3 [label = "NO (G4526)"];
+ISOPDO2 -> ISOPDOH [label = " (G4524)"];
+ISOPDO2 -> ISOPDOOH [label = "HO2 (G4525)"];
+ISOPDO2 -> MACR [label = " (G4524)"];
+ISOPDO2 -> MACR [label = "NO (G4526)"];
+ISOPDO2 -> MACR [label = "NO3 (G4527)"];
+ISOPDOH -> HCOC5 [label = "OH (G4529)"];
+ISOPDOOH -> HCHO [label = "hv (J4506)"];
+ISOPDOOH -> HCOC5 [label = "OH (G4528)"];
+ISOPDOOH -> MACR [label = "hv (J4506)"];
+LC578O2 -> ACETOL [label = " (G4546)"];
+LC578O2 -> ACETOL [label = "NO (G4548)"];
+LC578O2 -> ACETOL [label = "NO3 (G4549)"];
+LC578O2 -> GLYOX [label = " (G4546)"];
+LC578O2 -> GLYOX [label = "NO (G4548)"];
+LC578O2 -> GLYOX [label = "NO3 (G4549)"];
+LC578O2 -> HOCH2CHO [label = " (G4546)"];
+LC578O2 -> HOCH2CHO [label = "NO (G4548)"];
+LC578O2 -> HOCH2CHO [label = "NO3 (G4549)"];
+LC578O2 -> LC578OOH [label = "HO2 (G4547)"];
+LC578O2 -> MGLYOX [label = " (G4546)"];
+LC578O2 -> MGLYOX [label = "NO (G4548)"];
+LC578O2 -> MGLYOX [label = "NO3 (G4549)"];
+LC578OOH -> ACETOL [label = "hv (J4512)"];
+LC578OOH -> GLYOX [label = "hv (J4512)"];
+LC578OOH -> HOCH2CHO [label = "hv (J4512)"];
+LC578OOH -> LC578O2 [label = "OH (G4550)"];
+LC578OOH -> MGLYOX [label = "hv (J4512)"];
+LC5PAN1719 -> CO [label = "OH (G4559)"];
+LC5PAN1719 -> CO [label = "hv (J4514)"];
+LC5PAN1719 -> HO12CO3C4 [label = "OH (G4559)"];
+LC5PAN1719 -> HO12CO3C4 [label = "hv (J4514)"];
+LC5PAN1719 -> LHC4ACCO3 [label = " (G4558)"];
+LC5PAN1719 -> MACROH [label = "OH (G4559)"];
+LC5PAN1719 -> MACROH [label = "hv (J4514)"];
+LHC4ACCHO -> ACETOL [label = "O3 (G4544)"];
+LHC4ACCHO -> ACETOL [label = "hv (J4511)"];
+LHC4ACCHO -> CH3CO3 [label = "O3 (G4544)"];
+LHC4ACCHO -> CH3CO3 [label = "hv (J4511)"];
+LHC4ACCHO -> CO [label = "O3 (G4544)"];
+LHC4ACCHO -> CO [label = "hv (J4511)"];
+LHC4ACCHO -> GLYOX [label = "O3 (G4544)"];
+LHC4ACCHO -> HCHO [label = "O3 (G4544)"];
+LHC4ACCHO -> HCOCO2H [label = "O3 (G4544)"];
+LHC4ACCHO -> HOCH2CHO [label = "O3 (G4544)"];
+LHC4ACCHO -> HOCH2CHO [label = "hv (J4511)"];
+LHC4ACCHO -> HOCH2CO2H [label = "O3 (G4544)"];
+LHC4ACCHO -> LC578O2 [label = "OH (G4543)"];
+LHC4ACCHO -> LHC4ACCO3 [label = "NO3 (G4545)"];
+LHC4ACCHO -> LHC4ACCO3 [label = "OH (G4543)"];
+LHC4ACCHO -> LHC4ACCO3 [label = "hv (J4511)"];
+LHC4ACCHO -> MGLYOX [label = "O3 (G4544)"];
+LHC4ACCO2H -> ACETOL [label = "OH (G4556)"];
+LHC4ACCO2H -> CH3CO3 [label = "OH (G4556)"];
+LHC4ACCO2H -> CO [label = "OH (G4556)"];
+LHC4ACCO2H -> CO2 [label = "OH (G4556)"];
+LHC4ACCO2H -> HOCH2CHO [label = "OH (G4556)"];
+LHC4ACCO3 -> ACETOL [label = " (G4551)"];
+LHC4ACCO3 -> ACETOL [label = "NO (G4553)"];
+LHC4ACCO3 -> ACETOL [label = "NO3 (G4555)"];
+LHC4ACCO3 -> CH3CO3 [label = " (G4551)"];
+LHC4ACCO3 -> CH3CO3 [label = "NO (G4553)"];
+LHC4ACCO3 -> CH3CO3 [label = "NO3 (G4555)"];
+LHC4ACCO3 -> CO [label = " (G4551)"];
+LHC4ACCO3 -> CO [label = "NO (G4553)"];
+LHC4ACCO3 -> CO [label = "NO3 (G4555)"];
+LHC4ACCO3 -> CO2 [label = " (G4551)"];
+LHC4ACCO3 -> CO2 [label = "NO (G4553)"];
+LHC4ACCO3 -> CO2 [label = "NO3 (G4555)"];
+LHC4ACCO3 -> HOCH2CHO [label = " (G4551)"];
+LHC4ACCO3 -> HOCH2CHO [label = "NO (G4553)"];
+LHC4ACCO3 -> HOCH2CHO [label = "NO3 (G4555)"];
+LHC4ACCO3 -> LC5PAN1719 [label = "NO2 (G4554)"];
+LHC4ACCO3 -> LHC4ACCO2H [label = " (G4551)"];
+LHC4ACCO3 -> LHC4ACCO2H [label = "HO2 (G4552)"];
+LHC4ACCO3 -> LHC4ACCO3H [label = "HO2 (G4552)"];
+LHC4ACCO3H -> ACETOL [label = "hv (J4513)"];
+LHC4ACCO3H -> CH3CO3 [label = "hv (J4513)"];
+LHC4ACCO3H -> CO [label = "hv (J4513)"];
+LHC4ACCO3H -> CO2 [label = "hv (J4513)"];
+LHC4ACCO3H -> HOCH2CHO [label = "hv (J4513)"];
+LHC4ACCO3H -> LHC4ACCO3 [label = "OH (G4557)"];
+LISOPACNO3 -> LHC4ACCHO [label = "OH (G4516)"];
+LISOPACNO3 -> LHC4ACCHO [label = "hv (J4503)"];
+LISOPACO2 -> ISOPAOH [label = " (G4510)"];
+LISOPACO2 -> LHC4ACCHO [label = " (G4510)"];
+LISOPACO2 -> LHC4ACCHO [label = "NO (G4512)"];
+LISOPACO2 -> LHC4ACCHO [label = "NO3 (G4513)"];
+LISOPACO2 -> LISOPACNO3 [label = "NO (G4512)"];
+LISOPACO2 -> LISOPACOOH [label = "HO2 (G4511)"];
+LISOPACOOH -> LHC4ACCHO [label = "OH (G4514)"];
+LISOPACOOH -> LHC4ACCHO [label = "hv (J4502)"];
+LNISO3 -> CO [label = "NO (G4540)"];
+LNISO3 -> CO [label = "NO3 (G4541)"];
+LNISO3 -> CO2 [label = "NO (G4540)"];
+LNISO3 -> CO2 [label = "NO3 (G4541)"];
+LNISO3 -> GLYOX [label = "NO (G4540)"];
+LNISO3 -> GLYOX [label = "NO3 (G4541)"];
+LNISO3 -> LNISOOH [label = "HO2 (G4539)"];
+LNISO3 -> NOA [label = "NO (G4540)"];
+LNISO3 -> NOA [label = "NO3 (G4541)"];
+LNISOOH -> CO [label = "hv (J4510)"];
+LNISOOH -> CO2 [label = "hv (J4510)"];
+LNISOOH -> GLYOX [label = "hv (J4510)"];
+LNISOOH -> LNISO3 [label = "OH (G4542)"];
+LNISOOH -> NOA [label = "hv (J4510)"];
+NC4CHO -> CO [label = "O3 (G4537)"];
+NC4CHO -> CO [label = "hv (J4509)"];
+NC4CHO -> GLYOX [label = "O3 (G4537)"];
+NC4CHO -> HCOCO2H [label = "O3 (G4537)"];
+NC4CHO -> LNISO3 [label = "NO3 (G4538)"];
+NC4CHO -> LNISO3 [label = "OH (G4536)"];
+NC4CHO -> MGLYOX [label = "O3 (G4537)"];
+NC4CHO -> NOA [label = "O3 (G4537)"];
+NC4CHO -> NOA [label = "hv (J4509)"];
+NISOPO2 -> LISOPACNO3 [label = " (G4531)"];
+NISOPO2 -> NC4CHO [label = " (G4531)"];
+NISOPO2 -> NC4CHO [label = "NO (G4533)"];
+NISOPO2 -> NC4CHO [label = "NO3 (G4534)"];
+NISOPO2 -> NISOPOOH [label = "HO2 (G4532)"];
+NISOPOOH -> NC4CHO [label = "OH (G4535)"];
+NISOPOOH -> NC4CHO [label = "hv (J4508)"];
 }

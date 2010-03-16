@@ -20,7 +20,8 @@
 
 MODULE {%CMODEL}_tag_common
 
-  USE messy_mecca_kpp ! dp, nreact, nspec, ind_*, ...
+! USE messy_mecca_kpp, RRCONST => RCONST ! dp, nreact, nspec, ind_*, ...
+  USE messy_mecca_kpp_parameters
 
   IMPLICIT NONE
 
@@ -83,7 +84,7 @@ CONTAINS
     REAL(dp), INTENT(IN) :: major, minor
     INTEGER,  INTENT(IN) :: atoms
 
-    isoR2m = minor / maj2iso(major,minor,atoms)
+    isoR2m = safediv(minor, maj2iso(major,minor,atoms))
 
   END FUNCTION isoR2m
 
@@ -97,7 +98,7 @@ CONTAINS
     REAL(dp), INTENT(IN) :: major, minor_cur, minor_oth
     INTEGER,  INTENT(IN) :: atoms
 
-    isoR3m = minor_cur / maj3iso(major,minor_cur,minor_oth,atoms)
+    isoR3m = safediv(minor_cur, maj3iso(major,minor_cur,minor_oth,atoms))
 
   END FUNCTION isoR3m
 
@@ -232,6 +233,18 @@ CONTAINS
     kierate = 1.0_dp / (eps + 1.0_dp)
   END FUNCTION kierate
 
+! -----------------------------------------------------------------------------
+
+  ELEMENTAL REAL(dp) FUNCTION safediv(what,by)
+    ! safe division which gives zero when division by zero is performed
+    REAL(dp), INTENT(IN) :: what, by   ! operands
+    IF (by .EQ. 0.0_dp) THEN
+      safediv = 0.0_dp
+    ELSE
+      safediv = what/by
+    ENDIF
+  END FUNCTION safediv
+
 ! ==============================================================================
 
   SUBROUTINE tag_flow_calc(C, TSL)
@@ -239,7 +252,8 @@ CONTAINS
     IMPLICIT NONE
 
   ! I/O
-    REAL(dp), INTENT(IN) :: C(:), TSL
+    REAL(dp), INTENT(INOUT) :: C(:)
+    REAL(dp), INTENT(IN)    :: TSL
   
 ->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>CASE:REMARK}
 ! remark on use of FLOW_CALC directive:
@@ -250,7 +264,7 @@ CONTAINS
 ! 
 ! ex.: 
 ! {$FLOW_CALC}  [%C(ind_PT#)%]
-! {$FLOW_CALC}  [A(TRPT{%ATOM}IND($,2))%]
+! {$FLOW_CALC}  [%A(TRPT{%ATOM}IND($,2))%]
 -<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<CASE:REMARK}
 ! {$FLOW_CALC}  [%C(ind_{%PT})%] INT
 

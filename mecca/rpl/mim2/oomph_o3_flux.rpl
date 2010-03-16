@@ -1,0 +1,8 @@
+// -*- kpp -*- kpp mode for emacs
+// see gas.rpl-example for more information about *.rpl files
+
+// Author: Hartwig Harder
+
+#REPLACE <>
+   <EMI0001> UNITY = O3 : {%TrG} 75.0;
+#ENDREPLACE 

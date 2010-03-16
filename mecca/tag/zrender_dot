@@ -1,0 +1,36 @@
+#! /bin/tcsh -f
+#
+# S. Gromov, MPI-C, 2007
+# script to produce a PS (with necessary adjustments for following PDF) from GraphViz DOT
+#
+
+set dot = "~/soft/graphviz/bin/dot"
+echo "dot location is: "$dot
+
+set otype = "ps2"
+
+if ("$otype" == "ps2") then
+  set oext="ps"
+else 
+  set oext="$otype"
+endif
+
+# rendering graphviz sketches to ps
+# assuming $1 is dotfile
+
+foreach dotfile (` /bin/ls *.dot` ) 
+ echo "rendering $dotfile..."
+ $dot -T$otype -Gsplines=true -Goverlap=false -Eweight=5.0 -Gmindist=10.0 -Elen=10.0 -O $dotfile
+end
+
+foreach psfile (` /bin/ls *.ps*` )
+ ./zsub $psfile AgencyR AgencyFB-Reg
+ ./zsub $psfile "/bold { 2 setlinewidth }" "/bold { 5 setlinewidth }"
+ # following lines are to make concetrate edges bold
+ ./zsub $psfile  "/solid" "/sol+id"
+ ./zsub $psfile "solid" "bold"
+ ./zsub $psfile "/sol+id" "/solid"
+
+ ps2ps $psfile
+ ps2pdf $psfile
+end

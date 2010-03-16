@@ -245,10 +245,10 @@ CONTAINS
       TCC(i) = SUM( C(RDIND(:,i)) )
     ENDDO
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ABBR:O3F}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ABBR:O3F}
     C(ind_O3F_N_T) = TCC(1)
     C(ind_O3F_Z_T) = TCC(2)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ABBR:O3F}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ABBR:O3F}
 
   END SUBROUTINE {%DBL}_calctotals
 
@@ -361,7 +361,7 @@ CONTAINS
 
 ! TODO: put additional tracers/variables+units after INIT_TRAC, INIT_UNIT
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ABBR:O3F}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ABBR:O3F}
     CALL open_output_file(ncid_{%DBL}, 'caaba_mecca_{%DBL}', &
       (/   &
 ! {$TAG_SPECS} [%fO3_#%]
@@ -385,7 +385,7 @@ CONTAINS
        , &
 {$ELSA}       '@SRnumber of rejected species' &
        /) )
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ABBR:O3F}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ABBR:O3F}
 
   END SUBROUTINE {%DBL}_init
 
@@ -403,7 +403,7 @@ CONTAINS
   ! last value is a common parameter
     DOUT(UBOUND(DOUT)) = REAL({%DBL}_NREJCT)
     
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ABBR:O3F}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ABBR:O3F}
 ! output array: minor fractions (+total's fractions),
 !               total concentrations (+regular) + NREJCT
     DO i = 2, {%NCLASS}
@@ -419,7 +419,7 @@ CONTAINS
     DOUT(({%NSPEC})*({%NCLASS}-1)+{%NCLASS}+{%NCLASS}+1) = C(ind_{%ABBR}T{%A})
     
     CALL write_output_file(ncid_{%DBL}, model_time, D{%A}OUT)
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
 
   END SUBROUTINE {%DBL}_result
 
@@ -429,9 +429,9 @@ CONTAINS
 
   SUBROUTINE {%DBL}_finish
 
-->>- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {>ABBR:O3F}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ABBR:O3F}
     CALL close_file(ncid_{%DBL})
--<<- תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת {<ATOM:C}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
 
   END SUBROUTINE {%DBL}_finish
 
