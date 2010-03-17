@@ -1,5 +1,5 @@
 {This file was created automatically by xmecca, DO NOT EDIT!}
-{xmecca was run on 2010-03-16 at 16:04:22 by sander}
+{xmecca was run on 2010-03-17 at 16:34:35 by caaba}
 {***** START: gas-phase species from gas.spc *****}
 #INCLUDE atoms
 

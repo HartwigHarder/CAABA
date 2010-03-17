@@ -186,8 +186,8 @@ CONTAINS
     ! must be consistent with mecca_physc!
     !mz_hr_20080226+
     ! using relhum = (mixing ratio H2O)/(sat. mixing ratio H2O): WMO def.
-    c(ind_H2O) = cair * relhum * psatf(temp) / &
-      (press + (relhum-1.) * psatf(temp))
+    ! c(ind_H2O) = cair * relhum * psatf(temp) / &
+    !  (press + (relhum-1.) * psatf(temp))
     ! using relhum = p(H2O)/ps(H2O):
     !c(ind_H2O) = cair * relhum * psat(temp) / press
     !mz_hr_20080226-
@@ -739,7 +739,9 @@ CONTAINS
     SUBROUTINE x0_free_trop
       IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
       IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
-      !qqq todo: values from Heiko?
+	  IF (ind_CO2      /= 0) c(ind_CO2)     = 350.E-06 * cair
+	  IF (ind_CH4      /= 0) c(ind_CH4)     =  1.8E-06 * cair
+	  IF (ind_H2       /= 0) c(ind_H2)      =  0.6E-06 * cair
       PRINT *, 'ERROR: Enter values for free troposphere in x0_free_trop' !qqq
       STOP
     END SUBROUTINE x0_free_trop
@@ -1099,8 +1101,8 @@ CONTAINS
     !mz_hr_20080226+
     ! must be consistent with mecca_init!
     ! WMO relhum + function for psat
-    c(ind_H2O) = cair * relhum * psatf(temp) / &
-      (press + (relhum-1.) * psatf(temp))
+    !c(ind_H2O) = cair * relhum * psatf(temp) / &
+    !  (press + (relhum-1.) * psatf(temp))
     ! traditional relhum + series for psat
     !c(ind_H2O) = cair * relhum * psat(temp) / press
     !mz_hr_20080226-

@@ -42,7 +42,7 @@ photo_scenario    = 'FREE_TROP'
 !init_j = '/home/sander/tmp/readj_input.nc'
 !init_j_index = 25
 
-!l_steady_state_stop = T    ! stop caaba when steady state is reached?
+l_steady_state_stop = T    ! stop caaba when steady state is reached?
 
 !l_skipkpp = T    ! skip call to kpp chemistry integration
 
