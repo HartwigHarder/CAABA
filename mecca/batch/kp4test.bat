@@ -4,7 +4,7 @@
 # when it is run in batch mode (i.e. not interactive).
 
  set apn          = 2                 # number of aerosol phases [0...99, default=0]
- set gaseqnfile   = gas_mim2.eqn
+ set gaseqnfile   = gas.eqn
 #set rplfile      =                   # no replacements
  set rplfile      = mbl               # replacement file
  set wanted       = "Tr && (G || (Aa && Mbl)) && \!I && \!Hg" # 17) Minimum MBL-chem, no I

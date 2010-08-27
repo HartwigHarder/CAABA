@@ -52,14 +52,15 @@
   \end{tabular}\\[2mm]
   Number of reactions in selected mechanism:\\
   \begin{tabular}{lr}
-    Gas phase (Gnnn):       & \Geqns\\
-    Aqueous phase (Annn):   & \Aeqns\\
-    Henry (Hnnn):           & \Heqns\\
-    Photolysis (Jnnn):      & \Jeqns\\
-    Heterogeneous (HETnnn): & \HETeqns\\
-    Equilibria (EQnn):      & \EQeqns\\
-    Dummy (Dnn):            & \Deqns\\
-    All equations:          & \alleqns
+    Gas phase (Gnnn):         & \Geqns\\
+    Aqueous phase (Annn):     & \Aeqns\\
+    Henry (Hnnn):             & \Heqns\\
+    Photolysis (Jnnn):        & \Jeqns\\
+    Heterogeneous (HETnnn):   & \HETeqns\\
+    Equilibria (EQnn):        & \EQeqns\\
+    Isotope exchange (IEXnnn):& \IEXeqns\\
+    Dummy (Dnn):              & \Deqns\\
+    All equations:            & \alleqns
   \end{tabular}\\[30mm]
   Further information can be found in the article ``Technical Note: The
   new comprehensive atmospheric chemistry module MECCA'' by R.\ Sander
@@ -212,11 +213,11 @@ parameters as \code{k_3rd} and it is defined as:
 \note{G4304}{The value for the generic \chem{RO_2} + \chem{HO_2}
   reaction from \citet{964} is used here.}
 
-\note{G4306}{The MCM products are 0.2 IPROPOL + 0.2 \kpp{CH3COCH3} + 0.6
-  IC3H7O. IPROPOL and IC3H7O are substituted with their degradation
-  products. We assume IPROPOL to be oxidized entirely to \kpp{CH3COCH3}
-  + \kpp{HO2} by \kpp{OH}. IC3H7O + \kpp{O2} produces the same
-  products.}
+\note{G4306}{The MCM \citep{2419} products are 0.2 IPROPOL + 0.2
+  \kpp{CH3COCH3} + 0.6 IC3H7O. IPROPOL and IC3H7O are substituted with
+  their degradation products. We assume IPROPOL to be oxidized entirely
+  to \kpp{CH3COCH3} + \kpp{HO2} by \kpp{OH}. IC3H7O + \kpp{O2} produces
+  the same products.}
  
 \note{G4307}{Analogous to G4207 for both rate coefficient and branching
   ratios.}
@@ -286,7 +287,7 @@ parameters as \code{k_3rd} and it is defined as:
 
 \note{G4437}{\kpp{LHMVKABO2} is a lumped species of virtual composition
   0.3 HMVKAO2 + 0.7 HMVKBO2. The products are the weighted average for
-  the permutation reactions of each single MCM RO2.}
+  the permutation reactions of each single RO2 in the MCM \citep{2419}.}
 
 \note{G4439}{products are the weighted average for the decomposition of
   0.3 HMVKAO + 0.7 HMVKBO.}
@@ -298,7 +299,7 @@ parameters as \code{k_3rd} and it is defined as:
 
 \note{G4444}{\kpp{LMVKOHABO2} is a lumped species of virtual composition
   0.3 MVKOHAO2 + 0.7 MVKOHBO2. The products are the weighted average for
-  the permutation reactions of each single MCM RO2.}
+  the permutation reactions of each single RO2 in the MCM \citep{2419}.}
 
 \note{G4446}{products are the weighted average for the decomposition of
   0.3 MVKOHAO + 0.7 MVKOHBO.}
@@ -330,13 +331,19 @@ parameters as \code{k_3rd} and it is defined as:
 \note{G6407}{Rough extrapolation from reactions with \chem{CH_3CF_3},
   \chem{CH_3CClF_2}, and \chem{CH_3CCl_2F} from \citet{1945}.}
 
-\note{G7302}{The rate coefficient is: \code{k_BrO_NO2} =
-  \code{k_3rd(temp,cair,5.2E-31,3.2,6.9E-12,2.9,0.6)}.}
+\note{G6409}{It is assumed that the reaction liberates all \kpp{Cl}
+  atoms in the form of \kpp{HCl}.}
 
 % Br
 
+\note{G7302}{The rate coefficient is: \code{k_BrO_NO2} =
+  \code{k_3rd(temp,cair,5.2E-31,3.2,6.9E-12,2.9,0.6)}.}
+
 \note{G7303}{The rate coefficient is defined as backward reaction
   \citep{1845} divided by equilibrium constant \citep{1054}.}
+
+\note{G7404}{It is assumed that the reaction liberates all \kpp{Br}
+  atoms in the form of \kpp{HBr}.}
 
 \note{G7407}{It is assumed that the reaction liberates all \kpp{Br}
   atoms. The fate of the carbon atom is currently not considered.}
@@ -435,7 +442,77 @@ parameters as \code{k_3rd} and it is defined as:
 $^*$Notes:
 
 J-values are calculated with an external module and then supplied to the
-MECCA chemistry
+MECCA chemistry. 
+
+Values that originate from the Master Chemical Mechanism (MCM) by
+\citet{2419} are translated according in the following way:\\
+J(11)             $\rightarrow$ \code{jx(ip_COH2)}     \\
+J(12)             $\rightarrow$ \code{jx(ip_CHOH)}     \\
+J(15)             $\rightarrow$ \code{jx(ip_HOCH2CHO)} \\
+J(18)             $\rightarrow$ \code{jx(ip_MACR)}     \\
+J(22)             $\rightarrow$ \code{jx(ip_ACETOL)}   \\
+J(23)+J(24)       $\rightarrow$ \code{jx(ip_MVK)}      \\
+J(31)+J(32)+J(33) $\rightarrow$ \code{jx(ip_GLYOX)}    \\
+J(34)             $\rightarrow$ \code{jx(ip_MGLYOX)}   \\
+J(41)             $\rightarrow$ \code{jx(ip_CH3OOH)}   \\
+J(53)             $\rightarrow$ J(\kpp{IC3H7NO3})      \\
+J(54)             $\rightarrow$ J(\kpp{IC3H7NO3})      \\
+J(55)             $\rightarrow$ J(\kpp{IC3H7NO3})      \\
+J(56)+J(57)       $\rightarrow$ \code{jx(ip_NOA)}
+
+\note{J4207}{It is assumed that J(\kpp{PHAN}) is the same as J(\kpp{PAN}).}
+
+\note{J4212}{It is assumed that J(\kpp{ETHOHNO3}) is the same as
+  J(\kpp{IC3H7NO3}).}
+
+\note{J4302}{Following \citet{1584}, we use J(\kpp{ACETOL}) =
+  \code{0.11*jx(ip_CHOH)}. As an additional factor, the quantum yield of
+  0.65 is taken from \citet{2510}.}
+
+\note{J4306}{Following \citet{1584}, we use J(\kpp{IC3H7NO3}) =
+  \code{3.7*jx(ip_PAN)}.}
+
+\note{J4307}{\kpp{NOA} contains the cromophores of both \kpp{CH3COCH3}
+  and a nitrate group. It is assumed here that the J values are
+  additive, i.e.: J(\kpp{NOA}) = J(\kpp{CH3COCH3}) + J(\kpp{IC3H7NO3}).}
+
+\note{J4406}{It is assumed that J(\kpp{LC4H9NO3}) is the same as
+  J(\kpp{IC3H7NO3}).}
+
+\note{J4407}{It is assumed that J(\kpp{MPAN}) is the same as J(\kpp{PAN}).}
+
+\note{J4405}{It is assumed that J(\kpp{BIACET}) is 2.15 times larger
+  than J(\kpp{MGLYOX}), consistent with the photolysis rate coefficients
+  used in the MCM \citep{2419}.}
+
+\note{J4413}{It is assumed that J(\kpp{MACROOH}) is 2.77 times larger
+  than J(\kpp{HOCH2CHO}), consistent with the photolysis rate
+  coefficients used in the MCM \citep{2419}.}
+
+\note{J4414}{It is assumed that J(\kpp{MACROH}) is 2.77 times larger
+  than J(\kpp{HOCH2CHO}), consistent with the photolysis rate
+  coefficients used in the MCM \citep{2419}.}
+
+\note{J4420}{It is assumed that J(\kpp{BIACETOH}) is 2.15 times larger
+  than J(\kpp{MGLYOX}), consistent with the photolysis rate coefficients
+  used in the MCM \citep{2419}.}
+
+\note{J4503}{It is assumed that J(\kpp{LISOPACNO3}) = 0.59 $\times$
+  J(\kpp{IC3H7NO3}), consistent with the photolysis rate coefficients
+  used in the MCM \citep{2419}.}
+
+\note{J4505}{It is assumed that J(\kpp{ISOPBNO3}) = 2.84 $\times$
+  J(\kpp{IC3H7NO3}), consistent with the photolysis rate coefficients
+  used in the MCM \citep{2419}.}
+
+\note{J4509}{It is assumed that J(\kpp{NC4CHO}) is the same as
+  J(\kpp{MACR}).}
+
+\note{J4514}{It is assumed that J(\kpp{LC5PAN1719}) is the same as
+  J(\kpp{PAN}).}
+
+\note{J4515}{Consistent with the MCM \citep{2419}, we assume that
+  J(\kpp{HCOC5}) is half as large as J(\kpp{MVK}).}
 
 \note{J6100}{\citet{1741} claim that the combination of absorption cross
   sections from \citet{1746} and the \chem{Cl_2O_2} formation rate
@@ -544,6 +621,10 @@ reference\\
 
 \begin{multicols}{3}
 $^*$Notes:
+
+If no data are available, the following default values are used:\\
+$\alpha^{\ominus}$~= 0.1\\
+$-\Delta_{\rm obs}H/R$~= 0 K
 
 The temperature dependence of the accommodation coefficients is given by
 \citep{155}:
@@ -695,18 +776,19 @@ $k_{\rm mt}$ = mass transfer coefficient
 $\rm lwc$ = liquid water content of aerosol mode
 
 H3201, H6300, H6301, H6302, H7300, H7301, H7302, H7601, H7602: For
-uptake of $X$ (= \chem{N_2O_5}, \chem{ClNO_3}, \chem{BrNO_3}) and
+uptake of X (X = \chem{N_2O_5}, \chem{ClNO_3}, or \chem{BrNO_3}) and
 subsequent reaction with \chem{H_2O}, \chem{Cl^-}, and \chem{Br^-}, we
-define $k_{\rm exf}(X) = k_{\rm mt}(X)\times lwc / ( [H_2O] + 5.0E2
-[Cl^-] + 3.0E5 [Br^-] )$.
-
-H6301, H6302, H7601: The total uptake is determined by $k_{\rm
-  mt}(\chem{ClNO_3})$. The relative rates are assumed to be the same as
-for \chem{N_2O_5} (H3201, H6300, H7300).
-
-H7301, H7302, H7602: The total uptake is determined by $k_{\rm
-  mt}(\chem{BrNO_3})$. The relative rates are assumed to be the same as
-for \chem{N_2O_5} (H3201, H6300, H7300).
+define:
+$$k_{\rm exf}(\chem{X}) = \frac{k_{\rm mt}(\chem{X})\times {\rm LWC}}
+{[\chem{H_2O}] + 5\E2 [\chem{Cl^-}] + 3\E5 [\chem{Br^-}]}$$
+The total uptake rate of X is only determined by $k_{\rm mt}$. The
+factors only affect the branching between hydrolysis and the halide
+reactions. The factor 5\E2 was chosen such that the chloride reaction
+dominates over hydrolysis at about [\chem{Cl^-}] $>$~0.1~\unit{M} (see
+Fig.~3 in \citet{536}), i.e.\ when the ratio [\chem{H_2O}]/[\chem{Cl^-}]
+is less than 5\E2. The ratio 5\E2/3\E5 was chosen such that the
+reactions with chloride and bromide are roughly equal for sea water
+composition \citep{358}.
 
 \end{multicols}
 

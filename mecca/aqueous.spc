@@ -75,6 +75,7 @@
 
  SO2_a##        = IGNORE; {@SO_2\aq}         {sulfur dioxide}
  H2SO4_a##      = IGNORE; {@H_2SO_4\aq}      {sulfuric acid}
+ DMS_a##        = IGNORE; {@DMS\aq}          {dimethyl sulfide: CH3SCH3}
  DMSO_a##       = IGNORE; {@DMSO\aq}         {dimethyl sulfoxide: CH3SOCH3}
 
 {------------------------------------- Hg ------------------------------------}

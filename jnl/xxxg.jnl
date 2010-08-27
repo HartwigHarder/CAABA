@@ -54,7 +54,7 @@ SAY unit = [($unit)]
 LET factor = conv
 
 ! SET verbosity (higher values of v produce more plots)
-LET v = 5
+LET v = 1
 
 !-------------------------------------------------------------------------------
 
@@ -269,9 +269,9 @@ IF `v GE 1` THEN GO _plot_($dim) HgCl
 IF `v GE 1` THEN GO _plot_($dim) HgCl2
 IF `v GE 1` THEN GO _plot_($dim) HgBr
 IF `v GE 1` THEN GO _plot_($dim) HgBr2
-IF `v GE 1` THEN Go _plot_($dim) ClHgBr
-IF `v GE 1` THEN Go _plot_($dim) BrHgOBr
-IF `v GE 1` THEN Go _plot_($dim) ClHgOBr
+IF `v GE 1` THEN GO _plot_($dim) ClHgBr
+IF `v GE 1` THEN GO _plot_($dim) BrHgOBr
+IF `v GE 1` THEN GO _plot_($dim) ClHgOBr
 
 GO exitviewport
 

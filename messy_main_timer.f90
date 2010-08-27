@@ -863,7 +863,7 @@ CONTAINS
 
       ! I/O
       INTEGER, INTENT(OUT) :: year, month, day, hrs, mins, secs
-      REAL(dp)             :: jdate
+      REAL(dp), INTENT(IN) :: jdate
 
       ! LOCAL
       INTEGER, PARAMETER :: IGREG = 2299161

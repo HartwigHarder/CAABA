@@ -2,22 +2,26 @@
   splines=true;
   overlap=false;
   normalize=true;
-  // concentrate=true;
-  // ordering = out;
+//concentrate=true;
+//ordering = out;
 
   rankdir = LR;
+//rankdir = TB;
   ranksep = "1.0 equally";
 
   size = "7,11"; 
-  // size = "40,80";
-  // ratio = fill;
+//size = "40,80";
+//ratio = fill;
 
   //orientation = landscape;
   margin = ".1";
 
   // label: (each label line should be <= of 70 chars! - otherwise a postscript error is possible)
-  fontsize = 40; fontname=AgencyR; fontcolor=white;
+  fontsize = 40;
+  fontcolor=white;
+  fontname=SimplexTH;
+//fontname = AgencyR;
 
-  node [fontname=AgencyR, fontsize=55, shape=ellipse, style="bold, filled"];
-  edge [fontname=AgencyR, fontsize=50, style=bold, arrowhead=normal, arrowsize=2];
+  node [fontname=SimplexTH, fontsize=55, shape=ellipse, style="bold, filled"];
+  edge [fontname=SimplexTH, fontsize=50, style=bold, arrowhead=normal, arrowsize=2];
 

@@ -1,11 +1,12 @@
 // en FPC v>=2.0.0
 
 // = imdouble.pas ====================================================
+// (isotopic) mechanism doubling tool
 //
 // im-double main source module
 // requires: all is done through imcom.inc
 //
-// [Gromov, MPIC, 2007-2008]
+// [S. Gromov, MPIC, 2007-2009]
 // ===================================================================
 
 program imdouble;
@@ -19,14 +20,23 @@ program imdouble;
 
 {$DEFINE xUSE_PT}          // using passive tracers, may be OFF
 
-{$DEFINE USE_PT_KIE}      // defines whether to add PTs to all
+{$DEFINE xUSE_PT_KIE}      // defines whether to add PTs to all
                           // KIE-reactions (for monitoring)
 
 {$DEFINE USE_KRSIND}      // defines whether to output the list of
                           // KIE-related specs indices (for correction)
 
+{$DEFINE noPRECISE_FRACISO_IEX}  // defines whether to treat IEX in case of "fractional" isotopologue
+                                 // (i.e. 1 class) very carefully (i.e. weighting of reaction rate to regular-minor)
+
 {$DEFINE USE_DKRATE}      // defines whether to put reaction rates in the eqn header as a
                           // separate variables and use them in multiple doubled reactions
+
+{$DEFINE IEX_ONWARD_RATES}  // defines whether isotope exchange rates are given as onward for the
+                            // first reactant, or referred to the regular reaction (affects the rate coefficient)
+
+{$DEFINE noIEX_REGREF}    // defines whether to enable created regular reactions as a reference
+                          // for the isotope exchange reactions
 
 // -----------------------------------------------------------------
 
@@ -39,11 +49,15 @@ program imdouble;
 
 {$IFDEF USE_DKRATE}
 const prev_ptracs_intr : ansistring = ''; // previous value of ptracs_intr
-      dkratesyntax = 'dbl_k#';
+      dkratesyntax = 'dbl_k@';            // naming of vars for duped r.rate coeffs
 {$ENDIF}
 
+const dsrcsubsyntax = 'dbl_src_f@';       // naming of vars for source substit. fracs
+
+const stoiformat = '0.0######';
+
 // main doubling routine
-procedure doubleit(fname : string; nconf : integer);
+procedure doubleit(fname : string);
 
 function giveiso(spec : string; no : integer) : string;
 var n : integer;
@@ -73,33 +87,57 @@ begin
 // making the list of all "source" species used in source specification
 _srcspecs:=0;
 fillchar(srcspecs,sizeof(srcspecs),0);
-for i:=1 to _src do
-    for j:=1 to src[i]._trans do
+for i:=1 to _eqs do
+    if ((eqs[i].itag) and (eqs[i].isrc)) then
+    for j:=1 to src[eqs[i].nsrc]._trans do
         begin
-        gotcha:=false;
+        gotcha:=false;              // checking if a spec in the list already
         for k:=1 to _srcspecs do
-            if (src[i].trans[j].src=srcspecs[k]) then gotcha:=true;
-        if (not(gotcha) and is_usedspec(src[i].trans[j].src)) then
+            if (src[eqs[i].nsrc].trans[j].src=srcspecs[k]) then gotcha:=true;
+        if (not(gotcha) and is_usedspec(src[eqs[i].nsrc].trans[j].src)) and
+           ((src[eqs[i].nsrc].trans[j].src<>eqs[i].educ[1]) and   // if the source is on the lef side of eq, no fraction calc is needed
+            (src[eqs[i].nsrc].trans[j].src<>eqs[i].educ[2])) then
            begin
            inc(_srcspecs);
-           srcspecs[_srcspecs]:=src[i].trans[j].src;
+           srcspecs[_srcspecs]:=src[eqs[i].nsrc].trans[j].src;
            end;
         end;
 
-writeln(f,'{-------------- [imdouble] - inline code: start ------------------------------}');
+{$IFDEF PRECISE_FRACISO_IEX}
+// source species for IEX for "fractional" isotopologues
+if not(_isos>1) then
+   for i:=1 to _eqs do
+       if ((eqs[i].itag) and (eqs[i].iiex)) then
+         with iex[eqs[i].niex] do
+          for j:=1 to 2 do
+              begin
+              gotcha:=false;              // checking if a spec in the list already
+              for k:=1 to _srcspecs do
+                  if (tsl[exspec[j]].spec=srcspecs[k]) then gotcha:=true;
+              if (not(gotcha) and is_usedspec(tsl[exspec[j]].spec)) then
+                 begin
+                 inc(_srcspecs);
+                 srcspecs[_srcspecs]:=tsl[exspec[j]].spec;
+                 end;
+              end;
+{$ENDIF}
+
+// in case we've nothing to add
+if (_srcspecs=0) then exit;
 
 // GLOBAL part
 writeln(f,'#INLINE F90_GLOBAL');
+writeln(f,'! ---------------- [',tagname,'] - inline code ----------------');
 writeln(f,'! reaction rates modifiers according to the specified source isotopic composition');
-if (nconf=1) then      // adding only once !
-   writeln(f,'  REAL(dp) :: src_temp                 ! variable used for fractions calculation');
+
+writeln(f,'  REAL(dp) :: dbl_src_temp           ! variable used for fractions calculation');
 
 for i:=1 to _srcspecs do
     begin
-//       writeln(f,'! '+src[i].spec+' isotopologues fractions');
+//       writeln(f,'! '+src[i].spec+' isotopologue fractions');
     a:='  REAL(dp) :: ';
     for j:=1 to _isos do
-        a:=a+'src_'+srcspecs[i]+'_f'+tagabbr+clsname[j]+isoatom+', ';
+        a:=a+substr(dsrcsubsyntax,'@',clsname[j]+srcspecs[i])+', ';
     setlength(a,length(a)-2);
     writeln(f,wrap(a,2,4));
     end;
@@ -107,45 +145,35 @@ writeln(f,'#ENDINLINE');
 
 // RCONST part
 writeln(f,'#INLINE F90_RCONST');
-writeln(f,'! calculation of the isotopologues fractions');
+writeln(f,'! ---------------- [',tagname,'] - inline code ----------------');
+writeln(f,'! calculation of the isotopologue fractions');
 //writeln(f,'!');
 
 for i:=1 to _srcspecs do
     begin
     // total composition
     a:='(';
-    for j:=1 to _isos do
-        a:=a+'C(ind_'+tagabbr+clsname[j]+srcspecs[i]+')+';
+    if (_isos>1) then
+       for j:=1 to _isos do
+           a+='C('+substr(sisyntax,'@',clsname[j]+srcspecs[i])+')+'            // substr(sisyntax,'@',clsname[j]+srcspecs[i]) should be replaced with isos[]
+    else
+        a+='C(ind_'+srcspecs[i]+')+';
     setlength(a,length(a)-1);
-    a:=a+')';
-    writeln(f,'  src_temp = ',a);
-    writeln(f,'  IF (src_temp .GT. 0.0_dp) THEN');
+    a+=')';
+    if not(_isos>1) then
+       a+='       ! <!> warn: 1 class used, thus weighting to regular ';
+    writeln(f,'  dbl_src_temp = ',a);
+    writeln(f,'  IF (dbl_src_temp .GT. 0.0_dp) THEN');
     for j:=1 to _isos do
-        writeln(f,'    src_'+srcspecs[i]+'_f'+tagabbr+clsname[j]+isoatom+' = ',
-                    'C(ind_'+tagabbr+clsname[j]+srcspecs[i]+') / src_temp');
+        writeln(f,'    '+substr(dsrcsubsyntax,'@',clsname[j]+srcspecs[i])+' = ',
+                    'C(ind_'+clsname[j]+srcspecs[i]+') / dbl_src_temp');
     writeln(f,'  ELSE');
     for j:=1 to _isos do
-        writeln(f,'    src_'+srcspecs[i]+'_f'+tagabbr+clsname[j]+isoatom+' = 0.0_dp');
+        writeln(f,'    '+substr(dsrcsubsyntax,'@',clsname[j]+srcspecs[i])+' = 0.0_dp');
     writeln(f,'  ENDIF');
 //  writeln(f,'!');
     end;
 writeln(f,'#ENDINLINE');
-
-(*
-// RATES part
-writeln(f,'#INLINE F90_RATES');
-writeln(f,'  ELEMENTAL REAL FUNCTION zerodiv(what,by)');
-writeln(f,'    ! safe division which gives 0 when /0 operation is performed');
-writeln(f,'    REAL(dp), INTENT(IN) :: what, by   ! operands');
-writeln(f,'    IF (by .EQ. 0.0) THEN');
-writeln(f,'      zerodiv = 0.0');
-writeln(f,'    ELSE');
-writeln(f,'      zerodiv = REAL(what/by)');
-writeln(f,'    ENDIF');
-writeln(f,'  END FUNCTION zerodiv');
-writeln(f,'#ENDINLINE');
-writeln(f,'{-------------- [imdouble] - inline code: end --------------------------------}');
-*)
 
 end;
 
@@ -154,48 +182,54 @@ end;
 procedure addinline4dblrates;
 var i : word;
     a : ansistring;
+    any2rate : boolean;
+    
 begin
-
-writeln(f,'{-------------- [imdouble] - inline code: start ------------------------------}');
+{$IFDEF USE_DKRATE}
+// detecting if there are reactions not yet processed
+any2rate:=false;
+for i:=1 to _eqs do
+    if (eqs[i].itag) and (eqs[i].etag<2) then
+       any2rate:=true;
+if not(any2rate) then exit;
 
 // GLOBAL part
 writeln(f,'#INLINE F90_GLOBAL');
+writeln(f,'! ---------------- [',tagname,'] - inline code ----------------');
+writeln(f,'!');
 writeln(f,'! reaction rates variables (to be used in multiplied doubled reactions)');
 a:='  REAL(dp) :: ';
 for i:=1 to _eqs do
-    if (eqs[i].itag) then
-       if (pos(':'+eqs[i].abbr+'>',prev_ptracs_intr)=0) then    // var. might have been added in the previous conf.
-          a+=substr(dkratesyntax,'#',eqs[i].abbr)+', ';
+    if (eqs[i].itag) and (eqs[i].etag<2) then
+//       if (pos(':'+eqs[i].abbr+'>',prev_ptracs_intr)=0) then    // var. might have been added in the previous conf.
+          a+=substr(dkratesyntax,'@',eqs[i].abbr)+', ';
 setlength(a,length(a)-2);
 writeln(f,wrap(a,2,4));
-
 writeln(f,'#ENDINLINE');
 
 // RCONST part
 writeln(f,'#INLINE F90_RCONST');
+writeln(f,'! ---------------- [',tagname,'] - inline code ----------------');
 writeln(f,'! reaction rates variables calculation (to be calculated once per rates evaluation)');
+writeln(f,'!');
 for i:=1 to _eqs do
-    if (eqs[i].itag) then
-       if (pos(':'+eqs[i].abbr+'>',prev_ptracs_intr)=0) then    // var. might have been added in the previous conf.
-          writeln(f,'  '+substr(dkratesyntax,'#',eqs[i].abbr)+' = '+trim(imcom_ext4marks(eqs[i].phys,'}',';')+';'));
+    if (eqs[i].itag) and (eqs[i].etag<2) then
+//       if (pos(':'+eqs[i].abbr+'>',prev_ptracs_intr)=0) then    // var. might have been added in the previous conf.
+          writeln(f,'  '+substr(dkratesyntax,'@',eqs[i].abbr)+' = '+trim(imcom_ext4marks(eqs[i].phys,'}',';')+';'));
 writeln(f,'#ENDINLINE');
-writeln(f,'{-------------- [imdouble] - inline code: end --------------------------------}');
+{$ENDIF}	  
 
 {$IFDEF USE_PT}
 prev_ptracs_intr:=ptracs_intr;
 {$ENDIF}
-	  
 end;
 
 // - doubleit body
 
-var i, j, k, l : integer;
-    a : ansistring;
-
-    e : integer;
+var i, j, k, l, e, d : integer;
+    a, b : ansistring;
     qae : array[1..2] of integer;   // quantity of atoms in educts
-    qap : integer;                  //  -- " --             products
-    b : ansistring;
+    qap : integer;                  //  -- " --             product
     af, pf, savstoi : real;
 {$IFDEF DBL_EXPL}
     x : integer;
@@ -218,20 +252,21 @@ rewrite(f);
 writeln(f,'#INLINE F90_GLOBAL');
 writeln(f,'! -------------------------------------------------------------------------');
 writeln(f,'! current mechanism (',paramstr(1),') is isotopically doubled by [imdouble]');
+writeln(f,'! configuration: ',tagname);
   write(f,'! atom: ',isoatom,', ',_isos,' isotopologues of masses ');
 for i:=1 to _isos do
     write(f,clsname[i],' ');
-writeln(f,'}');
+writeln(f);
 writeln(f,'! # of doubled / added species: ',_utsl,' / ',(_utsl+1)*_isos+1);
 writeln(f,'! # of reactions in the selected mechanism: ',_eqs);
 writeln(f,'! # of tagged reactions: ',nooftagreac,' (',_src,' subs)');
 {$IFDEF USE_PT}
 writeln(f,'! # of added passive tracers: ',_ptracs_conf,' (',_ptracs_conf-nooftagreac,' add.kie)');
 {$ENDIF}
-writeln(f,'! warning: current doubling is ',{$IFNDEF DBL_EXPL}'NOT ',{$ENDIF}'EXPLICIT');
+writeln(f,'! current doubling is ',{$IFNDEF DBL_EXPL}'NOT ',{$ENDIF}'EXPLICIT');
 writeln(f,'! PTs added: ',{$IFDEF USE_PT}'YES'{$ELSE}'NO'{$ENDIF},
              ', for KIE monitoring: ',{$IFDEF USE_PT_KIE}'YES'{$ELSE}'NO'{$ENDIF},'');
-writeln(f,'! [Gromov, MPI-C] =', datetimetostr(now),'=');
+writeln(f,'! =', datetimetostr(now),'=');
 writeln(f,'! --v-- further comes modified mechanism ----------------------------------');
 writeln(f,'#ENDINLINE');
 writeln(f);
@@ -240,15 +275,16 @@ for l:=1 to _eqnfile do
     if (eqnfile[l].iseq) then
        begin
 
-       if (eqs[eqnfile[l].eqno].itag) then           // working with eqation or just passing line
+       if (eqs[eqnfile[l].eqno].itag) then           // working with equation or just passing line
           with eqs[eqnfile[l].eqno] do
 
           begin
 
 {$IFNDEF DBL_EXPL}
-          // skipping? creation of reaction for isotope exchange
+          // disabling creation of reference reaction for isotope exchange
+ {$IFNDEF IEX_REGREF}
           if (iiex) then write(f,'// ');
-
+ {$ENDIF}
           // first, original eq with a production tracer added
           write(f,'<',abbr,'> ');
 
@@ -260,29 +296,32 @@ for l:=1 to _eqnfile do
           // products
           for j:=1 to _prod do
               begin
-              if stoi[j]<>1.0 then
+              if (j>1) then
+                 if (stoi[j]>0) then write(f,' + ');    // avoiding "-" products
+              if (stoi[j]<>1.0) then
                  write(f,floattostr(stoi[j]),' ');
               write(f,prod[j]);
-              if (j<_prod) then
-                 write(f,' + ');
               end;
  {$IFDEF USE_PT}
-          if (pos(substr(ptsyntax,'#',abbr),eqnfile[l].line)=0) then
+          if (pos(substr(ptsyntax,'@',abbr),eqnfile[l].line)=0) then
              // adding production tracer
-             write(f,' + '+substr(ptsyntax,'#',abbr));
+             write(f,' + '+substr(ptsyntax,'@',abbr));
  {$ENDIF}
           // adding reaction rate
  {$IFNDEF USE_DKRATE}
-          writeln(f,' :'+phys);
+          write(f,' : '+trim(phys));
  {$ELSE}
-          writeln(f,' :'+' {%*} '+substr(dkratesyntax,'#',abbr)+'; {&&}');
+          write(f,' :'+' {%*} '+substr(dkratesyntax,'@',abbr)+'; {&&}');
  {$ENDIF}
 
 {$ENDIF}
-
+          // writing "ever tagged" number
+          write(f,' {'+_etagspsy,etag:1,'}');
+          writeln(f);
+          
           // now the doubled reactions come
 
-          // ok, is it a subsitution or normal equation for tagging?
+          // ok, is it a isotope exchange/subsitution or normal equation for tagging?
           if (not(isrc) and not(iiex)) then
              begin
 
@@ -304,15 +343,18 @@ for l:=1 to _eqnfile do
               if in_tsl(educ[e]) then
                  for k:=1 to _isos do  // cycling through isotopologues
 {$IFDEF DBL_EXPL}
-                  for x:=1 to _isos do // another cycle for explicit
+                  for x:=1 to _isos do // another cycle for explicit doubling
 {$ENDIF}
                     begin
 
                     a:=' <';
-                    a+=substr(drsyntax,'#',abbr)+tagabbr+clsname[k]+isoatom;
+                    a+=substr(drsyntax,'@',abbr)+clsname[k];
                     if (if2t) then                       // in case both educts are tagged
 {$IFNDEF DBL_EXPL}
-                       a+='i'+inttostr(e);               // impl. quad. nomenclature: G4110I12Ci1
+                       if (educ[1]<>educ[2]) then
+                          a+='i'+educ[e]                 // impl. quad. nomenclature: G4110I12CiSRC
+                       else
+                           a+='i2'+educ[e];              // impl. quad. nom. for same educts: G4110I12Ci2SRC
 {$ELSE}
                        a+='e'+inttostr(x);               // expl. quad. nomenclature: G4215aI13Ce2
 {$ENDIF}
@@ -329,16 +371,18 @@ for l:=1 to _eqnfile do
 {$IFNDEF DBL_EXPL}
                     a+=educ[3-e];                        // replicating "regular" @right side
 {$ENDIF}
+
                     // accounting the atom fraction of current educt: account in stoi`s of the products
-                    af:=qae[e]/(qae[1]+qae[2]);
+                    af:=qae[e]/(qae[1]+qae[2]);          // this is a place for improvement (now using source subs)!
 
                     for j:=1 to _prod do     // cycling products
+                        begin
+                        savstoi:=stoi[j];
 {$IFNDEF DBL_EXPL}
                         if (in_tsl(prod[j])) then        // filtering out all non-tagged species in implicit
 {$ENDIF}
                            begin
                            if (a[length(a)-1]<>'=') then a+=' + '; // if right side is not empty
-                           savstoi:=stoi[j];
 {$IFNDEF DBL_EXPL}
                            stoi[j]:=stoi[j]*af;          // quadruplicated equations
 {$ELSE}
@@ -352,12 +396,13 @@ for l:=1 to _eqnfile do
                               qap:=tsl[no_tsl(prod[j])].qatm;          // qty. of atoms in product
                               pf:=qap/qae[e];                          // prob = A(prod)/A(educ), i.e. 1/3 for C3H6 -> CH3O2
 
-                              // if # of atoms in product >= # atoms in educt:  constructing molecule
-                              // if # of atoms in product < # atoms in educt: breaking to molecules
+                              // if # of atoms in product = # atoms in educt: straightforwardly creating minor isotopologue
+                              // if # of atoms in product > # atoms in educt: adding atoms from major pool
+                              // if # of atoms in product < # atoms in educt: freeing abundant excess to the major pool
                               if not(pf=1.0) then
                                  begin
                                  if ((stoi[j]*(1.0-pf))<>1.0) then
-                                    b+=formatfloat('0.0###########',stoi[j]*(1.0-pf)); // coeff. for a major isotopol. in minor reac
+                                    b+=formatfloat(stoiformat,stoi[j]*(1.0-pf)); // coeff. for a major isotopol. in minor reac
                                  if ((1.0-pf)>0) then
                                     b:='+'+b;                             // insert "+" in case of positive stoi coeff
                                  insert(' ',b,2);                         // insert space between stoi coeff and its sign
@@ -368,25 +413,43 @@ for l:=1 to _eqnfile do
                               end;
 
                            if (stoi[j]<>1.0) then                           // placing <>1 stoi coefficient
-                              a+=formatfloat('0.0###########',stoi[j])+' '; // by trial&error found: MECCA makes no difference in
+                              a+=formatfloat(stoiformat,stoi[j])+' '; // by trial&error found: MECCA makes no difference in
                            a+=giveiso(prod[j],k);                           //   precision starting from 12 dig. after the comma
 
                            a+=b;
+                           end;
 
-                           // reverting changes in stoichiom. coeff
-                           stoi[j]:=savstoi;
+                        // adding production PT
+                        if (in_bsl(prod[j])) then
+                           begin
+                           a+=' + ';
+                           if (stoi[j]<>1.0) then
+                              a+=formatfloat(stoiformat,stoi[j])+' ';
+                           a+=substr(ptpsyntax,'@',clsname[k]+prod[j]);
+                           end;
+
+                        // reverting changes to the stoichiom. coeff
+                        stoi[j]:=savstoi;
+                        end;
+
+                    // loss PTs
+                    for i:=1 to 2 do
+                        if (in_bsl(educ[i])) then
+                           begin
+                           a+=' + ';
+                           if (if2s) then a+='2 ';
+                           a+=substr(ptlsyntax,'@',clsname[k]+educ[i]);
                            end;
 
                     // checking if there are no produts on the right side (USE_PT off & destruction to nothing - quite possible)
                     b:=trim(a); if (b[length(b)]='=') then a:=a + 'Dummy ';
-                           
 {$IFDEF USE_PT}
 
  {$IFDEF DBL_EXPL}
                     // PTs in explicit case: all equations have the same PT - total production
-                    if (pos(substr(ptsyntax,'#',abbr),eqnfile[l].line)=0) then
+                    if (pos(substr(ptsyntax,'@',abbr),eqnfile[l].line)=0) then
                        // adding production tracer
-                       a+=' + '+substr(ptsyntax,'#',abbr);
+                       a+=' + '+substr(ptsyntax,'@',abbr);
  {$ENDIF}
 
  {$IFDEF USE_PT_KIE}
@@ -394,7 +457,7 @@ for l:=1 to _eqnfile do
                     for j:=1 to _kie do
                         if (kie[j].imec) and (abbr=kie[j].abbr) then
                            begin
-                           a+=' + '+substr(ptsyntax,'#',abbr+tagabbr+clsname[k]+isoatom);
+                           a+=' + '+substr(ptsyntax,'@',abbr+clsname[k]);
   {$IFNDEF DBL_EXPL}
                            if (if2t) then a+='i'+inttostr(e);
   {$ELSE}
@@ -405,27 +468,20 @@ for l:=1 to _eqnfile do
  {$ENDIF}
 {$ENDIF}
 
-                    // in case educts are equal, avoiding "double" reaction for mecca
-                    if ((if2t) and (educ[1]=educ[2]) and (e=2)) then
-{$IFNDEF DBL_EXPL}
-                       a+=' + Dummy';
-{$ELSE}
-                       a+=' + '+floattostr(x-1.0)+ ' Dummy';
-{$ENDIF}
-
-(*
-                    // this is checked later by check_eqn_dupes
-                    // applied to only MECCA2.0 reaction list! attention!     ??!!??
-                    if (e=1) and ((abbr='G7402b') or (abbr='J4101b')) then
-                       a+=' + Dummy ';
-*)
-
                     // adding reaction rate
 {$IFNDEF USE_DKRATE}
                     a+=' :'+phys;
 {$ELSE}
-                    a+=' :'+' {%*} '+substr(dkratesyntax,'#',abbr)+'; {&&}';
+                    a+=' :'+' {%*} '+substr(dkratesyntax,'@',abbr)+'; {&&}';
 {$ENDIF}
+
+                    // in case educts are equal, skip duplicating reaction but doubling the rate
+                    if (if2s) then
+                       if (e=1) then
+                          insert('*(2.0)',a,pos(';',a))
+                       else
+                           continue;
+
                     // checking whether the reaction has kie
                     for j:=1 to _kie do
                         if (kie[j].imec) and (abbr=kie[j].abbr) then
@@ -442,68 +498,72 @@ for l:=1 to _eqnfile do
              end
           else   // for 'if not(isrc) and not(iiex)'
               if (isrc) then
-                 // if products have no sources in .eqn source (source specification)
+                 // if products have no sources in .eqn (source specification)
                  with src[eqs[eqnfile[l].eqno].nsrc] do
                       for e:=1 to _trans do                 // e cycles through source specification
                           if (trans[e]._dst>0) then         // avoiding sources without destination
                              begin
 
-                             // destroying tagged educts (if any) without fractionation (supposed)
-                             if (e=1) then   // this condition is to work only once, in the beginning
-                                for k:=1 to _isos do
-                                    for j:=1 to 2 do
-                                        if in_tsl(educ[j]) then
-                                           begin
-                                           write(f,' <'+substr(drsyntax,'#',abbr)+tagabbr+clsname[k]+isoatom+'s'+inttostr(j)+'> ');
-                                           if (educ[3-j]<>'') then
-                                              write(f,educ[3-j]+' + ');
-                                           write(f,giveiso(educ[j],k)+' = ');
-                                           if (educ[3-j]<>'') then
-                                              write(f,educ[3-j])
-                                           else
-                                               write(f,'Dummy');
-                                           if ((educ[1]=educ[2]) and (j=2)) then
-                                              write(f,' + Dummy');
-{$IFNDEF USE_DKRATE}
-                                           writeln(f,' :'+phys);
-{$ELSE}
-                                           writeln(f,' :'+' {%*} '+substr(dkratesyntax,'#',abbr)+'; {&&}');
-{$ENDIF}
-                                           end;
+                             // transfer info string
+                             a:='// <'+abbr+'> '+trans[e].src+' = ';
+                             for j:=1 to trans[e]._dst do
+                                 begin
+                                 if not(trans[e].dst[j].stoi=1.0) then
+                                    a+=formatfloat('##0.###',trans[e].dst[j].stoi)+' ';
+                                 a+=trans[e].dst[j].spec;
+                                 if (j<trans[e]._dst) then
+                                    a+=' + ';
+                                 end;
+                             a+=' : ; {%isotrans:'+isoatom+'}';
+                             writeln(f,a);       
 
-                             // q-ty of atoms in educts
-                             qae[1]:=tsl[no_tsl(trans[e].src)].qatm;
-                             qae[2]:=0;                // source specification is now only from one source
+                             // if a specified source is one of the educts given in the eq, creating normal r-n
+                             // else creating futile destruction r-n
+                             d:=0;                  // no of detected educt matching src specification
+                             for j:=1 to 2 do
+                                 if in_tsl(educ[j]) then
+                                    if (educ[j]=trans[e].src) then
+                                       begin
+                                       d:=j; break;
+                                       end;
 
-                             // then istopologues
+                             // products
                              for k:=1 to _isos do
                                  begin
 
-                                 // new r-n abbr
-                                 write(f,' <'+substr(drsyntax,'#',abbr)+tagabbr+clsname[k]+isoatom+'s'+trans[e].src+'> ');
-                                 a:=educ[1];                    // 1st educt
-                                 if (educ[2]<>'') then
-                                    a+=' + '+educ[2];           // 2nd educt
-{$IFNDEF DBL_EXPL}
-                                 a+=' = '+a;                    // replicate "regulars" @ right side
-{$ELSE}
-                                 a+=' = ';                      // explicit doubling
-{$ENDIF}
+                                 // composing reaction
+                                 // educts
+                                 a:=' <'+substr(drsyntax,'@',abbr)+clsname[k]+'s'+trans[e].src+'> ';
+                                 if (d>0) then j:=d else j:=1;
+                                 if (educ[3-j]<>'') then
+                                    a+=educ[3-j]+' + ';
+                                 if (d>0) then a+=giveiso(educ[d],k)
+                                          else a+=educ[j];
+                                 a+=' = ';
+                                 if (educ[3-j]<>'') then
+                                    a+=educ[3-j];
+                                 if (d=0) then a+=' + '+educ[j];
 
+                                 // q-ty of atoms in educts
+                                 qae[1]:=tsl[no_tsl(trans[e].src)].qatm;
+                                 qae[2]:=0;                // source specification: contibution of only one educt
+
+                                 i:=length(a); // storing the length of eq to determine if any product is written ot not
                                  for j:=1 to _prod do
+                                     begin
+                                     savstoi:=stoi[j];
 {$IFNDEF DBL_EXPL}
                                      if (in_tsl(prod[j])) then
 {$ENDIF}
                                         begin
 
-                                        // should be accounted in current (e) source?
+                                        // should be accounted for in current (e) source?
                                         if ( no_trans_dst(eqs[eqnfile[l].eqno].nsrc,e,prod[j])>0 ) then
                                            begin
-                                           savstoi:=stoi[j];
-                                           if (a[length(a)-1]<>'=') then a+=' + ';  // if right side is not empty
+                                           a+=' + ';  // for each product
 
                                            // accounting the number of total source specification(s) for this species
-                                           stoi[j]:=stoi[j]*trans[e].dst[no_trans_dst(eqs[eqnfile[l].eqno].nsrc,e,prod[j])].stoi;
+                                           stoi[j]:=stoi[j]*trans[e].dst[no_trans_dst(eqs[eqnfile[l].eqno].nsrc,e,prod[j])].stoi*trans[e].weight;
 
                                            // accounting the transfer of the minor isotope atom
                                            // from educt molecule to current product molecule
@@ -513,12 +573,13 @@ for l:=1 to _eqnfile do
                                               qap:=tsl[no_tsl(prod[j])].qatm;          // qty. of atoms in product
                                               pf:=qap/qae[1];                          // prob = A(prod)/A(educ), i.e. 1/3 for C3H6 -> CH3O2
 
-                                              // if # of atoms in product >= # atoms in educt:  constructing molecule
-                                              // if # of atoms in product < # atoms in educt: breaking to molecules
+                                              // if # of atoms in product = # atoms in educt: just creating minor isotopologue
+                                              // if # of atoms in product > # atoms in educt: adding atoms from major pool
+                                              // if # of atoms in product < # atoms in educt: freeing abundant excess to the major pool
                                               if not(pf=1.0) then
                                                  begin
                                                  if ((stoi[j]*(1.0-pf))<>1.0) then
-                                                    b+=formatfloat('0.0###########',stoi[j]*(1.0-pf)); // coeff. for a major isotopol. in minor reac
+                                                    b+=formatfloat(stoiformat,stoi[j]*(1.0-pf)); // coeff. for a major isotopol. in minor reac
                                                  if ((1.0-pf)>0) then
                                                     b:='+'+b;                             // insert "+" in case of positive stoi coeff
                                                  insert(' ',b,2);                         // insert space between stoi coeff and its sign
@@ -533,25 +594,49 @@ for l:=1 to _eqnfile do
                                            a+=giveiso(prod[j],k);
 
                                            a+=b;
-
-                                           // reverting changes in stoichiom. coeff
-                                           stoi[j]:=savstoi;
                                            end;
-                                         end;
+
+                                        // adding production PT
+                                        if (in_bsl(prod[j])) then
+                                           begin
+                                           a+=' + ';
+                                           if (stoi[j]<>1.0) then
+                                              a+=formatfloat(stoiformat,stoi[j])+' ';
+                                           a+=substr(ptpsyntax,'@',clsname[k]+prod[j]);
+                                           end;
+
+                                        // reverting changes to the stoichiom. coeff
+                                        stoi[j]:=savstoi;
+                                        end;
+
+                                     end;
+
+                                 if (i=length(a)) then // no products were written, i.e. src -> empty
+                                    continue;
+
+                                 if (d>0) then
+                                 // loss PTs
+                                 for i:=1 to 2 do
+                                    if (in_bsl(educ[i])) then
+                                       begin
+                                       a+=' + ';
+                                       if (if2s) then a+='2 ';
+                                       a+=substr(ptlsyntax,'@',clsname[k]+educ[i]);
+                                       end;
 
 {$IFDEF USE_PT}
  {$IFDEF DBL_EXPL}
                                  // PTs in explicit case
-                                 if (pos(substr(ptsyntax,'#',abbr),eqnfile[l].line)=0) then
+                                 if (pos(substr(ptsyntax,'@',abbr),eqnfile[l].line)=0) then
                                     // adding production tracer
-                                    a+=' + '+substr(ptsyntax,'#',abbr);
+                                    a+=' + '+substr(ptsyntax,'@',abbr);
  {$ENDIF}
  {$IFDEF USE_PT_KIE}
                                  // add passive tracer to the the reaction which has kie
                                  for j:=1 to _kie do
                                      if ((kie[j].imec) and (abbr=kie[j].abbr)) then
                                         begin
-                                        a+=' + '+substr(ptsyntax,'#',abbr+tagabbr+clsname[k]+isoatom);
+                                        a+=' + '+substr(ptsyntax,'@',abbr+clsname[k]);
                                         break;
                                         end;
  {$ENDIF}
@@ -560,16 +645,24 @@ for l:=1 to _eqnfile do
 {$IFNDEF USE_DKRATE}
                                  a+=' :'+phys;
 {$ELSE}
-                                 a+=' :'+' {%*} '+substr(dkratesyntax,'#',abbr)+'; {&&}';
+                                 a+=' :'+' {%*} '+substr(dkratesyntax,'@',abbr)+'; {&&}';
 {$ENDIF}
                                  // weighting reaction rate with corresponding isotopomer fraction
-                                 insert('( ',a,pos('}',a)+2); // adding left brace
-                                 insert(' )*'+'src_'+trans[e].src+'_f'+tagabbr+clsname[k]+isoatom,a,pos(';',a));
+                                 //   if the source is not the one from the left side
+                                 if (d=0) then
+                                    begin
+                                    insert('( ',a,pos('}',a)+2); // adding left brace
+                                    insert(' )*'+substr(dsrcsubsyntax,'@',clsname[k]+trans[e].src),a,pos(';',a));
+                                    end;
+
+                                 // in case educts are equal, skip duplicating reaction but doubling the rate
+                                 if ((d>0) and (educ[1]=educ[2])) then
+                                    insert('*(2.0)',a,pos(';',a));
 
                                  // checking whether the reaction has kie
                                  for j:=1 to _kie do
                                      if (abbr=kie[j].abbr) then
-                                        if (kie[j].isot=tsl[no_tsl(educ[e])].isos[k]) then
+                                        if (kie[j].isot=tsl[no_tsl(trans[e].src)].isos[k]) then
                                            begin
                                            insert('( ',a,pos('}',a)+2); // adding left brace
                                            insert(' )'+kie[j].expr,a,pos(';',a));
@@ -590,17 +683,18 @@ for l:=1 to _eqnfile do
 
                      // educts
                      for e:=1 to 2 do
-                         // istopologues
+                       if (_isos>1) then // multiple istopologues
                          for k:=2 to _isos do
                            with iex[niex] do
                              begin
 
                              // new r-n abbr
-                             a:=' <'+substr(drsyntax,'#',abbr)+tsl[exspec[e]].isos[k]+'> ';
+                             a:=' <'+substr(drsyntax,'@',abbr)+tsl[exspec[e]].isos[k]+'> ';
+
                              a+=tsl[exspec[e]].isos[k]  +' + ';    // major
                              a+=tsl[exspec[3-e]].isos[1]+' = ';    // rare
 
-                             // no-isotopomers approach: exchanging rare isotope atom (one) only
+                             // exchanging one rare isotope atom
                              a+=tsl[exspec[e]].isos[1]+' + ';      // now rare
                              a+=tsl[exspec[3-e]].isos[k];          // now major
             
@@ -608,7 +702,7 @@ for l:=1 to _eqnfile do
 {$IFNDEF USE_DKRATE}
                              a+=' :'+phys;
 {$ELSE}
-                             a+=' :'+' {%*} '+substr(dkratesyntax,'#',abbr)+'; {&&}';
+                             a+=' :'+' {%*} '+substr(dkratesyntax,'@',abbr)+'; {&&}';
 {$ENDIF}
                              // checking whether the reaction has kie
                              for j:=1 to _kie do
@@ -620,13 +714,70 @@ for l:=1 to _eqnfile do
                                        // adding right brace and expr. to the end of phys line before ;
                                        end;
 
-                             // calculating transfer probability (if rare sharing molec. has more than 1 isotope atom)
-                             if (tsl[exspec[e]].qatm>1) then
-                                insert('(1.0/'+inttostr(tsl[exspec[e]].qatm)+'.0)*',a,pos('}',a)+2);
+{$IFNDEF IEX_ONWARD_RATES}
+                             // calculating transfer probability (as nu = q(3-e) / (q(1)+q(2)))
+                             // referred to the regular r-n rate, for both reactants, both directions
+                             j:=tsl[exspec[1]].qatm+tsl[exspec[2]].qatm; // total on the left side
+                             insert('('+inttostr(tsl[exspec[3-e]].qatm)+'.0/'+inttostr(j)+'.0)*',a,pos('}',a)+2);
+{$ELSE}
+                             // calculating transfer probability (as nu = q(3-e) / q(e))
+                             // referred to the onward r-n rate, reverse direction
+                             if (e=2) then
+                                insert('('+inttostr(tsl[exspec[3-e]].qatm)+'.0/'+inttostr(tsl[exspec[e]].qatm)+'.0)*',a,pos('}',a)+2);
+{$ENDIF}
 
                              // voila!
                              writeln(f,a);
 
+                             end
+                       else // "fractional" isotopologues (i.e. one)
+                           with iex[niex] do
+                             begin
+
+                             // new r-n abbr
+                             a:=' <'+substr(drsyntax,'@',abbr)+tsl[exspec[e]].isos[k]+'> ';
+                             a+=tsl[exspec[e]].isos[1]  +' + ';  // minor disappeared
+                             a+=tsl[exspec[3-e]].spec+' = ';     // regular (minor+rest)
+
+                             // exchanging one rare isotope atom
+                             a+=tsl[exspec[3-e]].spec+' + ';     // replicationg regular (minor+rest)
+                             a+=tsl[exspec[3-e]].isos[1];        // minor appeared
+            
+                             // rate
+                             //   add. modified acc. to the fraction of the major
+{$IFNDEF USE_DKRATE}
+                             a+=' :'+phys;
+{$ELSE}
+                             a+=' :'+' {%*} '+substr(dkratesyntax,'@',abbr)+
+{$IFDEF PRECISE_FISO_IEX}
+                                     '*(1.0 - '+substr(dsrcsubsyntax,'@',clsname[1]+tsl[exspec[3-e]].spec)+')'+
+{$ENDIF}
+                                     '; {&&}';
+{$ENDIF}
+                             // checking whether the reaction has kie
+                             for j:=1 to _kie do
+                                 if (kie[j].imec) and (abbr=kie[j].abbr) then
+                                    if (kie[j].isot=tsl[exspec[e]].isos[k]) then
+                                       begin
+                                       insert('( ',a,pos('}',a)+2);            // adding left brace
+                                       insert(' )'+kie[j].expr,a,pos(';',a));
+                                       // adding right brace and expr. to the end of phys line before ;
+                                       end;
+
+{$IFNDEF IEX_ONWARD_RATES}
+                             // calculating transfer probability (as nu = q(3-e) / (q(1)+q(2)))
+                             // referred to the regular r-n rate, for both reactants, both directions
+                             j:=tsl[exspec[1]].qatm+tsl[exspec[2]].qatm; // total on the left side
+                             insert('('+inttostr(tsl[exspec[3-e]].qatm)+'.0/'+inttostr(j)+'.0)*',a,pos('}',a)+2);
+{$ELSE}
+                             // calculating transfer probability (as nu = q(3-e) / q(e))
+                             // referred to the onward r-n rate, reverse direction
+                             if (e=2) then
+                                insert('('+inttostr(tsl[exspec[3-e]].qatm)+'.0/'+inttostr(tsl[exspec[e]].qatm)+'.0)*',a,pos('}',a)+2);
+{$ENDIF}
+
+                             // voila!
+                             writeln(f,a);
                              end;
 
                      end;         // if (iiex)
@@ -641,16 +792,15 @@ for l:=1 to _eqnfile do
        
        if (eqnfile[l].eqno=_eqs) then
           begin
-
           // LAST dummy reaction here for totals (Ti) so MECCA won't throw it away
           // et la reaction futile
           writeln(f);
           writeln(f,'{------ [imdouble] - total ',isoatom,' dummy reaction ----------------------------------}');
           // assuming there is at least two isotopologues (!)
-          write(f,'<D0000T',isoatom,'> '+tagabbr+'T'+isoatom,' = ',
-                                     tagabbr+clsname[1]+'T'+isoatom);
+          write(f,'<D0000T',isoatom,'> '+cfgname+'T'+isoatom,' = ',
+                                         cfgname+'T'+clsname[1]);
           for j:=2 to _isos do
-              write(f,' + '+tagabbr+clsname[j]+'T'+isoatom);
+              write(f,' + '+cfgname+'T'+clsname[j]);
           writeln(f,' : {%StTrG}  0.0;  {&&}');
 {$IFDEF DBL_EXPL}
           // les reactions futiles pour les substances ordinaires
@@ -695,10 +845,10 @@ else
        if (_src>0) then                    // if source specification takes place
           addinline4subs;
 
-       if (_kie>0) then                    // if there is KIE present
+       if (kieproc<>_nonestr) then         // if there is KIE [rocessing file specified
           begin
           writeln(f,'{------ [imdouble] - KIE process section for ',isoatom,' -------------------------------}');
-          write(f,imcom_parse_kieproc);   // kie processing for doubling
+          write(f,imcom_parse_proc(kieproc));   // kie processing for doubling
           writeln(f,'{------ [imdouble] -----------------------------------------------------------}');
           end;
 
@@ -718,84 +868,6 @@ end;
 
 // -----------------------------------------------------------------
 
-procedure check_eqn_dupes(fname : string);
-var f, o : textfile;
-    e : array[1..max_eqs*max_isos] of record 
-        eq : string;
-        line, corr : integer;
-        end;
-    a : string;
-    l, p, i, j : integer;
-begin
-
-write('check_eqn_dupes(',fname,'): ');
-
-assign(f,fname);
-reset(f);
-
-p:=0; l:=0;
-while not(eof(f)) do
-      begin
-      inc(l);
-      readln(f,a);
-      if imcom_is_eqn(a) then
-         begin
-         inc(p);
-         e[p].eq:=imcom_ext4marks(a,'>',':');          // copier l'equation
-         e[p].eq:=uppercase(delspace(trim(e[p].eq)));  // >JE+SUIS+UNE=EQUATION+0.5MAINTENANT:
-         e[p].line:=l;
-         e[p].corr:=0;
-         end;
-      end;
-close(f);
-
-// bubblesort comparison & correction
-for i:=1 to p-1 do
-    for j:=i+1 to p do
-        if (e[j].eq=e[i].eq) then
-           begin
-           inc(e[j].corr);
-           e[j].eq+=uppercase('+Dummy');
-           end;
-
-// apporter des modifications
-assign(o,fname+'.$$$'); rewrite(o);
-assign(f,fname); reset(f);
-
-j:=1; // indice a e[]
-l:=0; // indice a f
-p:=0;
-while not(eof(f)) do
-      begin
-      inc(l);
-      readln(f,a);
-      if (e[j].line=l) then
-         begin
-         
-         if (e[j].corr>0) then
-            begin
-            insert('+ '+inttostr(e[j].corr)+' Dummy ',a,pos(':',a));
-            inc(p);
-            end;
-            
-         inc(j);
-         end;
-      writeln(o,a);
-      end;
-close(f);
-close(o);
-rename(o,fname);
-
-if (p>0) then
-   write(p,' identical equations found, corrected')
-else
-    write(' no identical equations found');
-writeln;
-
-end;
-
-// -----------------------------------------------------------------
-
 // additional species list - interconfigurational
 // synx: :I12CO=C12 + O>
 var addspecs_intr : ansistring;
@@ -808,12 +880,12 @@ for i:=1 to _utsl do
     with tsl[utsl[i]] do
          for j:=1 to _isos do
              begin
-             addspecs_intr+=':'+tagabbr+clsname[j]+spec+'>';
+             addspecs_intr+=':'+clsname[j]+spec+'>';
              inc(_addspecs_intr);
              end;
-addspecs_intr+=':'+tagabbr+'T'+isoatom+'>';
+addspecs_intr+=':'+cfgname+'T'+isoatom+'>';
 for i:=1 to _isos do
-    addspecs_intr+=':'+tagabbr+clsname[i]+'T'+isoatom+'>';
+    addspecs_intr+=':'+cfgname+'T'+clsname[i]+'>';
 inc(_addspecs_intr,1+_isos);
 
 writeln('imdouble_update_addspecs: done [total ',_addspecs_intr,' specs]');
@@ -851,13 +923,13 @@ writeln(f);
 writeln(f,'{-------------- [imdouble] ---------------------------------------------------}');
 writeln(f);
 writeln(f,'{ additional species list for doubled mechanism based on: ',paramstr(1),' }');
-writeln(f,'{ configuration: ',tagabbr+isoatom,' }');
+writeln(f,'{ configuration: ',cfgname,' }');
 writeln(f,'{ intended # of species to add: ',_addspecs_intr,' }');
 {$IFDEF USE_PT}
 writeln(f,'{ intended # of PTs to add: ',_ptracs_intr,' }');
 {$ENDIF}
 writeln(f);
-writeln(f,'{ [Gromov, MPI-C] =',datetimetostr(now),'= }');
+writeln(f,'{ =',datetimetostr(now),'= }');
 writeln(f);
 
 writeln(f,'{- new atoms -----------------------------------------------------------------}');
@@ -865,7 +937,10 @@ writeln(f);
 writeln(f,'#ATOMS');
 writeln(f);
 for i:=1 to _isos do
-    writeln(f,'  ',isoatom+clsname[i],'     { ',isomass[i],' mass element ',isoatom,' };');
+    if (isomass[i]>0) then
+       writeln(f,'  ',clsname[i],'     { mass ',isomass[i]:0:7,' of element ',isoatom,' };')
+    else
+       writeln(f,'  ',clsname[i],'     { species class ',clsname[i],'(',i,') };');
 writeln(f);
 
 writeln(f,'{- doubled species -----------------------------------------------------------}');
@@ -877,7 +952,7 @@ a:='';
 tmp:=addspecs_intr;
 while (length(tmp)>0) do
       begin
-      // one addspecs entry is like :ISOP>
+      // one addspecs entry is like :C5H8>
 
       a:=copy2symbdel(tmp,':');   // rem ':'
       // delete(tmp,1,1); // uncomment this for fp package earlier than 5.2.0
@@ -895,16 +970,35 @@ for i:=1 to _utsl do
          begin
          
          for j:=1 to _isos do
-             safeaddspec(isos[j],spc[nspc].icomp[j]+'; { '+spec+' '+clsname[j]+isoatom+' isotopologue }');
+             safeaddspec(isos[j],spc[nspc].icomp[j]+'; '+spc[nspc].icapt[j]+'   { '+spec+' '+clsname[j]+isoatom+' isotopologue }');
+          
          writeln(f);
-         
          end;
+
+writeln(f,'{ budgeting PTs }');
+writeln(f);
+for i:=1 to _bsl do
+    with bsl[i] do
+         begin
+         
+         // loss PTs
+         if (iloss) then
+            for j:=1 to _isos do
+                safeaddspec( substr(ptlsyntax,'@',clsname[j]+spec),{spc[nspc].icomp[j]}'IGNORE'+'; { '+spec+' '+clsname[j]+' loss PT }');
+         // production PTs
+         if (iprod) then
+            for j:=1 to _isos do
+                safeaddspec( substr(ptpsyntax,'@',clsname[j]+spec),{spc[nspc].icomp[j]}'IGNORE'+'; { '+spec+' '+clsname[j]+' production PT }');
+         
+         writeln(f);
+         end;
+
 
 writeln(f,'{ totals }');
 writeln(f);
-safeaddspec(tagabbr+'T'+isoatom,'IGNORE; { total '+isoatom+' atoms count }');
+safeaddspec(cfgname+'T'+isoatom,'IGNORE; { '+cfgname+' total '+isoatom+' atoms count }');
 for j:=1 to _isos do
-    safeaddspec(tagabbr+clsname[j]+'T'+isoatom,'IGNORE; { total '+clsname[j]+isoatom+' atoms count }');
+    safeaddspec(cfgname+'T'+clsname[j],'IGNORE; { '+cfgname+'total '+clsname[j]+isoatom+' atoms count }');
 writeln(f);
 
 {$IFDEF USE_PT}
@@ -914,7 +1008,7 @@ writeln(f);
 for i:=1 to _eqs do
     with eqs[i] do
          if (itag) then
-            safeaddspec(substr(ptsyntax,'#',abbr),'IGNORE; { '+abbr+' reaction passive production tracer }');
+            safeaddspec(substr(ptsyntax,'@',abbr),'IGNORE; { '+abbr+' reaction passive production tracer }');
 writeln(f);
 
 (* this method is no longer used since the introduction of spc[] and work with species file
@@ -929,7 +1023,7 @@ while (length(tmp)>0) do
       a:=copy2symbdel(tmp,'>');   // copy to '>'
       // delete(tmp,1,1); // uncomment this for fp package earlier than 5.2.0
 
-      writeln(f,'  ',substr(ptsyntax,'#',a),' = IGNORE; { ',a,' reaction production }');
+      writeln(f,'  ',substr(ptsyntax,'@',a),' = IGNORE; { ',a,' reaction production }');
       end; *)
 
  {$IFDEF USE_PT_KIE}
@@ -939,20 +1033,20 @@ for k:=1 to _kie do
        with kie[k] do
             for j:=1 to _isos do
  	        if not( in_tsl(eqs[kie[k].eqno].educ[1]) and in_tsl(eqs[kie[k].eqno].educ[2]) ) then    // not a quadrupl. reaction
-		   safeaddspec(abbr+tagabbr+clsname[j]+isoatom,'IGNORE; { '+abbr+' reaction '+isot+' KIE production tracer }')
+		   safeaddspec(abbr+clsname[j],'IGNORE; { '+abbr+' reaction '+isot+' KIE production tracer }')
                 else
   {$IFNDEF DBL_EXPL}
 		    begin	    // in case both educts are tagged (quadrupled equation = quad. kie PTs)
-		    safeaddspec(kie[k].abbr+tagabbr+clsname[j]+isoatom+'i1',
+		    safeaddspec(kie[k].abbr+clsname[j]+'i1',
                                 'IGNORE; { '+abbr+' reaction '+isot+' KIE production tracers }');
-		    safeaddspec(kie[k].abbr+tagabbr+clsname[j]+isoatom+'i2',
+		    safeaddspec(kie[k].abbr+clsname[j]+'i2',
                                 'IGNORE;');
                     end;
   {$ELSE}
-		    safeaddspec(kie[k].abbr+tagabbr+clsname[j]+isoatom+'e'+inttostr(1),
+		    safeaddspec(kie[k].abbr+clsname[j]+'e'+inttostr(1),
                                 'IGNORE; { '+abbr+' reaction '+isot+' KIE production tracers }');
                     for i:=2 to _isos do  // in case of explicit doubling (_iso-replicated equations with KIE)
-		        safeaddspec(kie[k].abbr+tagabbr+clsname[j]+isoatom+'e'+inttostr(i),'IGNORE;');
+		        safeaddspec(kie[k].abbr+clsname[j]+'e'+inttostr(i),'IGNORE;');
   {$ENDIF}
 
 writeln(f);
@@ -1086,6 +1180,7 @@ var f : textfile;
 
 var t, finc : text;  // template, include file
     a, u, p, s : ansistring;
+    ec : boolean;    // "empty" configuration flag
 
 // main part
 begin
@@ -1096,6 +1191,9 @@ write('produce_imdouble_code(',fname,'): ');
 imcom_update_reps;
 
 imcom_check_files_exist([tname, kieproc]);
+
+// checking for an empty configuration
+if (cfgname='') then ec:=true else ec:=false;
 
 // output code
 assign(f,fname);
@@ -1137,12 +1235,11 @@ while not(eof(t)) do
           if pos('{$CONF_PARAM',a)>0 then
              writeln(f,imcom_parameters)
           else
-          if pos('{$CONF_LIST',a)>0 then
+          if not(ec) and (pos('{$CONF_LIST',a)>0) then
              writeln(f,imcom_make_configslist(imcom_ext4marks(a,'[%','%]')))
           else
           if pos('{$TRAC_DECL',a)>0 then
-                 writeln(f,imcom_make_tracdecl(imcom_ext4marks(a,'[%','%]'),
-                                               imcom_ext4marks(a,'(%','%)')))
+                 writeln(f,imcom_make_tracdecl(imcom_ext4marks(a,'[%','%]')))
           else
           if pos('{$TAG_SPECS',a)>0 then
              writeln(f,imcom_make_tagspecs_list(imcom_ext4marks(a,'[%','%]')))
@@ -1196,11 +1293,11 @@ var i, nconf : integer;
 
 begin
 
-if (paramcount<2) then
+if (paramcount<3) then
    begin
-   writeln('>> MECCA kinetic meccanism doubling');
-   writeln('usage: ./imdouble <spcfile> <eqnfile> <tagging configuration(s) list>');
-   writeln('   ex:             zzz.spc   yyy.eqn   tagXX.cfg');
+   writeln('>> MECCA kinetic meccanism (isotopic) doubling');
+   writeln('usage: ./imdouble <spcfile> <eqnfile> <tracdeffile> <tagging configuration(s) list>');
+   writeln('   ex:             zzz.spc   yyy.eqn   xxx.tex       tagXX.cfg [tagXY.cfg ...]');
    halt;
    end;
 
@@ -1212,7 +1309,7 @@ writebreak;
 
 SORRY, EXPLICIT VERSION NEEDS RE-FORMULATION AND RE-CODING NOW
 
-if (paramcount>2) then
+if (paramcount>4) then
    begin
    writeln('sorry, stop. current version is EXPLICIT, compiled with a DBL_EXPL switch.');
    writeln('explicit doubling can be performed only for one configuration, please check input parameters');
@@ -1226,7 +1323,7 @@ imcom_init;
 _addspecs_intr:=0;
 addspecs_intr:='';
 
-_conf:=paramcount-2;
+_conf:=paramcount-3;
 
 for nconf:=1 to _conf do
     begin
@@ -1235,43 +1332,55 @@ for nconf:=1 to _conf do
     writeln('>> doubling ',nconf,' of ',_conf,' configuration(s)...');
     writeln;
 
-    imcom_check_files_exist([paramstr(nconf+2),paramstr(1),paramstr(2)]);
+    imcom_check_files_exist([paramstr(nconf+3),paramstr(1),paramstr(2)]);
 
     // read tagging config
-    imcom_read_tag_config(paramstr(nconf+2));
-
+    imcom_read_tag_config(paramstr(nconf+3));
+    
     // read species ans equations files interpreting according to the loaded config
     if (nconf=1) then
        begin
-       imcom_read_spc(paramstr(1));
-       imcom_read_eqs(paramstr(2));
+       l_spcfname:=paramstr(1);
+       l_eqnfname:=paramstr(2);
        end
     else
-        begin
-        imcom_read_spc(l_spcfname); // next configuration is based on previously created spc/eqn files
-        imcom_read_eqs(l_eqnfname);
+        begin           // next configuration is based on previously created spc/eqn files
+        l_eqnfname:=eqnfname;
+        l_spcfname:=spcfname;
         end;
-    l_eqnfname:=eqnfname;
-    l_spcfname:=spcfname;
+
+    imcom_read_spc(l_spcfname); 
+    imcom_read_eqs(l_eqnfname);
+
+    // skipping "empty" configuration
+    if (cfgname='') then
+       begin
+       writeln;
+       writeln('empty configuration detected, skipping doubling routines to code parsing');
+       // copying input spc/eqn to destination spc/eqn
+       shell('cp '+l_spcfname+' '+spcfname);
+       shell('cp '+l_eqnfname+' '+eqnfname);
+       continue;
+       end;
     
     // updating inter-conf. PTs list
     imcom_update_ptracs;
 
     // updating inter-conf. additional specs. list
     imdouble_update_addspecs;
-
+    
     // double the meccanism
-    doubleit(eqnfname,nconf);                   // creating a new equation file
+    doubleit(eqnfname);                      // creating a new equation file
     imdouble_produce_speciesfile(spcfname);  // creating an additional specs file
     for i:=1 to _form_conf do
         produce_imdouble_code(form_conf[i,1],form_conf[i,2]);
 
     // check for a possible duplicate reactions
-    check_eqn_dupes(eqnfname);
+    imcom_check_eqn_dupes(eqnfname,'Dummy');
 
     conf[nconf]:=tagname;
     
-    imcom_make_addtracdef('gas.tex',tracdef);
+    imcom_make_addtracdef(paramstr(3),tracdef);
     end;
 
 writeln;

@@ -1,4 +1,4 @@
-! Time-stamp: <2010-03-11 17:07:58 sander>
+! Time-stamp: <2010-07-27 15:46:41 sander>
 
 ! SEMIDEP = Simplified EMIssion and DEPosition
 
@@ -70,6 +70,8 @@ CONTAINS
       CALL emission_ff
     CASE ('OOMPH')
       CALL emission_oomph
+    CASE ('LAB')
+      CALL emission_lab
     !qqq todo: CASE ('STRATO')
       !qqq todo: CALL emission_strato
     CASE ('MBL')
@@ -120,6 +122,14 @@ CONTAINS
       !IF (ind_CH2I2  /= 0) c(ind_CH2I2)  = c(ind_CH2I2)  + 3.0E7 * fct ! ref0897
     END SUBROUTINE emission_mbl
 
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE emission_lab
+      !qqq todo: more values from Sergej?
+      IF (ind_O3     /= 0) c(ind_O3)     = c(ind_O3)     + 5.E10 * fct ! ref0203, p. 6699
+      IF (ind_NO     /= 0) c(ind_NO)     = c(ind_NO)     + 5.0E9 * fct
+    END SUBROUTINE emission_lab
+    
     !-------------------------------------------------------------------------
 
     SUBROUTINE emission_mim2
@@ -185,6 +195,8 @@ CONTAINS
       !qqq todo: CALL photo_strato
     CASE ('OOMPH','MBL')
       CALL drydep_mbl
+    CASE ('LAB')
+      CALL drydep_lab
     CASE ('MIM2')
       CALL drydep_mim2
     CASE ('')
@@ -236,6 +248,13 @@ CONTAINS
       IF (ind_CH3SO3H  /= 0) c(ind_CH3SO3H)  = (1.-fct*1.0)  * c(ind_CH3SO3H)
       IF (ind_DMSO     /= 0) c(ind_DMSO)     = (1.-fct*1.0)  * c(ind_DMSO)
     END SUBROUTINE drydep_mbl
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE drydep_lab
+      !qqq todo: more values from Sergej?
+      IF (ind_O3       /= 0) c(ind_O3)       = (1.-fct*0.04) * c(ind_O3)
+    END SUBROUTINE drydep_lab
 
     !-------------------------------------------------------------------------
 

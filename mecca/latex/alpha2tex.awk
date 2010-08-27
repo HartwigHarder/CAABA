@@ -3,12 +3,13 @@
 # Authors:
 #   Rolf Sander, Max-Planck-Institute, Mainz, Germany
 #
-# Time-stamp: <2008-02-13 13:16:47 sander>
+# Time-stamp: <2010-07-08 14:34:53 sander>
 #
-# alpha2tex.awk transforms alpha in messy_mecca_mbl.f90 into tex.
+# alpha2tex.awk transforms accommodation coefficients alpha
+# in messy_cmn_gasaq.f90 into tex.
 #
 # usage:
-# setenv LC_COLLATE C ; gawk -f alpha2tex.awk ../smcl/messy_mecca_aero.f90
+# setenv LC_ALL C ; gawk -f alpha2tex.awk ../../messy_cmn_gasaq.f90
 #
 # ----------------------------------------------------------------------------
 
@@ -30,11 +31,11 @@ BEGIN {
 
 {
   # does current line define an accommodation coefficient?
-  if (match($0, "^[^!]*alpha.*= *alpha_T") != 0) {
+  if (match($0, "^[^!]*CALL add_alpha(.*)") != 0) {
     # printf "alpha definition = %s\n", $0 >> logfile
 
     # store species' name in species
-    if (match($0, "ind_([A-Za-z0-9]+)", arr0) != 0) {
+    if (match($0, "'([A-Za-z0-9]+)'", arr0) != 0) {
       basespecies = arr0[1]
       species = "\\kpp{" arr0[1] "}"
     } else {
@@ -45,7 +46,7 @@ BEGIN {
     printf "species = %s\n", basespecies >> logfile
 
     # store values in alpha and minDHR
-    if (match($0, "alpha_T\\((.*),(.*), *ztemp *\\)", arr) != 0) {
+    if (match($0, "add_alpha\\('.*',(.*),(.*)\\)", arr) != 0) {
       alpha  = arr[1]
       minDHR = arr[2]
     } else {
@@ -54,6 +55,9 @@ BEGIN {
       errorstring = sprintf("%s\nERROR: alpha and minDHR not found:\n  %s",
         errorstring, $0)
     }
+    # insert default values:
+    gsub("alpha_T0",   "(default)", alpha)
+    gsub("alpha_Tdep", "(default)", minDHR)
     # remove precision (_dp) from strings:
     gsub("_[dD][pP]", "", alpha)
     gsub("_[dD][pP]", "", minDHR)

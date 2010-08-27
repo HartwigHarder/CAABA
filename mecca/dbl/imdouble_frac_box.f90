@@ -40,7 +40,7 @@ MODULE messy_mecca_{%DBL}_box
 ! -----------------------------------------------------------------------------
 
 ! here constants and doubled species indices are to be defined
-! {$TRAC_DECL} [%ind_#%] <-- boxmodel syntax  (%{%TAG}_#%) <-- isotracers syntax
+! {$TRAC_DECL} [%ind_@%] <-- boxmodel syntax  (%{%TAG}_@%) <-- isotracers syntax
 
 ! -----------------------------------------------------------------------------
   
@@ -68,7 +68,7 @@ MODULE messy_mecca_{%DBL}_box
   PUBLIC {%DBL}_calctotals
   PUBLIC {%DBL}_calcfractions
   PUBLIC {%DBL}_correct2reg
-  PUBLIC {%DBL}_correct2frac
+  PUBLIC {%DBL}_correct2dbl
 ! PUBLIC {%DBL}_fudge
   PUBLIC {%DBL}_resetPTs
   PUBLIC {%DBL}_init
@@ -93,10 +93,7 @@ CONTAINS
  FATAL: initialization unit is not fracmin, please check configuration and former
 #endif
 
-! {$x0} [%1%] (%    CF({%TAG}_#,2) = $%)
-! {$x0} [%2%] (%    CF({%TAG}_#,3) = $%)
-! {$x0} [%3%] (%    CF({%TAG}_#,4) = $%)
-! {$x0} [%4%] (%    CF({%TAG}_#,5) = $%)
+! {$x0} [%#%] (%    CF({%TAG}_@,#) = $%)
 
 #ifdef ZERO_TEST
     CF(:,1) = 1.0_dp
@@ -238,17 +235,17 @@ CONTAINS
   ! here the number of total molecules is calculated from each species composition
 
   ! careful, {%ABBT}_T is calculated from regular!
-    C(ind_{%ABBR}T{%A}) = SUM( C({%RDIND}(:,0)) )
+    C(ind_{%CONF}T{%A}) = SUM( C({%RDIND}(:,0)) )
 
   ! classes concentrations
     DO i = 1, NDCLASS
       TCC(i) = SUM( C(RDIND(:,i)) )
     ENDDO
 
-->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ABBR:O3F}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>CONF:O3F}
     C(ind_O3F_N_T) = TCC(1)
     C(ind_O3F_Z_T) = TCC(2)
--<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ABBR:O3F}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CONF:O3F}
 
   END SUBROUTINE {%DBL}_calctotals
 
@@ -296,6 +293,14 @@ CONTAINS
     INTEGER  :: i
     REAL(dp) :: tot
    
+#ifdef CLASSES_1
+  ! in case one class is defined, quitting
+#ifdef DEBUG
+    print *,'{%DBL}_correct2reg: no correction performed (one class)'
+#endif
+    return
+#endif
+
   ! here is the ver. with corr. of ALL species to regular
 
     DO i = 1, {%NDSPEC}
@@ -315,21 +320,28 @@ CONTAINS
   
 ! correction of "regular" species budget to the total isotopologues budget
 
-  SUBROUTINE {%DBL}_correct2frac
+  SUBROUTINE {%DBL}_correct2dbl
 
     IMPLICIT NONE
 
     INTEGER  :: i
 
-  ! here is the ver. with corr. of ALL species to regular
+#ifdef CLASSES_1
+  ! in case one class is defined, quitting
+#ifdef DEBUG
+    print *,'{%DBL}_correct2dbl: no correction performed (one class)'
+#endif
+    return
+#endif
 
+  ! here is the ver. with corr. of ALL species to regular
     DO i = 1, NDSPEC
       C({%RDIND}(i,0)) = SUM(C({%RDIND}(i,1:{%NCLASS})))
     ENDDO
 
 !    C({%RDIND}(:,0)) = SUM(C({%RDIND}(:,1:{%NCLASS})),DIM=2)
 
-  END SUBROUTINE {%DBL}_correct2frac
+  END SUBROUTINE {%DBL}_correct2dbl
 
 
 
@@ -361,10 +373,10 @@ CONTAINS
 
 ! TODO: put additional tracers/variables+units after INIT_TRAC, INIT_UNIT
 
-->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ABBR:O3F}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>CONF:O3F}
     CALL open_output_file(ncid_{%DBL}, 'caaba_mecca_{%DBL}', &
       (/   &
-! {$TAG_SPECS} [%fO3_#%]
+! {$TAG_SPECS} [%fO3_@%]
        , &
 {$ELSA}       'fON_T', 'fO3_T', &
 {$ELSA}       'TON', 'TO3', 'TOR' &
@@ -378,14 +390,14 @@ CONTAINS
        , &
 {$ELSA}       'specs' &
        /), (/   &
-! {$TAG_SPECS} [%@SRf_O_3(#)%]
+! {$TAG_SPECS} [%@SRf_O_3(@)%]
        , &
 {$ELSA}       '@SRf_N_O_N_-_O_3(TO)', '@SRf_O_3(TO)', &
 {$ELSA}       '@SRTO_N_O_N_-_O_3', '@SRT_O_3', '@SRTO (regular)' &
        , &
 {$ELSA}       '@SRnumber of rejected species' &
        /) )
--<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ABBR:O3F}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CONF:O3F}
 
   END SUBROUTINE {%DBL}_init
 
@@ -403,7 +415,7 @@ CONTAINS
   ! last value is a common parameter
     DOUT(UBOUND(DOUT)) = REAL({%DBL}_NREJCT)
     
-->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ABBR:O3F}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>CONF:O3F}
 ! output array: minor fractions (+total's fractions),
 !               total concentrations (+regular) + NREJCT
     DO i = 2, {%NCLASS}
@@ -416,10 +428,10 @@ CONTAINS
     DOUT(({%NSPEC})*({%NCLASS}-1)+{%NCLASS}+1: &
          ({%NSPEC})*({%NCLASS}-1)+{%NCLASS}+{%NCLASS}) = TCC(:)
          
-    DOUT(({%NSPEC})*({%NCLASS}-1)+{%NCLASS}+{%NCLASS}+1) = C(ind_{%ABBR}T{%A})
+    DOUT(({%NSPEC})*({%NCLASS}-1)+{%NCLASS}+{%NCLASS}+1) = C(ind_{%CONF}T{%A})
     
     CALL write_output_file(ncid_{%DBL}, model_time, D{%A}OUT)
--<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CONF:O3F}
 
   END SUBROUTINE {%DBL}_result
 
@@ -429,9 +441,9 @@ CONTAINS
 
   SUBROUTINE {%DBL}_finish
 
-->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ABBR:O3F}
+->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>CONF:O3F}
     CALL close_file(ncid_{%DBL})
--<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
+-<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<CONF:O3F}
 
   END SUBROUTINE {%DBL}_finish
 

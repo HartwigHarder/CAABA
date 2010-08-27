@@ -1,5 +1,5 @@
 !*****************************************************************************
-!                Time-stamp: <2010-03-11 17:03:21 sander>
+!                Time-stamp: <2010-07-27 15:53:07 sander>
 !*****************************************************************************
 
 ! SAPPHO = Simplified And Parameterized PHOtolysis rates
@@ -73,6 +73,8 @@ CONTAINS
       CALL photo_ff
     !qqq todo: CASE ('FREE_TROP')
       !qqq todo: CALL photo_free_trop
+    CASE ('LAB')
+      CALL photo_lab
     CASE ('','OOMPH','MBL','MIM2')
       CALL photo_mbl
     !qqq todo: CASE ('STRATO')
@@ -135,6 +137,28 @@ CONTAINS
       jx(ip_CH3Br)  = 0.                                                 ! J99
       jx(ip_CH3CHO) = jx(ip_CHOH)+jx(ip_COH2) ! mz_rs_20050911 assumed
     END SUBROUTINE photo_ff
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE photo_lab
+      !qqq todo: more values from Sergej?
+      JX(IP_CH3CHO)   = 5.339559E-05
+      JX(IP_CH3COCH3) = 6.3392E-06
+      JX(IP_CH3OOH)   = 1.300389E-05
+      JX(IP_CHOH)     = 8.030251E-05
+      JX(IP_COH2)     = 0.0001400505
+      JX(IP_H2O2)     = 1.461451E-05
+      JX(IP_HNO3)     = 1.232162E-06
+      JX(IP_HNO4)     = 1.255586E-05
+      JX(IP_HONO)     = 0.00411277
+      JX(IP_N2O5)     = 4.650903E-05
+      JX(IP_NO2)      = 0.01843288
+      JX(IP_NO2O)     = 0.2858042
+      JX(IP_NOO2)     = 0.03579563
+      JX(IP_O1D)      = 7.111431E-05
+      JX(IP_O3P)      = 0.0007458425
+      JX(IP_PAN)      = 9.793765E-07
+    END SUBROUTINE photo_lab
 
     !-------------------------------------------------------------------------
 

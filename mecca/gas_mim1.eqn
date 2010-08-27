@@ -1,17 +1,17 @@
 // ------------------------------- gas.eqn -----------------------------------
-// Time-stamp: <2010-03-04 09:16:18 joec_pa>
+// Time-stamp: <2010-08-17 13:00:33 sander>
 // ---------------------------------------------------------------------------
 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, get it from:
 // http://www.gnu.org/copyleft/gpl.html
@@ -37,7 +37,16 @@
 //   - Reaction mechanisms merged, sorted, labeled, and maintained
 //   - Gas-phase reaction rates updated to JPL2006
 // - Franziska Koellner (2009):
-//   - added uncertainties for reaction constants 
+//   - added uncertainties for reaction constants
+
+// ---------------------------------------------------------------------------
+
+// Monte-Carlo information:
+
+// - The uncertainty factor, e.g. "{§1.13}" is placed directly behind
+//   the value of the rate coefficient
+// - Uncertainties refer to only one temperature, usually 298 K.
+//   Uncertainties in the Temperature-dependencies are not considered
 
 // ---------------------------------------------------------------------------
 
@@ -68,8 +77,7 @@
   ! - qqq describe potential KP4 incompatibility here...
   ! -------------------------------------------------------
   REAL(dp) :: cair    ! c(air) (wet) [mcl/cm^3]
-  REAL(dp) :: press   ! pressure [Pa] ! mz_pj_20080716
-  REAL     :: mcfct(NREACT) ! Monte-Carlo factor
+  REAL(dp) :: press   ! pressure [Pa]
 !KPPPP_DIRECTIVE vector variable definition end
   ! AEROSOL ONLY:
 !KPPPP_DIRECTIVE vector variable definition start
@@ -88,7 +96,7 @@
   REAL(dp) :: jx(IP_MAX) = 0.
 !KPPPP_DIRECTIVE vector variable definition end
 
-  ! iht_ = index of troposheric heterogeneous reactions 
+  ! iht_ = index of troposheric heterogeneous reactions
   INTEGER, PARAMETER, PUBLIC :: &
     iht_N2O5      =  1, iht_HNO3      =  2, iht_Hg      =  3, &
     iht_RGM       = 4
@@ -110,7 +118,7 @@
 !KPPPP_DIRECTIVE vector variable definition end
 
   ! Parameters included for acid-base equilibria calculation
-  ! used to enable the double use of the aqueous.eqn for liquid 
+  ! used to enable the double use of the aqueous.eqn for liquid
   ! and aerosol phase.
   REAL(dp), PARAMETER :: &
     testfac_HO2   = 1.e5_dp, testfac_HONO   = 1.e5_dp, &
@@ -133,7 +141,7 @@
   ! start of executable statements
   ! define some rate constants here if the expressions are too long
   ! for kpp or if they are used more than once
-  k_HO2_HO2    = (1.5E-12{§1.13}*EXP(19.{§2.63}/temp)+1.7E-33*EXP(1000./temp)*cair)* & ! {1.5+-0.2} and {19+-31}
+  k_HO2_HO2    = (1.5E-12{§1.13}*EXP(19./temp)+1.7E-33*EXP(1000./temp)*cair)* & ! {1.5+-0.2}
                  (1.+1.4E-21*EXP(2200./temp)*C(ind_H2O))
   k_NO3_NO2    = k_3rd(temp,cair,2.0E-30,4.4,1.4E-12,0.7,0.6){§1.2}
   k_NO2_HO2    = k_3rd(temp,cair,2.0E-31,3.4,2.9E-12,1.1,0.6){§1.1}
@@ -158,7 +166,7 @@
   ! mz_pj_20080812+
   k_O3s = (1.7E-12*EXP(-940./temp)) * C(ind_OH) &  ! <G2104>
         + (1.E-14*EXP(-490./temp)) * C(ind_HO2) &  ! <G2107>
-        + JX(ip_O1D) * 2.2E-10 * C(ind_H2O) &      ! 
+        + jx(ip_O1D) * 2.2E-10 * C(ind_H2O) &      !
         / ( 3.2E-11*EXP(70./temp)*C(ind_O2)   &
            + 1.8E-11*EXP(110./temp)*C(ind_N2) &
            + 2.2E-10*C(ind_H2O) )
@@ -242,7 +250,7 @@
 <G2109>  HO2  + OH       = H2O + O2    : {%StTrG} 4.8E-11{§1.25}*EXP(250./temp); {&1945}
 <G2110>  HO2  + HO2      = H2O2 + O2   : {%StTrG} k_HO2_HO2; {&&1599, 165}
 <G2111>  H2O  + O1D      = 2 OH        : {%StTrG} 1.63E-10{§1.15}*EXP(60./temp); {&1945}
-<G2112>  H2O2 + OH       = H2O + HO2   : {%StTrG} 1.8E-12{STD};{&1945}
+<G2112>  H2O2 + OH       = H2O + HO2   : {%StTrG} 1.8E-12{§};{&1945}
 
 {<G3nnn> ------------------------------- N -------------------------}{@\myhline}
 
@@ -270,28 +278,28 @@
 <G3206>  HNO3 + OH       = H2O   + NO3   : {%StTrGN} k_HNO3_OH; {&&1945}
 <G3207>  HNO4       {+M} = NO2   + HO2   : {%StTrGN} k_NO2_HO2/(2.1E-27{§1.3}*EXP(10900./temp)); {&&1945}
 <G3208>  HNO4 + OH       = NO2   + H2O   : {%StTrGN} 1.3E-12{§1.3}*EXP(380./temp); {&1945}
-<G3209>  NH3   + OH      = NH2 + H2O     : {%TrGN}   1.7E-12*EXP(-710./temp); {&2415}
-<G3210>  NH2   + O3      = NH2O + O2     : {%TrGN}   4.3E-12*EXP(-930./temp); {&2415}
-<G3211>  NH2   + HO2     = NH2O + OH     : {%TrGN}   4.8E-07*EXP(-628./temp)*temp**(-1.32); {&2415}
-<G3212>  NH2   + HO2     = HNO + H2O     : {%TrGN}   9.4E-09*EXP(-356./temp)*temp**(-1.12); {&2415}
-<G3213>  NH2   + NO      = HO2 + OH + N2 : {%TrGN}   1.92E-12*((temp/298.)**(-1.5)); {&2415}
-<G3214>  NH2   + NO      = N2 + H2O      : {%TrGN}   1.41E-11*((temp/298.)**(-1.5)); {&2415}
-<G3215>  NH2   + NO2     = N2O + H2O     : {%TrGN}   1.2E-11*((temp/298.)**(-2.0)); {&2415}
-<G3216>  NH2   + NO2     = NH2O + NO     : {%TrGN}   0.8E-11*((temp/298.)**(-2.0)); {&2415}
-<G3217>  NH2O  + O3      = NH2 + O2      : {%TrGN}   1.2E-14; {&2415}
-<G3218>  NH2O            = NHOH          : {%TrGN}   1.3E+3; {&2415}
-<G3219>  HNO   + OH      = NO + H2O      : {%TrGN}   8.0E-11*EXP(-500./temp); {&2415}
-<G3220>  HNO   + NHOH    = NH2OH + NO    : {%TrGN}   1.66E-12*EXP(-1500./temp); {&2415}
-<G3221>  HNO   + NO2     = HONO + NO     : {%TrGN}   1.0E-12*EXP(-1000./temp); {&2415}
-<G3222>  NHOH  + OH      = HNO + H2O     : {%TrGN}   1.66E-12; {&2415}
-<G3223>  NH2OH + OH      = NHOH + H2O    : {%TrGN}   4.13E-11*EXP(-2138./temp); {&2415}
-<G3224>  HNO   + O2      = HO2 + NO      : {%TrGN}   3.65E-14*EXP(-4600./temp); {&2415}
+<G3209>  NH3   + OH      = NH2 + H2O     : {%TrGN}   1.7E-12{§}*EXP(-710./temp); {&2415}
+<G3210>  NH2   + O3      = NH2O + O2     : {%TrGN}   4.3E-12{§}*EXP(-930./temp); {&2415}
+<G3211>  NH2   + HO2     = NH2O + OH     : {%TrGN}   4.8E-07{§}*EXP(-628./temp)*temp**(-1.32); {&2415}
+<G3212>  NH2   + HO2     = HNO + H2O     : {%TrGN}   9.4E-09{§}*EXP(-356./temp)*temp**(-1.12); {&2415}
+<G3213>  NH2   + NO      = HO2 + OH + N2 : {%TrGN}   1.92E-12{§}*((temp/298.)**(-1.5)); {&2415}
+<G3214>  NH2   + NO      = N2 + H2O      : {%TrGN}   1.41E-11{§}*((temp/298.)**(-1.5)); {&2415}
+<G3215>  NH2   + NO2     = N2O + H2O     : {%TrGN}   1.2E-11{§}*((temp/298.)**(-2.0)); {&2415}
+<G3216>  NH2   + NO2     = NH2O + NO     : {%TrGN}   0.8E-11{§}*((temp/298.)**(-2.0)); {&2415}
+<G3217>  NH2O  + O3      = NH2 + O2      : {%TrGN}   1.2E-14{§}; {&2415}
+<G3218>  NH2O            = NHOH          : {%TrGN}   1.3E3{§}; {&2415}
+<G3219>  HNO   + OH      = NO + H2O      : {%TrGN}   8.0E-11{§}*EXP(-500./temp); {&2415}
+<G3220>  HNO   + NHOH    = NH2OH + NO    : {%TrGN}   1.66E-12{§}*EXP(-1500./temp); {&2415}
+<G3221>  HNO   + NO2     = HONO + NO     : {%TrGN}   1.0E-12{§}*EXP(-1000./temp); {&2415}
+<G3222>  NHOH  + OH      = HNO + H2O     : {%TrGN}   1.66E-12{§}; {&2415}
+<G3223>  NH2OH + OH      = NHOH + H2O    : {%TrGN}   4.13E-11{§}*EXP(-2138./temp); {&2415}
+<G3224>  HNO   + O2      = HO2 + NO      : {%TrGN}   3.65E-14{§}*EXP(-4600./temp); {&2415}
 
 {<G4nnn> ------------------------------- C -------------------------}{@\myhline}
 
 // 1C (#G41nn)
 <G4100>  CH4     + O1D     = .75 CH3O2 + .75 OH + .25 HCHO + .4 H + .05 H2 : {%StG}    1.5E-10{§1.2}; {&1945}
-<G4101>  CH4     + OH {+O2}= CH3O2 + H2O      : {%StTrG}  1.85E-20*EXP(2.82*log(temp)-987./temp); {&&1627}
+<G4101>  CH4     + OH {+O2}= CH3O2 + H2O      : {%StTrG}  1.85E-20{§1.2}*EXP(2.82*log(temp)-987./temp); {&1627}
 <G4102>  CH3OH   + OH      = HCHO + HO2        : {%TrG}    2.9E-12{§1.10}*EXP(-345./temp); {&1945}
 <G4103>  CH3O2   + HO2     = CH3OOH + O2       : {%StTrG}  4.1E-13{§1.3}*EXP(750./temp); {&&1945}
 <G4104>  CH3O2   + NO      = HCHO + NO2 + HO2  : {%StTrGN} 2.8E-12{§1.15}*EXP(300./temp); {&1945}

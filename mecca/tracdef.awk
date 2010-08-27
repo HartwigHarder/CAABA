@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------------
 
 # Author: Rolf Sander, Max-Planck-Institute, Mainz, Germany, 2003
-# Time-stamp: <2009-11-12 12:29:38 akerkweg>
+# Time-stamp: <2010-03-24 18:24:53 sander>
 
 # tracdef.awk extracts all ind_XYZ from messy_mecca_kpp_Parameters.f90 and
 # inserts these species into messy_mecca_idt_e5.inc. For all ind_XYZ that are

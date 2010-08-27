@@ -1,53 +1,7 @@
 // -*- kpp -*- kpp mode for emacs
+// see gas.rpl-example for more information about *.rpl files
 
-// Replacement files allow you to modify gas.eqn. Please note: If you apply
-// any *.rpl files to the reaction mechanism, you do so at your own risk.
-// The files provided here are mostly under development. For more
-// information, please contact the authors mentioned in the *.rpl files.
-
-// IMPORTANT: When adding a new reaction, please assign a PRELIMINARY
-// reaction number by adding your initials as a suffix, e.g. John Doe could
-// use "<G0001JD>".
-
-// Syntax of this replacement file is similar to kpp syntax, but...
-// - Only the commands "#REPLACE" and "#ENDREPLACE" are allowed.
-// - Comments must start with "//", curly braces ("{}") cannot be used here.
-
-// known limitation:
-// - The reaction number (e.g. "<G9876>") in the input equation file
-//   (gas.eqn) must be the first (non-whitespace) item in the line. If it is
-//   preceded by a comment in curly braces, replace.awk will not be able to
-//   find it.
-
-// here, reaction G4110 is replaced by a modified reaction:
-//#REPLACE <G4110>
-//<a> CO + OH = HO2 + CO2 : {%StTrG} 1.57E-13 + cair*3.54E-33; {&1628}
-//#ENDREPLACE
-
-// reaction numbers in the replacement (<a>, <b>, ...) will be added as a suffix
-// to the original reaction number, i.e.:
-// <a> --> <G4101a>
-// <b> --> <G4101b>
-//#REPLACE <G4101>
-//<a> CH4 + OH = CH3 + H2O : {%StTrG} 1.85E-20*EXP(2.82*log(temp)-987./temp); {&&1627}
-//<b> CH3 + O2 = CH3O2 : {%StTrG} 1E-999; {&&}
-//#ENDREPLACE
-
-// to add a new reaction, specify an empty reaction number
-// in the "#REPLACE" command ("<>"), and give a complete
-// reaction number in the replacement ("<G9876>"):
-//#REPLACE <>
-//<G9876JD> XYZ + OH = RO2 + H2O : {%StG} 1.57E-13; {&&}
-//#ENDREPLACE
-
-// to delete a reaction, specify an empty replacement:
-//#REPLACE <G4200>
-//#ENDREPLACE
-
-// an error message is given if the specified reaction does not exist:
-//#REPLACE <G9999>
-//<a> CO + OH = HO2 + CO2 : {%StTrG} 1.57E-13 + cair*3.54E-33; {&1628}
-//#ENDREPLACE
+// Author: Hartwig Harder
 
 #REPLACE <>
    <EMI0001> UNITY = O3 : {%TrG} 75.0;

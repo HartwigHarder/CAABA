@@ -11,59 +11,30 @@ node[shape=oval,
   color=yellow,
   style="filled"];
 BrCl
-CCl4
-CF2Cl2
-CF2ClBr
-CFCl3
 CH2ClBr
-CH2ClI
 CH3CCl3
-CH3Cl
 CHCl2Br
 CHClBr2
 Cl
 Cl2
 Cl2O2
-ClHgBr
-ClHgOBr
 ClNO2
 ClNO3
 ClO
 HCl
 HOCl
-HgCl
-HgCl2
-ICl
 OClO
 }
 BrCl -> Cl [label = "Br (G7600)"];
 BrCl -> Cl [label = "hv (J7600)"];
 BrCl -> Cl2 [label = "Cl (G7604)"];
-CCl4 -> Cl [label = "O1D (G6404)"];
-CCl4 -> Cl [label = "hv (J6401)"];
-CCl4 -> ClO [label = "O1D (G6404)"];
-CF2Cl2 -> Cl [label = "O1D (G6500)"];
-CF2Cl2 -> Cl [label = "hv (J6501)"];
-CF2Cl2 -> ClO [label = "O1D (G6500)"];
-CF2ClBr -> Cl [label = "hv (J7601)"];
-CFCl3 -> Cl [label = "O1D (G6501)"];
-CFCl3 -> Cl [label = "hv (J6500)"];
-CFCl3 -> ClO [label = "O1D (G6501)"];
 CH2ClBr -> Cl [label = "hv (J7602)"];
-CH2ClI -> Cl [label = "hv (J8403)"];
-CH3CCl3 -> Cl [label = "O1D (G6407)"];
 CH3CCl3 -> Cl [label = "OH (G6408)"];
-CH3CCl3 -> Cl [label = "hv (J6402)"];
-CH3Cl -> Cl [label = "O1D (G6405)"];
-CH3Cl -> Cl [label = "OH (G6406)"];
-CH3Cl -> Cl [label = "hv (J6400)"];
 CHCl2Br -> Cl [label = "hv (J7603)"];
 CHClBr2 -> Cl [label = "hv (J7604)"];
 Cl -> BrCl [label = "Br2 (G7602)"];
 Cl -> Cl2 [label = "BrCl (G7604)"];
 Cl -> Cl2 [label = "ClNO3 (G6304)"];
-Cl -> ClHgBr [label = "HgBr (G10706)"];
-Cl -> ClO [label = "HO2 (G6201b)"];
 Cl -> ClO [label = "O3 (G6100)"];
 Cl -> HCl [label = "C2H2 (G6411)"];
 Cl -> HCl [label = "C2H4 (G6409)"];
@@ -72,57 +43,31 @@ Cl -> HCl [label = "CH3CHO (G6410)"];
 Cl -> HCl [label = "CH3OOH (G6402)"];
 Cl -> HCl [label = "CH4 (G6400)"];
 Cl -> HCl [label = "DMS (G9600)"];
-Cl -> HCl [label = "H2 (G6200)"];
 Cl -> HCl [label = "H2O2 (G6202)"];
 Cl -> HCl [label = "HCHO (G6401)"];
-Cl -> HCl [label = "HO2 (G6201a)"];
-Cl -> HgCl [label = "Hg (G10600)"];
 Cl2 -> BrCl [label = "Br (G7601)"];
 Cl2 -> Cl [label = "Br (G7601)"];
 Cl2 -> Cl [label = "hv (J6000)"];
-Cl2 -> HgCl2 [label = "Hg (G10601)"];
 Cl2O2 -> Cl [label = "hv (J6100)"];
 Cl2O2 -> ClO [label = " (G6103)"];
 ClNO2 -> Cl [label = "hv (J6300)"];
-ClNO3 -> BrCl [label = "HBr (HET540)"];
 ClNO3 -> Cl [label = "hv (J6301a)"];
 ClNO3 -> Cl2 [label = "Cl (G6304)"];
-ClNO3 -> Cl2 [label = "HCl (HET420)"];
 ClNO3 -> ClO [label = " (G6302)"];
-ClNO3 -> ClO [label = "O3P (G6303)"];
 ClNO3 -> ClO [label = "hv (J6301b)"];
-ClNO3 -> HOCl [label = "H2O (HET421)"];
 ClO -> BrCl [label = "BrO (G7603c)"];
 ClO -> Cl [label = "BrO (G7603b)"];
 ClO -> Cl [label = "CH3O2 (G6403)"];
 ClO -> Cl [label = "ClO (G6102b)"];
 ClO -> Cl [label = "ClO (G6102c)"];
-ClO -> Cl [label = "IO (G8600)"];
 ClO -> Cl [label = "NO (G6300)"];
-ClO -> Cl [label = "O3P (G6101)"];
-ClO -> Cl [label = "OH (G6203)"];
 ClO -> Cl2 [label = "ClO (G6102a)"];
 ClO -> Cl2O2 [label = "ClO (G6102d)"];
 ClO -> ClNO3 [label = "NO2 (G6301)"];
-ClO -> HCl [label = "OH (G6203)"];
 ClO -> HOCl [label = "HO2 (G6204)"];
-ClO -> ICl [label = "IO (G8600)"];
 ClO -> OClO [label = "BrO (G7603a)"];
 ClO -> OClO [label = "ClO (G6102c)"];
-ClO -> OClO [label = "IO (G8600)"];
-HCl -> BrCl [label = "BrNO3 (HET541)"];
-HCl -> BrCl [label = "HOBr (HET543)"];
 HCl -> Cl [label = "OH (G6205)"];
-HCl -> Cl [label = "hv (J6200)"];
-HCl -> Cl2 [label = "ClNO3 (HET420)"];
-HCl -> Cl2 [label = "HOCl (HET410)"];
-HCl -> ClNO2 [label = "N2O5 (HET422)"];
-HOCl -> BrCl [label = "HBr (HET542)"];
 HOCl -> Cl [label = "hv (J6201)"];
-HOCl -> Cl2 [label = "HCl (HET410)"];
-HOCl -> ClO [label = "OH (G6206)"];
-HgCl -> ClHgBr [label = "Br (G10707)"];
-HgCl -> ClHgOBr [label = "BrO (G10705)"];
-ICl -> Cl [label = "hv (J8600)"];
 OClO -> ClO [label = "hv (J6101)"];
 }

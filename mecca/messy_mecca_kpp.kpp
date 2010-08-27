@@ -5,10 +5,7 @@
 // (SETFIX of liquid H2O_a* is done in mecca.spc via xmecca)
 //#SETFIX CO2; O2; N2;
 // keep these fixed for Learjet measurement suite:
-//#SETFIX H2; CO2; O2; N2; NO; CH4; CO; H2O2; CH3OOH; NO; O3;
-// keep these fixed for DOMINO measurement suite:
-#SETFIX H2; CO2; O2; N2; NO; CH4; CO; H2O2; NO; O3; H2O;
-// #SETFIX H2; CO2; O2; N2; NO; CH4; CO; H2O2; CH3OOH; NO; O3; HCHO; CH3OH; CH3CHO; CH3COOH; CH3COCH3; ISOP; MEK;
+#SETFIX H2; CO2; O2; N2; NO; CH4; CO; H2O2; CH3OOH; O3;
 
 // define chemical equations
 #INCLUDE mecca.eqn

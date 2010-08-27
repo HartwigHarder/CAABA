@@ -1,5 +1,5 @@
 !*****************************************************************************
-!                Time-stamp: <2010-03-16 16:00:25 sander>
+!                Time-stamp: <2010-08-17 16:22:22 sander>
 !*****************************************************************************
 
 ! submodel MECCA
@@ -36,10 +36,10 @@ MODULE messy_mecca
   PUBLIC :: mecca_read_nml_ctrl           ! read CTRL namelist and initialize
   PUBLIC :: initialize_kpp_variables
   PUBLIC :: steady_state_reached
-  PUBLIC :: define_mcfct
+  PUBLIC :: define_mcexp
 
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: modstr = 'mecca' ! name of module
-  CHARACTER(LEN=*), PUBLIC, PARAMETER :: modver = '2.6'   ! module version
+  CHARACTER(LEN=*), PUBLIC, PARAMETER :: modver = '2.7b'  ! module version
   LOGICAL, PUBLIC, SAVE :: l_aero     ! switch for aero chemistry
 
   ! GLOBAL CTRL-NAMELIST
@@ -48,7 +48,7 @@ MODULE messy_mecca
   LOGICAL, PUBLIC, SAVE :: l_kpp_debug  = .FALSE. ! switch for kpp debugging
   LOGICAL, PUBLIC, SAVE :: l_tag        = .FALSE. ! switch for tagging
   LOGICAL, PUBLIC, SAVE :: l_dbl        = .FALSE. ! switch for doubling
-  INTEGER, PUBLIC, SAVE :: mcfct_seed   = 0       ! Monte-Carlo factor seed
+  INTEGER, PUBLIC, SAVE :: mcexp_seed   = 0       ! Monte-Carlo factor seed
 
 CONTAINS
 
@@ -78,7 +78,7 @@ CONTAINS
     CHARACTER(LEN=*), PARAMETER :: substr = 'mecca_read_nml_ctrl'
 
     NAMELIST /CTRL/ mecca_aero, l_force_khet, l_kpp_debug, l_tag, l_dbl, &
-      mcfct_seed
+      mcexp_seed
 
     ! INITIALIZE
     status = 1 ! error
@@ -117,7 +117,7 @@ CONTAINS
     WRITE(*,*) 'l_tag        = ', l_tag
     WRITE(*,*) 'l_dbl        = ', l_dbl
     IF (REQ_MCFCT) &
-      WRITE(*,*) 'mcfct_seed   = ', mcfct_seed
+      WRITE(*,*) 'mcexp_seed   = ', mcexp_seed
 
     CALL read_nml_close(substr, iou, modstr)
     status = 0 ! no error
@@ -154,51 +154,45 @@ CONTAINS
 
   LOGICAL FUNCTION steady_state_reached(c)
 
-    USE messy_mecca_kpp, ONLY: ind_OH
-    IMPLICIT NONE
-    REAL(DP), DIMENSION(:), INTENT(IN) :: c
-    REAL(DP), SAVE :: old_oh = 0.
-    REAL(DP) :: change 
-     
-    steady_state_reached = .FALSE.
+     USE messy_mecca_kpp, ONLY: ind_OH, ind_HO2
+     USE caaba_mem,       ONLY: time_step_len
+     IMPLICIT NONE
+     REAL(DP), DIMENSION(:), INTENT(IN) :: c
+     REAL(DP), SAVE :: old_oh  = 0.
+     REAL(DP), SAVE :: old_ho2 = 0.
+     REAL(DP) :: change_oh, change_ho2
 
-    ! Steady state is defined here as less than 0.1% change of the OH
-    ! radical. Note that this definition is probably only useful if the
-    ! day/night cycle is switched off.
-    change=abs((old_oh-c(ind_oh))/c(ind_oh))
-    IF (change<1e-3) steady_state_reached = .TRUE.
+     steady_state_reached = .FALSE.
 
-    old_oh = c(ind_oh)
+     ! Steady state is defined here as less than a relative 1e-6 change
+     ! per second. Note that this definition is probably only useful if
+     ! the day/night cycle is switched off.
+     change_oh  = ABS((old_oh-c(ind_oh))/c(ind_oh))/time_step_len
+     change_ho2 = ABS((old_ho2-c(ind_ho2))/c(ind_ho2))/time_step_len
+     IF ( (change_oh<1e-6).AND.(change_ho2<1e-6) ) THEN
+       steady_state_reached = .TRUE.
+     ENDIF
+     old_oh  = c(ind_oh)
+     old_ho2 = c(ind_ho2)
 
-  END FUNCTION steady_state_reached
-
+   END FUNCTION steady_state_reached
   ! --------------------------------------------------------------------------
 
-  SUBROUTINE define_mcfct(status, mcfct)
+  SUBROUTINE define_mcexp(status, mcexp)
 
     USE messy_main_rnd,   ONLY: RND_MTW_GAUSS, rnd_init, rnd_number, rnd_finish
-    USE messy_mecca_kpp,  ONLY: EQN_TAGS
     IMPLICIT NONE
     INTEGER,                INTENT(OUT) :: status
-    REAL(DP), DIMENSION(:), INTENT(OUT) :: mcfct
+    REAL(DP), DIMENSION(:), INTENT(OUT) :: mcexp
     INTEGER :: i, id_rnd
 
-    ! assign a set of normally distributed random numbers to mcfct:
-    CALL rnd_init(status, id_rnd, RND_MTW_GAUSS, mcfct_seed)
+    ! assign a set of normally distributed random numbers to mcexp:
+    CALL rnd_init(status, id_rnd, RND_MTW_GAUSS, mcexp_seed)
     IF (status/=0) RETURN
-    CALL rnd_number(id_rnd, mcfct(:))
+    CALL rnd_number(id_rnd, mcexp(:))
     CALL rnd_finish(id_rnd)
 
-    ! below, the Monte-Carlo method can be restricted to certain rate
-    ! coefficients (choose one):
-    DO i=1, SIZE(mcfct)
-      ! do not apply mcfct to photolysis reactions:
-      IF (EQN_TAGS(i)(1:1)=='J') mcfct(i) = 0.
-      ! apply mcfct only to photolysis reactions:
-      ! IF (EQN_TAGS(i)(1:1)/='J') mcfct(i) = 0.
-    ENDDO
-
-  END SUBROUTINE define_mcfct
+  END SUBROUTINE define_mcexp
 
 !*****************************************************************************
 

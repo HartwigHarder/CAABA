@@ -149,7 +149,6 @@ IF `($nsensi) GT 0` THEN ! for PLOT/OVER
   GO ppl_mylayout
   PPL PLOT
   ! loop through sensitivity data sets:
-  !PLOT/OVER/DASH=($dashtype($dashnumber))/nolabels \
   REPEAT/range=($dsensi):($dend)/name=dnum ( \
     DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
     DEFINE SYMBOL dashnumber = `($dnum)-($dsensi)+1` ; \

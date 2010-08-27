@@ -4,7 +4,7 @@
 # when it is run in batch mode (i.e. not interactive).
 
  set apn          = 1                 # number of aerosol phases [0...99, default=0]
- set gaseqnfile   = gas_mim2.eqn
+ set gaseqnfile   = gas.eqn
  set rplfile      = mbl               # replacement file
  set wanted       = "Tr && (G || (Aa && Mbl)) && \!I" # Minimum MBL-chem, no I
  set mcfct        = n                 # Monte-Carlo factor?

@@ -19,8 +19,8 @@ echo "// Created automatically by xgraphviz, DO NOT EDIT\!" > $dotfile
 echo "creating $pdffile ..."
 
 # create dependencies with awk script:
-# for strange reasons, gawk only works properly if LC_COLLATE = C
-setenv LC_COLLATE C
+# for strange reasons, gawk only works properly if LC_ALL = C
+setenv LC_ALL C
 gawk -f eqn2dot.awk -v spc1file="$spc1file" -v spc2file="$spc2file" -v labeltype="$labeltype" $eqnfile
 
 # create inputfile for graphviz:
@@ -37,8 +37,8 @@ echo 'subgraph species {' >> $dotfile
 echo 'node[shape=oval,'   >> $dotfile
 echo '  color=yellow,'    >> $dotfile
 echo '  style="filled"];' >> $dotfile
-# # for strange reasons, gawk only works properly if LC_COLLATE = C
-# setenv LC_COLLATE C
+# # for strange reasons, gawk only works properly if LC_ALL = C
+# setenv LC_ALL C
 # grep -E '^ *[A-Za-z0-9_]+' $spc1file \
 #   | sed 's|[^A-Za-z0-9_].*||' \
 #   | sed 's|$|;|' >> $dotfile

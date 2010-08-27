@@ -126,7 +126,7 @@ CONTAINS
 
 ->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:C}
 
-! {$x0} [%1%]  (%    D13C({%TAG}_#) = $%)
+! {$x0} [%2%]  (%    D13C({%TAG}_#) = $%)
 
 #ifdef ZERO_TEST
     D13C(:) = 0.0_dp
@@ -148,9 +148,9 @@ CONTAINS
 -<<- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {<ATOM:C}
 ->>- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ {>ATOM:O}
 
-! {$x0} [%1%]  (%    D17O({%TAG}_#) = $%)
+! {$x0} [%2%]  (%    D17O({%TAG}_#) = $%)
 
-! {$x0} [%2%]  (%    D18O({%TAG}_#) = $%)
+! {$x0} [%3%]  (%    D18O({%TAG}_#) = $%)
 
 #ifdef ZERO_TEST
     D17O(:) = 0.0_dp
@@ -174,10 +174,11 @@ CONTAINS
 #ifdef INIUNIT_FRACMIN
   ! this is in the development phase, careful
   ! getting values from the configuration setup
-! {$x0} [%1%]  (%    ISO{%A}({%TAG}_#,2) = $%)
-! {$x0} [%2%]  (%    ISO{%A}({%TAG}_#,3) = $%)
-! {$x0} [%3%]  (%    ISO{%A}({%TAG}_#,4) = $%)
-! {$x0} [%4%]  (%    ISO{%A}({%TAG}_#,5) = $%)
+! {$x0} [%1%]  (%    ISO{%A}({%TAG}_#,1) = $%)
+! {$x0} [%2%]  (%    ISO{%A}({%TAG}_#,2) = $%)
+! {$x0} [%3%]  (%    ISO{%A}({%TAG}_#,3) = $%)
+! {$x0} [%4%]  (%    ISO{%A}({%TAG}_#,4) = $%)
+! {$x0} [%5%]  (%    ISO{%A}({%TAG}_#,5) = $%)
 
   ! ISO{%A}(:,:) through fractions and regular species:
     DO i = 2, {%NISO} 

@@ -1,5 +1,5 @@
 #! /bin/tcsh -f
-# Time-stamp: <2010-03-08 11:05:28 sander>
+# Time-stamp: <2010-08-17 16:21:41 sander>
 # Author: Rolf Sander, Max-Planck-Institute, Mainz, Germany
 # xcaaba = eXecute CAABA
 
@@ -162,21 +162,33 @@ endif
 
 ##############################################################################
 
-set defaultnml = `ls -la caaba.nml | sed 's|.*nml/||g'`
+set defaultnml = `ls -la caaba.nml | sed 's|.*/||g'`
 echo "\nChoose a namelist file from the nml/ directory:"
+echo "(or type 'm' for multirun)"
 set inn = "0"
 cd nml
+# multirun namelist should not be selected here:
+if ( -e caaba_multirun.nml ) rm caaba_multirun.nml
 set allfiles = *.nml
 cd -
 foreach i ($allfiles) # list all possibilities
   @ inn=$inn + 1
   printf "%2d) %s\n" $inn $allfiles[$inn]
 end
+echo " m) multirun"
 echo " q) quit"
 echo "The default is to use the same file as last time:"
 echo "default=$defaultnml"
 set inputstring = "$<"
 if ( "$inputstring" == "q" ) exit 1
+
+if ( "$inputstring" == "m" ) then
+  cd multirun
+  echo "\nStarting multirun.tcsh..."
+  ./multirun.tcsh
+  exit
+endif
+
 if(($inputstring <= $#allfiles) && ($inputstring >= 1)) then
   set nmlfile = $allfiles[$inputstring]
   ln -fs nml/$nmlfile caaba.nml
@@ -197,11 +209,14 @@ echo "with the selected chemistry mechanism\!"
 # check if MECCA code was prepared for Monte-Carlo simulations:
 set test = `grep -i "REQ_MCFCT *= *\.TRUE\." messy_mecca_kpp*.f90`
 if ( "$test" != "" ) then
-  echo "\nRun Monte-Carlo simulations with CAABA? [y/q, default=y]"
+  echo "\nRun Monte-Carlo simulations with CAABA? [y/n/q, default=y]"
   set inputstring = "$<"
   if ( "$inputstring" == "q" ) exit
-  ./montecarlo/montecarlo.tcsh
-  exit
+  if ( "$inputstring" != "n" ) then
+    echo "\nStarting montecarlo.tcsh..."
+    ./montecarlo/montecarlo.tcsh
+    exit
+  endif
 endif
 
 ##############################################################################
@@ -209,19 +224,11 @@ endif
 echo "\nRun CAABA boxmodel with MECCA chemistry?"
 echo "y = Yes (default)"
 echo "n = No"
-echo "m = Multirun (multiple runs)"
 echo "q = Quit"
 
 set inputstring = "$<"
 echo "$hline"
 if ( "$inputstring" == "q" ) exit
-
-if ( "$inputstring" == "m" ) then
-  cd multirun
-  ./multirun.tcsh
-  exit
-endif
-
 if ( "$inputstring" != "n" ) then
   # remove old files:
   rm caaba_*.nc
@@ -250,6 +257,21 @@ if ( "$inputstring" != "n" ) then
     #endif
   endif
   echo "Log output is now available in ./caaba.log"
+endif
+
+##############################################################################
+
+if ( -e `which ncks` ) then
+  echo "\nSplitting caaba_mecca.nc into species and reactions with ncks..."
+  mv caaba_mecca.nc caaba_mecca-ori.nc
+  # put all species (i.e. all variables except for RR*) into caaba_mecca.nc:
+  ncks -x -v "RR.*" caaba_mecca-ori.nc caaba_mecca.nc
+  # put all RR* variables into caaba_mecca_rr.nc:
+  ncks    -v "RR.*" caaba_mecca-ori.nc caaba_mecca_rr.nc
+  rm caaba_mecca-ori.nc
+else
+  echo "\nSince ncks is not available, caaba_mecca.nc cannot be split into"
+  echo "species and reactions."
 endif
 
 ##############################################################################

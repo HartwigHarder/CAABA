@@ -9,7 +9,7 @@
 !
 ! {$DBL_INFO} ! this is a template file for imdouble utility
 !
-! [Gromov, MPIC, 2007-2008]
+! [Gromov, MPIC, 2007-2009]
 ! ==============================================================================
 
 ! - general doubling parameters (as conditional defines) -----------------------
@@ -24,13 +24,22 @@ MODULE {%CMODEL}_dbl_common
 
   IMPLICIT NONE
 
+! module and version info
+  CHARACTER(LEN=*), PARAMETER, PUBLIC :: submodstr = '{%CMODEL}_dbl'
+  CHARACTER(LEN=*), PARAMETER, PUBLIC :: submodver = '1.6'
+
   REAL(dp), PARAMETER :: UNDEF = -1E+34_dp           ! undefined value mask
+
+  INTEGER             :: dbl_PTI(250)  ! array of PT indices (max. 250 !)
+  INTEGER             :: dbl_NPT = 0   ! no. of PTs found in current mech
+  CHARACTER(LEN=*), PARAMETER :: mask_PT = 'PT' ! mask to id a PT in SPEC_NAMES
 
   PUBLIC
 
 CONTAINS
 
 ! ==============================================================================
+! isotope-related functions and subroutines
 
 ! calculation of the major isotope atoms number from 2 isotopologues
 ! concentration and number of constituent isotope-tagged atoms
@@ -219,6 +228,89 @@ CONTAINS
   END FUNCTION kierate
 
 ! ==============================================================================
+! MECCA-related functions and subroutines
+
+  SUBROUTINE mecca_dbl_scanPTs(info)
+  
+    IMPLICIT NONE
+  
+    CHARACTER(len=1024), INTENT(OUT) :: info
+    INTEGER :: js
+
+    INTRINSIC :: SIZE
+
+    info = ''
+    dbl_NPT = 0
+
+    spec_loop: DO js = 1, NSPEC
+
+    ! checking if spec name satisfies mask_PT value
+      IF ( SPC_NAMES(js)(1:LEN_TRIM(mask_PT)) == TRIM(mask_PT) ) THEN
+
+      ! then deciding that it's a PT
+        dbl_NPT = dbl_NPT + 1
+        dbl_PTI(dbl_NPT) = js
+        info = TRIM(info)//' '//TRIM(SPC_NAMES(js))
+        
+      ENDIF
+      
+    ENDDO spec_loop
+    
+    IF (LEN_TRIM(info) .GT. 0) info = ':'//TRIM(info)
+    
+#ifdef MOVEDUPTOSMIL
+    print *,'mecca_dbl_scanPTs: found (',dbl_NPT,') passive tracers', &
+            TRIM(info)
+#endif
+
+#ifdef DEBUG
+    print *,'mecca_dbl_scanPTs: passed'
+#endif 
+
+  END SUBROUTINE mecca_dbl_scanPTs
+
+
+! -----------------------------------------------------------------------------
+ 
+  SUBROUTINE mecca_dbl_resetPTs(C)
+  
+    IMPLICIT NONE
+
+  ! concentrations vector
+    REAL(dp), INTENT(INOUT) :: C(:)
+
+  ! resetting PTs values
+    C(dbl_PTI(1:dbl_NPT)) = 0.0_dp
+
+#ifdef DEBUG
+    print *,'mecca_dbl_resetPTs: passed'
+#endif 
+
+  END SUBROUTINE mecca_dbl_resetPTs
+
+
+
+! -----------------------------------------------------------------------------
+ 
+  SUBROUTINE mecca_dbl_intPTs2arr(C, time_step_len)
+  
+    IMPLICIT NONE
+
+  ! concentrations vector
+    REAL(dp), INTENT(INOUT) :: C(:)
+  ! integration step
+    REAL(dp), INTENT(IN)    :: time_step_len
+
+  ! converting PTs integral values to average reaction rates
+    C(dbl_PTI(1:dbl_NPT)) = C(dbl_PTI(1:dbl_NPT)) / time_step_len
+
+#ifdef DEBUG
+    print *,'mecca_dbl_intPTs2arr(', time_step_len, '): passed'
+#endif 
+
+  END SUBROUTINE mecca_dbl_intPTs2arr
+
+
 
 END MODULE {%CMODEL}_dbl_common
 

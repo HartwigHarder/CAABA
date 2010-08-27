@@ -8,16 +8,15 @@ DEFINE SYMBOL C2 = `{spawn: "cd .. ; pwd"}`
 GO _define_sensi ($C2) "latest run"
 
 ! show other runs as well, e.g.:
-!GO _define_sensi ($C2)/output/test "test"
 !GO _define_sensi ($C2)/output/before "before"
 !GO _define_sensi ($C2)/output/after "after"
 
-! adjust and activate these lines for Monte-Carlo runs:
-! GO _define_sensi ($C2)/output/montecarlo/test/0001 "0001"
-! GO _define_sensi ($C2)/output/montecarlo/test/0002 "0002"
-! GO _define_sensi ($C2)/output/montecarlo/test/0003 "0003"
-! GO _define_sensi ($C2)/output/montecarlo/test/0004 "0004"
-! GO _define_sensi ($C2)/output/montecarlo/test/0005 "0005"
+! adjust and activate these lines for Monte-Carlo simulations:
+!GO _define_sensi ($C2)/output/montecarlo/test/0001 "0001"
+!GO _define_sensi ($C2)/output/montecarlo/test/0002 "0002"
+!GO _define_sensi ($C2)/output/montecarlo/test/0003 "0003"
+!GO _define_sensi ($C2)/output/montecarlo/test/0004 "0004"
+!GO _define_sensi ($C2)/output/montecarlo/test/0005 "0005"
 
 !*******************************************************************************
 

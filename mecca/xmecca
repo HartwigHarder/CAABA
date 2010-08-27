@@ -1,5 +1,5 @@
 #! /bin/tcsh -f
-# Time-stamp: <2010-03-16 16:00:48 sander>
+# Time-stamp: <2010-07-27 16:02:20 sander>
 # Authors:
 # Rolf Sander,     Max-Planck-Institute, Mainz, Germany, 2003-...
 # Astrid Kerkweg,  Max-Planck-Institute, Mainz, Germany, 2005-2007
@@ -17,7 +17,7 @@ echo "         www.mpch-mainz.mpg.de/~sander/messy/mecca/"
 # input files
 set gasspcfile        = "gas.spc"
 set aqueousspcfile    = "aqueous.spc"
-set defaultgaseqnfile = "gas_mim2.eqn"
+set defaultgaseqnfile = "gas.eqn"
 set aqueouseqnfile    = "aqueous.eqn"
 set cloudeqnfile      = "cloud.eqn"
 set gastexfile        = "gas.tex"
@@ -44,10 +44,10 @@ set f90file3   = "tmp_3.f90"
 set headerfile = "tmp_header"
 set paramfile  = "tmp_param"
 set spcfile5   = "tmp_5.spc"
-set texfile1   = "tmp_1.tex"
 set texfile2   = "tmp_2.tex"
-set texfile3   = "tmp_3.tex"
-set texfile4   = "tmp_4.tex"
+set diagtractexfile = "tmp_diagtrac.tex"
+set rxnratestexfile = "tmp_rxnrates.tex"
+set tracdeftexfile  = "tmp_tracdef.tex"
 
 # ferret jnl files:
 set jnlfile1 = "../jnl/_rxnrates.jnl"
@@ -125,6 +125,10 @@ if ($apn>99) then
   echo "ERROR: Number of aerosol phases is to large"
   exit 1
 endif
+if ( ("$apn" == "3") && ("$user" != "sander") ) then
+  echo "ERROR: do not use APN=3 which is still under construction\!"
+  exit 1
+endif
 echo "Selected number of aerosol phases = $apn" | tee -a $logfile
 
 if ( "$apn" == "0" ) then
@@ -174,7 +178,7 @@ else
   echo "\nChoose a gas phase equation file (q=quit, default=$defaultgaseqnfile):"
   echo "Available gas phase equation files:"
   set inn=0
-  set allfiles = gas_*.eqn
+  set allfiles = gas*.eqn
   foreach i ($allfiles) # list all possibilities
     @ inn=$inn + 1
     echo "$inn) $allfiles[$inn]"
@@ -189,14 +193,17 @@ else
     echo "default selection $defaultgaseqnfile"
   endif
 endif
+
 # set correct rpl subdirectory:
-# for strange reasons, gawk only works properly if LC_COLLATE = C
-setenv LC_COLLATE C
-set rplsubdir = `basename $gaseqnfile .eqn | gawk -F '_' '{print $2}'`
+if ( "$gaseqnfile" == "gas.eqn" ) then
+  set rpldir = rpl
+else
+  # for strange reasons, gawk only works properly if LC_ALL = C
+  setenv LC_ALL C
+  set rpldir = rpl/`basename $gaseqnfile .eqn | gawk -F '_' '{print $2}'`
+endif
 
 ##############################################################################
-
-cp $gaseqnfile $eqnfile0
 
 if ${?rplfile} then
   echo "\nFrom ${batchfile}: rplfile = $rplfile" | tee -a $logfile
@@ -209,7 +216,7 @@ else
   echo "Do you want to modify $gaseqnfile? [q/0/?, default=0]"
   echo "0) no replacements"
   set inn = "0"
-  cd rpl/$rplsubdir
+  cd $rpldir
   set allfiles = *.rpl
   cd -
   set allfiles = `echo $allfiles | sed 's|\.rpl||g'` # delete suffix .rpl
@@ -227,12 +234,13 @@ else
 endif
 if ("$rplfile" == "") then
   echo "No replacements with any *.rpl files" | tee -a $logfile
+  cp $gaseqnfile $eqnfile0
 else
-  set fullrplfile = rpl/$rplsubdir/$rplfile.rpl
+  set fullrplfile = $rpldir/$rplfile.rpl
   if ( -f $fullrplfile) then
     echo "You selected the replacement file: $rplfile" | tee -a $logfile
-    # for strange reasons, gawk only works properly if LC_COLLATE = C
-    setenv LC_COLLATE C
+    # for strange reasons, gawk only works properly if LC_ALL = C
+    setenv LC_ALL C
     gawk -f replace.awk -v infile=$gaseqnfile -v outfile=$eqnfile0 $fullrplfile
     if (! ${?batch}) then
       echo "Continue? [y/n/q, default=y]"
@@ -249,8 +257,8 @@ endif
 ##############################################################################
 
 echo "\nRunning aerosol.awk. Please wait..."
-# for strange reasons, gawk only works properly if LC_COLLATE = C
-setenv LC_COLLATE C
+# for strange reasons, gawk only works properly if LC_ALL = C
+setenv LC_ALL C
 gawk -f aerosol.awk -v apn=$apn_or_1 -v declfile=$f90file1 \
   -v initfile=$f90file2 $spcfile
 # declfile = file with declarations of ind_*_a arrays
@@ -280,7 +288,8 @@ echo "#ENDINLINE {above lines go to messy_mecca_kpp_util}"    >> "$eqnfile1"
 # gas phase
 echo "Gas-phase reactions from:     $gaseqnfile"
 echo "{***** START: gas-phase chemistry from $gaseqnfile *****}" >> $eqnfile1
-# eqnfile0 is either identical to gaseqnfile or has been modified with gas.rpl:
+# $eqnfile0 is either identical to $gaseqnfile or
+# it has been modified with a rpl file:
 cat $eqnfile0 >> $eqnfile1
 echo "{***** END:   gas-phase chemistry from $gaseqnfile *****}" >> $eqnfile1
 
@@ -325,11 +334,8 @@ else
   echo "3) Minimum MBL chemistry:          ($wanted03)"
   echo "4) Full MBL chemistry:             ($wanted04)"
   echo "5) Most reactions (no rain chem):  ($wanted05)"
-  #  mz_rs_20100307+
-  # qqq this info can disappear again in one of the following versions...
   echo "Only a few standard selections are listed here. For all other"
   echo "purposes, a batch file (mecca/batch/*.bat) should be created."
-  #  mz_rs_20100307-
   set default  = "$wanted01"
   echo "Choose a selection number or type a boolean expression [q=quit, default=1]:"
   set inputstring = "$<"
@@ -462,9 +468,15 @@ echo "Running gawk script to select reactions. Please wait..."
 # remove old $eqnfile:
 if ( -f $eqnfile ) mv -f $eqnfile $eqnfile~
 # select some reactions from $eqnfile2 and put them into $eqnfile:
-# for strange reasons, gawk only works properly if LC_COLLATE = C
-setenv LC_COLLATE C
+# for strange reasons, gawk only works properly if LC_ALL = C
+setenv LC_ALL C
 gawk -f $awkfile1 $eqnfile2
+
+set all_eqns = `grep "=.*:.*;"            $eqnfile | wc -l`
+if ("$all_eqns" == "0") then
+  echo "\nERROR: Your selection created an empty mechanism\!\n"
+  exit 1
+endif
 
 ##############################################################################
 
@@ -479,20 +491,28 @@ if ( "$mcfct" == "q" ) exit 1
 cp $eqnfile $eqnfile6
 if ( "$mcfct" == "y" ) then
   echo "Running mcfct.awk ..."
-  # for strange reasons, gawk only works properly if LC_COLLATE = C
-  setenv LC_COLLATE C
+  # for strange reasons, gawk only works properly if LC_ALL = C
+  setenv LC_ALL C
   gawk -f mcfct.awk $eqnfile6 >! $eqnfile
   set REQ_MCFCT = ".TRUE."
 else
   # remove factors from eqn file (necessary inside inlined f90 code):
   sed 's|{§[^}]*}||g' $eqnfile6 >! $eqnfile
+  # define dummy array size for MAX_MCEXP:
+  echo "#INLINE F90_GLOBAL"                                     >> $eqnfile
+  echo "  \! from xmecca:"                                      >> $eqnfile
+  echo "  INTEGER, PARAMETER :: MAX_MCEXP = 1"                  >> $eqnfile
+  echo "\!KPPPP_DIRECTIVE vector variable definition start"     >> $eqnfile
+  echo "  REAL :: mcexp(MAX_MCEXP) \! dummy Monte-Carlo factor" >> $eqnfile
+  echo "\!KPPPP_DIRECTIVE vector variable definition end"       >> $eqnfile
+  echo "#ENDINLINE {above lines go to messy_mecca_kpp_global}"  >> $eqnfile
   set REQ_MCFCT = ".FALSE."
 endif
 
 ##############################################################################
 
 # add diagnostic tracers to $eqnfile
-echo -n "" >! $texfile3
+echo -n "" >! $diagtractexfile
 
 if ${?diagtracfile} then
   echo "\nFrom ${batchfile}: diagtracfile = $diagtracfile" | tee -a $logfile
@@ -502,7 +522,7 @@ else
   set allfiles = *.tex
   cd -
   set allfiles = `echo $allfiles | sed 's|\.tex||g'` # delete suffix .tex
-  echo "\nAdd diagnostic tracers to gas.eqn? [q/0/?, default=0]"
+  echo "\nAdd diagnostic tracers to $gaseqnfile? [q/0/?, default=0]"
   echo "0) no diagnostic tracers"
   foreach i ($allfiles) # list all possibilities
     @ inn=$inn + 1
@@ -521,8 +541,8 @@ if ("$diagtracfile" == "") then
   echo "No diagtracfile selected" | tee -a $logfile
 else
   echo "you selected $diagtracfile"
-  # for strange reasons, gawk only works properly if LC_COLLATE = C
-  setenv LC_COLLATE C
+  # for strange reasons, gawk only works properly if LC_ALL = C
+  setenv LC_ALL C
   sed 's|%.*||g' diagtrac/$diagtracfile.tex | sed '/^$/d' >&! $texfile2
   set eqnlist  = `gawk -F '&' '{print $1}' $texfile2 | sed 's| ||g'`
   set traclist = `gawk -F '&' '{print $2}' $texfile2 | sed 's| |_SPACE_|g'`
@@ -540,7 +560,7 @@ else
       set dtrac_tex = `echo "$dtrac[${#dtrac}]" | sed 's|_|\\_|g' `
       echo "$dtrac[${#dtrac}] = IGNORE ; {@${dtrac_tex}}" >> $spcfile5
       # add diagnostic tracer to "tracdef.tex":
-      echo "'$dtrac[${#dtrac}]' & & AIR & & & OFF & OFF & OFF & & OFF & & OFF & & & & & 1._dp & & & & & & & \\" >> $texfile3
+      echo "'$dtrac[${#dtrac}]' & & AIR & & & OFF & OFF & OFF & & OFF & & OFF & & & & & 1._dp & & & & & & & \\" >> $diagtractexfile
       # add diagnostic tracers to eqnfile:
       awk -F '>' '{if ($1">" == "'$eqnnr'") \
                       {a=$0; \
@@ -578,21 +598,26 @@ else
 endif
 if ( "$rxnrates" == "q" ) exit 1
 if ( "$rxnrates" == "y" ) then
+  echo -n "" >! $spcfile5
   echo "#DEFVAR" >> $spcfile
   cp -f $eqnfile $eqnfile4
   awk '{if ($1 ~ /^</) {nr=$1; gsub("<","RR",nr); gsub(">","",nr);\
        sub("=","= "nr" + ",$0); \
        print nr" = IGNORE ; {@"nr"} {diagnostic tracer}" > "'$spcfile5'"; \
-       print "_QUOTE_"nr"_QUOTE_ & & AIR & & & OFF & OFF & OFF & & OFF & & OFF & & & & & 1._dp & & & & & & & \\\\" > "'$texfile4'"} \
+       print "_QUOTE_"nr"_QUOTE_ & & AIR & & & OFF & OFF & OFF & & OFF & & OFF & & & & & 1._dp & & & & & & & \\\\" > "'$rxnratestexfile'"} \
        print }' $eqnfile4 > $eqnfile5
+  # create real apostrophies:
+  sed -e "s|_QUOTE_|'|g" $rxnratestexfile > $texfile2
+  # split aqueous-phase species into basename and subname:
+  sed -e "s|_a\([0-9][0-9]\)' & & AIR &|' \& 'a\1' \& AEROSOL \&|" $texfile2 > $rxnratestexfile
   cp -f $eqnfile5 $eqnfile
   echo "{**** START: accumulated reaction rates ****}" >> $spcfile
   cat $spcfile5 >> $spcfile
   echo "{**** END: accumulated reaction rates ****}" >> $spcfile
   echo "pseudo-KPP species RR* have been added for accumulated reaction rates"
   # create jnl files for reaction rates:
-  # for strange reasons, gawk only works properly if LC_COLLATE = C
-  setenv LC_COLLATE C
+  # for strange reasons, gawk only works properly if LC_ALL = C
+  setenv LC_ALL C
   gawk -f rxnrates.awk -v jnlfile1=$jnlfile1 -v jnlfile2=$jnlfile2 $eqnfile
 else
   if (-f $jnlfile1) rm $jnlfile1
@@ -836,32 +861,32 @@ if (${?bm3d}) then
 
   # create a tracer definition ("tracdef") file by combining gas.tex and
   # aqueous.tex for all selected aerosol phases:
-  cat $gastexfile > $texfile1
+  cat $gastexfile > $tracdeftexfile
   set counter=0
   while ($counter<$apn)
     @ counter=$counter + 1
     set aerophasename = `printf "%2.2d" $counter`
     echo -n "$aerophasename "
-    sed -e "s|##|$aerophasename|g" $aqueoustexfile >> $texfile1
+    sed -e "s|##|$aerophasename|g" $aqueoustexfile >> $tracdeftexfile
   end
   echo ""
   if ("$diagtracfile" != "") then
     # add diagnostic tracers:
-    echo "% diagnostic tracers from $diagtracfile.tex, added via xmecca:" >> $texfile1
-    sort $texfile3 | uniq >> $texfile1
+    echo "% diagnostic tracers from $diagtracfile.tex, added via xmecca:" >> $tracdeftexfile
+    sort $diagtractexfile | uniq >> $tracdeftexfile
   endif
   if ( "$rxnrates" == "y" ) then
     # accumulated reaction rates:
-    echo "% START: accumulated reaction rates" >> $texfile1
-    sed -e "s|_QUOTE_|'|g" $texfile4 >> $texfile1
-    echo "% END: accumulated reaction rates" >> $texfile1
+    echo "% START: accumulated reaction rates" >> $tracdeftexfile
+    cat                       $rxnratestexfile >> $tracdeftexfile
+    echo "% END: accumulated reaction rates"   >> $tracdeftexfile
   endif
   #  mz_sg_20090730+
   if ( ( "$tagdbl" == "d" ) || ( "$tagdbl" == "b" ) ) then
     # doubled tracers:
-    echo "% START: doubled tracers" >> $texfile1
-    cat dbl/messy_mecca_dbl*.tex >> $texfile1
-    echo "% END: doubled tracers" >> $texfile1
+    echo "% START: doubled tracers" >> $tracdeftexfile
+    cat dbl/messy_mecca_dbl*.tex    >> $tracdeftexfile
+    echo "% END: doubled tracers"   >> $tracdeftexfile
   endif
   #  mz_sg_20090730-
 
@@ -869,11 +894,11 @@ if (${?bm3d}) then
   # species into messy_mecca_idt_si.inc. For all KPP_XXX that are not zero
   # it also inserts the species into messy_mecca_c2mr_si.inc,
   # messy_mecca_mr2c_si.inc, and messy_mecca_trac_si.inc, using the tracer
-  # info in $texfile1.
+  # info in $tracdeftexfile.
 
-  # for strange reasons, gawk only works properly if LC_COLLATE = C
-  setenv LC_COLLATE C
-  gawk -f tracdef.awk -v tracdef=$texfile1 $paramfile
+  # for strange reasons, gawk only works properly if LC_ALL = C
+  setenv LC_ALL C
+  gawk -f tracdef.awk -v tracdef=$tracdeftexfile $paramfile
 
 endif
 
@@ -933,9 +958,10 @@ set J_eqns   = `grep "<J[0-9].*=.*:.*;"   $eqnfile | wc -l`
 set PH_eqns  = `grep "<PH[0-9].*=.*:.*;"  $eqnfile | wc -l`
 set HET_eqns = `grep "<HET[0-9].*=.*:.*;" $eqnfile | wc -l`
 set EQ_eqns  = `grep "<EQ[0-9].*=.*:.*;"  $eqnfile | wc -l`
+set IEX_eqns = `grep "<IEX*.*=.*:.*;"     $eqnfile | wc -l`
 set D_eqns   = `grep "<D[0-9].*=.*:.*;"   $eqnfile | wc -l`
 # sum over these reaction types:
-@ sum = $G_eqns + $A_eqns + $H_eqns + $J_eqns + $PH_eqns + $HET_eqns + $EQ_eqns + $D_eqns
+@ sum = $G_eqns + $A_eqns + $H_eqns + $J_eqns + $PH_eqns + $HET_eqns + $EQ_eqns + $IEX_eqns + $D_eqns
 echo "\nNumber of reactions in selected mechanism:" | tee -a $logfile
 echo "gas phase      G:   $G_eqns"                  | tee -a $logfile
 echo "aqueous phase  A:   $A_eqns"                  | tee -a $logfile
@@ -944,6 +970,7 @@ echo "photolysis     J:   $J_eqns"                  | tee -a $logfile
 echo "aq. photolysis PH:  $PH_eqns"                 | tee -a $logfile
 echo "heterogeneous  HET: $HET_eqns"                | tee -a $logfile
 echo "equilibria     EQ:  $EQ_eqns"                 | tee -a $logfile
+echo "isot. exchange IEX: $IEX_eqns"                | tee -a $logfile
 echo "dummy          D:   $D_eqns"                  | tee -a $logfile
 echo "all equations:      $all_eqns"                | tee -a $logfile
 if ( "$sum" != "$all_eqns" ) then
@@ -972,14 +999,15 @@ echo "\\def\\Heqns{$H_eqns}"                       >> $infofile
 echo "\\def\\Jeqns{$J_eqns}"                       >> $infofile
 echo "\\def\\HETeqns{$HET_eqns}"                   >> $infofile
 echo "\\def\\EQeqns{$EQ_eqns}"                     >> $infofile
+echo "\\def\\IEXeqns{$IEX_eqns}"                   >> $infofile
 echo "\\def\\Deqns{$D_eqns}"                       >> $infofile
 echo "\\def\\alleqns{$all_eqns}"                   >> $infofile
-# for strange reasons, gawk only works properly if LC_COLLATE = C
-setenv LC_COLLATE C
+# for strange reasons, gawk only works properly if LC_ALL = C
+setenv LC_ALL C
 gawk -f spc2tex.awk   ../$spcfile
 gawk -f eqn2tex.awk   ../$eqnfile
-gawk -f henry2tex.awk -v paramfile=$paramfile ../smcl/messy_mecca_aero.f90
-gawk -f alpha2tex.awk -v paramfile=$paramfile ../smcl/messy_mecca_aero.f90
+gawk -f henry2tex.awk -v paramfile=$paramfile ../../messy_cmn_gasaq.f90
+gawk -f alpha2tex.awk -v paramfile=$paramfile ../../messy_cmn_gasaq.f90
 
 if ${?latex} then
   echo "\nFrom ${batchfile}: latex = $latex" | tee -a $logfile
@@ -993,13 +1021,13 @@ if ( "$latex" == "y" ) then
   # extract the references that are really used
   # (activate only when all reactions were selected,
   # for example with "xmecca latex"):
-  citetags meccanism.aux | citefind - ~/tex/bib/literat.bib > meccalit.bib
+  #citetags meccanism.aux | citefind - ~/tex/bib/literat.bib > meccalit.bib
   bibtex meccanism
   pdflatex meccanism.tex
   pdflatex meccanism.tex
   pdflatex meccanism.tex
-  if ( -e `which kpdf` ) then
-    kpdf meccanism.pdf &
+  if ( -e `which evince` ) then
+    evince meccanism.pdf &
   else
     acroread meccanism.pdf &
   endif

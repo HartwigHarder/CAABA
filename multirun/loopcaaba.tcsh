@@ -23,14 +23,29 @@ echo $hline
 echo "inputfile = $1"
 
 set fname      = "$1"
+set outputdir  = "$2"
 set tmpFname   = "inputfile.nc"
-set sum_dat    = "sum.dat"
-set header_dat = "header.dat"
+set modelbase  = ".."
+
+echo "outdir = " $outputdir
+
+if (! -d $outputdir) mkdir $outputdir
+
+if ( -d $outputdir) then
+  echo "removing old data in output directory $outputdir"
+  rm $outputdir/*
+else
+  echo "creating new output directory $outputdir"
+  mkdir $outputdir
+endif
+
+set sum_dat    = $outputdir/"sum.dat"
+set header_dat = $outputdir/"header.dat"
 
 set OneShot = 0
 # current line number in netcdf file 
-if ( $#argv == 2 ) then # did we supply line number
-  set OneShot = $2
+if ( $#argv == 3 ) then # did we supply line number
+  set OneShot = $3
 endif
 
 set line = 0
@@ -66,15 +81,15 @@ while (${#ret} == 0)
   endif
   # --------------------------------------------------------------------------
   # GPS time:
-  set TimeGPS = (`ncks -s "%10.10g" -H -C -d T_AX,$line -v TGPS $fname`)
-  # set TimeGPS = (`ncks -s "%10.10g" -H -C -d T_AX,$line -v Tgps $fname`)
+  # set TimeGPS = (`ncks -s "%10.10g" -H -C -d T_AX,$line -v TGPS $fname`)
+  set TimeGPS = (`ncks -s "%10.10g" -H -C -d T_AX,$line -v Tgps $fname`)
   # --------------------------------------------------------------------------
 
   if ( $err == 0 ) then
 
     cd ..
     # create nml file:
-    set nmlfile = "nml/multirun/caaba.nml"
+    set nmlfile = "nml/caaba_multirun.nml"
     echo "! -*- f90 -*- (created by loopcaaba.tcsh, do not edit\!)" > $nmlfile
     echo "&CAABA"                           >> $nmlfile
     echo "USE_MECCA = T"                    >> $nmlfile
@@ -84,9 +99,10 @@ while (${#ret} == 0)
     echo "photrat_channel = 'readj'"        >> $nmlfile
     echo "init_spec = 'multirun/$tmpFname'" >> $nmlfile
     echo "init_j = 'multirun/$tmpFname'"    >> $nmlfile
+	echo "init_scenario = 'FREE_TROP'"      >> $nmlfile
     echo "l_steady_state_stop = T"          >> $nmlfile
     echo "/"                                >> $nmlfile
-    ln -fs $nmlfile .
+    ln -fs $nmlfile caaba.nml
     rm caaba_*.nc
     ./caaba.exe > caaba.log
     cd -
@@ -94,13 +110,13 @@ while (${#ret} == 0)
     set MaxTime = (`ncks -M ../caaba_mecca.nc | awk '/name = time, size =/ {print $8}'`)
     @ MaxTime--
     printf "%4d) Running CAABA for %s (MaxTime=%d)\n" $line $fname:t $MaxTime
-    if ( $MaxTime > 5 ) then
-      ncks -H -d time,$MaxTime ../caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "%g ",'$TimeGPS' }{if (NF>4) printf "%g ",$15} END {print}' >> $sum_dat
+    if ( $MaxTime > 1 ) then
+      ncks -H -d time,$MaxTime ../caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "%12.12g ",'$TimeGPS' }{if (NF>4) printf "%12.12g ",$15} END {print}' >> $sum_dat
       ncks -H -d time,$MaxTime ../caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "TimeGPS[99999] "}{if (NF>4) printf "%s ",$13} END {print}' >> $header_dat
       # ncks -A -d time,$MaxTime ../caaba_mecca.nc caaba_mecca_all.nc
       # ncks -A -d time,$MaxTime ../caaba_messy.nc caaba_messy_all.nc
     else
-      echo "Problem: MaxTime <= 5"
+      echo "Problem: MaxTime <= 1"
     endif
 
   else
@@ -116,20 +132,12 @@ end
 
 ##############################################################################
 
-if (! -d ../output/multirun) mkdir ../output/multirun
-set dirname = "../output/multirun/$fname:t:r"
 
-if ( -d $dirname ) then
-  echo "removing old data in output directory $dirname"
-  rm $dirname/*
-else
-  echo "creating new output directory $dirname"
-  mkdir $dirname
-endif
 echo "the output files are:"
-cp -p ../caaba_*.nc ../caaba.log ../nml/multirun/caaba.nml $dirname
-cp -p $sum_dat $header_dat $dirname
-ls -l $dirname
+# cp -p ../caaba_*.nc ../caaba.log ../nml/multirun/caaba.nml $outputdir
+cp -p ../caaba_*.nc ../caaba.log ..nml/caaba_multirun.nml $outputdir 
+cp -p $sum_dat $header_dat $outputdir
+ls -l $outputdir
 echo $hline
 
 # cleanup:

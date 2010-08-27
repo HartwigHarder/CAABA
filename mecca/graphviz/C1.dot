@@ -10,11 +10,6 @@ subgraph species {
 node[shape=oval,
   color=yellow,
   style="filled"];
-CH2ClI
-CH2I2
-CH3Br
-CH3Cl
-CH3I
 CH3O2
 CH3OH
 CH3OOH
@@ -43,17 +38,12 @@ C3H6 -> CO [label = "O3 (G4301)"];
 C3H6 -> CO2 [label = "O3 (G4301)"];
 C3H6 -> HCHO [label = "O3 (G4301)"];
 C3H6 -> HCOOH [label = "O3 (G4301)"];
-C3H7I -> CH3O2 [label = "OH (G8400)"];
-C3H7I -> CH3O2 [label = "hv (J8402)"];
 C3H8 -> CO2 [label = "OH (G4300)"];
 C5H8 -> CH3O2 [label = "O3 (G4500)"];
 C5H8 -> CO [label = "O3 (G4500)"];
 C5H8 -> CO2 [label = "O3 (G4500)"];
 C5H8 -> HCHO [label = "O3 (G4500)"];
 C5H8 -> HCOOH [label = "O3 (G4500)"];
-CH2ClI -> CO [label = "hv (J8403)"];
-CH2I2 -> CO [label = "hv (J8400)"];
-CH3Br -> CH3O2 [label = "hv (J7400)"];
 CH3CHO -> CH3O2 [label = "hv (J4201)"];
 CH3CHO -> CO [label = "hv (J4201)"];
 CH3CO2H -> CH3O2 [label = "OH (G4210)"];
@@ -70,9 +60,6 @@ CH3COCH2O2 -> HCHO [label = " (G4314)"];
 CH3COCH2O2 -> HCHO [label = "NO (G4313)"];
 CH3COCH2O2 -> HCHO [label = "NO3 (G4321)"];
 CH3COCH3 -> CH3O2 [label = "hv (J4301)"];
-CH3Cl -> CH3O2 [label = "hv (J6400)"];
-CH3I -> CH3O2 [label = "hv (J8401)"];
-CH3I -> HCHO [label = "NO3 (G8402)"];
 CH3O2 -> CH3OH [label = " (G4106b)"];
 CH3O2 -> CH3OOH [label = "HO2 (G4103)"];
 CH3O2 -> HCHO [label = " (G4106a)"];
@@ -80,7 +67,6 @@ CH3O2 -> HCHO [label = " (G4106b)"];
 CH3O2 -> HCHO [label = "BrO (G7402a)"];
 CH3O2 -> HCHO [label = "BrO (G7402b)"];
 CH3O2 -> HCHO [label = "ClO (G6403)"];
-CH3O2 -> HCHO [label = "IO (G8401)"];
 CH3O2 -> HCHO [label = "NO (G4104)"];
 CH3O2 -> HCHO [label = "NO3 (G4105)"];
 CH3OH -> HCHO [label = "OH (G4102)"];
@@ -93,12 +79,8 @@ CH3SO2 -> CH3O2 [label = " (G9403)"];
 CH3SO2 -> CH3SO3 [label = "O3 (G9404)"];
 CH3SO3 -> CH3SO3H [label = "HO2 (G9405)"];
 CH4 -> CH3O2 [label = "Cl (G6400)"];
-CH4 -> CH3O2 [label = "O1D (G4100)"];
 CH4 -> CH3O2 [label = "OH (G4101)"];
-CH4 -> CO [label = "hv (J4103)"];
-CH4 -> HCHO [label = "O1D (G4100)"];
 CO -> CO2 [label = "OH (G4110)"];
-CO2 -> CO [label = "hv (J4102)"];
 CO2H3CHO -> CO [label = "hv (J4418)"];
 CO2H3CO3 -> CO2 [label = " (G4451)"];
 CO2H3CO3 -> CO2 [label = "NO (G4453)"];

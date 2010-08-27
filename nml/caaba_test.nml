@@ -1,4 +1,4 @@
-! -*- f90 -*- Time-stamp: <2009-09-11 10:01:27 sander>
+! -*- f90 -*- Time-stamp: <2010-07-20 10:57:35 sander>
 
 !*****************************************************************************
 !
@@ -8,16 +8,16 @@
 
 &CAABA
 
- USE_JVAL    = T
+!USE_JVAL    = T
  USE_MECCA   = T
 !USE_READJ   = T
-!USE_SAPPHO  = T
+ USE_SAPPHO  = T
  USE_SEMIDEP = T
 !USE_TRAJECT = T
 
 ! see "list_of_scenarios" in caaba.f90 for possibilities:
 !init_scenario     = ''
-photo_scenario    = 'STRATO'
+!photo_scenario    = ''
 !emission_scenario = ''
 !drydep_scenario   = ''
 
@@ -28,12 +28,12 @@ photo_scenario    = 'STRATO'
 
 !startday    = 14.          ! 15th Jan
 !time_step   = '15 minutes' ! default: 20 minutes
-!ext_runtime = '40 days'    ! in days; default: 8
+ext_runtime = '1.5 days'    ! in days; default: 8
 
 ! Choose a channel that contains J-values for photolysis reactions:
-photrat_channel = 'jval'
+!photrat_channel = 'jval'
 !photrat_channel = 'readj'
-!photrat_channel = 'sappho'
+ photrat_channel = 'sappho'
 
 ! init_spec = initialize species from netcdf file:
 !init_spec = 'inputfile.nc'

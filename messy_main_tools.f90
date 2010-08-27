@@ -105,6 +105,8 @@ MODULE messy_main_tools
   PUBLIC :: rel2spechum         ! conversion from relative to specific 
   !mz_hr_20080229-
   PUBLIC :: find_next_free_unit
+  PUBLIC :: density
+  PUBLIC :: layerthickness
 
 CONTAINS
 
@@ -1337,7 +1339,36 @@ END FUNCTION match_wild
     END IF
 
   END FUNCTION find_next_free_unit
-!-------------------------------------------------------------------------
+
+  ! --------------------------------------------------------------------------
+
+  ELEMENTAL REAL(dp) FUNCTION density(press, temp, sphum)
+
+    ! calculate air density in kg/m3
+
+    USE messy_main_constants_mem, ONLY: R_gas, M_air, M_H2O
+
+    REAL(dp), INTENT(in) :: press
+    REAL(dp), INTENT(in) :: temp
+    REAL(dp), INTENT(in) :: sphum
+
+    density = press /( R_gas * &
+      temp * (1._dp +(M_air / M_H2O -1._dp) *sphum))
+
+  END FUNCTION density
+
+  !-----------------------------------------------------------------------------
+
+  ELEMENTAL REAL(dp) FUNCTION layerthickness(geopot_u, geopot_l)
+
+    USE messy_main_constants_mem,  ONLY: g
+
+    REAL(dp), INTENT(in) :: geopot_u
+    REAL(dp), INTENT(in) :: geopot_l
+    !LOCAL
+
+    layerthickness  = (geopot_u-geopot_l)/ g
+  END FUNCTION layerthickness
 
 ! ************************************************************************
 END MODULE messy_main_tools

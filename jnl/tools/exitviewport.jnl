@@ -11,9 +11,16 @@ ENDIF
 
 SAY "creating ps file ($outfile).ps"
 sp "double_line_widths ($tmp)/page*.plt"
-sp "gksm2ps -p portrait -l cps -R -o ($tmp)/ferret-raw.ps ($tmp)/page*.plt"
+IF ($landscape%FALSE|*>TRUE|%) THEN
+  ! landscape has been defined
+  sp "gksm2ps -p landscape -l cps -R -o ($tmp)/ferret-raw.ps ($tmp)/page*.plt"
+ELSE
+  ! landscape is undefined
+  sp "gksm2ps -p portrait -l cps -R -o ($tmp)/ferret-raw.ps ($tmp)/page*.plt"
+ENDIF
 sp "ps2ps ($tmp)/ferret-raw.ps ($outfile).ps"
-SAY "to view ps file, type: sp gv ($outfile).ps &"
+!SAY "to view ps file, type: sp gv ($outfile).ps &"
+SAY "to view ps file, type: sp evince ($outfile).ps &"
 
 !DEFINE SYMBOL makepdf = TRUE
 IF ($makepdf%FALSE|TRUE|*>FALSE|%) THEN ! only if makepdf is defined and TRUE

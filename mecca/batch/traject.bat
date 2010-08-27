@@ -1,11 +1,11 @@
 # -*- Shell-script -*-
 
-# Author: Patrick Joeckel (2008)
+# Author: Hella Riede (2008)
 # The shell variables defined here will be used by xmecca 
 # when it is run in batch mode (i.e. not interactive).
 
  set apn          = 0                 # number of aerosol phases [0...99, default=0]
- set gaseqnfile   = gas_mim2.eqn
+ set gaseqnfile   = gas_mim1.eqn
  set rplfile      =                   # no replacements
  # eval:
  set wanted = "((Tr && G && \!Cl && \!Br && \!I) || (St && \!Het)) && \!Hg"

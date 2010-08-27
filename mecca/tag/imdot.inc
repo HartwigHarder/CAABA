@@ -136,7 +136,7 @@ else
     if (pos(spec+' ',_to)>0) then
        s:=s+' shape=invtriangle, color='+scm[2,1]+', fillcolor='+scm[2,2]+', fontcolor='+scm[2,3]
     else
-    if (in_bcs(spec)) then
+    if (in_nis(spec)) then
        if (is_usedspec(spec)) then
 	  s:=s+' color='+scm[3,1]+', fillcolor='+scm[3,2]+', fontcolor='+scm[3,3]
        else
@@ -180,54 +180,62 @@ while not(eof(tmp)) do
       end;
 close(tmp);
 
-a:=a+'  label = "IMTAG // ATOM: <'+isoatom+'> ='+datetimetostr(now)+'= [Gromov, MPI-C]\n"+'+_LF+
-     '          "TSL: '+rem_specchar(paramstr(2))+' ['+inttostr(_utsl)+'/'+inttostr(_tsl)+'] '+
-                'EQN: '+rem_specchar(paramstr(1))+' ['+inttostr(nooftagreac)+'/'+inttostr(_eqs)+']\n"+'+_LF+
-     '          "MECH:'+wraptext(rem_specchar(rem_spaces(eqnfile[1].line)),'\n',['=',' ',',','(',')','!'], 40)+'"'+_LF+
-     '          "='+datetimetostr(now)+'= [Gromov, MPI-C]"'+_LF;
-a:=a+_LF;
-a:=a+'  bgcolor = '+scm[6,1]+';'+_LF;
-a:=a+_LF;
-a:=a+'  node [color='+scm[5,1]+', fillcolor='+scm[5,2]+', fontcolor='+scm[5,3]+', style="bold, filled" ];'+_LF;
-a:=a+'  edge [color='+scm[5,1]+', fontcolor='+scm[5,3]+'];'+_LF;
-a:=a+_LF;
+// finding mech info line in eqnfile
+p:=0;
+for s:=1 to _eqnfile do
+    if (pos('wanted',eqnfile[s].line)>0) then
+       begin p:=s; break; end;
+       
+a+='  label = "IMTAG // CFG: '+tagname+' - ATOM: <'+isoatom+'>\n"+'+_LF+
+   '    "TSL: '+rem_specchar(paramstr(2))+' ['+inttostr(_utsl)+'/'+inttostr(_tsl)+'] '+
+          'EQN: '+rem_specchar(paramstr(1))+' ['+inttostr(nooftagreac)+'/'+inttostr(_eqs)+']\n"+'+_LF;
+if (p>0) then
+a+='    "MECH: '+wraptext(rem_specchar(rem_spaces(imcom_ext4marks(eqnfile[p].line,'''',''''))),'\n',['=',' ',',','(',')','!'], 40)+'\n"+'+_LF;
+a+='    "='+datetimetostr(now)+'= [Gromov, MPI-C]";'+_LF;
+a+=_LF;
+a+='  // color scheme is selected in imdot.inc'+_LF;
+a+='  bgcolor = '+scm[6,1]+';'+_LF;
+a+=_LF;
+a+='  node [color='+scm[5,1]+', fillcolor='+scm[5,2]+', fontcolor='+scm[5,3]+', style="bold, filled" ];'+_LF;
+a+='  edge [color='+scm[5,1]+', fontcolor='+scm[5,3]+'];'+_LF;
+a+=_LF;
 
 // legend (based on MECCA selection) ------------------------------------------
-a:=a+'  // legend'+_LF;
+a+='  // legend'+_LF;
 
-a:=a+'  intermediate [color='+scm[4,1]+', fillcolor='+scm[4,2]+', fontcolor='+scm[4,3]+'];'+_LF;
-a:=a+'  source [color='+scm[3,1]+', fillcolor='+scm[3,2]+', fontcolor='+scm[3,3]+'];'+_LF;
-a:=a+'  AVEx [label = "AVE"];'+_LF;
-a:=a+'  AVEx -> AVEx [label = "pool average", fontcolor=gray ];'+_LF;
-a:=a+'  LOSSx [label = "LOSS"];'+_LF;
-a:=a+'  LOSSx -> LOSSx [label = "destruction", fontcolor=gray ];'+_LF+_LF;
+a+='  intermediate [color='+scm[4,1]+', fillcolor='+scm[4,2]+', fontcolor='+scm[4,3]+'];'+_LF;
+a+='  source [color='+scm[3,1]+', fillcolor='+scm[3,2]+', fontcolor='+scm[3,3]+'];'+_LF;
+a+='  AVEx [label = "AVE"];'+_LF;
+a+='  AVEx -> AVEx [label = "pool average", fontcolor=gray ];'+_LF;
+a+='  LOSSx [label = "LOSS"];'+_LF;
+a+='  LOSSx -> LOSSx [label = "destruction", fontcolor=gray ];'+_LF+_LF;
 
 writeln(dotcomm,a);
 
-a:=a+'  G12xx -> G12xx [label="(oxygen)", color='+rcm[1]+', fontcolor='+rcm[1]+'];'+_LF;
-a:=a+'  G3xxx -> G3xxx [label="(nitrates)", color='+rcm[2]+', fontcolor='+rcm[2]+'];'+_LF;
-a:=a+'  G41xx -> G41xx [label="(1C carbons)", color='+rcm[3]+', fontcolor='+rcm[3]+'];'+_LF;
-a:=a+'  G4xxx -> G4xxx [label="(higher carbons)", color='+rcm[4]+', fontcolor='+rcm[4]+'];'+_LF;
-a:=a+'  G6xxx -> G6xxx [label="(chlorine)", color='+rcm[5]+', fontcolor='+rcm[5]+'];'+_LF;
-a:=a+'  G7xxx -> G7xxx [label="(bromine)", color='+rcm[6]+', fontcolor='+rcm[6]+'];'+_LF;
-a:=a+'  G8xxx -> G8xxx [label="(iod)", color='+rcm[7]+', fontcolor='+rcm[7]+'];'+_LF;
-a:=a+'  G9xxx -> G9xxx [label="(sulphur)", color='+rcm[8]+', fontcolor='+rcm[8]+'];'+_LF;
-a:=a+'  PSCxxx -> PSCxxx [label="(PSCs)", color='+rcm[9]+', fontcolor='+rcm[9]+'];'+_LF;
-a:=a+'  Jxxxx -> Jxxxx [label="Photolysis", color='+rcm[10]+', fontcolor='+rcm[10]+'];'+_LF;
+a+='  G12xx -> G12xx [label="(oxygen)", color='+rcm[1]+', fontcolor='+rcm[1]+'];'+_LF;
+a+='  G3xxx -> G3xxx [label="(nitrates)", color='+rcm[2]+', fontcolor='+rcm[2]+'];'+_LF;
+a+='  G41xx -> G41xx [label="(1C carbons)", color='+rcm[3]+', fontcolor='+rcm[3]+'];'+_LF;
+a+='  G4xxx -> G4xxx [label="(higher carbons)", color='+rcm[4]+', fontcolor='+rcm[4]+'];'+_LF;
+a+='  G6xxx -> G6xxx [label="(chlorine)", color='+rcm[5]+', fontcolor='+rcm[5]+'];'+_LF;
+a+='  G7xxx -> G7xxx [label="(bromine)", color='+rcm[6]+', fontcolor='+rcm[6]+'];'+_LF;
+a+='  G8xxx -> G8xxx [label="(iod)", color='+rcm[7]+', fontcolor='+rcm[7]+'];'+_LF;
+a+='  G9xxx -> G9xxx [label="(sulphur)", color='+rcm[8]+', fontcolor='+rcm[8]+'];'+_LF;
+a+='  PSCxxx -> PSCxxx [label="(PSCs)", color='+rcm[9]+', fontcolor='+rcm[9]+'];'+_LF;
+a+='  Jxxxx -> Jxxxx [label="Photolysis", color='+rcm[10]+', fontcolor='+rcm[10]+'];'+_LF;
 
-a:=a+'  G12xx [label="G1xxx, G2xxx", color='+rcm[1]+', fontcolor='+rcm[1]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
-a:=a+'  G3xxx [color='+rcm[2]+', fontcolor='+rcm[2]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
-a:=a+'  G41xx [color='+rcm[3]+', fontcolor='+rcm[3]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
-a:=a+'  G4xxx [color='+rcm[4]+', fontcolor='+rcm[4]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
-a:=a+'  G6xxx [color='+rcm[5]+', fontcolor='+rcm[5]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
-a:=a+'  G7xxx [color='+rcm[6]+', fontcolor='+rcm[6]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
-a:=a+'  G8xxx [color='+rcm[7]+', fontcolor='+rcm[7]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
-a:=a+'  G9xxx [color='+rcm[8]+', fontcolor='+rcm[8]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
-a:=a+'  PSCxxx [color='+rcm[9]+', fontcolor='+rcm[9]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
-a:=a+'  Jxxxx [color='+rcm[10]+', fontcolor='+rcm[10]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  G12xx [label="G1xxx, G2xxx", color='+rcm[1]+', fontcolor='+rcm[1]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  G3xxx [color='+rcm[2]+', fontcolor='+rcm[2]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  G41xx [color='+rcm[3]+', fontcolor='+rcm[3]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  G4xxx [color='+rcm[4]+', fontcolor='+rcm[4]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  G6xxx [color='+rcm[5]+', fontcolor='+rcm[5]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  G7xxx [color='+rcm[6]+', fontcolor='+rcm[6]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  G8xxx [color='+rcm[7]+', fontcolor='+rcm[7]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  G9xxx [color='+rcm[8]+', fontcolor='+rcm[8]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  PSCxxx [color='+rcm[9]+', fontcolor='+rcm[9]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
+a+='  Jxxxx [color='+rcm[10]+', fontcolor='+rcm[10]+', fillcolor='+scm[6,1]+', style="bold" ];'+_LF;
 
-a:=a+'  { rank=max; G12xx G3xxx G41xx G4xxx G6xxx G7xxx G8xxx G9xxx Jxxxx AVEx LOSSx intermediate source }'+_LF;
-a:=a+_LF;
+a+='  { rank=max; G12xx G3xxx G41xx G4xxx G6xxx G7xxx G8xxx G9xxx Jxxxx AVEx LOSSx intermediate source }'+_LF;
+a+=_LF;
 
 writeln(dotmech,a);
 writeln(dotspec,a);
@@ -460,7 +468,7 @@ for r:=1 to rank do
     if rank_spec[s]=r then sign:=sign+' '+tsl[utsl[s]].spec+'_'+inttostr(s);
     sign:=sign+' }'+_LF;
 
-    a:=a+' P'+inttostr(r*3-1)+' -> P'+inttostr(r*3)+' -> P'+inttostr(r*3+1)+' ->';
+    a+=' P'+inttostr(r*3-1)+' -> P'+inttostr(r*3)+' -> P'+inttostr(r*3+1)+' ->';
     end;
 setlength(a,length(a)-2);
 writeln(dotspec,'  { node [ style=invis ]; edge [ style=invis ]; ',a,'; }');
@@ -519,8 +527,8 @@ for s:=1 to _tsl do
 	   // cutting last CR
 	   setlength(rels[s,p],length(rels[s,p])-2);
 	   
-	   // info from -> to
-	   rels[s,p]:=tsl[s].spec+'->'+tsl[p].spec+':\n'+rels[s,p];
+	   // info from > to
+	   rels[s,p]:=tsl[s].spec+'>'+tsl[p].spec+':\n'+rels[s,p];
 
            // random colour, H-S-L coding
 	   a:=floattostrf(0.22-random*0.14,fffixed,7,3)+','+

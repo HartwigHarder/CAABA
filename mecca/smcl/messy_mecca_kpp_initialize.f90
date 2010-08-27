@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Initialize.f90
-! Time                 : Tue Mar 16 16:04:25 2010
-! Working directory    : /home/sander/e2/messy_2.3zp_rs_mim2/messy/mbm/caaba/mecca
+! Time                 : Thu Aug 26 14:15:50 2010
+! Working directory    : /home/caaba/caaba_2.7b/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -58,13 +58,6 @@ SUBROUTINE Initialize ( )
   END DO
 
 ! constant rate coefficients
-  RCONST(10) = 1.8e-12
-  RCONST(21) = 3.5e-12
-  RCONST(34) = 1.2e-14
-  RCONST(35) = 1300
-  RCONST(39) = 1.66e-12
-  RCONST(46) = 1.3e-12
-  RCONST(53) = 4e-13
 ! END constant rate coefficients
 
 ! INLINED initializations

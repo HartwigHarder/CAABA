@@ -1,6 +1,7 @@
-\def\filedate{2009-11-20}\let\thedate\filedate % packages may change \filedate
+\def\filedate{2010-08-09}\let\thedate\filedate % packages may change \filedate
 
 \documentclass[twoside]{article}
+\usepackage{ucs}\usepackage[utf8x]{inputenc}
 \usepackage{natbib}
 \usepackage{chem}
 %\usepackage{afterpage}
@@ -14,13 +15,13 @@
 %\usepackage{verbatim}
 
 % activate to show "draft" watermark:
-%\usepackage{pdfdraftcopy}
+\usepackage{draftcopy}
 
 \oddsidemargin0mm
 \evensidemargin-10mm
 \topmargin-10mm
-\textheight230mm
-\textwidth170mm
+\textheight235mm
+\textwidth175mm
 \raggedbottom
 \parindent0mm
 \parskip1.0ex plus0.5ex minus0.5ex
@@ -44,6 +45,14 @@
 \pagestyle{myheadings}
 
 \input{mecca_info.tex} % \def\meccaversion{...}
+
+% line break after \paragraph:
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+  {-2.0ex\@plus -1ex \@minus -.2ex}%
+  {1.0ex \@plus .2ex}%
+  {\normalfont\normalsize\bfseries}}
+\makeatother
 
 \begin{document}
 
@@ -171,9 +180,9 @@ machine on a Windows PC.
   The result should be ``1''. However, you may get ``0'' as the result
   on your system. Supposedly, this is not a bug in awk but a feature.
   You can solve the problem by setting the environment variable
-  \verb|LC_COLLATE| to ``\verb|C|'':\\
-  \verb|export LC_COLLATE=C| $\qquad$ (if you use bash)\\
-  \verb|setenv LC_COLLATE C| $\qquad$ (if you use tcsh)\\
+  \verb|LC_ALL| to ``\verb|C|'':\\
+  \verb|export LC_ALL=C| $\qquad$ (if you use bash)\\
+  \verb|setenv LC_ALL C| $\qquad$ (if you use tcsh)\\
   When you try the awk test again, it should work fine.
 \item[La\TeX\ (optional):] If you have La\TeX\ installed on your
   computer, you can print a table (including rate coefficients and
@@ -201,7 +210,9 @@ machine on a Windows PC.
   \verb|jnl/| directory (see Sect.~\ref{sec:ferret} for details). To
   ensure that ferret finds all necessary files, you have to add
   ``\verb|./tools|'' to the \verb|FER_GO| environment variable. The
-  \verb|ferret_paths*template| files show how to do this.
+  \verb|ferret_paths*template| files show how to do this. For example,
+  when using the tcsh, type:\\
+  \verb|setenv FER_GO "$FER_GO ./tools"|
 \end{description}
 
 \begin{figure*}%[htb]
@@ -338,7 +349,7 @@ the nml/ directory:
 ...
 \end{verbatim}
 Namelists control the behaviour of CAABA/MECCA during run-time, and
-editing them allows fine-tuning of the model run (see
+editing them allows fine-tuning of the model simulation (see
 Sect.~\ref{sec:nmlfiles}). The default is to use the same namelist as
 last time. For the first tests, the file \verb|simple/caaba.nml| can be
 chosen. Next, \verb|xcaaba| shows the active contents of the namelist
@@ -349,13 +360,13 @@ Run CAABA boxmodel with MECCA chemistry?
 Answer ``y'', and the CAABA/MECCA model simulation will start. The flow
 control is illustrated in Fig:~\ref{fig:caaba_flowcontrol}. The model
 day and the current solar zenith angle (sza) are printed on the screen
-during the model run. The default is to integrate 8 days.
+during the model simulation. The default is to integrate 8 days.
 \begin{verbatim}
 Save the output and model code 
 in output/ directory?
 \end{verbatim}
 Answer ``y'', and \verb|xcaaba| will put the files into a subdirectory
-with a name based on the date and time of the model run, e.g.\
+with a name based on the date and time of the model simulation, e.g.\
 \verb|output/2009-08-24-16:29:00/|.
 
 \section{Selecting a chemical mechanism with the shell script {\tt xmecca}}
@@ -391,17 +402,18 @@ information about the replacement feature can be found in the file
 Choose a selection number or type a boolean
 expression:
 \end{verbatim}
-Now you can choose a subset of chemical reactions. Not all possible
-selections have been tested thoroughly. Try one of these:
+Now you can choose a subset of chemical reactions. A few predefined
+standard selections are available. For all other purposes, a batch file
+should be created, as explained at the end of this section. Some of the
+predefined selections are:
 \begin{description}
-\item [Troposphere, Minimum chemistry:] A very small mechanism
-\item [Troposphere, Gas, no halogens:] A gas-phase mechanism that
-  includes NMHCs
 \item [EVAL:] A mechanism that was used for the evaluation of the MECCA
   chemistry in the global model ECHAM5/MESSy \citep{1851}.
-\item [Minimum MBL chemistry:] A mechanism that contains aqueous-phase
-  chemistry and should only be used if the number of aerosol phases is
-  $>0$.
+\item [Minimum tropospheric chemistry:] A very small tropospheric
+  mechanism.
+\item [Minimum MBL chemistry:] A small mechanism that contains
+  aqueous-phase chemistry and should only be used if the number of
+  aerosol phases is $>0$.
 \end{description}
 For details about the selection, see Sect.~\ref{sec:selectreactions}.
 \begin{verbatim}
@@ -546,8 +558,8 @@ If you have chosen netCDF output, you can plot the model results with
 the ferret program (\url{http://ferret.wrc.noaa.gov/Ferret/}). Change
 into the \verb|jnl/| directory, then start the program by typing
 ``\verb|ferret|''. When ferret has started, you can plot the gas-phase
-species of the latest model run with the ferret script \verb|xxxg.jnl|
-by typing:
+species of the latest model simulation with the ferret script
+\verb|xxxg.jnl| by typing:
 \begin{verbatim}
 go xxxg.jnl
 \end{verbatim}
@@ -581,13 +593,13 @@ destruction rates for a certain species, e.g.\ for OH:
 \begin{verbatim}
 go rxnrates_scaled.jnl OH
 \end{verbatim}
-To plot results from previous runs which are saved in the \verb|output/|
-directory, edit the file \verb|setmodelrun.jnl| and enter the paths of
-the directories in the ``\verb|GO _define_sensi|'' command. To compare
-model runs, you can enter two or more ``\verb|GO _define_sensi|''
-commands in \verb|setmodelrun.jnl|. To plot the difference between model
-runs, activate the line ``\verb|DEFINE SYMBOL diffplot TRUE|'' in
-\verb|setmodelrun.jnl|.
+To plot results from previous simulations which are saved in the
+\verb|output/| directory, edit the file \verb|setmodelrun.jnl| and enter
+the paths of the directories in the ``\verb|GO _define_sensi|'' command.
+To compare model simulations, you can enter two or more
+``\verb|GO _define_sensi|'' commands in \verb|setmodelrun.jnl|. To plot
+the difference between model simulations, activate the line
+``\verb|DEFINE SYMBOL diffplot TRUE|'' in \verb|setmodelrun.jnl|.
 
 \section{Run CAABA/MECCA in special modes}
 \label{sec:special}
@@ -598,41 +610,42 @@ for sensitivity studies analyzing the effect of individual reactions
 inside a large chemical mechanism. For other applications, some special
 modes exist as described below.
 
-\subsection{Multiple model runs and steady-state}
+\subsection{Multiple model simulations and steady-state}
 \label{sec:multirun}
 
-The so-called ``multirun'' mode performs multiple model runs, each of
-them terminating when a steady-state has been reached. This is useful to
-calculate the steady-state concentrations of short-lived species (e.g.\
-OH) when the concentrations of longer-lived species (e.g.\ non-methane
-hydrocarbons) are known from measurements. The default termination
-condition is that the change of OH between two model time steps is less
-than 0.1~\unit{\%}. If necessary, this can be changed in the function
-\verb|steady_state_reached| in \verb|messy_mecca.f90|. To avoid that the
-concentrations of long-lived species change from their initial values,
-they can be fixed in the file \verb|mecca/messy_mecca_kpp.kpp| by adding
-them to the ``\verb|#SETFIX|'' line. Initial mixing ratios and J-values
-must be available in netCDF files in the \verb|multirun/input/|
-directory. As an example, the file \verb|example.nc| is available. To
-create such input netCDF files from ASCII files, the script
-\verb|asc2ferret4nc.tcsh| can be used. Finally, since the multirun mode
-needs ``\verb|ncks|'' from the netCDF Operators (NCO) software, it must
-be ensured that this program is available. After these preparations, the
-multirun mode can be entered by running \verb|xcaaba| and answering the
-question ``Run CAABA boxmodel with MECCA chemistry?'' with ``m''. This
-will start the \verb|multirun.tcsh| script in the \verb|multirun/|
-directory. The user can either select one input file or run model
-simulations for all input files in the \verb|multirun/input/| directory.
-For each input netCDF file, the script \verb|loopcaaba.tcsh| is called.
-For each time step contained in the input file, \verb|loopcaaba.tcsh|
-performs a CAABA/MECCA model run. It first creates a suitable namelist
-file \verb|caaba.nml|. Values for temperature and pressure are
-transferred from the input netCDF file to the namelist file. In
-addition, \verb|loopcaaba.tcsh| creates two important settings in
+The so-called ``multirun'' mode performs multiple model simulations,
+each of them terminating when a steady-state has been reached. This is
+useful to calculate the steady-state concentrations of short-lived
+species (e.g.\ OH) when the concentrations of longer-lived species
+(e.g.\ non-methane hydrocarbons) are known from measurements. The
+default termination condition is that the change of OH between two model
+time steps is less than 0.1~\unit{\%}. If necessary, this can be changed
+in the function \verb|steady_state_reached| in \verb|messy_mecca.f90|.
+To avoid that the concentrations of long-lived species change from their
+initial values, they can be fixed in the file
+\verb|mecca/messy_mecca_kpp.kpp| by adding them to the
+``\verb|#SETFIX|'' line. Initial mixing ratios and J-values must be
+available in netCDF files in the \verb|multirun/input/| directory. As an
+example, the file \verb|example.nc| is available. To create such input
+netCDF files from ASCII files, the script \verb|asc2ferret4nc.tcsh| can
+be used. Finally, since the multirun mode needs ``\verb|ncks|'' from the
+netCDF Operators (NCO) software, it must be ensured that this program is
+available. After these preparations, the multirun mode can be entered by
+running \verb|xcaaba| and answering the question ``Run CAABA boxmodel
+with MECCA chemistry?'' with ``m''. This will start the
+\verb|multirun.tcsh| script in the \verb|multirun/| directory. The user
+can either select one input file or make model simulations for all input
+files in the \verb|multirun/input/| directory. For each input netCDF
+file, the script \verb|loopcaaba.tcsh| is called. For each time step
+contained in the input file, \verb|loopcaaba.tcsh| performs a
+CAABA/MECCA model simulation. It first creates a suitable namelist file
+\verb|caaba.nml|. Values for temperature and pressure are transferred
+from the input netCDF file to the namelist file. In addition,
+\verb|loopcaaba.tcsh| creates two important settings in
 \verb|caaba.nml|: First, the steady-state option is switched on with
 ``\verb|l_steady_state_stop = T|''. Second, the submodel READJ is
 activated and used with ``\verb|USE_READJ = T|'' and
-``\verb|photrat_channel = 'readj'|''. After the model runs have
+``\verb|photrat_channel = 'readj'|''. After the model simulations have
 finished, a summary of the output is placed in the output directory. The
 name of the output directory will be based on the name of the input
 netCDF file, e.g.\ when the file \verb|example.nc| is used, the output
@@ -641,40 +654,330 @@ will be in \verb|output/multirun/example/|.
 \subsection{Monte-Carlo}
 \label{sec:montecarlo}
 
-In the Monte-Carlo mode, several CAABA/MECCA runs are performed, with
-each run using slightly different rate coefficients. To activate it, you
-first have to create a new chemistry mechanism with \verb|xmecca| and
-answer the question ``Add Monte-Carlo factor to all rate coefficients''
-with ``y''. This will start the awk script \verb|mcfct.awk|, which adds
-Monte-Carlo factors to the rate coefficients in the equation file, e.g.\
-``\verb|EXP(0.2*mcfct(42))|''. The measurement uncertainty $\Delta\log
-k$ is defined in \verb|gas.eqn| in a comment starting with the paragraph
-symbol: ``\verb|{|$\S$\verb|...}|''. If not available, it is set to 0.2
-in \verb|mcfct.awk|. Next, \verb|xcaaba| will start the script
-\verb|montecarlo.tcsh| in the directory \verb|montecarlo/|. The default
-is to make 5 model runs. To choose another value, change the definition
-of \verb|maxline| in \verb|montecarlo.tcsh| and make sure that the file
-\verb|mcfct_seed.txt| contains enough seed values for calculating the
-necessary random numbers. After performing the model runs, the resulting
-netCDF files are merged (using the tools \verb|ncpdq|, \verb|ncclamp|,
-and \verb|ncrcat|) and then stored in a directory with a name based on
-the date and time of the model run, e.g.\
-\verb|output/montecarlo/2009-08-24-16:29:00/|. If just a few model runs
-were made, they can be plotted together with ferret by activating the
-Monte-Carlo runs in \verb|setmodelrun.jnl|. Tools for the analysis of a
-large number of runs have to be developed in the future.
+\subsubsection{Performing Monte-Carlo simulations}
+
+In the Monte-Carlo mode, several CAABA/MECCA simulations are performed,
+with each individual simulation using slightly different rate
+coefficients. To activate it, you first have to create a new chemistry
+mechanism with \verb|xmecca| (see Sect.~\ref{sec:xmecca}) and answer the
+question ``Add Monte-Carlo factor to all rate coefficients'' with ``y''.
+This will start the awk script \verb|mcfct.awk|, which adds Monte-Carlo
+factors to the rate coefficients in the equation file. Next, the
+\verb|xcaaba| script can be used to start the simulations. It will start
+the script \verb|montecarlo.tcsh| in the directory \verb|montecarlo/|.
+The default is to make 5 model simulations. To choose another value (up
+to 9999), change the definition of \verb|maxline| in
+\verb|montecarlo.tcsh|.
+
+\subsubsection{Analyzing Monte-Carlo simulations}
+
+After performing the model simulations, the resulting netCDF files are
+merged (using the tools \verb|ncpdq|, \verb|ncclamp|, and \verb|ncrcat|)
+and then stored in the output directory with a name based on the date
+and time of the model simulations, e.g.\ \verb|$outputdir| =
+\verb|output/montecarlo/2010-06-24-16:29:00|. The final concentrations
+and rate coefficients of all simulations are summarized in
+\verb|caaba_mecca_c_end.nc| and \verb|caaba_mecca_k_end.nc|. Results of
+the individual simulations can be found in the directories
+\verb|$outputdir/runs/*|.
+
+\paragraph{Time series}
+
+If the model is set up to run for a fixed length (e.g.\ using the
+default of \verb|ext_runtime| = 8 days), the time series of all
+simulations can be plotted together with ferret by activating the lines
+for Monte-Carlo in \verb|setmodelrun.jnl|. However, these plots become
+illegible if more than about 5 simulations are made.
+
+\paragraph{Steady-state calculations}
+
+The most efficient way to analyze a large number of Monte-Carlo
+simulations is to use the steady-state option and only compare the
+final values of the different model simulations, not the individual time
+series. The ferret script \verb|montecarlo.jnl| can be used to create
+scatter plots of concentrations vs rate coefficients. It also plots
+linear regression lines for all comparisons above a certain threshold of
+the correlation coefficient (default: $r^2>0.05$).
+
+\subsubsection{Variation of rate coefficients}
+
+In each individual Monte-Carlo simulation $j$, all rate coefficients
+$k_i$ are varied by a Monte-Carlo factor:
+
+\begin{equation}
+  k^{\rm MC}_{i,j} = k_i \times f_i^{x_{i,j}}
+\end{equation}
+
+Here, $k^{\rm MC}_{i,j}$ is the rate coefficient of reaction $i$ used in
+the Monte-Carlo simulation $j$. It is defined as the product of the
+recommended value $k_i$ and the Monte-Carlo factor $f_i^{x_{i,j}}$. This
+Monte-Carlo factor consists of two parts, the uncertainty factor $f_i$
+and the exponent $x_{i,j}$:
+
+\paragraph{The uncertainty factor $f_i$} 
+
+The uncertainty factor $f_i$ describes the uncertainty of the measured
+(or estimated) rate coefficient $k_i$. Its value can usually be found in
+publications of laboratory studies or summaries like the JPL evaluation
+\citep{1945}.
+
+The tables of the IUPAC evaluations \egcite{1759} list the decadic
+logarithm $\lg(f_i)$ of the uncertainty factor, which they call
+``$\Delta\log k$''.
+
+Sometimes an absolute uncertainty is quoted instead of an uncertainty
+factor, e.g.\ $k = 2 \pm 0.2$ or $k = 2 \pm 10\%$. In this case we
+define $f_i$ such that the upper limit is reached when multiplied with
+$k_i$, i.e.\ in the current example $f_i = (2+0.2)/2 = 1.1$.
+
+The uncertainty factor is defined in the equation files (\verb|*.eqn|)
+in a comment starting with the paragraph symbol. Three different syntax
+types are possible:
+\begin{itemize}
+\item If there is just one \verb|§| sign, (e.g.\ ``\verb|{§1.1}|''), the
+  value inside the curly braces is the uncertainty factor $f_i$.
+\item With two \verb|§| signs, (e.g.\ ``\verb|{§§0.04}|''), the value
+  inside the curly braces equals $\lg(f_i)$.
+\item If there is only a \verb|§| sign (``\verb|{§}|'') but no number,
+  the uncertainty factor is set to the default value of $f_i$~= 1.25.
+\end{itemize}
+
+\paragraph{The Monte-Carlo exponent $x_{i,j}$} 
+
+There is one Monte-Carlo exponent $x_{i,j}$ (variable ``\verb|mcexp|''
+in the code) for each rate coefficient $k_i$ and for each individual
+Monte-Carlo simulation $j$. The values of $x_{i,j}$ are
+normally-distributed random numbers centered around zero, and produced
+with the Marsaglia polar method
+(\url{http://en.wikipedia.org/wiki/Marsaglia_polar_method}). As input
+for the Marsaglia polar method, uniformly distributed random numbers
+between 0 and 1 calculated with either the standard Fortran90 function
+{\tt RANDOM\_NUMBER} or the Mersenne Twister algorithm \citep{2404} are
+used.
+
+\subsubsection{Changing the uncertainty factors}
+
+The uncertainty factors can be changed by modifying the equation files,
+as shown in Sect.~\ref{sec:eqnfiles}. Note that predefined rate
+coefficients (e.g.\ \verb|k_HO2_HO2|) already contain an uncertainty
+factor and there must not be an additional factor in the reaction where
+they are used.
+
+In some cases, it may be useful to vary only one or a few rate
+coefficients. To do this, it is first necessary to find the correct
+indices of \verb|mcexp(...)| in \verb|mecca.eqn| (note that these
+indices may change when creating a new mechanism with \verb|xmecca|). As
+an example, to vary only the rate coefficients that use \verb|mcexp(40)|
+and \verb|mcexp(50)|, the following lines can be added to subroutine
+\verb|mecca_init| in \verb|messy_mecca_box.f90| after
+\verb|CALL define_mcexp|:
+\begin{verbatim}
+DO i=1, MAX_MCEXP
+  IF ((i/=40).OR.(i/=50)) mcexp(i) = 0.
+ENDDO
+\end{verbatim}
+
+To verify that the rate coefficients are modified in the Monte-Carlo
+simulations, it is possible to temporarily activate the subroutine
+\verb|montecarlo_check| in \verb|template_messy_mecca_kpp.f90| and check
+the output in \verb|caaba.log|. After these tests,
+\verb|montecarlo_check| must be switched off again to allow normal model
+simulations.
 
 \subsection{Lagrangian trajectories}
 \label{sec:lagrangian}
 
-The Lagrangian trajectory mode has recently been implemented by
-\citet{2403}. A description of its usage will be added here in the
-future.
+CAABA can be used as a Lagrangian trajectory box model \citep{2403}. The
+usual combination of submodels for this purpose includes the CAABA
+submodel TRAJECT for the processing of trajectory information, MECCA for
+atmospheric chemistry, and JVAL for photolysis rate calculation. All
+important settings for trajectory calculations can be made via the
+namelist file plus a few external files.
 
-The files \verb|current_jval.nc| and \verb|current_traj.nc| must both
-refer to exactly the same trajectory.
+\subsubsection{Namelist parameters}
 
-\todo{add more text based on info from hella here}
+A namelist template can be found in
+\verb|nml/caaba_traject_example.nml|. After copying the namelist file to
+a new name in the same directory and altering the settings, it will be
+available when running caaba via \verb|xcaaba|. There are standard and
+trajectory-exclusive namelist parameters to be set:
+\begin{itemize}\nosep
+\item \noindent\textbf{Submodel switches (mandatory):} The trajectory
+  mode of CAABA requires that \verb|USE_TRAJECT = T|,
+  \verb|USE_MECCA = T|, and \verb|USE_JVAL = T| and/or
+  \verb|USE_SAPPHO = T|. One of the two photolysis rate models is
+  sufficient, but it is also possible to run them in parallel (see also
+  \verb|photrat_channel|). If the use of external photolysis rates is
+  desired, \verb|USE_JVAL = T| is mandatory. For the application in
+  \citet{2403}, the submodel \verb|SEMIDEP| was switched off.
+  (\verb|!USE_SEMIDEP = T|).
+\item \textbf{Scenarios (optional):} Scenarios may be used in trajectory
+  mode. When using external input for chemical initialization and
+  photolysis rates, however, they can be ignored (commented out, e.g.,
+  \verb|!init_scenario = ''|) or used as complement.
+\item \textbf{Photolysis rate channel:} Choose
+  \verb|photrat_channel = 'jval'| when planning to prescribe photolysis
+  rates.
+\item \textbf{Trajectory input (mandatory):} The path to the netCDF file
+  containing trajectory waypoints should be specified as
+  \verb|input_physc = 'traject/example_traj.nc'|. For its structure, see
+  section \ref{sec:trajfile}.
+\item \textbf{Tracer initialization (optional):} Tracer mixing ratios
+  can be initialized with an external netCDF file by specifying the path
+  to it with \verb|init_spec = 'traject/example_init.nc'|. For its
+  structure, please refer to section \ref{sec:tracfile}.
+\item \textbf{Photolysis rates (optional):} For prescribed photolysis
+  rates, specify the path to the respective file as
+  \verb|input_jval = 'traject/example_jval.nc'|. For its structure, see
+  \ref{sec:jvalfile}.
+\item \textbf{Variable names (partly mandatory):} There are default
+  trajectory variable names designated in CAABA. They can be selectively
+  changed by providing alternative variable names. Here is a list of
+  trajectory variables, their default name, and respective examples how
+  to specify an alternative variable name:
+  \begin{center}
+    \begin{tabular}{lll}
+      \hline
+      quantity       & default      & alternative\\
+      \hline
+      longitude      & \verb|LON|   & \verb|vlon = 'LON_TR'|\\    
+      latitude       & \verb|LAT|   & \verb|vlat = 'LAT_TR'|\\
+      pressure       & \verb|PRESS| & \verb|vpress = 'P'|\\
+      temperature    & \verb|TEMP|  & \verb|vtemp = 'TM1'|\\
+      rel. humidity  &              & \verb|vrelhum = 'rh'|\\
+      spec. humidity &              & \verb|vspechum = 'sh'|\\
+      \hline
+    \end{tabular}
+  \end{center}
+  Humidity has no default variable name due to the choice of either
+  providing relative humidity or specific humidity. Thus, it is
+  mandatory to specify exactly one of the two in the namelist. When
+  specific humidity is provided, then both specific humidity and
+  relative humidity are written to the output \verb|caaba_physc.nc|,
+  since CAABA uses relative humidity internally. When relative humidity
+  is provided, only relative humidity will be written to output.
+\item \textbf{Integration time (optional):} \verb|time_step| sets the
+  integration and output time step. See also section
+  \ref{sec:caaba_nml}.
+\item \textbf{Clipping the trajectory (optional):} Two namelist
+  parameters allow flexible cropping of the model runtime along the
+  trajectory. \verb|runlast| defines the start of the CAABA simulation
+  counted backwards in time from the trajectory end, i.e.
+  \verb|runlast = 4.5| means ``calculate the last 4.5 days of the
+  trajectory''. The unit is days. The parameter \verb|ext_runtime|
+  defines the overall model simulation time. Thus, \verb|runlast| and
+  \verb|ext_runtime| combined clip out any desired part of the
+  trajectory.
+\end{itemize}
+
+\subsubsection{Trajectory input file}
+\label{sec:trajfile}
+
+The trajectory information is provided to CAABA via an external netCDF
+file specified in the namelist by \verb|input_physc|. A sample file is
+available at \verb|traject/example_traj.nc|. The file should contain a
+time origin in 'seconds/minutes/hours/days since yyyy-mm-dd hh:mm:ss',
+where the seconds in the time string are optional, for example:
+\verb|"MINUTES since 2000-01-19 08:00:00"|. The file must contain at
+least two trajectory waypoints and the following time-dependent
+variables:
+
+\begin{center}
+  \begin{tabular}{lll}
+    \hline
+    quantity       & default name &  unit\\
+    \hline
+    longitude      & \verb|LON|   &  degrees east\\
+    latitude       & \verb|LAT|   &  degrees north\\
+    pressure       & \verb|PRESS| &  Pascal\\
+    temperature    & \verb|TEMP|  &  Kelvin\\
+    (rel. humidity)  &            &  1\\
+    (spec. humidity) &            &  kg/kg\\
+    \hline
+  \end{tabular}
+\end{center}
+
+Of the two humidity quantities, only one needs to be present.
+
+\subsubsection{Photolysis rate file}
+\label{sec:jvalfile}
+
+It is possible to prescribe photolysis rate coefficients via netCDF
+file. An example is available at \verb|traject/example_jval.nc|. At the
+moment, only photolysis rates for the species \chem{NO_2} can be read
+into the model and must have the variable name \verb|J_NO2|. The files
+specified in \verb|input_jval| (e.g.\ \verb|example_jval.nc|) and
+\verb|input_physc| (e.g.\ \verb|example_traj.nc|) must both refer to
+exactly the same trajectory as the photolysis rate values are read into
+the model at the same times as other trajectory information.
+
+\subsubsection{Tracer initialization file}
+\label{sec:tracfile}
+
+There are default initial values included in MECCA for a variety of
+species and simulation aims (see \verb|init_scenario|). However, for
+several consecutive simulations with changing initialization, the
+possibility to define an initialization file using \verb|init_spec| is
+convenient. The tracer initialization file is a netCDF file with one
+point in time, at which selected species' mixing ratios are defined in
+mol/mol. The point in time itself is not important and not checked when
+reading the initial mixing ratios. All tracers that are not specified in
+\verb|init_spec| are initialized according to default or a chosen
+\verb|init_scenario|. An example for the initialization file can be
+found at \verb|traject/example_init.nc|.
+
+\subsubsection{Trajectory mode output}
+
+Output along the trajectory is written to \verb|caaba_messy.nc|. There
+are some special variables written out in addition to the default
+\verb|caaba_messy.nc| output. They are listed in the second part of the
+table.
+
+\begin{tabular}{lll}
+  \hline
+  variable         & unit             & notes\\
+  \hline
+  \verb|lon|       & \multicolumn{2}{l}{(dummy 3-D x-coordinate)}\\
+  \verb|lat|       & \multicolumn{2}{l}{(dummy 3-D y-coordinate)}\\
+  \verb|lev|       & \multicolumn{2}{l}{(dummy 3-D z-coordinate)}\\
+  \verb|time|      & \textless unit\textgreater  since ... & time\\
+  \verb|lon_tr|    & deg east         & longitude\\
+  \verb|lat_tr|    & deg north        & latitude\\
+  \verb|press|     & Pa               & pressure\\
+  \verb|temp|      & K                & temperature\\
+  \verb|relhum|    & 1                & relative humidity (RH)\\
+  \hline
+  \verb|spechum|   & kg/kg            & specific humidity ($q$)\\
+  \verb|sza|       & deg              & solar zenith angle\\
+  \verb|J_NO2_x|   & 1/s              & \chem{NO_2} photolysis rate\\
+  \verb|localtime| & same as time     & local time\\
+  \verb|year_loc|  &                  & year of local time\\
+  \verb|month_loc| &                  & month of local time\\
+  \verb|day_loc|   &                  & day of local time\\
+  \verb|hour_loc|  &                  & hour of local time\\
+  \verb|min_loc|   &                  & minute of local time\\
+  \verb|sec_loc|   &                  & second of local time\\
+  \hline
+\end{tabular}
+
+The specific humidity $q$ is only written to output if it was provided
+as input. In that case, the relative humidity RH is calculated using the
+WMO definition \citep{1660}:
+\begin{equation}
+  \mbox{RH} = \frac{\omega_v}{\omega_{vs}} = 
+\frac{p_{\chem{H_2O}}(T)}{p - p_{\chem{H_2O}}(T)} \times
+\frac{p - p_{\rm sat}(T)}{p_{\rm sat}(T)}
+\end{equation}
+with $\omega_v$~= water vapor mass mixing ratio and $\omega_{vs}$~=
+saturation water vapor mass mixing ratio. We calculate these as:
+\begin{eqnarray}
+  \omega_v & = & \frac{q}{1-q}\\
+  \omega_{vs} & = & \frac{M(\chem{H_2O})}{M({\rm air})} \times
+  \frac{p_{\rm sat}(T)}{p - p_{\rm sat}(T)} 
+\end{eqnarray}
+using the pressure $p$, the temperature-dependent saturation water vapor
+pressure $p_{\rm sat}(T)$, and the molar masses $M$ of water and dry
+air.
 
 \begin{table*}%[htb]
   \begin{center}
@@ -772,7 +1075,7 @@ refer to exactly the same trajectory.
   \begin{center}
   \includegraphics[width=\textwidth]{caaba_flowcontrol}
   \end{center}
-  \caption{Flow control of a CAABA box model run}
+  \caption{Flow control of a CAABA box model simulation}
   \label{fig:caaba_flowcontrol}
 \end{figure*}
 
@@ -815,17 +1118,20 @@ ext_runtime = '10 days'
 time_step   = '15 minutes'
 \end{verbatim}
 If you don't set these, the default is a model start on Julian day 80, a
-model run duration of 8 days, and an output time step of 20 minutes.
+model simulation duration of 8 days, and an output time step of 20
+minutes. The \verb|time_step| value can be given as any integer or
+floating point and in the units of \verb|seconds|, \verb|minutes|, or
+\verb|hours|.
 
-As an alternative, it is possible to stop the model run when a steady
-state has been reached. This is normally used in the ``multirun'' mode
-(Sect.~\ref{sec:multirun}):
+As an alternative, it is possible to stop the model simulation when a
+steady state has been reached. This is normally used in the ``multirun''
+mode (Sect.~\ref{sec:multirun}):
 
 \begin{verbatim}
 l_steady_state_stop = T
 \end{verbatim}
 
-The default location of the model run (latitude, longitude) is
+The default location of the model simulation (latitude, longitude) is
 45$^\circ$ N and 0$^\circ$ E. It can be changed here, e.g.:
 
 \begin{verbatim}
@@ -1224,16 +1530,10 @@ example for the name of the addition.
   \verb|NC4H10 = 4C + 10H ; {@C_4H_<10>} {n-butane}|\\
   Note that curly brackets needed by La\TeX\ must be entered as angle
   brackets.
-\end{itemize}
-
-\begin{itemize}\nosep
 \item \verb|jnl/xxxg.jnl|:\\
   Add one line per new species. Check if the new species is part of an
   existing familiy, e.g.\ add new reactive bromine species to
   \verb|Brx|.
-\end{itemize}
-
-\begin{itemize}\nosep
 \item \verb|jnl/tools/_kppvarg.jnl|:\\
   Add one line per new species.
 \end{itemize}
@@ -1248,20 +1548,11 @@ example for the name of the addition.
   The suffix \verb|_a##| is mandatory. The elemental composition is
   currently ignored. Note that curly brackets needed by La\TeX\ must be
   entered as angle brackets.
-\end{itemize}
-
-\begin{itemize}\nosep
 \item \verb|jnl/xxxa.jnl|:\\
   Add one line per new species. 
-\end{itemize}
-
-\begin{itemize}\nosep
 \item \verb|jnl/_families_a.jnl|:\\
   Check if the new species is part of an existing familiy, e.g.\ add new
   bromine species to \verb|Brtot|.
-\end{itemize}
-
-\begin{itemize}\nosep
 \item \verb|jnl/tools/_kppvara.jnl|:\\
   Add one line per new species.
 \end{itemize}
@@ -1278,11 +1569,11 @@ suffix, e.g.\ John Doe would use \verb|G0001JD|, \verb|G0002JD|,
 development branches, the final reaction numbers will be assigned.
 
 \begin{itemize}\nosep
-\item \verb|gas.eqn|:\\
-  Add one line per new reaction.
-\end{itemize}
-
-\begin{itemize}\nosep
+\item \verb|gas.eqn|:
+  \begin{itemize}
+  \item Add one line per new reaction.
+  \item Add Monte-Carlo uncertainty factor.
+  \end{itemize}
 \item \verb|latex/meccanism.tex|:\\
   If necessary, add a footnote about the new reaction here.
 \end{itemize}
@@ -1293,11 +1584,11 @@ First, choose an appropriate reaction number, as explained in
 Sect.~\ref{sec:addgprxn}.
 
 \begin{itemize}\nosep
-\item \verb|gas.eqn|:\\
-  Add one line per new reaction.
-\end{itemize}
-
-\begin{itemize}\nosep
+\item \verb|gas.eqn|:
+  \begin{itemize}
+  \item Add one line per new reaction.
+  \item Add Monte-Carlo uncertainty factor.
+  \end{itemize}
 \item \verb|latex/meccanism.tex|:\\
   If necessary, add a footnote about the new reaction here.
 \end{itemize}
@@ -1306,24 +1597,18 @@ Check if the necessary photolysis rate coefficient is already provided
 by SAPPHO, READJ, and/or JVAL. If not, add it:
 
 \begin{itemize}\nosep
-\item \verb|messy_cmn_photol_mem.f90|:\\
+\item \verb|messy_cmn_photol_mem.f90|:
   \begin{itemize}\nosep
   \item Add a new index of photolysis \verb|ip_XYZ| at the end of the
     list.
   \item Increase \verb|IP_MAX|.
   \item Add the name to \verb|jname|.
   \end{itemize}
-\end{itemize}
-
-\begin{itemize}\nosep
 \item \verb|messy_sappho_box.f90|:\\
   Add \verb|XYZ| to \verb|CALL open_output_file| and
   \verb|CALL write_output_file|.
 \item \verb|messy_sappho.f90|:\\
   Add a simple definition for \verb|jx(ip_XYZ)|.
-\end{itemize}
-
-\begin{itemize}\nosep
 \item \verb|messy_jval_box.f90|:\\
   Add one line.
 \item \verb|messy_jval_jvpp.inc|:\\
@@ -1336,11 +1621,11 @@ First, choose an appropriate reaction number, as explained in
 Sect.~\ref{sec:addgprxn}.
 
 \begin{itemize}\nosep
-\item \verb|aqueous.eqn|:\\
-  Add one line per new reaction.
-\end{itemize}
-
-\begin{itemize}\nosep
+\item \verb|aqueous.eqn|:
+  \begin{itemize}
+  \item Add one line per new reaction.
+  \item Add Monte-Carlo uncertainty factor.
+  \end{itemize}
 \item \verb|latex/meccanism.tex|:\\
   If necessary, add a footnote about the new reaction here.
 \end{itemize}
@@ -1351,18 +1636,27 @@ First, choose an appropriate reaction number, as explained in
 Sect.~\ref{sec:addgprxn}.
 
 \begin{itemize}\nosep
-\item \verb|aqueous.eqn|:\\
-  Add two lines per new equilibrium, one for the forward and one for the
-  backward reaction.
-\end{itemize}
-
-\begin{itemize}\nosep
-\item \verb|messy_mecca_aero.f90|:\\
-  Add calculation of \verb|vmean|, \verb|alpha|, and \verb|zhenry| which
-  is needed for \verb|k_exf| and \verb|k_exb|.
-\end{itemize}
-
-\begin{itemize}\nosep
+\item \verb|aqueous.eqn|:
+  \begin{itemize}
+  \item Add two lines per new equilibrium, one for the forward and one
+    for the backward reaction.
+  \item Add Monte-Carlo uncertainty factors.
+  \end{itemize}
+\item \verb|messy_cmn_gasaq.f90|:
+  \begin{itemize}
+  \item Add molar mass:\\
+    \verb|CALL add_species('XYZ', ...)|
+  \item Add the Henry's law coefficient:\\
+    \verb|CALL add_henry('XYZ', ...)|
+  \item Add the accommodation coefficient:\\
+    \verb|CALL add_alpha('XYZ', ...)|
+  \end{itemize}
+  Using these data, the subroutines
+  \verb|mecca_aero_trans_coeff|, \verb|mecca_aero_henry|,
+  and \verb|mecca_aero_calc_k_ex| in
+  \verb|messy_mecca_aero.f90| will automatically calculate
+  the rate coefficients \verb|k_exf| and \verb|k_exb| for
+  \verb|aqueous.eqn|.
 \item \verb|latex/meccanism.tex|:\\
   If necessary, add a footnote about the new equilibrium here.
 \end{itemize}
@@ -1373,12 +1667,12 @@ First, choose an appropriate reaction number, as explained in
 Sect.~\ref{sec:addgprxn}.
 
 \begin{itemize}\nosep
-\item \verb|aqueous.eqn|:\\
-  Add two lines per new equilibrium, one for the forward and one for the
-  backward reaction.
-\end{itemize}
-
-\begin{itemize}\nosep
+\item \verb|aqueous.eqn|:
+  \begin{itemize}
+  \item Add two lines per new equilibrium, one for the forward and one
+    for the backward reaction.
+  \item Add Monte-Carlo uncertainty factors.
+  \end{itemize}
 \item \verb|latex/meccanism.tex|:\\
   If necessary, add a footnote about the new equilibrium here.
 \end{itemize}
@@ -1442,7 +1736,7 @@ final label name can be assigned.
   \item If the submodel prints results, put subroutine \verb|xyz_result|
     here.
   \item If the submodel needs to close any open files at the end of the
-    model run, put subroutine \verb|xyz_finish| here.
+    model simulation, put subroutine \verb|xyz_finish| here.
   \end{itemize}
 \item \verb|messy_main_control_cb.f90|:
   \begin{itemize}
@@ -1486,18 +1780,20 @@ final label name can be assigned.
 The major changes between different CAABA/MECCA versions are listed
 here. A very detailed listing can be found in the file \verb|CHANGELOG|.
 
-\subsection{New in version 2.6}
+\subsection*{New in version 2.6}
 
 \begin{itemize}\nosep
 \item In its default configuration, the model now simulates very simple
   methane chemistry.
 \item Scenarios in namelists make it easier to define boundary
   conditions (Sect.~\ref{sec:caaba_nml}).
-\item Multiple model runs can be performed, each of them terminating
-  when a steady-state has been reached (Sect.~\ref{sec:multirun}).
+\item Multiple model simulations can be performed, each of them
+  terminating when a steady-state has been reached
+  (Sect.~\ref{sec:multirun}).
 \item The Monte-Carlo method can be used to investigate the effect of
   uncertainties of the rate coefficients (Sect.~\ref{sec:montecarlo}).
-\item \todo{add MIM2 when available}
+\item The new isoprene oxidation mechanism MIM2 by \citet{2272} has been
+  added.
 \item The graphviz software can be used to visualize the complex
   reaction mechanism.
 \item Plots of all reaction rates and scaled plot of
@@ -1507,10 +1803,10 @@ here. A very detailed listing can be found in the file \verb|CHANGELOG|.
   (``J-values'') from a netcdf file.
 \end{itemize}
 
-\subsection{New in version 2.5}
+\subsection*{New in version 2.5}
 
 \begin{itemize}\nosep
-\item Output of more information at the start of a model run.
+\item Output of more information at the start of a model simulation.
 \item It is not necessary anymore to have the netcdf library for running
   CAABA/MECCA with ASCII output. The corresponding output functions are
   now in the \verb|caaba_io*| files.
@@ -1521,7 +1817,7 @@ here. A very detailed listing can be found in the file \verb|CHANGELOG|.
 \item A reaction mechanism for Hg chemistry has been added.
 \end{itemize}
 
-\subsection{New in version 2.4}
+\subsection*{New in version 2.4}
 
 \begin{itemize}\nosep
 \item \verb|xmecca| runs in batch mode with \verb|*.bat| files.

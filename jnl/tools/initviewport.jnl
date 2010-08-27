@@ -3,7 +3,7 @@ LET viewport_rows = $2
 REPEAT/i=1:`viewport_columns*viewport_rows`:1 (CANCEL viewport `i`)
 !GO portraitNxN `viewport_columns` `viewport_rows`
 !GO portraitNxN `viewport_columns` `viewport_rows` 0 0 `768/1024` ! screen
-GO portraitNxN `viewport_columns` `viewport_rows` 0 0 $4"`296/210`"
+GO portraitNxN `viewport_columns` `viewport_rows` 0 0 $4"`296/210`" ! A4 portrait
 LET currentviewport = 0
 LET currentpage = 1
 

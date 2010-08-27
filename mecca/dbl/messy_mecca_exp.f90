@@ -11,6 +11,8 @@
 ! [Gromov, MPIC, 2007-2008]
 !=============================================================================
 
+#define noDEBUG
+
 #include "messy_mecca_exp.inc"
 
 MODULE messy_mecca_exp
@@ -99,20 +101,23 @@ CONTAINS
 
   !-----------------------------------------------------------------------------
 
-  SUBROUTINE nudge_spec(model_time, rel2nc_start, model2nc_scale, spec_list_ind)
+  SUBROUTINE nudge_spec(model_time, rel2nc_start, model2nc_scale, spec_list_ind, nudc_list)
   
     USE messy_mecca_kpp_monitor, ONLY: SPC_NAMES
+    USE messy_main_constants_mem, ONLY: R_gas, N_A, STRLEN_SHORT, STRLEN_MEDIUM
     USE netcdf
 
-    USE caaba_mem, ONLY: C, temp, cair
+    USE caaba_mem, ONLY: C, temp, cair, press
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)           :: spec_list_ind(:)
+    INTEGER, INTENT(IN)           :: spec_list_ind(:)      ! liste des substances
+    REAL(dp), INTENT(IN)          :: nudc_list(:)          ! avec les coefficients de nudge
+    
     REAL(dp), INTENT(IN)          :: model_time, rel2nc_start, model2nc_scale
 !                                                              ^ how many model steps fits into 1 nc step
 !                                                                for monthly data should be = 365.24 / 12, z.B.
-    REAL(dp)                      :: nudc, frac, dum
+    REAL(dp)                      :: frac, dum
     INTEGER                       :: timestep_nc, s
 
 
@@ -122,19 +127,26 @@ CONTAINS
 
 !    PRINT *, 'nudge_spec (',model_time,',',rel2nc_start,' (',model2nc_scale,'): nc pas # ',timestep_nc,', frac = ',frac
 
-    ! avec le coefficient de nudge
-    nudc = 0.5
-
     ! prendre la temperature 
     dum = get_val_i("TM1")
     if ( dum .LT. 400 ) temp = get_val_i("TM1")      ! sorting UNDEF through dum...
+    cair = (N_A/1.E6) * press / (R_gas*temp) ! cair = c(air) in [mcl/cc]
 
-!    PRINT *,'nudging the temperature: ',temp,' K'
-    
+#ifdef DEBUG
+    PRINT *,'nudging the temperature: ',temp,' K'
+#endif    
+
     ! et le reste des substances
     DO s = 1, UBOUND(spec_list_ind,1)
-      C(spec_list_ind(s)) = ( 1.0_dp - nudc ) * C(spec_list_ind(s)) + &
-                            nudc * ( get_val_i(SPC_NAMES(spec_list_ind(s))) * cair )
+#ifdef DEBUG
+      PRINT *,'nudging ',TRIM(SPC_NAMES(spec_list_ind(s))),' (',nudc_list(s),'): ', &
+        C(spec_list_ind(s))/cair*1E9,' -> ', &
+        get_val_i(SPC_NAMES(spec_list_ind(s)))*1E9,' => ',&
+        ( 1.0_dp - nudc_list(s) ) * C(spec_list_ind(s))/cair*1e9 + &
+          nudc_list(s) * ( get_val_i(SPC_NAMES(spec_list_ind(s)))*1e9 )
+#endif    
+      C(spec_list_ind(s)) = ( 1.0_dp - nudc_list(s) ) * C(spec_list_ind(s)) + &
+                            nudc_list(s) * ( get_val_i(SPC_NAMES(spec_list_ind(s))) * cair )
     ENDDO                          
     
 ! spec_list_ind:
@@ -212,6 +224,14 @@ CONTAINS
 #ifdef dbl_IC
     USE messy_mecca_dbl_IC_box
 #endif
+#ifdef dbl_FCF
+    USE messy_mecca_dbl_FCF_box
+#endif
+#ifdef dbl_FCB
+    USE messy_mecca_dbl_FCB_box
+#endif
+
+
 #ifdef tag_IC
     USE messy_mecca_tag_IC_box
 #endif
@@ -243,7 +263,7 @@ CONTAINS
 
   ! specs list   (to search for in emission file)
     INTEGER            :: iSIL
-    INTEGER, PARAMETER :: nSIL = 16
+    INTEGER, PARAMETER :: nSIL = 17
     INTEGER            :: SIL(nSIL) = &
       (/ ind_CH4, &
          ind_CO, &
@@ -260,7 +280,8 @@ CONTAINS
          ind_CH3CO2H, &
          ind_MEK, &
          ind_NO, &
-         ind_SO2 /)     
+         ind_SO2, &
+         ind_C5H8 /)     
 
   ! Dummy is instead of CO
 
@@ -277,51 +298,76 @@ CONTAINS
 
   ! warn: xBB turns BB emissions off
 
-  !        BB      BF      FF      L43     LAND    OCE     SHIPS
+  !        BB          BF        FF         L43        LAND       OCE      SHIPS
 
   ! corresponding 13C signatures for classes emissions
   ! area: highNH
     REAL(dp), PARAMETER :: S13C(nOEC,nSIL) = RESHAPE( &
        (/ &
           eUNDEF, -35.00_dp,    eUNDEF, -53.00_dp,    eUNDEF,    eUNDEF, -27.50_dp,  &
-       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -32.20_dp, -13.50_dp, -27.50_dp,  &
+       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -27.00_dp, -13.50_dp, -27.50_dp,  &
        -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &
-       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -32.20_dp,    eUNDEF,    eUNDEF,  &
-       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -32.20_dp,    eUNDEF,    eUNDEF,  &
-       -24.50_dp, -27.50_dp, -22.20_dp, -27.50_dp, -32.20_dp, -13.50_dp, -27.50_dp,  &
-       -24.50_dp, -27.50_dp, -27.40_dp, -27.50_dp,    eUNDEF, -13.50_dp, -27.50_dp,  &
-       -24.50_dp, -27.50_dp, -25.20_dp, -27.50_dp, -32.20_dp,    eUNDEF, -27.50_dp,  &
-       -24.50_dp, -27.50_dp, -27.70_dp, -27.50_dp,    eUNDEF, -13.50_dp, -27.50_dp,  &
-       -24.50_dp, -27.50_dp, -30.60_dp, -27.50_dp,    eUNDEF, -13.50_dp, -27.50_dp,  &
+       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -27.00_dp,    eUNDEF,    eUNDEF,  &
+       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -27.00_dp,    eUNDEF,    eUNDEF,  &
+       -24.50_dp, -27.50_dp, -22.20_dp, -27.50_dp, -27.00_dp, -20.00_dp, -27.50_dp,  &
+       -24.50_dp, -27.50_dp, -27.40_dp, -27.50_dp,    eUNDEF, -20.00_dp, -27.50_dp,  &
+       -24.50_dp, -27.50_dp, -25.20_dp, -27.50_dp, -27.00_dp,    eUNDEF, -27.50_dp,  &
+       -24.50_dp, -27.50_dp, -27.70_dp, -27.50_dp,    eUNDEF, -20.00_dp, -27.50_dp,  &
+       -24.50_dp, -27.50_dp, -30.60_dp, -27.50_dp,    eUNDEF, -20.00_dp, -27.50_dp,  &
        -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &
-       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -32.20_dp,    eUNDEF,    eUNDEF,  &
-       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -32.20_dp,    eUNDEF,    eUNDEF,  &
+       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -27.00_dp,    eUNDEF,    eUNDEF,  &
+       -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp, -27.00_dp,    eUNDEF,    eUNDEF,  &
        -24.50_dp, -27.50_dp, -27.50_dp, -27.50_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &
           eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,  &
-          eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF, eUNDEF   &
+          eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,  &
+          eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF, -27.50_dp,    eUNDEF,    eUNDEF   &
         /), (/ nOEC, nSIL /) )
 
   ! corresponding 18O signatures for classes emissions
   ! area: highNH
     REAL(dp), PARAMETER :: S18O(nOEC,nSIL) = RESHAPE( &
        (/ &
-         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,  &
-       17.15_dp,   0.00_dp,  23.50_dp,  17.50_dp,  -8.00_dp,   0.00_dp,  23.50_dp,   &
-       17.15_dp,   0.00_dp,  23.50_dp,  17.50_dp,    eUNDEF,    eUNDEF,    eUNDEF,   &
-       17.15_dp,   0.00_dp,  23.50_dp,  17.50_dp,  -8.00_dp,    eUNDEF,    eUNDEF,   &
-       17.15_dp,   0.00_dp,  23.50_dp,  17.50_dp,  -8.00_dp,    eUNDEF,    eUNDEF,   &
-         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &
-         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &
-         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &
-         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &
-         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &
-       17.15_dp,   0.00_dp,  23.50_dp,  17.50_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &
-       17.15_dp,   0.00_dp,  23.50_dp,  17.50_dp,  -8.00_dp,    eUNDEF,    eUNDEF,  &
-       17.15_dp,   0.00_dp,  23.50_dp,  17.50_dp,  -8.00_dp,    eUNDEF,    eUNDEF,  &
-       17.15_dp,   0.00_dp,  23.50_dp,  17.50_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &
-       23.50_dp,  23.50_dp,  23.50_dp,  23.50_dp,    eUNDEF,    eUNDEF,  23.50_dp,  &
-         eUNDEF,  23.50_dp,  23.50_dp,  23.50_dp,    eUNDEF,    eUNDEF,  23.50_dp   &
+         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,  &         ! ind_CH4, &
+       17.15_dp,  17.20_dp,  23.50_dp,  17.20_dp,  -8.00_dp,   0.00_dp,  23.50_dp,   &        ! ind_CO, &
+       17.15_dp,  17.20_dp,  23.50_dp,  17.20_dp,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_HCHO, &
+       17.15_dp,  17.20_dp,  23.50_dp,  17.20_dp,  -8.00_dp,    eUNDEF,    eUNDEF,   &        ! ind_CH3OH, &
+       17.15_dp,  17.20_dp,  23.50_dp,  17.20_dp,  -8.00_dp,    eUNDEF,    eUNDEF,   &        ! ind_HCOOH, &
+         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_C2H4, &
+         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_C2H6, &
+         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_C3H6, &
+         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_C3H8, &
+         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_NC4H10, &
+       17.15_dp,  17.20_dp,  23.50_dp,  17.20_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &         ! ind_CH3CHO, 
+       17.15_dp,  17.20_dp,  23.50_dp,  17.20_dp,  -8.00_dp,    eUNDEF,    eUNDEF,  &         ! ind_CH3COCH3
+       17.15_dp,  17.20_dp,  23.50_dp,  17.20_dp,  -8.00_dp,    eUNDEF,    eUNDEF,  &         ! ind_CH3CO2H,
+       17.15_dp,  17.20_dp,  23.50_dp,  17.20_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &         ! ind_MEK, &
+       17.15_dp,  17.20_dp,  23.50_dp,  17.20_dp,   0.00_dp,    eUNDEF,  23.50_dp,  &         ! ind_NO, &
+         eUNDEF,  17.20_dp,  23.50_dp,  17.20_dp,    eUNDEF,    eUNDEF,  23.50_dp,  &         ! ind_SO2, &
+         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF   &         ! ind_C5H8 /) 
         /), (/ nOEC, nSIL /) )
+
+!#  ! corresponding 18O signatures for classes emissions
+!#  ! area: highNH
+!#    REAL(dp), PARAMETER :: S18O(nOEC,nSIL) = RESHAPE( &
+!#       (/ &
+!#         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,  &         ! ind_CH4, &
+!#       17.15_dp,   0.00_dp,  23.50_dp,  17.20_dp,  -8.00_dp,   0.00_dp,  23.50_dp,   &        ! ind_CO, &
+!#       17.15_dp,   0.00_dp,  23.50_dp,  17.20_dp,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_HCHO, &
+!#       17.15_dp,   0.00_dp,  23.50_dp,  17.20_dp,  -8.00_dp,    eUNDEF,    eUNDEF,   &        ! ind_CH3OH, &
+!#       17.15_dp,   0.00_dp,  23.50_dp,  17.20_dp,  -8.00_dp,    eUNDEF,    eUNDEF,   &        ! ind_HCOOH, &
+!#         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_C2H4, &
+!#         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_C2H6, &
+!#         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_C3H6, &
+!#         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_C3H8, &
+!#         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,   &        ! ind_NC4H10, &
+!#       17.15_dp,   0.00_dp,  23.50_dp,  17.20_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &         ! ind_CH3CHO, 
+!#       17.15_dp,   0.00_dp,  23.50_dp,  17.20_dp,  -8.00_dp,    eUNDEF,    eUNDEF,  &         ! ind_CH3COCH3
+!#       17.15_dp,   0.00_dp,  23.50_dp,  17.20_dp,  -8.00_dp,    eUNDEF,    eUNDEF,  &         ! ind_CH3CO2H,
+!#       17.15_dp,   0.00_dp,  23.50_dp,  17.20_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &         ! ind_MEK, &
+!#       17.15_dp,  23.50_dp,  23.50_dp,  17.20_dp,   0.00_dp,    eUNDEF,  23.50_dp,  &         ! ind_NO, &
+!#         eUNDEF,  23.50_dp,  23.50_dp,  17.20_dp,    eUNDEF,    eUNDEF,  23.50_dp,  &         ! ind_SO2, &
+!#         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF   &         ! ind_C5H8 /) 
+!#        /), (/ nOEC, nSIL /) )
 
     REAL(dp), PARAMETER :: S17Ocap(nOEC,nSIL) = RESHAPE( &
        (/ &
@@ -339,43 +385,11 @@ CONTAINS
          0.0_dp,   0.00_dp,    0.0_dp,   0.00_dp,   0.00_dp,    eUNDEF,    eUNDEF,  &
          0.0_dp,   0.00_dp,    0.0_dp,   0.00_dp,   0.00_dp,    eUNDEF,    eUNDEF,  &
          0.0_dp,   0.00_dp,    0.0_dp,   0.00_dp,    eUNDEF,    eUNDEF,    eUNDEF,  &
-         0.0_dp,   0.00_dp,    0.0_dp,    0.0_dp,    eUNDEF,    eUNDEF,    0.0_dp,  &
-         eUNDEF,   0.00_dp,    0.0_dp,    0.0_dp,    eUNDEF,    eUNDEF,    0.0_dp   &
+         0.0_dp,   0.00_dp,    0.0_dp,    0.0_dp,   0.00_dp,    eUNDEF,    0.0_dp,  &
+         eUNDEF,   0.00_dp,    0.0_dp,    0.0_dp,    eUNDEF,    eUNDEF,    0.0_dp,  &
+         eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF,    eUNDEF   &
         /), (/ nOEC, nSIL /) )
 
-#ifdef dbl_IC
-  ! corresponding SIL species in dbl_IC  
-    INTEGER            :: dbl_SIL13C(nSIL) = &
-      (/ dbl_IC_CH4, dbl_IC_CO, dbl_IC_HCHO, dbl_IC_CH3OH, dbl_IC_HCOOH, &
-         dbl_IC_C2H4, dbl_IC_C2H6, dbl_IC_C3H6, dbl_IC_C3H8, dbl_IC_NC4H10, &
-         dbl_IC_CH3CHO, dbl_IC_CH3COCH3, dbl_IC_CH3CO2H, dbl_IC_MEK, &
-         -1, -1 /)
-#endif
-#ifdef tag_IC
-  ! corresponding SIL species in tag_IC  
-    INTEGER            :: tag_SIL13C(nSIL) = &
-      (/ tag_IC_CH4, tag_IC_CO, tag_IC_HCHO, tag_IC_CH3OH, tag_IC_HCOOH, &
-         tag_IC_C2H4, tag_IC_C2H6, tag_IC_C3H6, tag_IC_C3H8, tag_IC_NC4H10, &
-         tag_IC_CH3CHO, tag_IC_CH3COCH3, tag_IC_CH3CO2H, tag_IC_MEK, &
-         -1, -1 /)
-#endif
-
-#ifdef dbl_IO
-  ! corresponding SIL species in dbl_IC  
-    INTEGER            :: SIL18O(nSIL) = &
-      (/ -1, dbl_IO_CO, dbl_IO_HCHO, dbl_IO_CH3OH, dbl_IO_HCOOH, &
-         -1, -1, -1, -1, -1, &
-         dbl_IO_CH3CHO, dbl_IO_CH3COCH3, dbl_IO_CH3CO2H, dbl_IO_MEK, &
-         dbl_IO_NO, dbl_IO_SO2 /)
-#endif
-#ifdef tag_IO
-  ! corresponding SIL species in tag_IC  
-    INTEGER            :: SIL18O(nSIL) = &
-      (/ -1, tag_IO_CO, tag_IO_HCHO, tag_IO_CH3OH, tag_IO_HCOOH, &
-         -1, -1, -1, -1, -1, &
-         tag_IO_CH3CHO, tag_IO_CH3COCH3, tag_IO_CH3CO2H, tag_IO_MEK, &
-         tag_IO_NO, tag_IO_SO2 /)
-#endif
 
   ! - code section -------------------------------------------------------------
 
@@ -383,7 +397,9 @@ CONTAINS
     timestep_nc = 1 + INT( ( model_time - rel2nc_start ) / model2nc_scale )
     frac = model_time / model2nc_scale - INT( model_time / model2nc_scale )
 
+#ifdef DEBUG
   ! PRINT *, 'offlemb (',model_time,',',rel2nc_start,' (',model2nc_scale,'): nc pas # ',timestep_nc,', frac = ',frac
+#endif
 
   ! species cycle
     DO iSIL = 1, nSIL
@@ -399,6 +415,7 @@ CONTAINS
       ! if it exists in the datafile, processing
       
         spcname = TRIM(SPC_NAMES(SIL(iSIL)))
+
         IF (spcname == "NO") spcname = "NOX"        ! for NO we're searching for NOX emission record
       
         IF ( nf90_inq_varid(ncid_offlemb, TRIM(spcname)//"_"//OEC(iOEC), varid) == nf90_noerr ) THEN
@@ -409,21 +426,26 @@ CONTAINS
         ! l'iterpolation simple (linéaire)
           val_cur = val_ava + frac * (val_sui - val_ava)
           
-          val_cur = val_cur / 9.448_dp        ! scaling emissions to a factor of 9.448 (NH versus remNH in CO)
+ !         IF (spcname == "C5H8") val_cur = val_cur * 20        ! isop emission scale
+!          IF (spcname == "NOX") val_cur = val_cur * 0        ! isop emission scale
+        ! val_cur = val_cur / 9.448_dp        ! scaling emissions to a factor of 9.448 (NH versus remNH in CO)
+          val_cur = val_cur / 12_dp       ! scaling emissions for 70N
+!          val_cur = val_cur / 7_dp        ! scaling emissions for 30N
           
           val_tot = val_tot + val_cur
 
-        ! PRINT *, TRIM(spcname)//"_"//OEC(iOEC),': (',varid,') ',val_sui,' <-> ',val_ava,' >> ',val_cur
+#ifdef DEBUG
+          PRINT *, TRIM(spcname)//"_"//OEC(iOEC),': (',varid,') ',val_sui,' <-> ',val_ava,' >> ',val_cur
+#endif
 
         ! TODO: call here emission according to the class
-
       
 #ifdef dbl_IC
         ! checking if the value for the class is assigned in input data
           IF (S13C(iOEC,iSIL) /=eUNDEF) THEN
 
           ! emitting 12C/13C mixture converted from m2 to cm2
-            CALL dbl_IC_emis(dbl_SIL13C(iSIL), val_cur * fct / 1.0E4_dp, (/ S13C(iOEC,iSIL) /) )
+            CALL dbl_IC_emis(SIL(iSIL), val_cur * fct / 1.0E4_dp, (/ S13C(iOEC,iSIL) /) )
 !            print *,'#dbl_IC#: ',TRIM(SPC_NAMES(SIL(iSIL))), ' > ',TRIM(OEC(iOEC)), ':', S13C(iOEC,iSIL)
             
           ELSE
@@ -432,12 +454,29 @@ CONTAINS
 !                                                       ' class: ',TRIM(OEC(iOEC))
           ENDIF
 #endif
+#ifdef dbl_FCF
+        ! emission class FF - n=3
+          IF (iOEC == 3) THEN
+          ! checking if the value for the class is assigned in input data
+            IF (S13C(iOEC,iSIL) /= eUNDEF) THEN
+
+            ! emitting FCF species converted from m2 to cm2
+            CALL dbl_FCF_emis(SIL(iSIL), val_cur * fct / 1.0E4_dp, (/ 1.0_dp /) )
+!              print *,'#dbl_FCF#: ',TRIM(SPC_NAMES(SIL(iSIL))), ' > ',TRIM(OEC(iOEC)), ':', val_cur * fct / 1.0E4_dp
+            
+            ELSE
+!              print *,'offlemb_perform: #dbl_FCF# >eUNDEF signature for', & 
+!                                                          ' spec: ',TRIM(SPC_NAMES(SIL(iSIL))), &
+!                                                         ' class: ',TRIM(OEC(iOEC))
+            ENDIF
+          ENDIF  
+#endif
 #ifdef tag_IC
         ! checking if the value for the class is assigned in input data
           IF (S13C(iOEC,iSIL) /=eUNDEF) THEN
 
           ! emitting 12C/13C mixture converted from m2 to cm2
-            CALL tag_IC_emis(tag_SIL13C(iSIL), val_cur * fct / 1.0E4_dp, (/ S13C(iOEC,iSIL) /) )
+            CALL tag_IC_emis(SIL(iSIL), val_cur * fct / 1.0E4_dp, (/ S13C(iOEC,iSIL) /) )
 !            print *,'#tag_IC#: ',TRIM(SPC_NAMES(SIL(iSIL))), ' > ',TRIM(OEC(iOEC)), ':', S13C(iOEC,iSIL)
             
           ELSE
@@ -452,7 +491,7 @@ CONTAINS
           IF (S18O(iOEC,iSIL) /=eUNDEF) THEN
 
           ! emitting 18O/17O/16O mixture converted from m2 to cm2
-            CALL dbl_IO_emis(SIL18O(iSIL), val_cur * fct / 1.0E4_dp, &
+            CALL dbl_IO_emis(SIL(iSIL), val_cur * fct / 1.0E4_dp, &
                              (/ S17Ocap(iOEC,iSIL) + NMDF_O * S18O(iOEC,iSIL), S18O(iOEC,iSIL) /) )
 !            print *,'#dbl_IO#: ',TRIM(SPC_NAMES(SIL(iSIL))), ' > ',TRIM(OEC(iOEC)), ':', S18O(iOEC,iSIL),' / ',S17Ocap(iOEC,iSIL)
             
@@ -467,7 +506,7 @@ CONTAINS
           IF (S18O(iOEC,iSIL) /=eUNDEF) THEN
 
           ! emitting 18O/17O/16O mixture converted from m2 to cm2
-            CALL tag_IO_emis(SIL18O(iSIL), val_cur * fct / 1.0E4_dp, &
+            CALL tag_IO_emis(SIL(iSIL), val_cur * fct / 1.0E4_dp, &
                              (/ S17Ocap(iOEC,iSIL) + NMDF_O * S18O(iOEC,iSIL), S18O(iOEC,iSIL) /) )
 !            print *,'#tag_IO#: ',TRIM(SPC_NAMES(SIL(iSIL))), ' > ',TRIM(OEC(iOEC)), ':', S18O(iOEC,iSIL),' / ',S17Ocap(iOEC,iSIL)
             

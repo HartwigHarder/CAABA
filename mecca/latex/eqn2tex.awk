@@ -1,10 +1,10 @@
 # ----------------------------------------------------------------------------
 #
 # Authors:
-#   Rolf Sander, Max-Planck-Institute, Mainz, Germany, 2003-2005
+#   Rolf Sander, Max-Planck-Institute, Mainz, Germany, 2003-...
 #   Astrid Kerkweg, Max-Planck-Institute, Mainz, Germany, 2005
 #
-# Time-stamp: <2009-04-27 10:19:19 sander>
+# Time-stamp: <2010-03-24 18:18:11 sander>
 #
 # eqn2tex.awk transforms eqn into tex.
 #
@@ -138,6 +138,9 @@ BEGIN {
     rateconst = "\\code{" arr[2] "}"
     printf "equation  = %s\n", equation >> logfile
     printf "rateconst = %s\n", rateconst >> logfile
+    # delete reaction rate pseudo-species RR*
+    gsub("= RR[A-Za-z_0-9]+ \\+", "=", equation)
+    printf "equation  = %s\n", equation >> logfile
     # put LaTeX command \kpp{} around each specie in equation
     # here, "&" represents the matched regexp
     gsub("[A-Za-z][A-Za-z0-9_]*", "\\kpp{&}", equation)

@@ -6,7 +6,7 @@
 !
 ! this is a dummy for inter-configuration parameters file
 !
-! [Gromov, MPIC, 2007-2008]
+! [Gromov, MPIC, 2007-2009]
 ! ==============================================================================
 
 ! created for compatibility; do not delete, please

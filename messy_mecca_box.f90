@@ -1,11 +1,15 @@
-! Time-stamp: <2010-03-11 17:06:17 sander>
+!*****************************************************************************
+! Time-stamp: <2010-08-17 16:32:20 sander>
+!*****************************************************************************
 
-! MECCA =  Module Efficiently Calculating the Chemistry of the Atmosphere
+! MECCA: Module Efficiently Calculating the Chemistry of the Atmosphere
 
 ! Authors:
-! Rolf Sander,    MPICH, Mainz, 2003-2007: original code
+! Rolf Sander,    MPICH, Mainz, 2003-...: original code
 ! Astrid Kerkweg, MPICH, Mainz, 2003-2007: halogen/aerosol chemistry
 ! Hella Riede,    MPICH, Mainz, 2007:
+
+!*****************************************************************************
 
 ! This program is free software; you can redistribute it and/or
 ! modify it under the terms of the GNU General Public License
@@ -23,15 +27,15 @@
 
 MODULE messy_mecca_box
 
-  USE caaba_mem,                  ONLY: startday, model_time,                 &
+  USE caaba_mem,                  ONLY: startday, model_time, model_end,      &
                                         time_step_len, init_spec,             &
                                         c, cair, temp, press, relhum,         &
                                         l_ff, Ca_precip, l_steady_state_stop, &
                                         photrat_channel
   USE messy_cmn_photol_mem        ! IP_MAX, ip_*, jname
-  USE messy_mecca_kpp ! ind_*, update_rconst, kpp_integrate, APN
-                      ! initialize_indexarrays, SPC_NAMES, EQN_NAMES,
-                      ! EQN_TAGS, NSPEC, NREACT
+  USE messy_mecca_kpp             ! ind_*, kpp_integrate, rconst,
+                                  ! APN, initialize_indexarrays,
+                                  ! SPC_NAMES, EQN_TAGS, NSPEC, NREACT
   USE messy_mecca_dbl_box,        ONLY: mecca_dbl_init, mecca_dbl_postprocess,&
                                         mecca_dbl_result, mecca_dbl_finish
   USE messy_mecca_tag_box,        ONLY: mecca_tag_init, mecca_tag_process,    &
@@ -39,7 +43,7 @@ MODULE messy_mecca_box
 
   USE messy_main_constants_mem,   ONLY: N_A, rho_H2O, M_H2O, R_gas,          &
                                         OneDay, STRLEN_VLONG,                &
-                                        pi, HLINE2
+                                        pi, HLINE2, TINY_DP
   USE messy_mecca,                ONLY: l_aero, l_tag, l_dbl, modstr
 
   USE caaba_io,                   ONLY: nf, open_input_file, nf90_inquire, &
@@ -66,17 +70,20 @@ MODULE messy_mecca_box
   ! (for C, cair, and temp, see caaba_mem.f90)
   ! (see also important notes about temp, press, and cair in gas.eqn!)
 
+  REAL(DP), DIMENSION(NSPEC) :: output
+  CHARACTER(LEN=20) :: c_unit(NSPEC) ! c unit
   INTEGER :: ncid_aero, ncid_tracer, ncid_spec
 
   ! sea water composition, relative to total salt:
-  REAL(DP) :: HCO3m_rel, Clm_rel, Brm_rel, Im_rel, IO3m_rel, SO4mm_rel
+  REAL(DP) :: HCO3m_rel, NO3m_rel, Clm_rel, Brm_rel, Im_rel, IO3m_rel, &
+    SO4mm_rel
 
   REAL(DP), DIMENSION(:), ALLOCATABLE :: csalt, exchng, radius
   REAL(DP), DIMENSION(:), ALLOCATABLE :: c0_NH4p, c0_Nap
   REAL(DP), DIMENSION(:), ALLOCATABLE :: &
-    c0_HCO3m, c0_Clm, c0_Brm, c0_Im, c0_IO3m, c0_SO4mm, c0_HSO4m
+    c0_HCO3m, c0_NO3m, c0_Clm, c0_Brm, c0_Im, c0_IO3m, c0_SO4mm, c0_HSO4m
 
-  REAL(DP) :: mcfct(NREACT) ! Monte-Carlo factor
+  REAL(DP) :: mcexp(MAX_MCEXP) ! Monte-Carlo factor
 
   PRIVATE
   PUBLIC :: mecca_init   ! initialize aero chemistry
@@ -94,7 +101,8 @@ CONTAINS
     USE messy_mecca_kpp,          ONLY: REQ_MCFCT
     USE messy_mecca,              ONLY: mecca_read_nml_ctrl, &
                                         initialize_kpp_variables, &
-                                        mcfct_seed, define_mcfct
+                                        mcexp_seed, define_mcexp
+    USE messy_mecca_aero,         ONLY: mecca_aero_init_gasaq
     USE messy_main_constants_mem, ONLY: MH, MC, MO, MS, MCl, MBr
     USE messy_main_tools,         ONLY: psatf, psat
 
@@ -102,17 +110,14 @@ CONTAINS
 
     INTRINSIC :: TRIM
 
-    CHARACTER(LEN=100)  :: eqn_names_lj(NREACT) ! eqn_names left justified
-    CHARACTER(LEN=20)   :: rates_unit(NREACT)
-    CHARACTER(LEN=20)   :: unit(NSPEC)
     CHARACTER(LEN=20)   :: lwc_unit(APN)
     CHARACTER(LEN=7)    :: lwc_name(APN)
     INTEGER, PARAMETER  :: iou = 999   ! I/O unit
     INTEGER             :: status ! error status
-    INTEGER             :: i,jr
+    INTEGER             :: i, jb, jr
 
     REAL(DP), PARAMETER :: rho_sw = 1025._dp    ! density of sea water [kg/m3]
-    REAL(DP) :: csw_HCO3m, csw_Clm, csw_Brm, csw_Im, csw_IO3m, &
+    REAL(DP) :: csw_HCO3m, csw_NO3m, csw_Clm, csw_Brm, csw_Im, csw_IO3m, &
                 csw_SO4mm, csw_total
 
     ALLOCATE(xaer(APN))
@@ -122,6 +127,7 @@ CONTAINS
     ALLOCATE(c0_NH4p(APN))
     ALLOCATE(c0_Nap(APN))
     ALLOCATE(c0_HCO3m(APN))
+    ALLOCATE(c0_NO3m(APN))
     ALLOCATE(c0_Clm(APN))
     ALLOCATE(c0_Brm(APN))
     ALLOCATE(c0_Im(APN))
@@ -139,17 +145,23 @@ CONTAINS
     IF (status /= 0) STOP
 
     ! csw_* = concentration in sea water [mol/L]
-    ! mass mixing ratios [kg/kg] are from Stumm & Morgan, ref0133
-    csw_HCO3m = 0.0001424 * rho_sw / (MH+MC+MO*3.) * (1.-Ca_precip)
-    csw_Clm   = 0.019354  * rho_sw / MCl
-    csw_Brm   = 0.0000673 * rho_sw / MBr
+    ! mass fraction w_i [kg/kg] (Tab. 4 of ref2307 = Millero et al. 2008)
+    ! HCO3- + 2 CO3-- = 0.10481 + 2*0.01434 = 0.13349 g/kg
+    csw_HCO3m = 0.00013349 * rho_sw / (MH+MC+MO*3.) * (1.-Ca_precip)
+    csw_NO3m  = 1E-6 ! see Fig. 1D in ref2428 = Duce et al. 2008
+    ! activate next line for Southern Ocean:
+    !csw_NO3m  = 25E-6 ! ref2428 Southern Ocean
+    csw_Clm   = 0.01935271 * rho_sw / MCl
+    csw_Brm   = 0.00006728 * rho_sw / MBr
     csw_Im    = 7.4E-8  ! Tsunogai, Tab. 1a, ref0845
     csw_IO3m  = 2.64E-7 ! Tsunogai, Tab. 1a, ref0845
-    csw_SO4mm = 0.002712  * rho_sw / (MS+MO*4.)
-    csw_total = csw_HCO3m + csw_Clm + csw_Brm + csw_Im + csw_IO3m + csw_SO4mm
+    csw_SO4mm = 0.00271235 * rho_sw / (MS+MO*4.)
+    csw_total = csw_HCO3m + csw_NO3m + csw_Clm + csw_Brm + csw_Im &
+      + csw_IO3m + csw_SO4mm
 
     ! sea water composition, relative to total salt
     HCO3m_rel = csw_HCO3m / csw_total
+    NO3m_rel  = csw_NO3m  / csw_total
     Clm_rel   = csw_Clm   / csw_total
     Brm_rel   = csw_Brm   / csw_total
     Im_rel    = csw_Im    / csw_total
@@ -159,13 +171,14 @@ CONTAINS
     IF (l_aero) THEN
       PRINT *, 'Sea water composition, relative to total salt:'
       PRINT *, 'HCO3m_rel = ', HCO3m_rel
+      PRINT *, 'NO3m_rel  = ', NO3m_rel
       PRINT *, 'Clm_rel   = ', Clm_rel
       PRINT *, 'Brm_rel   = ', Brm_rel
       PRINT *, 'Im_rel    = ', Im_rel
       PRINT *, 'IO3m_rel  = ', IO3m_rel
       PRINT *, 'SO4mm_rel = ', SO4mm_rel
       PRINT *, 'SUM       = ', &
-        HCO3m_rel+Clm_rel+Brm_rel+Im_rel+IO3m_rel+SO4mm_rel
+        HCO3m_rel+NO3m_rel+Clm_rel+Brm_rel+Im_rel+IO3m_rel+SO4mm_rel
     ENDIF
 
     C(:) = 0. ! default value unless explicitly initialized
@@ -173,26 +186,48 @@ CONTAINS
 
     ! Monte-Carlo:
     IF (REQ_MCFCT) THEN
-      CALL define_mcfct(status, mcfct)
+      CALL define_mcexp(status, mcexp)
       IF (status /= 0) STOP
-      DO i=1, NREACT
-        PRINT *, 'mcfct('//TRIM(EQN_TAGS(i))//') = ', mcfct(i)
+      DO i=1, MAX_MCEXP
+        WRITE(*,'(A,I4,A,F12.8)') ' mcexp(', i, ') = ', mcexp(i)
+        ! mz_rs_20100727+
+        ! In this example, only mcexp(40) is used, all other mcexp(:)
+        ! are set to zero. Look at mecca.eqn to find which reaction is
+        ! affect by mcexp(40). This can be used to make Monte-Carlo
+        ! simulations where only one (or a few) rate coefficients are
+        ! modified.
+        ! IF (i/=40) mcexp(i) = 0.                 ! modify 1 rate coefficient
+        ! IF ((i/=40).OR.(i/=50)) mcexp(i) = 0.    ! modify 2 rate coefficients
+        ! mz_rs_20100727-
       ENDDO
-        PRINT *, 'average mcfct = ', SUM(mcfct)/NREACT
+      PRINT *, 'mcexp(avg)  = ', SUM(mcexp)/MAX_MCEXP
     ENDIF
 
     ! choose sat. press definition: psat (series) or psatf(function)
-    ! choose relhum definition: WMO or traditional 
+    ! choose relhum definition: WMO or traditional
     ! must be consistent with mecca_physc!
     !mz_hr_20080226+
     ! using relhum = (mixing ratio H2O)/(sat. mixing ratio H2O): WMO def.
-    ! c(ind_H2O) = cair * relhum * psatf(temp) / &
-    !  (press + (relhum-1.) * psatf(temp))
+    c(ind_H2O) = cair * relhum * psatf(temp) / &
+      (press + (relhum-1.) * psatf(temp))
     ! using relhum = p(H2O)/ps(H2O):
     !c(ind_H2O) = cair * relhum * psat(temp) / press
     !mz_hr_20080226-
     CALL x0 ! initial gas phase mixing ratios
-    IF (l_aero) CALL define_aerosol ! define radius, lwc, etc.
+    IF (l_aero) THEN
+      CALL define_aerosol ! define radius, lwc, etc.
+      ! define gas-aq physicochemical constants:
+      PRINT *, HLINE2
+      PRINT *, "         Henry's law coefficients "// &
+        "and accommodation coefficients"
+      PRINT *, HLINE2
+      PRINT *, 'species           Henry_T0 Henry_Tdep'// &
+        '   alpha_T0 alpha_Tdep         M'
+      PRINT *, '                   [M/atm]        [K]'// &
+        '        [1]        [K]  [kg/mol]'
+      PRINT *, HLINE2
+      CALL mecca_aero_init_gasaq(l_print=.TRUE.)
+    ENDIF
     IF (l_tag)  CALL mecca_tag_init
     IF (l_dbl)  CALL mecca_dbl_init
 
@@ -200,25 +235,19 @@ CONTAINS
 
     ! open output files and write headers:
 
-    ! open output file mecca_tracer_gp.nc:
-    unit(:) = 'mol/mol'    ! define species' units
-    CALL open_output_file(ncid_tracer, 'caaba_mecca', SPC_NAMES, unit)
-
-    ! open output file caaba_mecca_rates.nc:
-    equation_loop: DO jr=1, NREACT
-      ! trim leading spaces in EQN_NAMES and store in eqn_names_lj
-      DO i=1, LEN(EQN_NAMES(jr))
-        ! find first non-space character
-        IF (EQN_NAMES(jr)(i:i)/=' ') EXIT
-      ENDDO
-      eqn_names_lj(jr) = TRIM(EQN_NAMES(jr)(i:))
-    ENDDO equation_loop
-    rates_unit(:) = 'mol/(mol*day)'
+    ! define units for reaction rates RR* and species:
+    DO i = 1,NSPEC
+      IF (INDEX(SPC_NAMES(i),'RR') == 1) THEN
+        c_unit(i) = 'mol/mol/s'
+      ELSE
+        c_unit(i) = 'mol/mol' 
+      ENDIF
+    ENDDO
+    CALL open_output_file(ncid_tracer, 'caaba_mecca', SPC_NAMES, c_unit)
 
     IF (l_aero) THEN
-      ! open output file mecca_aero.nc:
-      DO i=1, APN
-        lwc_name(i) = 'lwc_a'//str(i,'(I2.2)')
+      DO jb = 1, APN
+        lwc_name(jb) = 'lwc_a'//str(jb,'(I2.2)')
       ENDDO
       lwc_unit(:) = 'm3/m3'
       CALL open_output_file(ncid_aero, 'caaba_mecca_aero', lwc_name, lwc_unit)
@@ -252,7 +281,7 @@ CONTAINS
 
   SUBROUTINE define_aerosol
 
-    USE caaba_mem, ONLY: degree_lat
+    USE caaba_mem, ONLY: degree_lat, zmix, zmbl
     IMPLICIT NONE
 
     !LOCAL
@@ -270,6 +299,7 @@ CONTAINS
     ! csalt(jb)    = c(salt) = total salt concentration  [mcl/cm3(air)]
     ! c0_NH4p(jb)  = initial c(NH4+)  in fresh aerosol   [mcl/cm3(air)]
     ! c0_HCO3m(jb) = initial c(HCO3-) in fresh aerosol   [mcl/cm3(air)]
+    ! c0_NO3m(jb)  = initial c(NO3-)  in fresh aerosol   [mcl/cm3(air)]
     ! c0_Clm(jb)   = initial c(Cl-)   in fresh aerosol   [mcl/cm3(air)]
     ! c0_Brm(jb)   = initial c(Br-)   in fresh aerosol   [mcl/cm3(air)]
     ! c0_Im(jb)    = initial c(I-)    in fresh aerosol   [mcl/cm3(air)]
@@ -287,6 +317,7 @@ CONTAINS
       csalt(1)    = 3.74074074074 * lwc(1) * N_A / 1.E3 ! mol/L -> mcl/cm3(air)
       c0_NH4p(1)  = csalt(1)
       c0_HCO3m(1) = 0.
+      c0_NO3m(1)  = 0.
       c0_Clm(1)   = 0.
       c0_Brm(1)   = 0.
       c0_Im(1)    = 0.
@@ -314,6 +345,7 @@ CONTAINS
       ENDIF
       c0_NH4p(2)  = 0.
       c0_HCO3m(2) = HCO3m_rel * csalt(2)
+      c0_NO3m(2)  = 0.
       c0_Clm(2)   = Clm_rel   * csalt(2)
       c0_Brm(2)   = Brm_rel   * csalt(2)
       c0_Im(2)    = Im_rel    * csalt(2)
@@ -321,6 +353,55 @@ CONTAINS
       c0_SO4mm(2) = SO4mm_rel * csalt(2)
       c0_HSO4m(2) = 0.
       exchng(2)   = 1. / (2.*OneDay) ! exchange with fresh aerosol [1/s]
+      ! ----------------------------------------------------------------------
+    CASE (3) ! 1 and 2 = same as for CASE(2); 3 = ocean surface
+      ! index 1 = sulfate aerosol
+      xaer(1)     = 1.
+      radius(1)   = 0.0882E-6
+      lwc(1)      = 1.08E-12
+      csalt(1)    = 3.74074074074 * lwc(1) * N_A / 1.E3 ! mol/L -> mcl/cm3(air)
+      c0_NH4p(1)  = csalt(1)
+      c0_HCO3m(1) = 0.
+      c0_NO3m(1)  = 0.
+      c0_Clm(1)   = 0.
+      c0_Brm(1)   = 0.
+      c0_Im(1)    = 0.
+      c0_IO3m(1)  = 0.
+      c0_SO4mm(1) = 0.
+      c0_HSO4m(1) = csalt(1)
+      exchng(1)   = 1. / (7.*OneDay) ! exchange with fresh aerosol [1/s]
+      ! index 2 = sea-salt aerosol
+      xaer(2)   = 1.
+      radius(2) = 1.67E-6  ! radius [m]
+      lwc(2)    = 3.04E-11 ! liquid water content [m3/m3]
+      csalt(2)  = 5.3 * lwc(2) * N_A / 1.E3 ! mol/L -> mcl/cm3(air)
+      c0_NH4p(2)  = 0.
+      c0_HCO3m(2) = HCO3m_rel * csalt(2)
+      c0_NO3m(2)  = 0.
+      c0_Clm(2)   = Clm_rel   * csalt(2)
+      c0_Brm(2)   = Brm_rel   * csalt(2)
+      c0_Im(2)    = Im_rel    * csalt(2)
+      c0_IO3m(2)  = IO3m_rel  * csalt(2)
+      c0_SO4mm(2) = SO4mm_rel * csalt(2)
+      c0_HSO4m(2) = 0.
+      exchng(2)   = 1. / (2.*OneDay) ! exchange with fresh aerosol [1/s]
+      ! index 3 = ocean surface
+      xaer(3)   = 1.
+      radius(3) = -999. ! radius [m] negative dummy value for ocean surface
+      lwc(3)    = zmix / zmbl ! liquid water content [m3/m3]
+      ! the concentration of sea water is about 0.53 mol/L
+      csalt(3)  = 0.53 * lwc(3) * N_A / 1.E3 ! mol/L -> mcl/cm3(air)
+      c0_NH4p(3)  = 0.
+      c0_HCO3m(3) = HCO3m_rel * csalt(3)
+      c0_NO3m(3)  = NO3m_rel  * csalt(3)
+      c0_Clm(3)   = Clm_rel   * csalt(3)
+      c0_Brm(3)   = Brm_rel   * csalt(3)
+      c0_Im(3)    = Im_rel    * csalt(3)
+      c0_IO3m(3)  = IO3m_rel  * csalt(3)
+      c0_SO4mm(3) = SO4mm_rel * csalt(3)
+      c0_HSO4m(3) = 0.
+      exchng(3)   = 1. / (2.*OneDay) ! exchange with deeper layers [1/s]
+
       ! ----------------------------------------------------------------------
     CASE (5)
       ! IMPORTANT: for testing purposes, the whole aerosol distribution
@@ -340,6 +421,7 @@ CONTAINS
       csalt(1:2)    = 3.7 * lwc(1:2)*N_A/1.E3 ! [mol/L] conv to [mcl/cm3(air)]
       c0_NH4p(1:2)  = csalt(1:2)
       c0_HCO3m(1:2) = 0.
+      c0_NO3m(1:2)  = 0.
       c0_Clm(1:2)   = 0.
       c0_Brm(1:2)   = 0.
       c0_Im(1:2)    = 0.
@@ -362,6 +444,7 @@ CONTAINS
       csalt(3:5)    = 5.3 * lwc(3:5)*N_A/1.E3 ! [mol/L] conv to [mcl/cm3(air)]
       c0_NH4p(3:5)  = 0.
       c0_HCO3m(3:5) = HCO3m_rel * csalt(3:5)
+      c0_NO3m(3:5)  = 0.
       c0_Clm(3:5)   = Clm_rel   * csalt(3:5)
       c0_Brm(3:5)   = Brm_rel   * csalt(3:5)
       c0_Im(3:5)    = Im_rel    * csalt(3:5)
@@ -399,6 +482,7 @@ CONTAINS
       csalt(1:7)    = 5.3 * lwc(1:7)*N_A/1.E3 ! [mol/L] conv to [mcl/cm3(air)]
       c0_NH4p(1:7)  = 0.
       c0_HCO3m(1:7) = HCO3m_rel * csalt(1:7)
+      c0_NO3m(1:7)  = 0.
       c0_Clm(1:7)   = Clm_rel   * csalt(1:7)
       c0_Brm(1:7)   = Brm_rel   * csalt(1:7)
       c0_Im(1:7)    = Im_rel    * csalt(1:7)
@@ -421,6 +505,7 @@ CONTAINS
       csalt(8)    = 3.7 * lwc(8) * N_A / 1.E3 ! [mol/L], conv to [mcl/cm3(air)]
       c0_NH4p(8)  = csalt(8)
       c0_HCO3m(8) = 0.
+      c0_NO3m(8)  = 0.
       c0_Clm(8)   = 0.
       c0_Brm(8)   = 0.
       c0_Im(8)    = 0.
@@ -449,6 +534,7 @@ CONTAINS
       csalt(1:5)    = 3.7 * lwc(1:5)*N_A/1.E3 ! [mol/L] conv to [mcl/cm3(air)]
       c0_NH4p(1:5)  = csalt(1:5)
       c0_HCO3m(1:5) = 0.
+      c0_NO3m(1:5)  = 0.
       c0_Clm(1:5)   = 0.
       c0_Brm(1:5)   = 0.
       c0_Im(1:5)    = 0.
@@ -475,6 +561,7 @@ CONTAINS
       csalt(6:10)    = 5.3 * lwc(6:10)*N_A/1.E3 ! [mol/L] conv to [mcl/cm3(air)]
       c0_NH4p(6:10)  = 0.
       c0_HCO3m(6:10) = HCO3m_rel * csalt(6:10)
+      c0_NO3m(6:10)  = 0.
       c0_Clm(6:10)   = Clm_rel   * csalt(6:10)
       c0_Brm(6:10)   = Brm_rel   * csalt(6:10)
       c0_Im(6:10)    = Im_rel    * csalt(6:10)
@@ -497,6 +584,7 @@ CONTAINS
         rho_H2O * lwc(jb) * 1000./M_H2O * N_A/1.E6
       IF (ind_NH4p_a(jb)  /= 0) c(ind_NH4p_a(jb))  = c0_NH4p(jb)
       IF (ind_HCO3m_a(jb) /= 0) c(ind_HCO3m_a(jb)) = c0_HCO3m(jb)
+      IF (ind_NO3m_a(jb)  /= 0) c(ind_NO3m_a(jb))  = c0_NO3m(jb)
       IF (ind_Clm_a(jb)   /= 0) c(ind_Clm_a(jb))   = c0_Clm(jb)
       IF (ind_Brm_a(jb)   /= 0) c(ind_Brm_a(jb))   = c0_Brm(jb)
       IF (ind_Im_a(jb)    /= 0) c(ind_Im_a(jb))    = c0_Im(jb)
@@ -508,6 +596,7 @@ CONTAINS
         c0_Nap(jb) = 0.
         IF (ind_NH4p_a(jb)  /= 0) c0_Nap(jb) = c0_Nap(jb) - c(ind_NH4p_a(jb))
         IF (ind_HCO3m_a(jb) /= 0) c0_Nap(jb) = c0_Nap(jb) + c(ind_HCO3m_a(jb))
+        IF (ind_NO3m_a(jb)  /= 0) c0_Nap(jb) = c0_Nap(jb) + c(ind_NO3m_a(jb))
         IF (ind_Clm_a(jb)   /= 0) c0_Nap(jb) = c0_Nap(jb) + c(ind_Clm_a(jb))
         IF (ind_Brm_a(jb)   /= 0) c0_Nap(jb) = c0_Nap(jb) + c(ind_Brm_a(jb))
         IF (ind_Im_a(jb)    /= 0) c0_Nap(jb) = c0_Nap(jb) + c(ind_Im_a(jb))
@@ -547,6 +636,7 @@ CONTAINS
     DO jb=1, APN
       WRITE(*,'(A2,I2.2,7(1PE9.2))') ' A', jb, &
         c0_HCO3m(jb) *1E3/(lwc(jb)*N_A), &
+        c0_NO3m(jb)  *1E3/(lwc(jb)*N_A), &
         c0_Clm(jb)   *1E3/(lwc(jb)*N_A), &
         c0_Brm(jb)   *1E3/(lwc(jb)*N_A), &
         c0_Im(jb)    *1E3/(lwc(jb)*N_A), &
@@ -593,6 +683,8 @@ CONTAINS
       CALL x0_ff_arctic
     CASE ('FREE_TROP')
       CALL x0_free_trop
+    CASE ('LAB')
+      CALL x0_lab
     CASE ('MBL')
       CALL x0_mbl
     CASE ('MIM2')
@@ -739,12 +831,19 @@ CONTAINS
     SUBROUTINE x0_free_trop
       IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
       IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
-	  IF (ind_CO2      /= 0) c(ind_CO2)     = 350.E-06 * cair
-	  IF (ind_CH4      /= 0) c(ind_CH4)     =  1.8E-06 * cair
-	  IF (ind_H2       /= 0) c(ind_H2)      =  0.6E-06 * cair
-      PRINT *, 'ERROR: Enter values for free troposphere in x0_free_trop' !qqq
-      STOP
+      IF (ind_CO2      /= 0) c(ind_CO2)     = 350.E-06 * cair
+      IF (ind_CH4      /= 0) c(ind_CH4)     = 1.8E-06 * cair
+      IF (ind_H2       /= 0) c(ind_H2)      = 0.6E-06 * cair
     END SUBROUTINE x0_free_trop
+
+    ! ------------------------------------------------------------------------
+
+    SUBROUTINE x0_lab
+      IF (ind_O2       /= 0) c(ind_O2)      = 210.E-03 * cair
+      IF (ind_N2       /= 0) c(ind_N2)      = 780.E-03 * cair
+      IF (ind_CH4      /= 0) c(ind_CH4)     =  1.8E-06 * cair
+      !qqq todo: more values from Sergej?
+    END SUBROUTINE x0_lab
 
     ! ------------------------------------------------------------------------
 
@@ -772,9 +871,12 @@ CONTAINS
       !IF (ind_C5H8    /= 0) c(ind_C5H8)    =  1.0E-09 * cair
       IF (ind_Hg       /= 0) c(ind_Hg)      = 1.68E-13 * cair
 
-      ! example for initializing aqueous-phase species:
-      ! (the index must not be greater than APN)
+      ! examples for initializing aqueous-phase species:
+      ! (qqq the index must not be greater than APN)
       ! IF (ind_NH4p_a(2)  /=0) c(ind_NH4p_a(2))  = 300.E-12 * cair
+      ! 1 nmol/L DMS:
+      ! IF (ind_DMS_a(3) /=0) c(ind_DMS_a(3)) = 1E-9 * lwc(3) * N_A / 1.E3 * cair
+
     END SUBROUTINE x0_mbl
 
     ! ------------------------------------------------------------------------
@@ -1074,19 +1176,16 @@ CONTAINS
 
     USE messy_mecca_kpp,         ONLY: REQ_MCFCT
     USE messy_mecca,             ONLY: steady_state_reached
-    USE messy_mecca_aero,        ONLY: mecca_aero_trans_coeff, &
-                                       mecca_aero_henry, &
-                                       mecca_aero_calc_k_ex
+    USE messy_mecca_aero,        ONLY: mecca_aero_calc_k_ex, &
+                                       mecca_aero_calc_k_ex_ocean
     USE messy_main_tools,        ONLY: psatf, psat
     USE messy_readj,             ONLY: jx_readj => jx
     USE messy_sappho,            ONLY: jx_sappho => jx
     USE messy_jval,              ONLY: jval_gp
-    USE caaba_mem,               ONLY: l_skipkpp, jval_clev
+    USE caaba_mem,               ONLY: l_skipkpp, jval_clev, zmix
 
 
     LOGICAL :: l_het(APN) =.TRUE.
-    REAL(DP) :: kmt(APN,0:NSPEC)=0.   ! mass transfer coefficient
-    REAL(DP) :: henry(0:NSPEC)=0.     ! Inverse Henry constant, dimensionless
     REAL(DP), DIMENSION(NBL,NSPEC) :: cbl
     INTEGER :: ip, status
 
@@ -1101,8 +1200,8 @@ CONTAINS
     !mz_hr_20080226+
     ! must be consistent with mecca_init!
     ! WMO relhum + function for psat
-    !c(ind_H2O) = cair * relhum * psatf(temp) / &
-    !  (press + (relhum-1.) * psatf(temp))
+    c(ind_H2O) = cair * relhum * psatf(temp) / &
+      (press + (relhum-1.) * psatf(temp))
     ! traditional relhum + series for psat
     !c(ind_H2O) = cair * relhum * psat(temp) / press
     !mz_hr_20080226-
@@ -1110,9 +1209,11 @@ CONTAINS
     CALL fill_temp(status, SPREAD(temp,1,NBL))
     CALL fill_cair(status, SPREAD(cair,1,NBL))
     CALL fill_press(status, SPREAD(press,1,NBL)) ! mz_pj_20080716
-    ! qqq: is it necessary to call fill_mcfct in the time loop, or
+    ! qqq: is it necessary to call fill_mcexp in the time loop, or
     ! can that be done once during the initialization?
-    IF (REQ_MCFCT) CALL fill_mcfct(status, SPREAD(mcfct,1,NBL))
+    IF (REQ_MCFCT) THEN
+      CALL fill_mcexp(status, SPREAD(mcexp,1,NBL))
+    ENDIF
 
     ! dummy values:
     dummy_khet_St(:) = 0.
@@ -1139,11 +1240,13 @@ CONTAINS
     CALL fill_jx(status, SPREAD(jx,1,NBL))
 
     IF (l_aero) THEN
-      CALL aerosol_exchng                ! exchange with fresh aerosol
-      CALL mecca_aero_trans_coeff(radius, temp, press, kmt) ! calc. kmt
-      CALL mecca_aero_henry(temp, henry) ! calc. Henry coefficients
-      CALL mecca_aero_calc_k_ex(l_het, xaer, lwc, c, kmt, henry, &
-        k_exf,k_exb,k_exf_N2O5, k_exf_ClNO3, k_exf_BrNO3)
+      CALL aerosol_exchng ! exchange with fresh aerosol
+      ! first, calculate exchange coefficients for aerosols:
+      CALL mecca_aero_calc_k_ex( &
+        radius, temp, press, l_het, xaer, lwc, c, &         ! in
+        k_exf, k_exb, k_exf_N2O5, k_exf_ClNO3, k_exf_BrNO3) ! out
+      ! next, calculate exchange coefficients for ocean surface:
+      CALL mecca_aero_calc_k_ex_ocean(xaer, radius, temp, zmix, k_exf, k_exb)
       CALL fill_lwc(status, SPREAD(lwc,1,NBL))
       CALL fill_cvfac(status, SPREAD(cvfac,1,NBL))
       CALL fill_xaer(status, SPREAD(xaer,1,NBL))
@@ -1166,11 +1269,12 @@ CONTAINS
     IF (l_dbl) CALL mecca_dbl_postprocess
     ! 1 for the # of steps to take:
     IF (l_tag) CALL mecca_tag_process(time_step_len, C, press, cair, temp)
-    
+
     IF (l_steady_state_stop) THEN
       IF (steady_state_reached(c(:))) THEN
         PRINT *, 'steady-state reached at day = ', model_time/OneDay
-        STOP
+        ! change model_end so that model run will stop next time step:
+        model_end = model_time + time_step_len
       ENDIF
     ENDIF
 
@@ -1206,6 +1310,8 @@ CONTAINS
             c(IND_Nap_a(jb))   = c(IND_Nap_a(jb))   + factor * c0_Nap(jb)
           IF (ind_HCO3m_a(jb) /=0) &
             c(ind_HCO3m_a(jb)) = c(ind_HCO3m_a(jb)) + factor * c0_HCO3m(jb)
+          IF (ind_NO3m_a(jb)  /=0) &
+            c(ind_NO3m_a(jb))  = c(ind_NO3m_a(jb))  + factor * c0_NO3m(jb)
           IF (ind_Clm_a(jb)   /=0) &
             c(ind_Clm_a(jb))   = c(ind_Clm_a(jb))   + factor * c0_Clm(jb)
           IF (ind_Brm_a(jb)   /=0) &
@@ -1225,10 +1331,14 @@ CONTAINS
         factor = 1. - xaer(jb) * time_step_len * exchng(jb)
         DO i = 1,NSPEC
           ! all species whose names contain '_a##' are lost via
-          ! particle sedimentation
+          ! particle sedimentation (except for RR*)
           IF (INDEX(SPC_NAMES(i),'_a'//TRIM(str(jb,'(I2.2)'))) /= 0) THEN
-            !PRINT *,'sedimentation of ', TRIM(SPC_NAMES(i)), ' from bin ', jb
-            c(i) = c(i) * factor
+            IF (INDEX(SPC_NAMES(i),'RR') /= 1) THEN
+              !PRINT *,'sedi of ', TRIM(SPC_NAMES(i)), ' from bin ', jb
+              c(i) = c(i) * factor
+            ELSE
+              !PRINT *,'no sedi of ', TRIM(SPC_NAMES(i)), ' from bin ', jb
+            ENDIF
           ENDIF
         ENDDO
 
@@ -1239,8 +1349,9 @@ CONTAINS
           cvfac(jb) = 1.E3 / ( N_A * lwc(jb) )
         ENDIF
 
-        ! c(H2O) may have changed in the sedimentation code above. To get
-        ! the correct c(H2O), it is determined from the current LWC:
+        ! The aqueous-phase concentration of water may have changed in
+        ! the sedimentation code above. To get the correct value, it is
+        ! determined from the current LWC:
         IF (ind_H2O_a(jb) /= 0) c(ind_H2O_a(jb)) = &
           rho_H2O * lwc(jb) * 1000./M_H2O * N_A/1.E6
 
@@ -1262,6 +1373,7 @@ CONTAINS
 
       tracer_loop: DO jt=1,SIZE(conc)
         IF (SPC_NAMES(jt)(1:2) == "RR") CYCLE ! no checks for reaction rates
+        IF (INDEX(SPC_NAMES(jt),"_a03")/=0) CYCLE ! no checks for ocean conc
         wrong_conc: IF ((conc(jt)<0._DP).OR.(conc(jt)>cair)) THEN
           WRITE(*,'(2A,F10.0,A,1PG12.3E3,2A)') infostring, &
             ' time =', model_time, &
@@ -1279,9 +1391,22 @@ CONTAINS
 
   SUBROUTINE mecca_result
 
+    IMPLICIT NONE
+    REAL(DP), SAVE, DIMENSION(NSPEC) :: c_old = 0.
+    INTEGER :: i
+
     IF (l_aero) CALL write_output_file(ncid_aero, model_time, lwc)
 
-    CALL write_output_file(ncid_tracer, model_time, c/cair)
+    output = c/cair
+    DO i = 1,NSPEC
+      IF (INDEX(SPC_NAMES(i),'RR') == 1) THEN
+        ! for the reaction rates RR*, divide the difference to previous
+        ! value by the time step length:
+        output(i) = (c(i)-c_old(i)) / (cair*time_step_len)
+      ENDIF
+    ENDDO
+    c_old = c
+    CALL write_output_file(ncid_tracer, model_time, output)
 
     IF (l_tag) CALL mecca_tag_result(model_time)
     IF (l_dbl) CALL mecca_dbl_result(model_time)
@@ -1292,6 +1417,49 @@ CONTAINS
 
   SUBROUTINE mecca_finish
 
+    USE messy_main_tools, ONLY: find_next_free_unit
+    IMPLICIT NONE
+    INTEGER :: ncid_c_end, ncid_k_end, unit, i
+    CHARACTER(LEN=20), PARAMETER :: k_unit(NREACT) = '(cm^3)^(1-N)/s'
+
+    ! write final values of c (c_end) to nc file:
+    CALL open_output_file(ncid_c_end, 'caaba_mecca_c_end', &
+      SPC_NAMES, c_unit)
+    CALL write_output_file(ncid_c_end, model_time, output)
+    CALL close_file(ncid_c_end)
+
+    ! write final values of rconst (k_end) to nc file:
+    CALL open_output_file(ncid_k_end, 'caaba_mecca_k_end', &
+      EQN_TAGS, k_unit)
+    CALL write_output_file(ncid_k_end, model_time, rconst)
+    CALL close_file(ncid_k_end)
+    
+    IF (REQ_MCFCT) THEN
+      ! create ferret *.jnl files:
+      unit = find_next_free_unit(100,200)
+      ! plot histogram of all rate coefficients:
+      OPEN(unit, FILE='_histogram_k.jnl', status='UNKNOWN')
+      DO i = 1,NREACT
+        WRITE (unit,*) 'GO frequency_histogram_rs ', TRIM(EQN_TAGS(i))
+      ENDDO
+      WRITE (unit,*) 'GO newpage'
+      CLOSE(unit)
+      ! make plots for all species:
+      OPEN(unit, FILE='_scatterplot1.jnl', status='UNKNOWN')
+      DO i = 1,NSPEC
+        WRITE (unit,*) 'GO _scatterplot2 ', TRIM(SPC_NAMES(i))
+      ENDDO
+      CLOSE(unit)
+      ! plot against all rate coefficients:
+      OPEN(unit, FILE='_scatterplot2.jnl', status='UNKNOWN')
+      WRITE (unit,*) 'GO frequency_histogram_rs ($1)'
+      DO i = 1,NREACT
+        WRITE (unit,*) 'GO scatterplot_mc ($1) ', TRIM(EQN_TAGS(i))
+      ENDDO
+      WRITE (unit,*) 'GO newpage'
+      CLOSE(unit)
+    ENDIF
+
     IF (l_aero) CALL close_file(ncid_aero)
 
     CALL close_file(ncid_tracer)
@@ -1299,7 +1467,8 @@ CONTAINS
     IF (l_tag) CALL mecca_tag_finish
     IF (l_dbl) CALL mecca_dbl_finish
 
-    DEALLOCATE(c0_HCO3m, c0_Clm, c0_Brm, c0_Im, c0_IO3m, c0_SO4mm, c0_HSO4m)
+    DEALLOCATE(c0_HCO3m, c0_NO3m, c0_Clm, c0_Brm, c0_Im, c0_IO3m, &
+      c0_SO4mm, c0_HSO4m)
     DEALLOCATE(xaer, radius, lwc, csalt, c0_NH4p, c0_Nap, exchng)
 
   END SUBROUTINE mecca_finish

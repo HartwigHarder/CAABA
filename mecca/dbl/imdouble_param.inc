@@ -9,10 +9,22 @@
 ! [Gromov, MPIC, 2007-2008]
 ! ==============================================================================
 
-#define DEBUG
+#define DBL
 
-#define xNULL_TEST
+!
+#define xDEBUG
+
+! gives lots of repetative messages
+#define xDEEPDEBUG
+
+! minors are initialized with 0 permil rel. to standart
 #define xZERO_TEST
 
-! {$CONF_LIST} [%\#define {%DBL}%]
+! minors are initialized emptied
+#define xNULL_TEST
+
+! fast first-step E5 initialization of configurations
+#define INITFAST_E5
+
+! {$CONF_LIST} [%#define @%]
 

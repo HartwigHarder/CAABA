@@ -1,60 +1,253 @@
 % this file was created automatically by eqn2tex, do not edit!
-\code{G1000} & StTrG &  \kpp{O2} + \kpp{O1D} $\rightarrow$ \kpp{O3P} + \kpp{O2} & \code{3.3E-11*EXP(55./temp)} & \citet{1945}\\
-\code{G1001} & StTrG &  \kpp{O2} + \kpp{O3P} $\rightarrow$ \kpp{O3} & \code{6.E-34*((temp/300.)**(-2.4))*cair} & \citet{1945}\\
+\code{G1000} & StTrG &  \kpp{O2} + \kpp{O1D} $\rightarrow$ \kpp{O3P} + \kpp{O2} & \code{3.3E-11*EXP(LOG(1.1)*mcexp(24))*EXP(55./temp)} & \citet{1945}\\
+\code{G1001} & StTrG &  \kpp{O2} + \kpp{O3P} $\rightarrow$ \kpp{O3} & \code{6.E-34*EXP(LOG(1.1)*mcexp(25))*((temp/300.)**(-2.4))*cair} & \citet{1945}\\
 \myhline
-\code{G2100} & StTrG &  \kpp{H} + \kpp{O2} $\rightarrow$ \kpp{HO2} & \code{k_3rd(temp,cair,4.4E-32,1.3,4.7E-11,0.2,0.6)} & \citet{1945}\\
-\code{G2104} & StTrG &  \kpp{OH} + \kpp{O3} $\rightarrow$ \kpp{HO2} + \kpp{O2} & \code{1.7E-12*EXP(-940./temp)} & \citet{1945}\\
-\code{G2105} & StTrG &  \kpp{OH} + \kpp{H2} $\rightarrow$ \kpp{H2O} + \kpp{H} & \code{2.8E-12*EXP(-1800./temp)} & \citet{1945}\\
-\code{G2107} & StTrG &  \kpp{HO2} + \kpp{O3} $\rightarrow$ \kpp{OH} + 2 \kpp{O2} & \code{1.E-14*EXP(-490./temp)} & \citet{1945}\\
-\code{G2109} & StTrG &  \kpp{HO2} + \kpp{OH} $\rightarrow$ \kpp{H2O} + \kpp{O2} & \code{4.8E-11*EXP(250./temp)} & \citet{1945}\\
+\code{G2100} & StTrG &  \kpp{H} + \kpp{O2} $\rightarrow$ \kpp{HO2} & \code{k_3rd(temp,cair,4.4E-32,1.3,4.7E-11,0.2,0.6)*EXP(LOG(1.3)*mcexp(26))} & \citet{1945}\\
+\code{G2104} & StTrG &  \kpp{OH} + \kpp{O3} $\rightarrow$ \kpp{HO2} + \kpp{O2} & \code{1.7E-12*EXP(LOG(1.2)*mcexp(27))*EXP(-940./temp)} & \citet{1945}\\
+\code{G2105} & StTrG &  \kpp{OH} + \kpp{H2} $\rightarrow$ \kpp{H2O} + \kpp{H} & \code{2.8E-12*EXP(LOG(1.05)*mcexp(28))*EXP(-1800./temp)} & \citet{1945}\\
+\code{G2107} & StTrG &  \kpp{HO2} + \kpp{O3} $\rightarrow$ \kpp{OH} + 2 \kpp{O2} & \code{1.E-14*EXP(LOG(1.15)*mcexp(29))*EXP(-490./temp)} & \citet{1945}\\
+\code{G2109} & StTrG &  \kpp{HO2} + \kpp{OH} $\rightarrow$ \kpp{H2O} + \kpp{O2} & \code{4.8E-11*EXP(LOG(1.25)*mcexp(30))*EXP(250./temp)} & \citet{1945}\\
 \code{G2110} & StTrG &  \kpp{HO2} + \kpp{HO2} $\rightarrow$ \kpp{H2O2} + \kpp{O2} & \code{k_HO2_HO2} & \citet{1599}, \citet{165}$^*$\shownote{G2110}\\
-\code{G2111} & StTrG &  \kpp{H2O} + \kpp{O1D} $\rightarrow$ 2 \kpp{OH} & \code{1.63E-10*EXP(60./temp)} & \citet{1945}\\
-\code{G2112} & StTrG &  \kpp{H2O2} + \kpp{OH} $\rightarrow$ \kpp{H2O} + \kpp{HO2} & \code{1.8E-12} & \citet{1945}\\
+\code{G2111} & StTrG &  \kpp{H2O} + \kpp{O1D} $\rightarrow$ 2 \kpp{OH} & \code{1.63E-10*EXP(LOG(1.15)*mcexp(31))*EXP(60./temp)} & \citet{1945}\\
+\code{G2112} & StTrG &  \kpp{H2O2} + \kpp{OH} $\rightarrow$ \kpp{H2O} + \kpp{HO2} & \code{1.8E-12*EXP(LOG(1.25)*mcexp(32))} & \citet{1945}\\
 \myhline
-\code{G3101} & StTrG &  \kpp{N2} + \kpp{O1D} $\rightarrow$ \kpp{O3P} + \kpp{N2} & \code{2.15E-11*EXP(110./temp)} & \citet{1945}\\
-\code{G3103} & StTrGN &  \kpp{NO} + \kpp{O3} $\rightarrow$ \kpp{NO2} + \kpp{O2} & \code{3.E-12*EXP(-1500./temp)} & \citet{1945}\\
-\code{G3106} & StTrGN &  \kpp{NO2} + \kpp{O3} $\rightarrow$ \kpp{NO3} + \kpp{O2} & \code{1.2E-13*EXP(-2450./temp)} & \citet{1945}\\
-\code{G3108} & StTrGN &  \kpp{NO3} + \kpp{NO} $\rightarrow$ 2 \kpp{NO2} & \code{1.5E-11*EXP(170./temp)} & \citet{1945}\\
+\code{G3101} & StTrG &  \kpp{N2} + \kpp{O1D} $\rightarrow$ \kpp{O3P} + \kpp{N2} & \code{2.15E-11*EXP(LOG(1.10)*mcexp(33))*EXP(110./temp)} & \citet{1945}\\
+\code{G3103} & StTrGN &  \kpp{NO} + \kpp{O3} $\rightarrow$ \kpp{NO2} + \kpp{O2} & \code{3.E-12*EXP(LOG(1.1)*mcexp(34))*EXP(-1500./temp)} & \citet{1945}\\
+\code{G3106} & StTrGN &  \kpp{NO2} + \kpp{O3} $\rightarrow$ \kpp{NO3} + \kpp{O2} & \code{1.2E-13*EXP(LOG(1.15)*mcexp(35))*EXP(-2450./temp)} & \citet{1945}\\
+\code{G3108} & StTrGN &  \kpp{NO3} + \kpp{NO} $\rightarrow$ 2 \kpp{NO2} & \code{1.5E-11*EXP(LOG(1.3)*mcexp(36))*EXP(170./temp)} & \citet{1945}\\
 \code{G3109} & StTrGN &  \kpp{NO3} + \kpp{NO2} $\rightarrow$ \kpp{N2O5} & \code{k_NO3_NO2} & \citet{1945}$^*$\shownote{G3109}\\
-\code{G3110} & StTrGN &  \kpp{N2O5} $\rightarrow$ \kpp{NO2} + \kpp{NO3} & \code{k_NO3_NO2/(2.7E-27*EXP(11000./temp))} & \citet{1945}$^*$\shownote{G3110}\\
-\code{G3200} & TrGN &  \kpp{NO} + \kpp{OH} $\rightarrow$ \kpp{HONO} & \code{k_3rd(temp,cair,7.0E-31,2.6,3.6E-11,0.1,0.6)} & \citet{1945}\\
-\code{G3201} & StTrGN &  \kpp{NO} + \kpp{HO2} $\rightarrow$ \kpp{NO2} + \kpp{OH} & \code{3.5E-12*EXP(250./temp)} & \citet{1945}\\
-\code{G3202} & StTrGN &  \kpp{NO2} + \kpp{OH} $\rightarrow$ \kpp{HNO3} & \code{k_3rd(temp,cair,1.8E-30,3.0,2.8E-11,0.,0.6)} & \citet{1945}\\
+\code{G3110} & StTrGN &  \kpp{N2O5} $\rightarrow$ \kpp{NO2} + \kpp{NO3} & \code{k_NO3_NO2/(2.7E-27*EXP(LOG(1.2)*mcexp(37))*EXP(11000./temp))} & \citet{1945}$^*$\shownote{G3110}\\
+\code{G3200} & TrGN &  \kpp{NO} + \kpp{OH} $\rightarrow$ \kpp{HONO} & \code{k_3rd(temp,cair,7.0E-31,2.6,3.6E-11,0.1,0.6)*EXP(LOG(1.2)*mcexp(38))} & \citet{1945}\\
+\code{G3201} & StTrGN &  \kpp{NO} + \kpp{HO2} $\rightarrow$ \kpp{NO2} + \kpp{OH} & \code{3.5E-12*EXP(250./temp)*EXP(LOG(1.15)*mcexp(39))} & \citet{1945}\\
+\code{G3202} & StTrGN &  \kpp{NO2} + \kpp{OH} $\rightarrow$ \kpp{HNO3} & \code{k_3rd(temp,cair,1.8E-30,3.0,2.8E-11,0.,0.6)*EXP(LOG(1.3)*mcexp(40))} & \citet{1945}\\
 \code{G3203} & StTrGN &  \kpp{NO2} + \kpp{HO2} $\rightarrow$ \kpp{HNO4} & \code{k_NO2_HO2} & \citet{1945}$^*$\shownote{G3203}\\
-\code{G3204} & TrGN &  \kpp{NO3} + \kpp{HO2} $\rightarrow$ \kpp{NO2} + \kpp{OH} + \kpp{O2} & \code{3.5E-12} & \citet{1945}\\
-\code{G3205} & TrGN &  \kpp{HONO} + \kpp{OH} $\rightarrow$ \kpp{NO2} + \kpp{H2O} & \code{1.8E-11*EXP(-390./temp)} & \citet{1945}\\
+\code{G3204} & TrGN &  \kpp{NO3} + \kpp{HO2} $\rightarrow$ \kpp{NO2} + \kpp{OH} + \kpp{O2} & \code{3.5E-12*EXP(LOG(1.5)*mcexp(41))} & \citet{1945}\\
+\code{G3205} & TrGN &  \kpp{HONO} + \kpp{OH} $\rightarrow$ \kpp{NO2} + \kpp{H2O} & \code{1.8E-11*EXP(LOG(1.5)*mcexp(42))*EXP(-390./temp)} & \citet{1945}\\
 \code{G3206} & StTrGN &  \kpp{HNO3} + \kpp{OH} $\rightarrow$ \kpp{H2O} + \kpp{NO3} & \code{k_HNO3_OH} & \citet{1945}$^*$\shownote{G3206}\\
-\code{G3207} & StTrGN &  \kpp{HNO4} $\rightarrow$ \kpp{NO2} + \kpp{HO2} & \code{k_NO2_HO2/(2.1E-27*EXP(10900./temp))} & \citet{1945}$^*$\shownote{G3207}\\
-\code{G3208} & StTrGN &  \kpp{HNO4} + \kpp{OH} $\rightarrow$ \kpp{NO2} + \kpp{H2O} & \code{1.3E-12*EXP(380./temp)} & \citet{1945}\\
-\code{G3209} & TrGN &  \kpp{NH3} + \kpp{OH} $\rightarrow$ \kpp{NH2} + \kpp{H2O} & \code{1.7E-12*EXP(-710./temp)} & \citet{2415}\\
-\code{G3210} & TrGN &  \kpp{NH2} + \kpp{O3} $\rightarrow$ \kpp{NH2O} + \kpp{O2} & \code{4.3E-12*EXP(-930./temp)} & \citet{2415}\\
-\code{G3211} & TrGN &  \kpp{NH2} + \kpp{HO2} $\rightarrow$ \kpp{NH2O} + \kpp{OH} & \code{4.8E-07*EXP(-628./temp)*temp**(-1.32)} & \citet{2415}\\
-\code{G3212} & TrGN &  \kpp{NH2} + \kpp{HO2} $\rightarrow$ \kpp{HNO} + \kpp{H2O} & \code{9.4E-09*EXP(-356./temp)*temp**(-1.12)} & \citet{2415}\\
-\code{G3213} & TrGN &  \kpp{NH2} + \kpp{NO} $\rightarrow$ \kpp{HO2} + \kpp{OH} + \kpp{N2} & \code{1.92E-12*((temp/298.)**(-1.5))} & \citet{2415}\\
-\code{G3214} & TrGN &  \kpp{NH2} + \kpp{NO} $\rightarrow$ \kpp{N2} + \kpp{H2O} & \code{1.41E-11*((temp/298.)**(-1.5))} & \citet{2415}\\
-\code{G3215} & TrGN &  \kpp{NH2} + \kpp{NO2} $\rightarrow$ \kpp{N2O} + \kpp{H2O} & \code{1.2E-11*((temp/298.)**(-2.0))} & \citet{2415}\\
-\code{G3216} & TrGN &  \kpp{NH2} + \kpp{NO2} $\rightarrow$ \kpp{NH2O} + \kpp{NO} & \code{0.8E-11*((temp/298.)**(-2.0))} & \citet{2415}\\
-\code{G3217} & TrGN &  \kpp{NH2O} + \kpp{O3} $\rightarrow$ \kpp{NH2} + \kpp{O2} & \code{1.2E-14} & \citet{2415}\\
-\code{G3218} & TrGN &  \kpp{NH2O} $\rightarrow$ \kpp{NHOH} & \code{1.3E+3} & \citet{2415}\\
-\code{G3219} & TrGN &  \kpp{HNO} + \kpp{OH} $\rightarrow$ \kpp{NO} + \kpp{H2O} & \code{8.0E-11*EXP(-500./temp)} & \citet{2415}\\
-\code{G3220} & TrGN &  \kpp{HNO} + \kpp{NHOH} $\rightarrow$ \kpp{NH2OH} + \kpp{NO} & \code{1.66E-12*EXP(-1500./temp)} & \citet{2415}\\
-\code{G3221} & TrGN &  \kpp{HNO} + \kpp{NO2} $\rightarrow$ \kpp{HONO} + \kpp{NO} & \code{1.0E-12*EXP(-1000./temp)} & \citet{2415}\\
-\code{G3222} & TrGN &  \kpp{NHOH} + \kpp{OH} $\rightarrow$ \kpp{HNO} + \kpp{H2O} & \code{1.66E-12} & \citet{2415}\\
-\code{G3223} & TrGN &  \kpp{NH2OH} + \kpp{OH} $\rightarrow$ \kpp{NHOH} + \kpp{H2O} & \code{4.13E-11*EXP(-2138./temp)} & \citet{2415}\\
-\code{G3224} & TrGN &  \kpp{HNO} + \kpp{O2} $\rightarrow$ \kpp{HO2} + \kpp{NO} & \code{3.65E-14*EXP(-4600./temp)} & \citet{2415}\\
+\code{G3207} & StTrGN &  \kpp{HNO4} $\rightarrow$ \kpp{NO2} + \kpp{HO2} & \code{k_NO2_HO2/(2.1E-27*EXP(LOG(1.3)*mcexp(43))*EXP(10900./temp))} & \citet{1945}$^*$\shownote{G3207}\\
+\code{G3208} & StTrGN &  \kpp{HNO4} + \kpp{OH} $\rightarrow$ \kpp{NO2} + \kpp{H2O} & \code{1.3E-12*EXP(LOG(1.3)*mcexp(44))*EXP(380./temp)} & \citet{1945}\\
+\code{G3209} & TrGN &  \kpp{NH3} + \kpp{OH} $\rightarrow$ \kpp{NH2} + \kpp{H2O} & \code{1.7E-12*EXP(LOG(1.25)*mcexp(45))*EXP(-710./temp)} & \citet{2415}\\
+\code{G3210} & TrGN &  \kpp{NH2} + \kpp{O3} $\rightarrow$ \kpp{NH2O} + \kpp{O2} & \code{4.3E-12*EXP(LOG(1.25)*mcexp(46))*EXP(-930./temp)} & \citet{2415}\\
+\code{G3211} & TrGN &  \kpp{NH2} + \kpp{HO2} $\rightarrow$ \kpp{NH2O} + \kpp{OH} & \code{4.8E-07*EXP(LOG(1.25)*mcexp(47))*EXP(-628./temp)*temp**(-1.32)} & \citet{2415}\\
+\code{G3212} & TrGN &  \kpp{NH2} + \kpp{HO2} $\rightarrow$ \kpp{HNO} + \kpp{H2O} & \code{9.4E-09*EXP(LOG(1.25)*mcexp(48))*EXP(-356./temp)*temp**(-1.12)} & \citet{2415}\\
+\code{G3213} & TrGN &  \kpp{NH2} + \kpp{NO} $\rightarrow$ \kpp{HO2} + \kpp{OH} + \kpp{N2} & \code{1.92E-12*EXP(LOG(1.25)*mcexp(49))*((temp/298.)**(-1.5))} & \citet{2415}\\
+\code{G3214} & TrGN &  \kpp{NH2} + \kpp{NO} $\rightarrow$ \kpp{N2} + \kpp{H2O} & \code{1.41E-11*EXP(LOG(1.25)*mcexp(50))*((temp/298.)**(-1.5))} & \citet{2415}\\
+\code{G3215} & TrGN &  \kpp{NH2} + \kpp{NO2} $\rightarrow$ \kpp{N2O} + \kpp{H2O} & \code{1.2E-11*EXP(LOG(1.25)*mcexp(51))*((temp/298.)**(-2.0))} & \citet{2415}\\
+\code{G3216} & TrGN &  \kpp{NH2} + \kpp{NO2} $\rightarrow$ \kpp{NH2O} + \kpp{NO} & \code{0.8E-11*EXP(LOG(1.25)*mcexp(52))*((temp/298.)**(-2.0))} & \citet{2415}\\
+\code{G3217} & TrGN &  \kpp{NH2O} + \kpp{O3} $\rightarrow$ \kpp{NH2} + \kpp{O2} & \code{1.2E-14*EXP(LOG(1.25)*mcexp(53))} & \citet{2415}\\
+\code{G3218} & TrGN &  \kpp{NH2O} $\rightarrow$ \kpp{NHOH} & \code{1.3E3*EXP(LOG(1.25)*mcexp(54))} & \citet{2415}\\
+\code{G3219} & TrGN &  \kpp{HNO} + \kpp{OH} $\rightarrow$ \kpp{NO} + \kpp{H2O} & \code{8.0E-11*EXP(LOG(1.25)*mcexp(55))*EXP(-500./temp)} & \citet{2415}\\
+\code{G3220} & TrGN &  \kpp{HNO} + \kpp{NHOH} $\rightarrow$ \kpp{NH2OH} + \kpp{NO} & \code{1.66E-12*EXP(LOG(1.25)*mcexp(56))*EXP(-1500./temp)} & \citet{2415}\\
+\code{G3221} & TrGN &  \kpp{HNO} + \kpp{NO2} $\rightarrow$ \kpp{HONO} + \kpp{NO} & \code{1.0E-12*EXP(LOG(1.25)*mcexp(57))*EXP(-1000./temp)} & \citet{2415}\\
+\code{G3222} & TrGN &  \kpp{NHOH} + \kpp{OH} $\rightarrow$ \kpp{HNO} + \kpp{H2O} & \code{1.66E-12*EXP(LOG(1.25)*mcexp(58))} & \citet{2415}\\
+\code{G3223} & TrGN &  \kpp{NH2OH} + \kpp{OH} $\rightarrow$ \kpp{NHOH} + \kpp{H2O} & \code{4.13E-11*EXP(LOG(1.25)*mcexp(59))*EXP(-2138./temp)} & \citet{2415}\\
+\code{G3224} & TrGN &  \kpp{HNO} + \kpp{O2} $\rightarrow$ \kpp{HO2} + \kpp{NO} & \code{3.65E-14*EXP(LOG(1.25)*mcexp(60))*EXP(-4600./temp)} & \citet{2415}\\
 \myhline
-\code{G4101} & StTrG &  \kpp{CH4} + \kpp{OH} $\rightarrow$ \kpp{CH3O2} + \kpp{H2O} & \code{1.85E-20*EXP(2.82*log(temp)-987./temp)} & \citet{1627}$^*$\shownote{G4101}\\
-\code{G4102} & TrG &  \kpp{CH3OH} + \kpp{OH} $\rightarrow$ \kpp{HCHO} + \kpp{HO2} & \code{2.9E-12*EXP(-345./temp)} & \citet{1945}\\
-\code{G4103} & StTrG &  \kpp{CH3O2} + \kpp{HO2} $\rightarrow$ \kpp{CH3OOH} + \kpp{O2} & \code{4.1E-13*EXP(750./temp)} & \citet{1945}$^*$\shownote{G4103}\\
-\code{G4104} & StTrGN &  \kpp{CH3O2} + \kpp{NO} $\rightarrow$ \kpp{HCHO} + \kpp{NO2} + \kpp{HO2} & \code{2.8E-12*EXP(300./temp)} & \citet{1945}\\
-\code{G4105} & TrGN &  \kpp{CH3O2} + \kpp{NO3} $\rightarrow$ \kpp{HCHO} + \kpp{HO2} + \kpp{NO2} & \code{1.3E-12} & \citet{1759}\\
-\code{G4106a} & StTrG &  \kpp{CH3O2} $\rightarrow$ \kpp{HCHO} + \kpp{HO2} & \code{2.*RO2*9.5E-14*EXP(390./temp)/(1.+1./26.2*EXP(1130./temp))} & \citet{1945}\\
-\code{G4106b} & StTrG &  \kpp{CH3O2} $\rightarrow$ .5 \kpp{HCHO} + .5 \kpp{CH3OH} + .5 \kpp{O2} & \code{2.*RO2*9.5E-14*EXP(390./temp)/(1.+26.2*EXP(-1130./temp))} & \citet{1945}\\
+\code{G4101} & StTrG &  \kpp{CH4} + \kpp{OH} $\rightarrow$ \kpp{CH3O2} + \kpp{H2O} & \code{1.85E-20*EXP(LOG(1.2)*mcexp(61))*EXP(2.82*log(temp)-987./temp)} & \citet{1627}\\
+\code{G4102} & TrG &  \kpp{CH3OH} + \kpp{OH} $\rightarrow$ \kpp{HCHO} + \kpp{HO2} & \code{2.9E-12*EXP(LOG(1.10)*mcexp(62))*EXP(-345./temp)} & \citet{1945}\\
+\code{G4103} & StTrG &  \kpp{CH3O2} + \kpp{HO2} $\rightarrow$ \kpp{CH3OOH} + \kpp{O2} & \code{4.1E-13*EXP(LOG(1.3)*mcexp(63))*EXP(750./temp)} & \citet{1945}$^*$\shownote{G4103}\\
+\code{G4104} & StTrGN &  \kpp{CH3O2} + \kpp{NO} $\rightarrow$ \kpp{HCHO} + \kpp{NO2} + \kpp{HO2} & \code{2.8E-12*EXP(LOG(1.15)*mcexp(64))*EXP(300./temp)} & \citet{1945}\\
+\code{G4105} & TrGN &  \kpp{CH3O2} + \kpp{NO3} $\rightarrow$ \kpp{HCHO} + \kpp{HO2} + \kpp{NO2} & \code{1.3E-12*EXP(0.3*LOG(10.)*mcexp(65))} & \citet{1759}\\
+\code{G4106a} & StTrG &  \kpp{CH3O2} $\rightarrow$ \kpp{HCHO} + \kpp{HO2} & \code{2.*RO2*9.5E-14*EXP(LOG(1.2)*mcexp(66))*EXP(390./temp)/(1.+1./26.2*EXP(LOG(1.25)*mcexp(67))*EXP(1130./temp))} & \citet{1945}\\
+\code{G4106b} & StTrG &  \kpp{CH3O2} $\rightarrow$ .5 \kpp{HCHO} + .5 \kpp{CH3OH} + .5 \kpp{O2} & \code{2.*RO2*9.5E-14*EXP(LOG(1.2)*mcexp(68))*EXP(390./temp)/(1.+26.2*EXP(LOG(1.25)*mcexp(69))*EXP(-1130./temp))} & \citet{1945}\\
 \code{G4107} & StTrG &  \kpp{CH3OOH} + \kpp{OH} $\rightarrow$ .7 \kpp{CH3O2} + .3 \kpp{HCHO} + .3 \kpp{OH} + \kpp{H2O} & \code{k_CH3OOH_OH} & \citet{1945}$^*$\shownote{G4107}\\
-\code{G4108} & StTrG &  \kpp{HCHO} + \kpp{OH} $\rightarrow$ \kpp{CO} + \kpp{H2O} + \kpp{HO2} & \code{9.52E-18*EXP(2.03*log(temp)+636./temp)} & \citet{1634}\\
-\code{G4109} & TrGN &  \kpp{HCHO} + \kpp{NO3} $\rightarrow$ \kpp{HNO3} + \kpp{CO} + \kpp{HO2} & \code{3.4E-13*EXP(-1900./temp)} & \citet{1945}$^*$\shownote{G4109}\\
-\code{G4110} & StTrG &  \kpp{CO} + \kpp{OH} $\rightarrow$ \kpp{H} + \kpp{CO2} & \code{(1.57E-13+cair*3.54E-33)} & \citet{1628}\\
-\code{G4111} & TrG &  \kpp{HCOOH} + \kpp{OH} $\rightarrow$ \kpp{CO2} + \kpp{HO2} + \kpp{H2O} & \code{4.0E-13} & \citet{1945}\\
+\code{G4108} & StTrG &  \kpp{HCHO} + \kpp{OH} $\rightarrow$ \kpp{CO} + \kpp{H2O} + \kpp{HO2} & \code{9.52E-18*EXP(LOG(1.05)*mcexp(70))*EXP(2.03*log(temp)+636./temp)} & \citet{1634}\\
+\code{G4109} & TrGN &  \kpp{HCHO} + \kpp{NO3} $\rightarrow$ \kpp{HNO3} + \kpp{CO} + \kpp{HO2} & \code{3.4E-13*EXP(LOG(1.3)*mcexp(71))*EXP(-1900./temp)} & \citet{1945}$^*$\shownote{G4109}\\
+\code{G4110} & StTrG &  \kpp{CO} + \kpp{OH} $\rightarrow$ \kpp{H} + \kpp{CO2} & \code{(1.57E-13+cair*3.54E-33)*EXP(LOG(1.15)*mcexp(72))} & \citet{1628}\\
+\code{G4111} & TrG &  \kpp{HCOOH} + \kpp{OH} $\rightarrow$ \kpp{CO2} + \kpp{HO2} + \kpp{H2O} & \code{4.0E-13*EXP(LOG(1.2)*mcexp(73))} & \citet{1945}\\
+\code{G4200} & TrGC &  \kpp{C2H6} + \kpp{OH} $\rightarrow$ \kpp{C2H5O2} + \kpp{H2O} & \code{1.49E-17*EXP(LOG(1.25)*mcexp(74))*temp*temp*EXP(-499./temp)} & \citet{1627}\\
+\code{G4201} & TrGC &  \kpp{C2H4} + \kpp{O3} $\rightarrow$ \kpp{HCHO} + .63 \kpp{CO} + .13 \kpp{HO2} + 0.23125 \kpp{HCOOH} + 0.13875 \kpp{HCHO} + 0.13875 \kpp{H2O2} + .13 \kpp{OH} & \code{1.2E-14*EXP(LOG(1.25)*mcexp(75))*EXP(-2630./temp)} & \citet{1945}$^*$\shownote{G4201}\\
+\code{G4202} & TrGC &  \kpp{C2H4} + \kpp{OH} $\rightarrow$ \kpp{HOCH2CH2O2} & \code{k_3rd(temp,cair,1.0E-28,4.5,8.8E-12,0.85,0.6)*EXP(LOG(1.25)*mcexp(76))} & \citet{1945}\\
+\code{G4203} & TrGC &  \kpp{C2H5O2} + \kpp{HO2} $\rightarrow$ \kpp{C2H5OOH} & \code{7.5E-13*EXP(LOG(1.25)*mcexp(77))*EXP(700./temp)} & \citet{1945}\\
+\code{G4204} & TrGNC &  \kpp{C2H5O2} + \kpp{NO} $\rightarrow$ \kpp{CH3CHO} + \kpp{HO2} + \kpp{NO2} & \code{2.6E-12*EXP(LOG(1.25)*mcexp(78))*EXP(365./temp)} & \citet{1945}\\
+\code{G4205} & TrGNC &  \kpp{C2H5O2} + \kpp{NO3} $\rightarrow$ \kpp{CH3CHO} + \kpp{HO2} + \kpp{NO2} & \code{2.3E-12*EXP(LOG(1.25)*mcexp(79))} & \citet{1207}\\
+\code{G4206} & TrGC &  \kpp{C2H5O2} $\rightarrow$ .98 \kpp{CH3CHO} + .38 \kpp{HO2} + .02 \kpp{HOCH2CH2O2} & \code{3.1E-13*EXP(LOG(1.25)*mcexp(80))*RO2} & \citet{2419}$^*$\shownote{G4206}\\
+\code{G4207} & TrGC &  \kpp{C2H5OOH} + \kpp{OH} $\rightarrow$ .43 \kpp{C2H5O2} + .43 \kpp{H2O} + .57 \kpp{CH3CHO} + .57 \kpp{OH} & \code{0.6*k_CH3OOH_OH + 8.01E-12} & see note\shownote{G4207}\\
+\code{G4208} & TrGC &  \kpp{CH3CHO} + \kpp{OH} $\rightarrow$ \kpp{CH3CO3} + \kpp{H2O} & \code{4.4E-12*EXP(0.08*LOG(10.)*mcexp(81))*EXP(365./temp)} & \citet{1759}\\
+\code{G4209} & TrGNC &  \kpp{CH3CHO} + \kpp{NO3} $\rightarrow$ \kpp{CH3CO3} + \kpp{HNO3} & \code{KNO3AL} & \citet{1945}\\
+\code{G4210} & TrGC &  \kpp{CH3CO2H} + \kpp{OH} $\rightarrow$ \kpp{CH3O2} + \kpp{CO2} + \kpp{H2O} & \code{4.2E-14*EXP(0.15*LOG(10.)*mcexp(82))*EXP(855./temp)} & \citet{1759}\\
+\code{G4211a} & TrGC &  \kpp{CH3CO3} + \kpp{HO2} $\rightarrow$ \kpp{CH3CO3H} & \code{4.3E-13*EXP(LOG(1.25)*mcexp(83))*EXP(1040./temp)/(1.+1./37.*EXP(660./temp))} & \citet{1613}\\
+\code{G4211b} & TrGC &  \kpp{CH3CO3} + \kpp{HO2} $\rightarrow$ \kpp{CH3CO2H} + \kpp{O3} & \code{4.3E-13*EXP(LOG(1.25)*mcexp(84))*EXP(1040./temp)/(1.+37.*EXP(-660./temp))} & \citet{1613}\\
+\code{G4212} & TrGNC &  \kpp{CH3CO3} + \kpp{NO} $\rightarrow$ \kpp{CH3O2} + \kpp{CO2} + \kpp{NO2} & \code{8.1E-12*EXP(LOG(1.25)*mcexp(85))*EXP(270./temp)} & \citet{1613}\\
+\code{G4213} & TrGNC &  \kpp{CH3CO3} + \kpp{NO2} $\rightarrow$ \kpp{PAN} & \code{k_CH3CO3_NO2} & \citet{1945}\\
+\code{G4214} & TrGNC &  \kpp{CH3CO3} + \kpp{NO3} $\rightarrow$ \kpp{CH3O2} + \kpp{NO2} + \kpp{CO2} & \code{4.E-12*EXP(LOG(1.25)*mcexp(86))} & \citet{1617}\\
+\code{G4217} & TrGC &  \kpp{CH3CO3} $\rightarrow$ .7 \kpp{CH3O2} + .7 \kpp{CO2} + .3 \kpp{CH3CO2H} & \code{1.00E-11*EXP(LOG(1.25)*mcexp(87))*RO2} & \citet{2419}\\
+\code{G4218} & TrGC &  \kpp{CH3CO3H} + \kpp{OH} $\rightarrow$ \kpp{CH3CO3} + \kpp{H2O} & \code{0.6*k_CH3OOH_OH} & \citet{2419}$^*$\shownote{G4218}\\
+\code{G4220} & TrGNC &  \kpp{PAN} + \kpp{OH} $\rightarrow$ \kpp{HCHO} + \kpp{CO} + \kpp{NO2} + \kpp{H2O} & \code{9.50E-13*EXP(LOG(1.25)*mcexp(88))*EXP(-650./temp)} & \citet{2419}\\
+\code{G4221} & TrGNC &  \kpp{PAN} $\rightarrow$ \kpp{CH3CO3} + \kpp{NO2} & \code{k_PAN_M} & \citet{1945}$^*$\shownote{G4221}\\
+\code{G4222} & TrGC &  \kpp{C2H2} + \kpp{OH} $\rightarrow$ 0.636 \kpp{GLYOX} + 0.636 \kpp{OH} + 0.364 \kpp{HCOOH} + 0.364 \kpp{CO} + 0.364 \kpp{HO2} & \code{k_3rd(temp,cair,5.5e-30,0.0,8.3e-13,-2.,0.6)*EXP(LOG(1.25)*mcexp(89))} & \citet{1945}\\
+\code{G4223} & TrGC &  \kpp{HOCH2CHO} + \kpp{OH} $\rightarrow$ .8 \kpp{HOCH2CO3} + .2 \kpp{GLYOX} + .2 \kpp{HO2} + \kpp{H2O} & \code{1.00E-11*EXP(LOG(1.25)*mcexp(90))} & \citet{2419}\\
+\code{G4224} & TrGNC &  \kpp{HOCH2CHO} + \kpp{NO3} $\rightarrow$ \kpp{HOCH2CO3} + \kpp{HNO3} & \code{KNO3AL} & \citet{2419}\\
+\code{G4225} & TrGC &  \kpp{HOCH2CO3} $\rightarrow$ .7 \kpp{HCHO} + .7 \kpp{CO2} + .7 \kpp{HO2} + .3 \kpp{HOCH2CO2H} & \code{1.00E-11*EXP(LOG(1.25)*mcexp(91))*RO2} & \citet{2419}\\
+\code{G4226} & TrGC &  \kpp{HOCH2CO3} + \kpp{HO2} $\rightarrow$ .71 \kpp{HOCH2CO3H} + .29 \kpp{HOCH2CO2H} + .29 \kpp{O3} & \code{KAPHO2} & \citet{2419}\\
+\code{G4227} & TrGNC &  \kpp{HOCH2CO3} + \kpp{NO} $\rightarrow$ \kpp{NO2} + \kpp{HO2} + \kpp{HCHO} + \kpp{CO2} & \code{KAPNO} & \citet{2419}\\
+\code{G4228} & TrGNC &  \kpp{HOCH2CO3} + \kpp{NO2} $\rightarrow$ \kpp{PHAN} & \code{k_CH3CO3_NO2} & \citet{2419}\\
+\code{G4229} & TrGNC &  \kpp{HOCH2CO3} + \kpp{NO3} $\rightarrow$ \kpp{NO2} + \kpp{HO2} + \kpp{HCHO} + \kpp{CO2} & \code{KRO2NO3*1.60} & \citet{2419}\\
+\code{G4230} & TrGC &  \kpp{HOCH2CO2H} + \kpp{OH} $\rightarrow$ \kpp{HCHO} + \kpp{HO2} + \kpp{CO2} + \kpp{H2O} & \code{2.73E-12*EXP(LOG(1.25)*mcexp(92))} & \citet{2419}\\
+\code{G4231} & TrGC &  \kpp{HOCH2CO3H} + \kpp{OH} $\rightarrow$ \kpp{HOCH2CO3} + \kpp{H2O} & \code{6.19E-12*EXP(LOG(1.25)*mcexp(93))} & \citet{2419}\\
+\code{G4232} & TrGNC &  \kpp{PHAN} $\rightarrow$ \kpp{HOCH2CO3} + \kpp{NO2} & \code{k_PAN_M} & \citet{2419}\\
+\code{G4233} & TrGNC &  \kpp{PHAN} + \kpp{OH} $\rightarrow$ \kpp{HCHO} + \kpp{CO} + \kpp{NO2} + \kpp{H2O} & \code{1.12E-12*EXP(LOG(1.25)*mcexp(94))} & \citet{2419}\\
+\code{G4234} & TrGC &  \kpp{GLYOX} + \kpp{OH} $\rightarrow$ 1.2 \kpp{CO} + .6 \kpp{HO2} + .4 \kpp{HCOCO3} + \kpp{H2O} & \code{1.14E-11*EXP(LOG(1.25)*mcexp(95))} & \citet{2419}\\
+\code{G4235} & TrGNC &  \kpp{GLYOX} + \kpp{NO3} $\rightarrow$ 1.2 \kpp{CO} + .6 \kpp{HO2} + .4 \kpp{HCOCO3} + \kpp{HNO3} & \code{KNO3AL} & \citet{2419}\\
+\code{G4236} & TrGC &  \kpp{HCOCO3} $\rightarrow$ .7 \kpp{CO} + .7 \kpp{HO2} + .7 \kpp{CO2} + .3 \kpp{HCOCO2H} & \code{1.00E-11*EXP(LOG(1.25)*mcexp(96))*RO2} & \citet{2419}\\
+\code{G4237} & TrGC &  \kpp{HCOCO3} + \kpp{HO2} $\rightarrow$ .71 \kpp{HCOCO3H} + .29 \kpp{HCOCO2H} + .29 \kpp{O3} & \code{KAPHO2} & \citet{2419}\\
+\code{G4238} & TrGNC &  \kpp{HCOCO3} + \kpp{NO} $\rightarrow$ \kpp{HO2} + \kpp{CO} + \kpp{NO2} + \kpp{CO2} & \code{KAPNO} & \citet{2419}\\
+\code{G4239} & TrGNC &  \kpp{HCOCO3} + \kpp{NO3} $\rightarrow$ \kpp{HO2} + \kpp{CO} + \kpp{NO2} + \kpp{CO2} & \code{KRO2NO3*1.60} & \citet{2419}\\
+\code{G4240} & TrGC &  \kpp{HCOCO2H} + \kpp{OH} $\rightarrow$ \kpp{CO} + \kpp{HO2} + \kpp{CO2} + \kpp{H2O} & \code{1.23E-11*EXP(LOG(1.25)*mcexp(97))} & \citet{2419}\\
+\code{G4241} & TrGC &  \kpp{HCOCO3H} + \kpp{OH} $\rightarrow$ \kpp{HCOCO3} + \kpp{H2O} & \code{1.58E-11*EXP(LOG(1.25)*mcexp(98))} & \citet{2419}\\
+\code{G4242} & TrGC &  \kpp{HOCH2CH2O2} $\rightarrow$ .6 \kpp{HOCH2CH2O} + .2 \kpp{HOCH2CHO} + .2 \kpp{ETHGLY} & \code{2.00E-12*EXP(LOG(1.25)*mcexp(99))*RO2} & \citet{2419}\\
+\code{G4243} & TrGNC &  \kpp{HOCH2CH2O2} + \kpp{NO} $\rightarrow$ .24875 \kpp{HO2} + .4975 \kpp{HCHO} + .74625 \kpp{HOCH2CH2O} + .995 \kpp{NO2} + .005 \kpp{ETHOHNO3} & \code{KRO2NO} & \citet{2419}$^*$\shownote{G4243}\\
+\code{G4244} & TrGC &  \kpp{HOCH2CH2O2} + \kpp{HO2} $\rightarrow$ \kpp{HYETHO2H} & \code{2.00E-13*EXP(LOG(1.25)*mcexp(100))*EXP(1250./temp)} & \citet{2419}\\
+\code{G4245} & TrGNC &  \kpp{ETHOHNO3} + \kpp{OH} $\rightarrow$ \kpp{HOCH2CHO} + \kpp{NO2} + \kpp{H2O} & \code{8.40E-13*EXP(LOG(1.25)*mcexp(101))} & \citet{2419}\\
+\code{G4246a} & TrGC &  \kpp{HYETHO2H} + \kpp{OH} $\rightarrow$ \kpp{HOCH2CH2O2} + \kpp{H2O} & \code{0.6*k_CH3OOH_OH} & \citet{2419}$^*$\shownote{G4246}\\
+\code{G4246b} & TrGC &  \kpp{HYETHO2H} + \kpp{OH} $\rightarrow$ \kpp{HOCH2CHO} + \kpp{OH} + \kpp{H2O} & \code{1.38E-11*EXP(LOG(1.25)*mcexp(102))} & \citet{2419}\\
+\code{G4247a} & TrGC &  \kpp{HOCH2CH2O} $\rightarrow$ \kpp{HO2} + \kpp{HOCH2CHO} & \code{6.00E-14*EXP(LOG(1.25)*mcexp(103))*EXP(-550./temp)*C(ind_O2)} & \citet{2419}\\
+\code{G4247b} & TrGC &  \kpp{HOCH2CH2O} $\rightarrow$ \kpp{HO2} + \kpp{HCHO} + \kpp{HCHO} & \code{9.50E13*EXP(LOG(1.25)*mcexp(104))*EXP(-5988./temp)} & \citet{2419}\\
+\code{G4248} & TrGC &  \kpp{ETHGLY} + \kpp{OH} $\rightarrow$ \kpp{HOCH2CHO} + \kpp{HO2} + \kpp{H2O} & \code{7.70E-12*EXP(LOG(1.25)*mcexp(105))} & \citet{2419}\\
+\code{G4300} & TrGC &  \kpp{C3H8} + \kpp{OH} $\rightarrow$ .736 \kpp{IC3H7O2} + .264 \kpp{C2H5O2} + .264 \kpp{CO2} + .264 \kpp{HO2} + \kpp{H2O} & \code{1.55E-17*EXP(LOG(1.25)*mcexp(106))*temp*temp*EXP(-61./temp)} & \citet{2419}$^*$\shownote{G4300}\\
+\code{G4301} & TrGC &  \kpp{C3H6} + \kpp{O3} $\rightarrow$ .28 \kpp{CH3O2} + .1 \kpp{CH4} + .075 \kpp{CH3CO2H} + .56 \kpp{CO} + .075 \kpp{HCOOH} + .09 \kpp{H2O2} + .28 \kpp{HO2} + .2 \kpp{CO2} + .545 \kpp{CH3CHO} + .545 \kpp{HCHO} + .36 \kpp{OH} & \code{6.5E-15*EXP(LOG(1.25)*mcexp(107))*EXP(-1900./temp)} & \citet{1945}$^*$\shownote{G4301}\\
+\code{G4302} & TrGC &  \kpp{C3H6} + \kpp{OH} $\rightarrow$ \kpp{HYPROPO2} & \code{k_3rd(temp,cair,8.E-27,3.5,3.E-11,0.,0.5)*EXP(LOG(1.25)*mcexp(108))} & \citet{1207}\\
+\code{G4303} & TrGNC &  \kpp{C3H6} + \kpp{NO3} $\rightarrow$ \kpp{PRONO3BO2} & \code{4.6E-13*EXP(LOG(1.25)*mcexp(109))*EXP(-1155./temp)} & \citet{1207}\\
+\code{G4304} & TrGC &  \kpp{IC3H7O2} + \kpp{HO2} $\rightarrow$ \kpp{IC3H7OOH} & \code{1.9E-13*EXP(LOG(1.25)*mcexp(110))*EXP(1300./temp)} & \citet{964}$^*$\shownote{G4304}\\
+\code{G4305} & TrGNC &  \kpp{IC3H7O2} + \kpp{NO} $\rightarrow$ .96 \kpp{CH3COCH3} + .96 \kpp{HO2} + .96 \kpp{NO2} + .04 \kpp{IC3H7NO3} & \code{2.7E-12*EXP(LOG(1.25)*mcexp(111))*EXP(360./temp)} & \citet{1207}\\
+\code{G4306} & TrGC &  \kpp{IC3H7O2} $\rightarrow$ \kpp{CH3COCH3} + .8 \kpp{HO2} & \code{4.E-14*EXP(LOG(1.25)*mcexp(112))*RO2} & \citet{2419}$^*$\shownote{G4306}\\
+\code{G4307} & TrGC &  \kpp{IC3H7OOH} + \kpp{OH} $\rightarrow$ .27 \kpp{IC3H7O2} + .73 \kpp{CH3COCH3} + .73 \kpp{OH} + \kpp{H2O} & \code{1.66E-11*EXP(LOG(1.25)*mcexp(113)) + 0.6*k_CH3OOH_OH} & \citet{2419}$^*$\shownote{G4307}\\
+\code{G4311} & TrGC &  \kpp{CH3COCH3} + \kpp{OH} $\rightarrow$ \kpp{CH3COCH2O2} + \kpp{H2O} & \code{(1.33E-13+3.82E-11*EXP(-2000./temp))*EXP(LOG(1.25)*mcexp(114))} & \citet{1945}\\
+\code{G4312} & TrGC &  \kpp{CH3COCH2O2} + \kpp{HO2} $\rightarrow$ \kpp{HYPERACET} & \code{8.6E-13*EXP(LOG(1.25)*mcexp(115))*EXP(700./temp)} & \citet{1613}\\
+\code{G4313} & TrGNC &  \kpp{CH3COCH2O2} + \kpp{NO} $\rightarrow$ \kpp{CH3CO3} + \kpp{HCHO} + \kpp{NO2} & \code{2.9E-12*EXP(LOG(1.25)*mcexp(116))*EXP(300./temp)} & \citet{1945}\\
+\code{G4314} & TrGC &  \kpp{CH3COCH2O2} $\rightarrow$ .6 \kpp{CH3CO3} + .6 \kpp{HCHO} + .2 \kpp{MGLYOX} + .2 \kpp{ACETOL} & \code{7.5E-13*EXP(LOG(1.25)*mcexp(117))*EXP(500./temp)*2.*RO2} & \citet{1613}\\
+\code{G4315a} & TrGC &  \kpp{HYPERACET} + \kpp{OH} $\rightarrow$ \kpp{CH3COCH2O2} + \kpp{H2O} & \code{0.6*k_CH3OOH_OH} & see note\shownote{G4315}\\
+\code{G4315b} & TrGC &  \kpp{HYPERACET} + \kpp{OH} $\rightarrow$ \kpp{MGLYOX} + \kpp{OH} + \kpp{H2O} & \code{8.39E-12*EXP(LOG(1.25)*mcexp(118))} & \citet{2419}\\
+\code{G4316} & TrGC &  \kpp{ACETOL} + \kpp{OH} $\rightarrow$ \kpp{MGLYOX} + \kpp{HO2} + \kpp{H2O} & \code{3.E-12*EXP(LOG(1.25)*mcexp(119))} & \citet{1207}\\
+\code{G4317} & TrGC &  \kpp{MGLYOX} + \kpp{OH} $\rightarrow$ \kpp{CH3CO3} + \kpp{CO} & \code{8.4E-13*EXP(LOG(1.25)*mcexp(120))*EXP(830./temp)} & \citet{1616}\\
+\code{G4320} & TrGNC &  \kpp{IC3H7NO3} + \kpp{OH} $\rightarrow$ \kpp{CH3COCH3} + \kpp{NO2} & \code{6.2E-13*EXP(LOG(1.25)*mcexp(121))*EXP(-230./temp)} & \citet{1207}\\
+\code{G4321} & TrGNC &  \kpp{CH3COCH2O2} + \kpp{NO3} $\rightarrow$ \kpp{CH3CO3} + \kpp{HCHO} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4322} & TrGC &  \kpp{HYPROPO2} $\rightarrow$ \kpp{CH3CHO} + \kpp{HCHO} + \kpp{HO2} & \code{8.80E-13*EXP(LOG(1.25)*mcexp(122))*RO2} & \citet{2419}\\
+\code{G4323} & TrGC &  \kpp{HYPROPO2} + \kpp{HO2} $\rightarrow$ \kpp{HYPROPO2H} & \code{KRO2HO2*0.520} & \citet{2419}\\
+\code{G4324} & TrGNC &  \kpp{HYPROPO2} + \kpp{NO} $\rightarrow$ \kpp{CH3CHO} + \kpp{HCHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO} & \citet{2419}\\
+\code{G4325} & TrGNC &  \kpp{HYPROPO2} + \kpp{NO3} $\rightarrow$ \kpp{CH3CHO} + \kpp{HCHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4326a} & TrGC &  \kpp{HYPROPO2H} + \kpp{OH} $\rightarrow$ \kpp{HYPROPO2} & \code{1.90E-12*EXP(LOG(1.25)*mcexp(123))*EXP(190./temp)} & \citet{2419}\\
+\code{G4326b} & TrGC &  \kpp{HYPROPO2H} + \kpp{OH} $\rightarrow$ \kpp{ACETOL} + \kpp{OH} & \code{2.44E-11*EXP(LOG(1.25)*mcexp(124))} & \citet{2419}\\
+\code{G4327} & TrGNC &  \kpp{PRONO3BO2} + \kpp{HO2} $\rightarrow$ \kpp{PR2O2HNO3} & \code{KRO2HO2*0.520} & \citet{2419}\\
+\code{G4328} & TrGNC &  \kpp{PRONO3BO2} + \kpp{NO} $\rightarrow$ \kpp{NOA} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO} & \citet{2419}\\
+\code{G4329} & TrGNC &  \kpp{PRONO3BO2} + \kpp{NO3} $\rightarrow$ \kpp{NOA} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4330a} & TrGNC &  \kpp{PR2O2HNO3} + \kpp{OH} $\rightarrow$ \kpp{PRONO3BO2} & \code{1.90E-12*EXP(LOG(1.25)*mcexp(125))*EXP(190./temp)} & \citet{2419}\\
+\code{G4330b} & TrGNC &  \kpp{PR2O2HNO3} + \kpp{OH} $\rightarrow$ \kpp{NOA} + \kpp{OH} & \code{3.47E-12*EXP(LOG(1.25)*mcexp(126))} & \citet{2419}\\
+\code{G4331} & TrGNC &  \kpp{MGLYOX} + \kpp{NO3} $\rightarrow$ \kpp{CH3CO3} + \kpp{CO} + \kpp{HNO3} & \code{KNO3AL*2.4} & \citet{2419}\\
+\code{G4332} & TrGNC &  \kpp{NOA} + \kpp{OH} $\rightarrow$ \kpp{MGLYOX} + \kpp{NO2} & \code{1.30E-13*EXP(LOG(1.25)*mcexp(127))} & \citet{2419}\\
+\code{G4333} & TrGC &  \kpp{HOCH2COCHO} + \kpp{OH} $\rightarrow$ \kpp{HOCH2CO3} + \kpp{CO} & \code{1.44E-11*EXP(LOG(1.25)*mcexp(128))} & \citet{2419}\\
+\code{G4334} & TrGNC &  \kpp{HOCH2COCHO} + \kpp{NO3} $\rightarrow$ \kpp{HOCH2CO3} + \kpp{CO} + \kpp{HNO3} & \code{KNO3AL*2.4} & \citet{2419}\\
+\code{G4335} & TrGC &  \kpp{HOCH2COCO2H} + \kpp{OH} $\rightarrow$ \kpp{HOCH2CO3} + \kpp{CO2} & \code{2.89E-12*EXP(LOG(1.25)*mcexp(129))} & \citet{2419}\\
+\code{G4400} & TrGC &  \kpp{NC4H10} + \kpp{OH} $\rightarrow$ \kpp{LC4H9O2} + \kpp{H2O} & \code{1.81E-17*EXP(LOG(1.25)*mcexp(130))*temp*temp*EXP(114./temp)} & \citet{1627}$^*$\shownote{G4400}\\
+\code{G4401} & TrGC &  \kpp{LC4H9O2} $\rightarrow$ 0.254 \kpp{CO2} + 0.5552 \kpp{MEK} + 0.5552 \kpp{HO2} + 0.3178 \kpp{CH3CHO} + 0.4448 \kpp{C2H5O2} & \code{2.5E-13*EXP(LOG(1.25)*mcexp(131))*RO2} & \citet{2419}$^*$\shownote{G4401}\\
+\code{G4402} & TrGC &  \kpp{LC4H9O2} + \kpp{HO2} $\rightarrow$ \kpp{LC4H9OOH} & \code{KRO2HO2*0.625} & \citet{2419}\\
+\code{G4403} & TrGNC &  \kpp{LC4H9O2} + \kpp{NO} $\rightarrow$ 0.9172 \kpp{NO2} + 0.233 \kpp{CO2} + 0.5092 \kpp{MEK} + 0.5092 \kpp{HO2} + 0.2915 \kpp{CH3CHO} + 0.408 \kpp{C2H5O2} + 0.0828 \kpp{LC4H9NO3} & \code{KRO2NO} & \citet{2419}$^*$\shownote{G4403}\\
+\code{G4404} & TrGC &  \kpp{LC4H9OOH} + \kpp{OH} $\rightarrow$ 0.2285796 \kpp{LC4H9O2} + 0.7117253 \kpp{MEK} + 0.1193902 \kpp{CO2} + 0.0596951 \kpp{C2H5O2} + 0.7714204 \kpp{OH} + \kpp{H2O} & \code{2.636E-11*EXP(LOG(1.25)*mcexp(132))} & \citet{2419}$^*$\shownote{G4404}\\
+\code{G4405} & TrGC &  \kpp{MVK} + \kpp{O3} $\rightarrow$ 0.28 \kpp{CH3CO3} + 0.56 \kpp{CO} + 0.225 \kpp{LCARBON} + 0.075 \kpp{HCOOH} + 0.09 \kpp{H2O2} + 0.28 \kpp{HO2} + 0.1 \kpp{CO2} + 0.1 \kpp{CH3CHO} + 0.645 \kpp{HCHO} + 0.36 \kpp{OH} + 0.545 \kpp{MGLYOX} & \code{7.51E-16*EXP(LOG(1.25)*mcexp(133))*EXP(-1521./temp)} & \citet{2419}\\
+\code{G4406} & TrGC &  \kpp{MVK} + \kpp{OH} $\rightarrow$ \kpp{LHMVKABO2} & \code{4.13E-12*EXP(LOG(1.25)*mcexp(134))*EXP(452./temp)} & \citet{2419}\\
+\code{G4413} & TrGC &  \kpp{MEK} + \kpp{OH} $\rightarrow$ \kpp{LMEKO2} + \kpp{H2O} & \code{3.24E-18*EXP(LOG(1.25)*mcexp(135))*temp*temp*EXP(414./temp)} & \citet{2419}$^*$\shownote{G4413}\\
+\code{G4414} & TrGC &  \kpp{LMEKO2} + \kpp{HO2} $\rightarrow$ \kpp{LMEKOOH} & \code{KRO2HO2*0.625} & \citet{2419}\\
+\code{G4415} & TrGNC &  \kpp{LMEKO2} + \kpp{NO} $\rightarrow$ 0.538 \kpp{HCHO} + 0.538 \kpp{CO2} + 0.459 \kpp{HOCH2CH2O2} + 0.079 \kpp{C2H5O2} + 0.462 \kpp{CH3CO3} + 0.462 \kpp{CH3CHO} + \kpp{NO2} & \code{KRO2NO} & \citet{2419}$^*$\shownote{G4415}\\
+\code{G4416} & TrGC &  \kpp{LMEKOOH} + \kpp{OH} $\rightarrow$ 0.40851 \kpp{CH3COCH2O2} + 0.350196 \kpp{BIACET} + 0.807212 \kpp{OH} + 0.048506 \kpp{C2H5O2} + 0.505522 \kpp{CO2} + 0.192788 \kpp{LMEKO2} + \kpp{H2O} & \code{3.786E-11*EXP(LOG(1.25)*mcexp(136))} & \citet{2419}$^*$\shownote{G4416}\\
+\code{G4417} & TrGNC &  \kpp{LC4H9NO3} + \kpp{OH} $\rightarrow$ 0.91423 \kpp{MEK} + 0.08577 \kpp{C2H5O2} + 0.17154 \kpp{CO2} + \kpp{NO2} + \kpp{H2O} & \code{9.598E-13*EXP(LOG(1.25)*mcexp(137))} & \citet{2419}$^*$\shownote{G4417}\\
+\code{G4418} & TrGNC &  \kpp{MPAN} + \kpp{OH} $\rightarrow$ \kpp{ACETOL} + \kpp{CO} + \kpp{NO2} & \code{3.2E-11*EXP(LOG(1.25)*mcexp(138))} & \citet{1629}\\
+\code{G4419} & TrGNC &  \kpp{MPAN} $\rightarrow$ \kpp{MACO3} + \kpp{NO2} & \code{k_PAN_M} & see note\shownote{G4419}\\
+\code{G4420} & TrGC &  \kpp{LMEKO2} $\rightarrow$ 0.538 \kpp{HCHO} + 0.538 \kpp{CO2} + 0.459 \kpp{HOCH2CH2O2} + 0.079 \kpp{C2H5O2} + 0.462 \kpp{CH3CO3} + 0.462 \kpp{CH3CHO} & \code{1.483E-12*EXP(LOG(1.25)*mcexp(139))*RO2} & \citet{2419}$^*$\shownote{G4420}\\
+\code{G4421} & TrGC &  \kpp{MACR} + \kpp{OH} $\rightarrow$ .57 \kpp{MACO3} + .43 \kpp{MACRO2} & \code{1.86E-11*EXP(LOG(1.25)*mcexp(140))*EXP(175./temp)} & \citet{2419}\\
+\code{G4422} & TrGC &  \kpp{MACR} + \kpp{O3} $\rightarrow$ .59 \kpp{MGLYOX} + .41 \kpp{CH3CO3} + .03375 \kpp{HCOOH} + .55625 \kpp{HCHO} + .82 \kpp{CO} + .12375 \kpp{H2O2} + .41 \kpp{HO2} + .82 \kpp{OH} & \code{1.36E-15*EXP(LOG(1.25)*mcexp(141))*EXP(-2112./temp)} & \citet{2419}\\
+\code{G4423} & TrGNC &  \kpp{MACR} + \kpp{NO3} $\rightarrow$ \kpp{MACO3} + \kpp{HNO3} & \code{KNO3AL*2.0} & \citet{2419}\\
+\code{G4424} & TrGC &  \kpp{MACO3} $\rightarrow$ .7 \kpp{CH3CO3} + .7 \kpp{HCHO} + .7 \kpp{CO2} + .3 \kpp{MACO2H} & \code{1.00E-11*EXP(LOG(1.25)*mcexp(142))*RO2} & \citet{2419}\\
+\code{G4425} & TrGC &  \kpp{MACO3} + \kpp{HO2} $\rightarrow$ .71 \kpp{MACO3H} + .29 \kpp{MACO2H} + .29 \kpp{O3} & \code{KAPHO2} & \citet{2419}\\
+\code{G4426} & TrGNC &  \kpp{MACO3} + \kpp{NO} $\rightarrow$ \kpp{CH3CO3} + \kpp{HCHO} + \kpp{NO2} + \kpp{CO2} & \code{8.70E-12*EXP(LOG(1.25)*mcexp(143))*EXP(290./temp)} & \citet{2419}\\
+\code{G4427} & TrGNC &  \kpp{MACO3} + \kpp{NO2} $\rightarrow$ \kpp{MPAN} & \code{k_CH3CO3_NO2} & \citet{2419}\\
+\code{G4428} & TrGNC &  \kpp{MACO3} + \kpp{NO3} $\rightarrow$ \kpp{CH3CO3} + \kpp{HCHO} + \kpp{NO2} + \kpp{CO2} & \code{KRO2NO3*1.60} & \citet{2419}\\
+\code{G4429} & TrGC &  \kpp{MACRO2} $\rightarrow$ .7 \kpp{ACETOL} + .7 \kpp{HCHO} + .7 \kpp{HO2} + .3 \kpp{MACROH} & \code{9.20E-14*EXP(LOG(1.25)*mcexp(144))*RO2} & \citet{2419}\\
+\code{G4430} & TrGC &  \kpp{MACRO2} + \kpp{HO2} $\rightarrow$ \kpp{MACROOH} & \code{KRO2HO2*0.625} & \citet{2419}\\
+\code{G4431} & TrGNC &  \kpp{MACRO2} + \kpp{NO} $\rightarrow$ \kpp{ACETOL} + \kpp{HCHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO} & \citet{2419}\\
+\code{G4432} & TrGNC &  \kpp{MACRO2} + \kpp{NO3} $\rightarrow$ \kpp{ACETOL} + \kpp{HCHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4433} & TrGC &  \kpp{MACROOH} + \kpp{OH} $\rightarrow$ \kpp{MACRO2} & \code{2.82E-11*EXP(LOG(1.25)*mcexp(145))} & \citet{2419}\\
+\code{G4434} & TrGC &  \kpp{MACROH} + \kpp{OH} $\rightarrow$ \kpp{ACETOL} + \kpp{HCHO} + \kpp{HO2} & \code{2.46E-11*EXP(LOG(1.25)*mcexp(146))} & \citet{2419}\\
+\code{G4435} & TrGC &  \kpp{MACO2H} + \kpp{OH} $\rightarrow$ \kpp{CH3CO3} + \kpp{HCHO} + \kpp{CO2} & \code{1.51E-11*EXP(LOG(1.25)*mcexp(147))} & \citet{2419}\\
+\code{G4436} & TrGC &  \kpp{MACO3H} + \kpp{OH} $\rightarrow$ \kpp{MACO3} & \code{1.87E-11*EXP(LOG(1.25)*mcexp(148))} & \citet{2419}\\
+\code{G4437} & TrGC &  \kpp{LHMVKABO2} $\rightarrow$ 0.06 \kpp{CO2H3CHO} + 0.18 \kpp{HO2} + 0.18 \kpp{HCHO} + 0.18 \kpp{MGLYOX} + 0.42 \kpp{CH3CO3} + .42 \kpp{HOCH2CHO}+ .2 \kpp{HO12CO3C4} + .14 \kpp{BIACETOH} & \code{(.3*2.00E-12 + .7*8.80E-13)*EXP(LOG(1.25)*mcexp(149))*RO2} & \citet{2419}$^*$\shownote{G4437}\\
+\code{G4438} & TrGC &  \kpp{LHMVKABO2} + \kpp{HO2} $\rightarrow$ \kpp{LHMVKABOOH} & \code{KRO2HO2*0.625} & \citet{2419}\\
+\code{G4439} & TrGNC &  \kpp{LHMVKABO2} + \kpp{NO} $\rightarrow$ .3 \kpp{MGLYOX} + .7 \kpp{HOCH2CHO} + .7 \kpp{CH3CO3} + .3 \kpp{HCHO} + .3 \kpp{HO2} + \kpp{NO2} & \code{KRO2NO} & \citet{2419}$^*$\shownote{G4439}\\
+\code{G4440} & TrGNC &  \kpp{LHMVKABO2} + \kpp{NO3} $\rightarrow$ .3 \kpp{MGLYOX} + .7 \kpp{HOCH2CHO} + .7 \kpp{CH3CO3} + .3 \kpp{HCHO} + .3 \kpp{HO2} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}$^*$\shownote{G4440}\\
+\code{G4441} & TrGC &  \kpp{LHMVKABOOH} + \kpp{OH} $\rightarrow$ .3 \kpp{CO2H3CHO} + .7 \kpp{BIACETOH} + \kpp{OH} & \code{4.496E-11*EXP(LOG(1.25)*mcexp(150))} & \citet{2419}$^*$\shownote{G4441}\\
+\code{G4442} & TrGC &  \kpp{MVKOH} + \kpp{OH} $\rightarrow$ \kpp{LMVKOHABO2} & \code{4.60E-12*EXP(LOG(1.25)*mcexp(151))*EXP(452./temp)} & \citet{2419}\\
+\code{G4443} & TrGC &  \kpp{MVKOH} + \kpp{O3} $\rightarrow$ 0.56 \kpp{CO} + 0.545 \kpp{HOCH2COCHO} + 0.075 \kpp{HOCH2COCO2H} + 0.075 \kpp{HCOOH} + 0.09 \kpp{H2O2} + 0.28 \kpp{HOCH2CO3} + 0.28 \kpp{HO2} + 0.2 \kpp{CO2} + 0.545 \kpp{HCHO} + 0.36 \kpp{OH} + 0.1 \kpp{HOCH2CHO} & \code{7.51E-16*EXP(LOG(1.25)*mcexp(152))*EXP(-1521./temp)} & \citet{2419}\\
+\code{G4444} & TrGC &  \kpp{LMVKOHABO2} $\rightarrow$ .7 \kpp{HOCH2CHO} + .7 \kpp{HOCH2CO3} + .3 \kpp{HOCH2COCHO} + .3 \kpp{HCHO} + .3 \kpp{HO2} & \code{(0.3*2.00E-12+0.7*8.80E-13)*EXP(LOG(1.25)*mcexp(153))*RO2} & \citet{2419}$^*$\shownote{G4444}\\
+\code{G4445} & TrGC &  \kpp{LMVKOHABO2} + \kpp{HO2} $\rightarrow$ \kpp{LMVKOHABOOH} & \code{KRO2HO2*0.625} & \citet{2419}\\
+\code{G4446} & TrGNC &  \kpp{LMVKOHABO2} + \kpp{NO} $\rightarrow$ .3 \kpp{HOCH2COCHO} + .3 \kpp{HCHO} + .3 \kpp{HO2} + .7 \kpp{HOCH2CHO} + .7 \kpp{HOCH2CO3} + \kpp{NO2} & \code{KRO2NO} & \citet{2419}$^*$\shownote{G4446}\\
+\code{G4447} & TrGNC &  \kpp{LMVKOHABO2} + \kpp{NO3} $\rightarrow$ .3 \kpp{HOCH2COCHO} + .3 \kpp{HCHO} + .3 \kpp{HO2} + .7 \kpp{HOCH2CHO} + .7 \kpp{HOCH2CO3} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}$^*$\shownote{G4447}\\
+\code{G4448} & TrGC &  \kpp{LMVKOHABOOH} + \kpp{OH} $\rightarrow$ .7 \kpp{HO12CO3C4} + .3 \kpp{CO2H3CHO} + \kpp{OH} & \code{5.98E-11*EXP(LOG(1.25)*mcexp(154))} & \citet{2419}$^*$\shownote{G4448}\\
+\code{G4449} & TrGC &  \kpp{CO2H3CHO} + \kpp{OH} $\rightarrow$ \kpp{CO2H3CO3} & \code{2.45E-11*EXP(LOG(1.25)*mcexp(155))} & \citet{2419}\\
+\code{G4450} & TrGNC &  \kpp{CO2H3CHO} + \kpp{NO3} $\rightarrow$ \kpp{CO2H3CO3} + \kpp{HNO3} & \code{KNO3AL*4.0} & \citet{2419}\\
+\code{G4451} & TrGC &  \kpp{CO2H3CO3} $\rightarrow$ \kpp{MGLYOX} + \kpp{HO2} + \kpp{CO2} & \code{1.00E-11*EXP(LOG(1.25)*mcexp(156))*RO2} & \citet{2419}\\
+\code{G4452} & TrGC &  \kpp{CO2H3CO3} + \kpp{HO2} $\rightarrow$ \kpp{CO2H3CO3H} & \code{KAPHO2} & \citet{2419}\\
+\code{G4453} & TrGNC &  \kpp{CO2H3CO3} + \kpp{NO} $\rightarrow$ \kpp{MGLYOX} + \kpp{HO2} + \kpp{NO2} + \kpp{CO2} & \code{KAPNO} & \citet{2419}\\
+\code{G4454} & TrGNC &  \kpp{CO2H3CO3} + \kpp{NO3} $\rightarrow$ \kpp{MGLYOX} + \kpp{HO2} + \kpp{NO2} + \kpp{CO2} & \code{KRO2NO3*1.60} & \citet{2419}\\
+\code{G4455} & TrGC &  \kpp{CO2H3CO3H} + \kpp{OH} $\rightarrow$ \kpp{CO2H3CO3} & \code{7.34E-12*EXP(LOG(1.25)*mcexp(157))} & \citet{2419}\\
+\code{G4456} & TrGC &  \kpp{HO12CO3C4} + \kpp{OH} $\rightarrow$ \kpp{BIACETOH} + \kpp{HO2} & \code{1.88E-11*EXP(LOG(1.25)*mcexp(158))} & \citet{2419}\\
+\code{G4500} & TrGC &  \kpp{C5H8} + \kpp{O3} $\rightarrow$ .051 \kpp{CH3O2} + .1575 \kpp{CH3CO3} + .054 \kpp{LHMVKABO2} + .522 \kpp{CO} + .06875 \kpp{HCOOH} + .11 \kpp{H2O2} + .32475 \kpp{MACR} + .1275 \kpp{C3H6} + .2625 \kpp{HO2} + .255 \kpp{CO2} + .74975 \kpp{HCHO} + .04125 \kpp{MACO2H} + .27 \kpp{OH} + .244 \kpp{MVK} & \code{7.86E-15*EXP(LOG(1.25)*mcexp(159))*EXP(-1913./temp)} & \citet{2419}\\
+\code{G4501} & TrGC &  \kpp{C5H8} + \kpp{OH} $\rightarrow$ .25 \kpp{LISOPACO2} + .491 \kpp{ISOPBO2} + .259 \kpp{ISOPDO2} & \code{2.54E-11*EXP(LOG(1.25)*mcexp(160))*EXP(410./temp)} & \citet{964}\\
+\code{G4509} & TrGNC &  \kpp{C5H8} + \kpp{NO3} $\rightarrow$ \kpp{NISOPO2} & \code{3.03E-12*EXP(LOG(1.25)*mcexp(161))*EXP(-446./temp)} & \citet{2419}\\
+\code{G4510} & TrGC &  \kpp{LISOPACO2} $\rightarrow$ .9 \kpp{LHC4ACCHO} + .8 \kpp{HO2} + .1 \kpp{ISOPAOH} & \code{2.4E-12*EXP(LOG(1.25)*mcexp(162))*RO2} & \citet{2419}\\
+\code{G4511} & TrGC &  \kpp{LISOPACO2} + \kpp{HO2} $\rightarrow$ \kpp{LISOPACOOH} & \code{0.706*KRO2HO2} & \citet{2419}\\
+\code{G4512} & TrGNC &  \kpp{LISOPACO2} + \kpp{NO} $\rightarrow$ .892 \kpp{LHC4ACCHO} + .892 \kpp{HO2} + .892 \kpp{NO2} + .108 \kpp{LISOPACNO3} & \code{KRO2NO} & \citet{2419}\\
+\code{G4513} & TrGNC &  \kpp{LISOPACO2} + \kpp{NO3} $\rightarrow$ \kpp{LHC4ACCHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4514} & TrGC &  \kpp{LISOPACOOH} + \kpp{OH} $\rightarrow$ \kpp{LHC4ACCHO} + \kpp{OH} & \code{1.07E-10*EXP(LOG(1.25)*mcexp(163))} & \citet{2419}\\
+\code{G4515} & TrGC &  \kpp{ISOPAOH} + \kpp{OH} $\rightarrow$ \kpp{LHC4ACCHO} + \kpp{HO2} & \code{9.30E-11*EXP(LOG(1.25)*mcexp(164))} & \citet{2419}\\
+\code{G4516} & TrGNC &  \kpp{LISOPACNO3} + \kpp{OH} $\rightarrow$ \kpp{LHC4ACCHO} + \kpp{NO2} & \code{8.91E-11*EXP(LOG(1.25)*mcexp(165))} & \citet{2419}\\
+\code{G4517} & TrGC &  \kpp{ISOPBO2} $\rightarrow$ .6 \kpp{MVK} + .2 \kpp{MVKOH} + .6 \kpp{HCHO} + .6 \kpp{HO2} + .2 \kpp{CH3O2} + .2 \kpp{ISOPBOH} & \code{8.E-13*EXP(LOG(1.25)*mcexp(166))*RO2} & \citet{2419}\\
+\code{G4518} & TrGC &  \kpp{ISOPBO2} + \kpp{HO2} $\rightarrow$ \kpp{ISOPBOOH} & \code{0.706*KRO2HO2} & \citet{2419}\\
+\code{G4519} & TrGNC &  \kpp{ISOPBO2} + \kpp{NO} $\rightarrow$ .696 \kpp{MVK} + .232 \kpp{MVKOH} + .696 \kpp{HCHO} + .696 \kpp{HO2} + .232 \kpp{CH3O2} + .928 \kpp{NO2} + .072 \kpp{ISOPBNO3} & \code{KRO2NO} & \citet{2419}\\
+\code{G4520} & TrGNC &  \kpp{ISOPBO2} + \kpp{NO3} $\rightarrow$ .75 \kpp{MVK} + .25 \kpp{MVKOH} + .75 \kpp{HCHO} + .75 \kpp{HO2} + .25 \kpp{CH3O2} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4521} & TrGC &  \kpp{ISOPBOOH} + \kpp{OH} $\rightarrow$ \kpp{ISOPBO2} & \code{4.2E-11*EXP(LOG(1.25)*mcexp(167))} & \citet{2419}\\
+\code{G4522} & TrGC &  \kpp{ISOPBOH} + \kpp{OH} $\rightarrow$ .75 \kpp{MVK} + .25 \kpp{MVKOH} + .75 \kpp{HCHO} + .75 \kpp{HO2} + .25 \kpp{CH3O2} & \code{3.85E-11*EXP(LOG(1.25)*mcexp(168))} & \citet{2419}\\
+\code{G4523} & TrGNC &  \kpp{ISOPBNO3} + \kpp{OH} $\rightarrow$ \kpp{MVK} + \kpp{HCHO} + \kpp{NO2} & \code{3.55E-11*EXP(LOG(1.25)*mcexp(169))} & \citet{2419}\\
+\code{G4524} & TrGC &  \kpp{ISOPDO2} $\rightarrow$ .8 \kpp{MACR} + .8 \kpp{HCHO} + .8 \kpp{HO2} + .1 \kpp{HCOC5} + .1 \kpp{ISOPDOH} & \code{2.9E-12*EXP(LOG(1.25)*mcexp(170))*RO2} & \citet{2419}\\
+\code{G4525} & TrGC &  \kpp{ISOPDO2} + \kpp{HO2} $\rightarrow$ \kpp{ISOPDOOH} & \code{0.706*KRO2HO2} & \citet{2419}\\
+\code{G4526} & TrGNC &  \kpp{ISOPDO2} + \kpp{NO} $\rightarrow$ .855 \kpp{MACR} + .855 \kpp{HCHO} + .855 \kpp{HO2} + .855 \kpp{NO2} + .145 \kpp{ISOPDNO3} & \code{KRO2NO} & \citet{2419}\\
+\code{G4527} & TrGNC &  \kpp{ISOPDO2} + \kpp{NO3} $\rightarrow$ \kpp{MACR} + \kpp{HCHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4528} & TrGC &  \kpp{ISOPDOOH} + \kpp{OH} $\rightarrow$ \kpp{HCOC5} + \kpp{OH} & \code{1.07E-10*EXP(LOG(1.25)*mcexp(171))} & \citet{2419}\\
+\code{G4529} & TrGC &  \kpp{ISOPDOH} + \kpp{OH} $\rightarrow$ \kpp{HCOC5} + \kpp{HO2} & \code{7.38E-11*EXP(LOG(1.25)*mcexp(172))} & \citet{2419}\\
+\code{G4530} & TrGNC &  \kpp{ISOPDNO3} + \kpp{OH} $\rightarrow$ \kpp{HCOC5} + \kpp{NO2} & \code{6.1E-11*EXP(LOG(1.25)*mcexp(173))} & \citet{2419}\\
+\code{G4531} & TrGNC &  \kpp{NISOPO2} $\rightarrow$ .8 \kpp{NC4CHO} + .6 \kpp{HO2} + .2 \kpp{LISOPACNO3} & \code{1.3E-12*EXP(LOG(1.25)*mcexp(174))*RO2} & \citet{2419}\\
+\code{G4532} & TrGNC &  \kpp{NISOPO2} + \kpp{HO2} $\rightarrow$ \kpp{NISOPOOH} & \code{.706*KRO2HO2} & \citet{2419}\\
+\code{G4533} & TrGNC &  \kpp{NISOPO2} + \kpp{NO} $\rightarrow$ \kpp{NC4CHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO} & \citet{2419}\\
+\code{G4534} & TrGNC &  \kpp{NISOPO2} + \kpp{NO3} $\rightarrow$ \kpp{NC4CHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4535} & TrGNC &  \kpp{NISOPOOH} + \kpp{OH} $\rightarrow$ \kpp{NC4CHO} + \kpp{OH} & \code{1.03E-10*EXP(LOG(1.25)*mcexp(175))} & \citet{2419}\\
+\code{G4536} & TrGNC &  \kpp{NC4CHO} + \kpp{OH} $\rightarrow$ \kpp{LNISO3} & \code{4.16E-11*EXP(LOG(1.25)*mcexp(176))} & \citet{2419}\\
+\code{G4537} & TrGNC &  \kpp{NC4CHO} + \kpp{O3} $\rightarrow$ .445 \kpp{NO2} + .89 \kpp{CO} + .075625 \kpp{H2O2} + .034375 \kpp{HCOCO2H} + .555 \kpp{NOA} + .445 \kpp{HO2} + .520625 \kpp{GLYOX} + .89 \kpp{OH} + .445 \kpp{MGLYOX} & \code{2.40E-17*EXP(LOG(1.25)*mcexp(177))} & \citet{2419}\\
+\code{G4538} & TrGNC &  \kpp{NC4CHO} + \kpp{NO3} $\rightarrow$ \kpp{LNISO3} + \kpp{HNO3} & \code{KNO3AL*4.25} & \citet{2419}\\
+\code{G4539} & TrGNC &  \kpp{LNISO3} + \kpp{HO2} $\rightarrow$ \kpp{LNISOOH} & \code{.5*.706*KRO2HO2 + .5*KAPHO2} & \citet{2419}\\
+\code{G4540} & TrGNC &  \kpp{LNISO3} + \kpp{NO} $\rightarrow$ \kpp{NOA} + .5 \kpp{GLYOX} + .5 \kpp{CO} + \kpp{HO2} + \kpp{NO2} + .5 \kpp{CO2} & \code{.5*KAPNO +.5*KRO2NO} & \citet{2419}\\
+\code{G4541} & TrGNC &  \kpp{LNISO3} + \kpp{NO3} $\rightarrow$ \kpp{NOA} + .5 \kpp{GLYOX} + .5 \kpp{CO} + \kpp{HO2} + \kpp{NO2} + .5 \kpp{CO2} & \code{1.3*KRO2NO3} & \citet{2419}\\
+\code{G4542} & TrGNC &  \kpp{LNISOOH} + \kpp{OH} $\rightarrow$ \kpp{LNISO3} & \code{2.65E-11*EXP(LOG(1.25)*mcexp(178))} & \citet{2419}\\
+\code{G4543} & TrGC &  \kpp{LHC4ACCHO} + \kpp{OH} $\rightarrow$ .52 \kpp{LC578O2} + .48 \kpp{LHC4ACCO3} & \code{4.52E-11*EXP(LOG(1.25)*mcexp(179))} & \citet{2419}\\
+\code{G4544} & TrGC &  \kpp{LHC4ACCHO} + \kpp{O3} $\rightarrow$ .2225 \kpp{CH3CO3} + .89 \kpp{CO} + .0171875 \kpp{HOCH2CO2H} + .075625 \kpp{H2O2} + .0171875 \kpp{HCOCO2H} + .2775 \kpp{ACETOL} + .6675 \kpp{HO2} + .2603125 \kpp{GLYOX} + .2225 \kpp{HCHO} + .89 \kpp{OH} + .2603125 \kpp{HOCH2CHO} + .5 \kpp{MGLYOX} & \code{2.40E-17*EXP(LOG(1.25)*mcexp(180))} & \citet{2419}\\
+\code{G4545} & TrGNC &  \kpp{LHC4ACCHO} + \kpp{NO3} $\rightarrow$ \kpp{LHC4ACCO3} + \kpp{HNO3} & \code{KNO3AL*4.25} & \citet{2419}\\
+\code{G4546} & TrGC &  \kpp{LC578O2} $\rightarrow$ .5 \kpp{ACETOL} + .5 \kpp{MGLYOX} + .5 \kpp{GLYOX} + .5 \kpp{HOCH2CHO} + \kpp{HO2} & \code{9.20E-14*EXP(LOG(1.25)*mcexp(181))*RO2} & \citet{2419}\\
+\code{G4547} & TrGC &  \kpp{LC578O2} + \kpp{HO2} $\rightarrow$ \kpp{LC578OOH} & \code{KRO2HO2*0.706} & \citet{2419}\\
+\code{G4548} & TrGNC &  \kpp{LC578O2} + \kpp{NO} $\rightarrow$ .5 \kpp{ACETOL} + .5 \kpp{MGLYOX} + .5 \kpp{GLYOX} + .5 \kpp{HOCH2CHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO} & \citet{2419}\\
+\code{G4549} & TrGNC &  \kpp{LC578O2} + \kpp{NO3} $\rightarrow$ .5 \kpp{ACETOL} + .5 \kpp{MGLYOX} + .5 \kpp{GLYOX} + .5 \kpp{HOCH2CHO} + \kpp{HO2} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4550} & TrGC &  \kpp{LC578OOH} + \kpp{OH} $\rightarrow$ \kpp{LC578O2} & \code{3.16E-11*EXP(LOG(1.25)*mcexp(182))} & \citet{2419}\\
+\code{G4551} & TrGC &  \kpp{LHC4ACCO3} $\rightarrow$ .3 \kpp{LHC4ACCO2H} + .35 \kpp{ACETOL} + .35 \kpp{HOCH2CHO} + .35 \kpp{CH3CO3} + .35 \kpp{CO} + .35 \kpp{HO2} + .7 \kpp{CO2} & \code{1.00E-11*EXP(LOG(1.25)*mcexp(183))*RO2} & \citet{2419}\\
+\code{G4552} & TrGC &  \kpp{LHC4ACCO3} + \kpp{HO2} $\rightarrow$ .71 \kpp{LHC4ACCO3H} + .29 \kpp{LHC4ACCO2H} + .29 \kpp{O3} & \code{KAPHO2} & \citet{2419}\\
+\code{G4553} & TrGNC &  \kpp{LHC4ACCO3} + \kpp{NO} $\rightarrow$ .5 \kpp{ACETOL} + .5 \kpp{HOCH2CHO} + .5 \kpp{CH3CO3} + .5 \kpp{CO} + .5 \kpp{HO2} + \kpp{NO2} + \kpp{CO2} & \code{KAPNO} & \citet{2419}\\
+\code{G4554} & TrGNC &  \kpp{LHC4ACCO3} + \kpp{NO2} $\rightarrow$ \kpp{LC5PAN1719} & \code{k_CH3CO3_NO2} & \citet{2419}\\
+\code{G4555} & TrGNC &  \kpp{LHC4ACCO3} + \kpp{NO3} $\rightarrow$ .5 \kpp{ACETOL} + .5 \kpp{HOCH2CHO} + .5 \kpp{CH3CO3} + .5 \kpp{CO} + .5 \kpp{HO2} + \kpp{NO2} + \kpp{CO2} & \code{1.6*KRO2NO3} & \citet{2419}\\
+\code{G4556} & TrGC &  \kpp{LHC4ACCO2H} + \kpp{OH} $\rightarrow$ .5 \kpp{ACETOL} + .5 \kpp{HOCH2CHO} + .5 \kpp{CH3CO3} + .5 \kpp{CO} + .5 \kpp{HO2} + \kpp{CO2} & \code{2.52E-11*EXP(LOG(1.25)*mcexp(184))} & \citet{2419}\\
+\code{G4557} & TrGC &  \kpp{LHC4ACCO3H} + \kpp{OH} $\rightarrow$ \kpp{LHC4ACCO3} & \code{2.88E-11*EXP(LOG(1.25)*mcexp(185))} & \citet{2419}\\
+\code{G4558} & TrGNC &  \kpp{LC5PAN1719} $\rightarrow$ \kpp{LHC4ACCO3} + \kpp{NO2} & \code{k_PAN_M} & \citet{2419}\\
+\code{G4559} & TrGNC &  \kpp{LC5PAN1719} + \kpp{OH} $\rightarrow$ .5 \kpp{MACROH} + .5 \kpp{HO12CO3C4} + \kpp{CO} + \kpp{NO2} & \code{2.52E-11*EXP(LOG(1.25)*mcexp(186))} & \citet{2419}\\
+\code{G4560} & TrGC &  \kpp{HCOC5} + \kpp{OH} $\rightarrow$ \kpp{C59O2} & \code{3.81E-11*EXP(LOG(1.25)*mcexp(187))} & \citet{2419}\\
+\code{G4561} & TrGC &  \kpp{C59O2} $\rightarrow$ \kpp{ACETOL} + \kpp{HOCH2CO3} & \code{9.20E-14*EXP(LOG(1.25)*mcexp(188))*RO2} & \citet{2419}\\
+\code{G4562} & TrGC &  \kpp{C59O2} + \kpp{HO2} $\rightarrow$ \kpp{C59OOH} & \code{KRO2HO2*0.706} & \citet{2419}\\
+\code{G4563} & TrGNC &  \kpp{C59O2} + \kpp{NO} $\rightarrow$ \kpp{ACETOL} + \kpp{HOCH2CO3} + \kpp{NO2} & \code{KRO2NO} & \citet{2419}\\
+\code{G4564} & TrGNC &  \kpp{C59O2} + \kpp{NO3} $\rightarrow$ \kpp{ACETOL} + \kpp{HOCH2CO3} + \kpp{NO2} & \code{KRO2NO3} & \citet{2419}\\
+\code{G4565} & TrGC &  \kpp{C59OOH} + \kpp{OH} $\rightarrow$ \kpp{C59O2} & \code{9.7E-12*EXP(LOG(1.25)*mcexp(189))} & \citet{2419}\\
 \myhline
 \myhline
 \myhline

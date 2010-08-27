@@ -1,3 +1,7 @@
+# Makefile syntax info:
+# When a line starts with '@', the echoing of that line is suppressed.
+# When a line starts with '-', errors in the command line are ignored.
+
 ### name of the executable that will be produced
 PROG = $(INSTALLDIR)/caaba.exe
 
@@ -14,6 +18,7 @@ MAKEFILE_INC = depend.mk
 # http://www.arsc.edu/~kate/Perl
 F_makedepend = ./sfmakedepend --file=$(MAKEFILE_INC)
 
+.PHONY: all
 all: $(PROG)
 
 # the dependencies depend on the link
@@ -28,16 +33,16 @@ depend $(MAKEFILE_INC): $(SRCS)
 
 .PHONY: zip
 zip:
-	./zipcaaba.tcsh zip
+	@./_zipcaaba.tcsh zip verbose
 
 .PHONY: zipall
 zipall:
-	./zipcaaba.tcsh zipall
+	@./zipcaaba.tcsh zipall verbose
 
 # forcheck:
 .PHONY: check
 check:
-	-forchk -rigor -cond -f95 -obs -ff -decl -ext -intr -spec -ancmpl -anprg -anref -shcom -shinc -shmod -shprg -shref -shsrc -shsub -inf -plen 25 -pwid 132 *.f90 /soft/ECHAM5/lib/netcdf90.flb >& forcheck.log
+	forchk -rigor -cond -f95 -obs -ff -decl -ext -intr -spec -ancmpl -anprg -anref -shcom -shinc -shmod -shprg -shref -shsrc -shsub -inf -plen 25 -pwid 132 *.f90 /soft/ECHAM5/lib/netcdf90.flb >& forcheck.log
 	@echo "(forcheck found: 8=errors, 4=warnings, 2=infos)"
 
 # put the same find commands here as in cmg command:
@@ -68,19 +73,21 @@ list:
 	@echo "NETCDF_INCLUDE = $(NETCDF_INCLUDE)"
 	@echo "NETCDF_LIB     = $(NETCDF_LIB)"
 
+.PHONY: clean
 clean:
-	rm -f depend.mk.old *.o *.mod *.log *~
+	-rm -f depend.mk.old *.o *.mod *.log *~
 
+.PHONY: distclean
 distclean: clean
-	rm -f $(PROG)
-	rm -f depend.mk* 
-	rm -f *.nc
-	rm -f *.dat
-	rm -f mecca/latex/*.aux
-	rm -f mecca/latex/*.blg
-	rm -f mecca/latex/*.dvi
-	rm -f mecca/latex/*.log
-	rm -f *.exe
+	-rm -f $(PROG)
+	-rm -f depend.mk* 
+	-rm -f *.nc
+	-rm -f *.dat
+	-rm -f mecca/latex/*.aux
+	-rm -f mecca/latex/*.blg
+	-rm -f mecca/latex/*.dvi
+	-rm -f mecca/latex/*.log
+	-rm -f *.exe
 
 # all object files *.o depend on their source files *.f90
 # the object files are created with the "-c" compiler option

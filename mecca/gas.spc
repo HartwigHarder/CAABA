@@ -121,7 +121,7 @@ LMVKOHABOOH   = 4C +  8H + 5O     ; {@LMVKOHABOOH}       {HOCH2-CH(OOH)-CO-CH2OH
 MACO2H        = 4C +  6H + 2O     ; {@MACO2H}            {CH2=C(CH3)COOH}
 MACO3         = 4C +  5H + 3O     ; {@MACO3}             {CH2=C(CH3)C(O)O2}
 MACO3H        = 4C +  6H + 2O     ; {@MACO3H}            {CH2=C(CH3)C(O)OOH}
-MACR          = 4C +  6H +  O     ; {@MACR}              {CH2=C(CH3)CHO}
+MACR          = 4C +  6H +  O     ; {@MACR}              {CH2=C(CH3)CHO = methacrolein}
 MACRO2        = 4C +  7H + 4O     ; {@MACRO2}            {HOCH2C(OO)(CH3)CHO}
 MACROH        = 4C +  8H + 3O     ; {@MACROH}            {HOCH2C(OH)(CH3)CHO}
 MACROOH       = 4C +  8H + 4O     ; {@MACROOH}           {HOCH2C(OOH)(CH3)CHO}

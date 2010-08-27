@@ -1,6 +1,6 @@
 ******************************************************************************
 **                               CAABA history                              **
-**                  Time-stamp: <2010-03-16 16:05:56 sander>                **
+**                  Time-stamp: <2010-08-17 16:27:00 sander>                **
 ******************************************************************************
 
 Previous versions are available as zip files at:
@@ -11,7 +11,123 @@ new versions are created with: ncv <VERSION>
 ******************************************************************************
 
 The next version will be:
-caaba_2.6b (2010)
+caaba_2.7c (2010)
+
+******************************************************************************
+
+caaba_2.7b (2010-08-17)
+
+CHANGES by Rolf Sander:
+- bugfix for gas_mim1.eqn: mcexp deleted
+- reaction rates RR* are already divided by time_step_len in the f90
+  code, thus they are not accumulated in the netcdf files anymore
+- Monte-Carlo:
+  - montecarlo.jnl: histograms of k and c added
+
+******************************************************************************
+
+caaba_2.7 (2010-07-27)
+
+CHANGES by Rolf Sander:
+- example input file for READJ: input/readj_input.nc
+- new scenario "LAB" for modeling laboratory conditions
+- messy_mecca_box.f90 creates output files caaba_mecca_k_end.nc and
+  caaba_mecca_c_end.nc which contain rate coefficients k and
+  concentrations c at the end of the model run
+- Multirun:
+  - namelist file moved to multirun/input/caaba_multirun.nml
+  - NaN replaced by 0.0 in multirun/input/*.txt
+  - multirun/input/asc2ferret4nc.tcsh converts PRESS and TEMP to
+    lowercase via ncrename
+- Monte-Carlo:
+  - montecarlo.jnl produces scatter plots c vs k plus linear regression
+  - messy_mecca_box.f90 creates _scatterplot1.jnl and _scatterplot2.jnl
+  - mcfct renamed to mcexp (because it is an exponent, not a factor)
+- in xmecca plus a few other files: LC_COLLATE replaced by LC_ALL in all
+  calls to awk scripts
+- revert renaming to previous state:
+  - gas_mim2.eqn renamed back to gas.eqn
+  - batch/*.bat adjusted accordingly
+  - *.rpl files are now in rpl/ and rpl/mim1/
+- ncclamp added into the new directory caaba/tools/
+
+******************************************************************************
+
+caaba_2.6f (2010-06-14)
+
+CHANGES by Rolf Sander:
+- xmecca: exit with an error message if the selected mechanism is empty
+- new script "cmg" = caaba/mecca-grep to search the code
+- MECCA:
+  - if APN=3 then ocean chemistry is calculated as a pseudo-aerosol
+  - nitrate (c0_NO3m) as initial aerosol component added
+  - new reference for sea water composition is ref2307 = Millero et al.
+    2008 (previously Stumm & Morgan, ref0133, p. 567 was used)
+  - gas/aq transfer of DMS added: H9402
+- xcaaba splits output file caaba_mecca.nc into species and reactions
+  (RR*) with ncks
+
+******************************************************************************
+
+caaba_2.6e (2010-04-19)
+
+CHANGES by Rolf Sander:
+- messy_mecca_aero.f90: 
+  - general clean-up
+  - functions density and layerthickness moved to messy_main_tools.f90
+- ncv uses _zipcaaba.tcsh
+- _zipcaaba.tcsh also includes input files for traject: traject/*.nc
+
+******************************************************************************
+
+caaba_2.6d (2010-04-12)
+
+CHANGES by Rolf Sander:
+- messy_cmn_gasaq:
+  - new values are activated and old code deleted
+  - Henry's law coefficients of infinitely soluble species (e.g. N2O5)
+    set to HUGE_dp
+  - henry2tex.awk and alpha2tex.awk adjusted to new syntax:
+    "CALL add_alpha('XYZ', alpha0, minDHR) ! {&REF}"
+    "CALL add_henry('XYZ', KH, minDHR) ! {&REF}"
+- messy_mecca_aero: molar mass of HNO4 was wrong. This bug is fixed
+  automatically because correct values from messy_cmn_gasaq are used
+  now.
+
+******************************************************************************
+
+caaba_2.6c (2010-04-08)
+
+CHANGES by Rolf Sander:
+- messy_cmn_gasaq: new module that defines physicochemical constants.
+  For debugging purposes, a comparison to the old values can be printed
+  (search for "q1q"). The new values are not activated yet.
+
+******************************************************************************
+
+caaba_2.6b (2010-04-01)
+
+CHANGES by Rolf Sander:
+- xtag and xdbl: making zero configuration is not verbose anymore
+- eqn2tex.awk: reaction rate pseudo-species RR* removed from latex output
+- xmecca: creating correct accumulated reaction rate entries (RR*) now
+  also for aqueous-phase reactions
+- bugfix in messy_mecca_box.f90: aqueous-phase RR* excluded from
+  sedimentation
+- update of photolysis rate coefficients in gas_mim2.eqn that are
+  derived from other species, e.g.: J(ETHOHNO3) = 3.7 * J(PAN). Also,
+  corresponding references and footnotes added to meccanism.tex.
+
+CHANGES by Sergey Gromov:
+- MECCA:
+  - meccanism.tex: number of isotope exchange reactions added
+  - xmecca updated
+  - update of MECCA_TAG and MECCA_DBL
+  - new rpl/mim1/tagdbl_rb_eval.rpl
+
+CHANGES by Patrick Joeckel:
+- MECCA: gas.tex MIM1-only substances restored: NACA, LHOC3H6OOH, ISOOH,
+         MVKOOH, ISON, LHOC3H6O2, ISO2, MVKO2
 
 ******************************************************************************
 
@@ -52,10 +168,9 @@ CHANGES by Domenico Taraborrelli and Rolf Sander:
    jx(ip_CH3OOH)                    for many ROOH
    jx(ip_CH3OOH)+0.074*jx(ip_CHOH)  for HYPERACET
    jx(ip_CH3OOH)+jx(ip_HOCH2CHO)    for HCOCO3H
-   jx(ip_GLYOX)                     for GLYOX
-   jx(ip_HOCH2CHO)                  for HOCH2CHO, MACROOH, and MACROH
-   jx(ip_MACR)                      for MACR, NC4CHO, and LHC4ACCHO
-   jx(ip_MVK)                       for MVK and MVKOH
+   jx(ip_HOCH2CHO)                  for MACROOH and MACROH
+   jx(ip_MACR)                      for NC4CHO and LHC4ACCHO
+   jx(ip_MVK)                       for MVKOH
 - gas.tex:
   - new species added
   - MPAN corrected (C4 not C3)
@@ -193,7 +308,8 @@ CHANGES by Rolf Sander:
       time_t, see: http://en.wikipedia.org/wiki/Time_t
     - scan.y, scanutil.c and y.tab.c: "#include <malloc.h>" deleted
       because it is not necessary. "malloc" comes from <stdio.h>.
-    - new file Makefile.defs.Darwin for MAC OSX
+    - new file Makefile.defs.Darwin for MAC OSX with:
+      FLEX_LIB_DIR=/Developer/SDKs/MacOSX10.5.sdk/usr/lib
 
 ******************************************************************************
 
@@ -1084,6 +1200,10 @@ CHANGES by Rolf Sander:
 - heterogeneous chemistry from smeili
 - reaction numbers (not yet for halogen reactions)
 - updated rate constant for N2+O1D and for CO+OH
+
+- note added on 2010-03-17: gas.eqn was updated in this version,
+  probably with new MIM chemistry from RvK. For example, the coefficient
+  for ACETOL + hv was changed from 0.11 to 0.074
 
 ******************************************************************************
 

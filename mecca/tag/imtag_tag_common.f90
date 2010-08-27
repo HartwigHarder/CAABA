@@ -25,6 +25,10 @@ MODULE {%CMODEL}_tag_common
 
   IMPLICIT NONE
 
+! module and version info
+  CHARACTER(LEN=*), PARAMETER, PUBLIC :: modstr = '{%CMODEL}_tag'
+  CHARACTER(LEN=*), PARAMETER, PUBLIC :: modver = '1.4'
+
 ! inter-configuration molecules flow control and directions indices
   INTEGER, PARAMETER :: NFLDIR = {%QIFLDIR}
   REAL(dp)           :: flow(NFLDIR)

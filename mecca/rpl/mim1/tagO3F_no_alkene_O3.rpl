@@ -1,5 +1,7 @@
 // -*- kpp -*- kpp mode for emacs
 
+// Author: Sergey Gromov
+
 // Syntax of this replacement file is similar to kpp syntax, but...
 // - Only the commands "#REPLACE" and "#ENDREPLACE" are allowed.
 // - Comments must start with "//", curly braces ("{}") cannot be used here.

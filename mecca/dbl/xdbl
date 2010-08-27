@@ -15,7 +15,6 @@
 # --------------------------------------------------------------------------
 
 # paths are relative
-set bindir       = "../../../../../bin"          # batch files location
 set batchdir     = "../batch"          # batch files location
 set meccadir     = ".."                # where MECCA + equation/species files are located
 set f90smcl      = "../smcl"           # where f90-files should go to
@@ -25,11 +24,14 @@ set xtagdir      = "../tag"            # tagging directory (shared files !)
 set box2dbl      = "mecca/dbl"         # relative path from box to dbl
 set smcl2dbl     = "../dbl"            #        - " -       smcl to dbl
 set si2dbl       = "../mbm/caaba/mecca/dbl" #        - " -       si to dbl
+
+set bindir       = "../../../../../bin" # binaries location
+set toolsdir     = "../../../../tools" # tools location
 set fpc_call     = "fpc -l -viwnh -B"  # fpc compiler call
 set do_recompile = "false"             # set to "true" to recompile the executable(s)
 
 # detecting ECHAM5/MESSy
-if ( -d ../../../../smil ) then
+if ( -d ../../../../echam5 ) then
   set bm3d
 endif
 
@@ -59,13 +61,14 @@ endif
 
 setzero:
 
-echo ""
-echo "[ XDBL: script to double selected MECCA kinetic chemistry mechanism ]"
-echo "  (note: no aerosol-phase chemistry supported so far)"
-echo ""
+echo "Switching off doubling..."
+#echo ""
+#echo "[ XDBL: script to double selected MECCA kinetic chemistry mechanism ]"
+#echo "  (note: no aerosol-phase chemistry supported so far)"
+#echo ""
 
 # --------------------------------------------------------------------------
-echo "initializing configuration(s) setup..."
+#echo "initializing configuration(s) setup..."
 
 # linking mecca.eqn & mecca.spc to current folder
 ln -fs $meccadir/mecca.eqn ./mecca.eqn
@@ -74,7 +77,7 @@ ln -fs $meccadir/mecca.spc ./mecca.spc
 ln -fs $meccadir/gas.tex ./gas.tex
 
 # cleaning setup with default "empty" configuration
-rm -fv *.cfg *.kie *.log
+rm -f *.cfg *.kie *.log
 
 # linking configuration files from tag
 set cfgfiles = ($xtagdir/*.cfg $xtagdir/*.kie)
@@ -83,52 +86,40 @@ foreach cfgfile ($cfgfiles)
 end
 
 # cleaning files
-rm -fv *.log
-rm -fv messy_mecca_dbl*.f90 messy_mecca_dbl*.inc messy_mecca_dbl*.spc messy_mecca_dbl*.eqn messy_mecca_dbl*.tex
-rm -fv $f90box/messy_mecca_dbl*.f90 $f90box/messy_mecca_dbl*.inc
-rm -fv $f90smcl/messy_mecca_dbl*.f90 $f90smcl/messy_mecca_dbl*.inc
+rm -f *.log
+rm -f messy_mecca_dbl*.f90 messy_mecca_dbl*.inc messy_mecca_dbl*.spc messy_mecca_dbl*.eqn messy_mecca_dbl*.tex
+rm -f $f90box/messy_mecca_dbl*.f90 $f90box/messy_mecca_dbl*.inc
+rm -f $f90smcl/messy_mecca_dbl*.f90 $f90smcl/messy_mecca_dbl*.inc
 
 # default empty "zero" configuration
-cp -f  messy_mecca_dbl_box.f90-zero $f90box/messy_mecca_dbl_box.f90
-cp -f  messy_mecca_dbl_parameters.inc-zero messy_mecca_dbl_parameters.inc
-ln -fs --target-directory=$f90smcl $smcl2dbl/messy_mecca_dbl_parameters.inc
-ln -fs --target-directory=$f90box  $box2dbl/messy_mecca_dbl_parameters.inc
+cp -f messy_mecca_dbl_box.f90-zero $f90box/messy_mecca_dbl_box.f90
+cp -f messy_mecca_dbl_parameters.inc-zero messy_mecca_dbl_parameters.inc
+cd $f90smcl; ln -fs $smcl2dbl/messy_mecca_dbl_parameters.inc .; cd -
+cd $f90box;  ln -fs $box2dbl/messy_mecca_dbl_parameters.inc .;  cd -
 
 # in ECHAM5/MESSy setup
 if (${?bm3d}) then
-  rm -fv $f90si/messy_mecca_dbl*.f90 $f90si/messy_mecca_dbl*.inc
-  cp -f  messy_mecca_dbl_si.f90-zero $f90si/messy_mecca_dbl_si.f90
-  ln -fs --target-directory=$f90si $si2dbl/messy_mecca_dbl_parameters.inc
+  rm -f $f90si/messy_mecca_dbl*.f90 $f90si/messy_mecca_dbl*.inc
+  cp -f messy_mecca_dbl_si.f90-zero $f90si/messy_mecca_dbl_si.f90
+  cd $f90si; ln -fs $si2dbl/messy_mecca_dbl_parameters.inc .; cd -
 endif
 
-echo "done"
-echo ""
+#echo "done"
+#echo ""
 
 # just to initialize to zero configuration and exit
 if ( "$1" == "zero" ) exit 0
 
-# --------------------------------------------------------------------------
-if ("$do_recompile" == "true") then
-  echo "recompiling imdouble executable..."
-  echo "(see compile.log for details)"
-  rm ./imdouble.exe
-  $fpc_call imdouble -oimdouble.exe > compile.log
-  if ("$status" != "0") then
-    echo "not done"
-    echo "--- listing compile.log ---"
-    cat compile.log
-    exit 1
-  endif
-  echo "done"
-  echo ""
-endif
+# checking if imdouble tool is available
+source ${xtagdir}/xchecktool imdouble
+if ("$?" != "0") exit 1
 
 # --------------------------------------------------------------------------
 # SELECTION OF DESIRED CONFIGURATION(S)
 # --------------------------------------------------------------------------
 
 # invoking configuration selection script
-source ${xtagdir}/xselectcfg
+source ${xtagdir}/xselectcfg tag\*.cfg
 if ("$?" != "0") exit 1
 
 # --------------------------------------------------------------------------
@@ -147,8 +138,12 @@ if ("$do_dbl" == "true") then
   echo ">>> doubling with imdouble >>>"
   echo ""
 
-  $bindir/imdouble.exe mecca.spc mecca.eqn $cfglist | tee -a imdouble.log
+  ./imdouble.exe mecca.spc mecca.eqn gas.tex $cfglist | tee -a imdouble.log
   set exitstatus = "$status"
+
+  echo "----- list of warnings: -----"
+  grep \<\!\> imdouble.log
+  echo ""
 
   echo "exit status from imdouble is: $exitstatus"
   echo ""
@@ -158,6 +153,12 @@ if ("$do_dbl" == "true") then
   endif
 
   # ----- distributing files to the directories --------------------------------
+
+  # decapitalizing names of all produced files
+  set dblfiles = (messy_mecca_dbl*)
+  foreach dblfile ($dblfiles)
+    mv -f $dblfile `echo $dblfile | gawk '{print tolower($0)}'` >&! /dev/null
+  end
 
   # applying changes to mecca.eqn & .spc
   cat messy_mecca_dbl.eqn > $meccadir/mecca.eqn
@@ -188,15 +189,17 @@ if ("$do_dbl" == "true") then
     foreach ddir ($destdir)
       if ( "$fext" == "inc" ) then
         # linking include files to all dirs, not copying
-        ln -fs --target-directory=$f90smcl $smcl2dbl/$dblfile
-        ln -fs --target-directory=$f90box $box2dbl/$dblfile
-        if (${?bm3d}) ln -fs --target-directory=$f90si $si2dbl/$dblfile
+        cd $f90smcl; ln -fs $smcl2dbl/$dblfile .; cd -
+        cd $f90box;  ln -fs $box2dbl/$dblfile .;  cd -
+        if (${?bm3d}) then
+          cd $f90si; ln -fs $si2dbl/$dblfile .; cd -
+        endif  
       else
         # copying to destination, linking back to dbl
         if ("$destdir" != "") then
           if (-e $ddir/$dblfile) rm -f $ddir/$dblfile
           mv -f $dblfile $ddir/.
-          ln -s $ddir/$dblfile .
+          ln -fs $ddir/$dblfile .
           echo linking $dblfile from $ddir
         endif
       endif  
@@ -209,6 +212,30 @@ if ("$do_dbl" == "true") then
 endif
 
 # --------------------------------------------------------------------------
+# EXTENDED BUDGETING
+# --------------------------------------------------------------------------
+
+if (! ${?batch}) then
+  unset embud
+  echo ""
+  echo "Perform extended mechanism budgeting [y/n/q, default=n]?:"
+  set inputstring = "$<"
+
+  if ( "$inputstring" == "q" ) exit 1
+  if ( "$inputstring" == "y" ) set embud = ""
+else
+  set save_tagcfg = $tagcfg
+  set tagcfg = $embud
+endif
+
+if (${?embud}) source ./xembud
+
+if (${?batch}) then
+  set tagcfg = $save_tagcfg
+  unset sav_tagcfg
+endif
+
+# --------------------------------------------------------------------------
 # ALL DONE
 # --------------------------------------------------------------------------
 
@@ -217,3 +244,26 @@ unsetenv $cfglist
 echo ""
 echo "all done --> returning"
 echo ""
+exit 0
+
+
+
+
+
+
+# - THIS IS LEFT FROM THE PREVIOUS VERSION - please keep so far ------------
+# --------------------------------------------------------------------------
+if ("$do_recompile" == "true") then
+  echo "recompiling imdouble executable..."
+  echo "(see compile.log for details)"
+  rm ./imdouble.exe
+  $fpc_call imdouble -oimdouble.exe > compile.log
+  if ("$status" != "0") then
+    echo "not done"
+    echo "--- listing compile.log ---"
+    cat compile.log
+    exit 1
+  endif
+  echo "done"
+  echo ""
+endif

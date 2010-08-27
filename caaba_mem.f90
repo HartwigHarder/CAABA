@@ -1,4 +1,4 @@
-! Time-stamp: <2009-09-01 12:05:58 sander>
+! Time-stamp: <2010-08-16 12:01:00 sander>
 
 ! This file declares global variables for caaba
 
@@ -97,13 +97,14 @@ MODULE caaba_mem
   INTEGER  :: jval_clev  ! current pressure level in jval
 
   ! PHYS / CHEM
-  REAL(DP), DIMENSION(:), ALLOCATABLE :: C
+  REAL(DP), DIMENSION(:), ALLOCATABLE :: c
   REAL(DP) :: cair                ! concentration of air [mcl/cc]
   REAL(DP) :: temp   = 293._DP    ! temperature [K]
   REAL(DP) :: press  = 101325._DP ! pressure [Pa]
   REAL(DP) :: relhum = 0.81_DP    ! relative humidity [0-1], > 1 warning, > 1.1 error
   REAL(DP) :: spechum   ! specific humidity [water vapor(kg))/(air mass(kg)]
   REAL(DP) :: zmbl   = 1000._DP   ! boundary layer height [m]
+  REAL(DP) :: zmix   = 25._DP     ! ocean mixing height [m] http://en.wikipedia.org/wiki/Mixed_layer
 
 END MODULE caaba_mem
 

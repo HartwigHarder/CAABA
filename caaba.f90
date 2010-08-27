@@ -1,4 +1,4 @@
-! Time-stamp: <2010-03-11 16:50:30 sander>
+! Time-stamp: <2010-07-27 15:18:05 sander>
 
 ! CAABA = Chemistry As A Boxmodel Application
 
@@ -74,11 +74,12 @@ CONTAINS
     INTEGER, INTENT(IN)  :: iou        ! I/O unit
     ! local:
     CHARACTER(LEN=*), PARAMETER :: substr = 'caaba_read_nml'
-    INTEGER, PARAMETER :: MAX_SCENARIOS = 8
+    INTEGER, PARAMETER :: MAX_SCENARIOS = 9
     CHARACTER(LEN=12), PARAMETER, DIMENSION(MAX_SCENARIOS) :: &
       list_of_scenarios = (/ &
       '            ', 'FF_ANTARCTIC', 'FF_ARCTIC   ', 'FREE_TROP   ', &
-      'MBL         ', 'MIM2        ', 'OOMPH       ', 'STRATO      ' /)
+      'MBL         ', 'MIM2        ', 'OOMPH       ', 'STRATO      ', &
+      'LAB         ' /)
     LOGICAL :: l_init_scenario_ok     = .FALSE.
     LOGICAL :: l_photo_scenario_ok    = .FALSE.
     LOGICAL :: l_emission_scenario_ok = .FALSE.

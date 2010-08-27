@@ -20,11 +20,11 @@ DEFINE SYMBOL dsensi = 2 !data set number of first sensi (try `,RETURN=dsetnum`)
 IF `($nsensi) GT 0` THEN ! for PLOT/OVER
   REPEAT/range=1:($nsensi)/name=dnum ( \
     DEFINE SYMBOL dnum = `dnum` ; \ ! convert VARIABLE to SYMBOL
-    USE "($run($dnum))/caaba_mecca.nc" )
+    USE "($run($dnum))/caaba_mecca_rr.nc" )
 ENDIF
 ! base last because it must be the current data set
 !USE "($run0)_tracer_gp.nc"
-USE "($run0)/caaba_mecca.nc"
+USE "($run0)/caaba_mecca_rr.nc"
 DEFINE SYMBOL dbase = `($nsensi)+2`
 say base run = data set number ($dbase)
 
@@ -54,6 +54,7 @@ LET factor = conv
 !-------------------------------------------------------------------------------
 
 go _rxnrates
+!go _myrxnrates !qqq print only selected
 
 !-------------------------------------------------------------------------------
 

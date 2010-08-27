@@ -13,8 +13,8 @@
 !        R. Sander, Max-Planck Institute for Chemistry, Mainz, Germany
 ! 
 ! File                 : messy_mecca_kpp_Global.f90
-! Time                 : Tue Mar 16 16:04:25 2010
-! Working directory    : /home/sander/e2/messy_2.3zp_rs_mim2/messy/mbm/caaba/mecca
+! Time                 : Thu Aug 26 14:15:50 2010
+! Working directory    : /home/caaba/caaba_2.7b/mecca
 ! Equation file        : messy_mecca_kpp.kpp
 ! Output root filename : messy_mecca_kpp
 ! 
@@ -40,7 +40,7 @@ MODULE messy_mecca_kpp_Global
   REAL(kind=dp) :: FIX(NFIX)
 ! VAR, FIX are chunks of array C
       EQUIVALENCE( C(1),VAR(1) )
-      EQUIVALENCE( C(31),FIX(1) )
+      EQUIVALENCE( C(439),FIX(1) )
 ! RCONST - Rate constants (global)
   REAL(kind=dp) :: RCONST(NREACT)
 ! TIME - Current integration time
@@ -70,21 +70,21 @@ MODULE messy_mecca_kpp_Global
 
   ! MECCA info from xmecca:
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: &
-    timestamp            = 'xmecca was run on 2010-03-16 at 16:04:22 by sander', &
-    gas_spc_file         = '-rw------- 1 sander sander 18477 2010-03-16 13:54 gas.spc', &
-    aqueous_spc_file     = '-rw------- 1 sander sander 8371 2010-03-04 23:04 aqueous.spc', &
-    gas_eqn_file         = '-rw------- 1 sander sander 70375 2010-03-11 15:35 gas_mim2.eqn', &
-    aqueous_eqn_file     = '-rw------- 1 sander sander 55063 2010-03-04 20:41 aqueous.eqn', &
-    gas_spc_file_sum     = '49309    19', &
-    aqueous_spc_file_sum = '00803     9', &
-    gas_eqn_file_sum     = '39773    69', &
-    aqueous_eqn_file_sum = '61681    54', &
+    timestamp            = 'xmecca was run on 2010-08-26 at 14:15:43 by caaba', &
+    gas_spc_file         = '-rw------- 1 caaba caaba 18492 Mar 24 18:14 gas.spc', &
+    aqueous_spc_file     = '-rw------- 1 caaba caaba 8444 Apr 19 10:24 aqueous.spc', &
+    gas_eqn_file         = '-rw------- 1 caaba caaba 72094 Jul 20 14:03 gas.eqn', &
+    aqueous_eqn_file     = '-rw------- 1 caaba caaba 56776 Jul 13 16:29 aqueous.eqn', &
+    gas_spc_file_sum     = '05778    19', &
+    aqueous_spc_file_sum = '54945     9', &
+    gas_eqn_file_sum     = '52025    71', &
+    aqueous_eqn_file_sum = '12944    56', &
     rplfile              = '', &
-    wanted               = 'Tr && G && !C && !S && !Cl && !Br && !I && !Hg', &
+    wanted               = 'Tr && G && !S && !Cl && !Br && !I && !Hg', &
     diagtracfile         = '', &
-    rxnrates             = 'n', &
+    rxnrates             = 'y', &
     tagdbl               = 'n'
-  LOGICAL, PARAMETER :: REQ_MCFCT = .FALSE.
+  LOGICAL, PARAMETER :: REQ_MCFCT = .TRUE.
 
   ! from xmecca for aerosol:
   INTEGER, PARAMETER, PUBLIC :: APN = 1
@@ -132,6 +132,7 @@ MODULE messy_mecca_kpp_Global
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_HIO3_a      = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_SO2_a       = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_H2SO4_a     = 0
+  INTEGER, PUBLIC, DIMENSION(APN) :: ind_DMS_a       = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_DMSO_a      = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_Hg_a        = 0
   INTEGER, PUBLIC, DIMENSION(APN) :: ind_HgO_a       = 0
@@ -204,8 +205,10 @@ MODULE messy_mecca_kpp_Global
 
   ! from gas.eqn:
   REAL :: k_HO2_HO2, k_NO3_NO2, k_NO2_HO2, k_HNO3_OH, k_CH3OOH_OH, &
-          k_CH3CO3_NO2, k_PAN_M, k_ClO_ClO, k_BrO_NO2, k_I_NO2, k_DMS_OH
+          k_CH3CO3_NO2, k_PAN_M, k_ClO_ClO, k_BrO_NO2, k_I_NO2, k_DMS_OH, &
+          G7402a_yield
   REAL :: KRO2NO, KRO2HO2, KAPHO2, KAPNO, KRO2NO3, KNO3AL
+  REAL :: J_IC3H7NO3, J_ACETOL
   REAL(dp) :: RO2      ! sum of peroxy radicals
   REAL :: k_O3s ! mz_pj_20080812
   ! ALL PHASES:
@@ -230,7 +233,6 @@ MODULE messy_mecca_kpp_Global
   ! -------------------------------------------------------
   REAL(dp) :: cair    ! c(air) (wet) [mcl/cm^3]
   REAL(dp) :: press   ! pressure [Pa]
-  REAL     :: mcfct(NREACT) ! Monte-Carlo factor
 !KPPPP_DIRECTIVE vector variable definition end
   ! AEROSOL ONLY:
 !KPPPP_DIRECTIVE vector variable definition start
@@ -287,14 +289,20 @@ MODULE messy_mecca_kpp_Global
   LOGICAL, PARAMETER :: REQ_PHOTRAT = .TRUE.
   LOGICAL, PARAMETER :: REQ_AEROSOL = .FALSE.
 
+  ! from mcfct.awk:
+  INTEGER, PARAMETER :: MAX_MCEXP = 252
+!KPPPP_DIRECTIVE vector variable definition start
+  REAL :: mcexp(MAX_MCEXP) ! Monte-Carlo factor
+!KPPPP_DIRECTIVE vector variable definition end
+
   ! KPP info from xmecca:
   CHARACTER(LEN=*), PUBLIC, PARAMETER :: &
-    mecca_spc_file     = '-rw------- 1 sander sander 27226 2010-03-16 16:04 mecca.spc', &
-    mecca_eqn_file     = '-rw------- 1 sander sander 24935 2010-03-16 16:04 mecca.eqn', &
-    mecca_spc_file_sum = '52734    27', &
-    mecca_eqn_file_sum = '17546    25', &
+    mecca_spc_file     = '-rw------- 1 caaba caaba 43353 Aug 26 14:15 mecca.spc', &
+    mecca_eqn_file     = '-rw-r--r-- 1 caaba caaba 63279 Aug 26 14:15 mecca.eqn', &
+    mecca_spc_file_sum = '59066    43', &
+    mecca_eqn_file_sum = '40879    62', &
     kppoption          = 'k', &
-    KPP_HOME           = '/home/sander/e2/messy_2.3zp_rs_mim2/messy/tools/kpp', &
+    KPP_HOME           = '/home/caaba/caaba_2.7b/mecca/kpp', &
     KPP_version        = '2.2.1_rs5', &
     integr             = 'rosenbrock_posdef'
 

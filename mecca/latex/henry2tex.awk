@@ -3,12 +3,13 @@
 # Authors:
 #   Rolf Sander, Max-Planck-Institute, Mainz, Germany
 #
-# Time-stamp: <2008-02-13 13:16:54 sander>
+# Time-stamp: <2010-07-08 14:34:35 sander>
 #
-# henry2tex.awk transforms henry coefficients in messy_mecca_mbl.f90 into tex.
+# henry2tex.awk transforms Henry's law coefficients
+# in messy_cmn_gasaq.f90 into tex.
 #
 # usage:
-# setenv LC_COLLATE C ; gawk -f henry2tex.awk ../smcl/messy_mecca_aero.f90
+# setenv LC_ALL C ; gawk -f henry2tex.awk ../../messy_cmn_gasaq.f90
 #
 # ----------------------------------------------------------------------------
 
@@ -30,11 +31,11 @@ BEGIN {
 
 {
   # does current line define a Henry's law coefficient?
-  if (match($0, "^[^!]*zhenry.*= *henry_T") != 0) {
+  if (match($0, "^[^!]*CALL add_henry(.*)") != 0) {
     # printf "KH definition = %s\n", $0 >> logfile
 
     # store species' name in species
-    if (match($0, "ind_([A-Za-z0-9]+)", arr0) != 0) {
+    if (match($0, "'([A-Za-z0-9]+)'", arr0) != 0) {
       basespecies = arr0[1]
       species = "\\kpp{" arr0[1] "}"
     } else {
@@ -45,7 +46,7 @@ BEGIN {
     printf "species = %s\n", basespecies >> logfile
 
     # store values in KH and minDHR
-    if (match($0, "henry_T\\((.*),(.*), *ztemp *\\)", arr) != 0) {
+    if (match($0, "add_henry\\('.*',(.*),(.*)\\)", arr) != 0) {
       KH     = arr[1]
       minDHR = arr[2]
     } else {
@@ -54,6 +55,8 @@ BEGIN {
       errorstring = sprintf("%s\nERROR: KH and minDHR not found:\n  %s",
         errorstring, $0)
     }
+    # insert default values:
+    gsub("HUGE_DP", "$\\infty$", KH)
     # remove precision (_dp) from strings:
     gsub("_[dD][pP]", "", KH)
     gsub("_[dD][pP]", "", minDHR)

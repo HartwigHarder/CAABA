@@ -146,7 +146,7 @@ MODULE {%CMODEL}_{%TAG}
   PUBLIC {%TAG}_integrate
   PUBLIC {%TAG}_calctotals
   PUBLIC {%TAG}_correct2reg
-  PUBLIC {%TAG}_correct2iso
+  PUBLIC {%TAG}_correct2tag
 
 ! =============================================================================
 
@@ -1002,6 +1002,14 @@ CONTAINS
     CHARACTER(100) :: specs
     REAL(dp)       :: tot, corr
     
+#ifdef CLASSES_1
+  ! in case one class is defined, quitting
+#ifdef DEBUG
+    print *,'{%TAG}_correct2tag: no correction performed (one class)'
+#endif
+    return
+#endif
+
     specs = ""
     {%TAG}_NCOR2R = 0
 
@@ -1043,7 +1051,7 @@ CONTAINS
   
 ! correction of "regular" species budget to the total isotopologues budget
 
-  SUBROUTINE {%TAG}_correct2iso(C)
+  SUBROUTINE {%TAG}_correct2tag(C)
 
     IMPLICIT NONE
 
@@ -1052,13 +1060,21 @@ CONTAINS
 
     INTEGER  :: i
 
+#ifdef CLASSES_1
+  ! in case one class is defined, quitting
+#ifdef DEBUG
+    print *,'{%TAG}_correct2tag: no correction performed (one class)'
+#endif
+    return
+#endif
+
     C({%RTIND}(:,0)) = SUM(ISO{%A}(:,:),DIM=2)
 
 #ifdef DEBUG
-    print *,'{%TAG}_correct2iso: working'
+    print *,'{%TAG}_correct2tag: working'
 #endif 
 
-  END SUBROUTINE {%TAG}_correct2iso
+  END SUBROUTINE {%TAG}_correct2tag
 
 
 

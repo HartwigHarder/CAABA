@@ -1,4 +1,4 @@
-! Time-stamp: <2009-01-08 09:57:31 sander>
+! Time-stamp: <2010-04-09 14:40:53 sander>
 
 ! This module controls the MESSy submodel CALLs
 
@@ -41,10 +41,11 @@ CONTAINS
 
     USE caaba_mem,                ONLY: model_time, model_end, runtime, &
                                         time_string, time0_jul, &
-                                        t0year, t0month, t0day, t0hour, t0min, &
-                                        t0sec, firstjan_jul
+                                        t0year, t0month, t0day, t0hour, &
+                                        t0min, t0sec, firstjan_jul
     USE messy_main_constants_mem, ONLY: TINY_DP, HLINE1, DP
     USE messy_main_timer,         ONLY: gregor2julian, eval_time_str
+    USE messy_cmn_gasaq,          ONLY: cmn_gasaq_initialize
 
     USE messy_jval_box,           ONLY:    jval_init
     USE messy_mecca_box,          ONLY:   mecca_init
@@ -56,10 +57,21 @@ CONTAINS
 #endif
 
     IMPLICIT NONE
-
     INTRINSIC :: ABS, TRIM
-
     INTEGER :: status
+
+    !-------------------------------------------------------------------------
+
+    WRITE(*,*) HLINE1
+    CALL cmn_gasaq_initialize(status)
+    IF (status==0) THEN
+      WRITE(*,*) 'cmn_gasaq_initialize finished successfully'
+    ELSE
+      WRITE(*,*) 'ERROR: cmn_gasaq_initialize finished with status <> 0'
+      STOP
+    ENDIF
+
+    !-------------------------------------------------------------------------
 
     ! special requirements:
     ! - traject_init must be called first to have physical boundary conditions
@@ -72,6 +84,8 @@ CONTAINS
 #ifdef E4CHEM
     IF (USE_E4CHEM)  CALL  e4chem_init
 #endif
+
+    !-------------------------------------------------------------------------
 
     WRITE(*,*) HLINE1
     WRITE(*,*) 'Input/Output time unit and origin: ', TRIM(time_string)

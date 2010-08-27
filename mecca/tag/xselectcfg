@@ -1,20 +1,29 @@
+#! /bin/tcsh -f
+
 # --------------------------------------------------------------------------
 # SELECTION OF DESIRED CONFIGURATION(S)
 # --------------------------------------------------------------------------
 
+# set nonomatch
 set letters = (a b d e f g h i j k l m n p r s t u v w x y z)
 
 echo "please, choose the set of tagging configurations from:"
 echo "[one or more letters (no spaces!), quit=q]:"
 
-# list of configurations foubd in the current directory
+if ( "$1" == "" ) then
+  set crit = \*.cfg
+else
+  set crit = $1
+endif
+
+# list of configurations found in the current directory
 set cn = "0"
-set cfgfiles = (*.cfg)
+set cfgfiles = ($crit)
 set cfgletters = ""
 foreach i ($cfgfiles)
   @ cn=$cn + 1
-  set desc = `grep "###" $cfgfiles[$cn] | sed 's|###||g' | sed 's|;||g'`
-  set ltmp = `grep "+++" $cfgfiles[$cn] | sed 's|+++||g' | sed 's|;||g'`
+  set desc = `grep "#N#" $cfgfiles[$cn] | sed 's|#N#||g' | sed 's|;||g'`
+  set ltmp = `grep "#K#" $cfgfiles[$cn] | sed 's|#K#||g' | sed 's|;||g'`
   if ("$desc" == "") set desc = "<no description found>"
   if ("$ltmp" == "") set ltmp = $letters[$cn]
   set cfgletters = ($cfgletters $ltmp)
@@ -25,7 +34,7 @@ end
 if (! ${?batch}) then
   set inputstring = "$<"
 else
-  echo "selected configuration from batch (tagcfg) is: $tagcfg"
+  echo "selected configuration from batch is: $tagcfg"
   echo ""
   set inputstring = $tagcfg
 endif
@@ -55,5 +64,5 @@ if ("$cfglist" == "") then
   exit 1
 endif
 
-echo "[ selected configurations: $cfglist ]"
+echo "[ selected configuration(s): $cfglist ]"
 echo ""

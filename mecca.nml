@@ -1,4 +1,4 @@
-! -*- f90 -*- Time-stamp: <2009-01-12 17:27:33 sander>
+! -*- f90 -*- Time-stamp: <2010-07-14 12:59:20 sander>
 
 &CTRL_KPP
 ! icntrl(3) = solver-specific method:
@@ -28,7 +28,7 @@
 !l_dbl = T        ! execute doubling code
 
 ! Monte-Carlo factor seed:
- mcfct_seed = 1086686980
+ mcexp_seed = 1748989111
 
 /
 
@@ -69,7 +69,7 @@ aerosurf_clim = 'offlem', 'aerosurf_clim_A_CLIM'
 
 ! aerosol submodel and modes:
 !asm(3) = 'm7',   '2,3,4'
-!asm(4) = 'made', '  41,  62, 13,14,5, 37, 49' !qqq only for testing
+!asm(4) = 'made', '  41,  62, 13,14,5, 37, 49' ! dummy values for testing only
 ! aerosol chemistry coupling (submodel to calculate rate coefficients):
 ! (0 = aerosol surface climatology)
 asm_cpl = 0

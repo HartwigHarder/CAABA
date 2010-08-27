@@ -255,6 +255,7 @@ INTEGER :: idt_IBr_a01     = 0
 INTEGER :: idt_HIO3_a01    = 0
 INTEGER :: idt_SO2_a01     = 0
 INTEGER :: idt_H2SO4_a01   = 0
+INTEGER :: idt_DMS_a01     = 0
 INTEGER :: idt_DMSO_a01    = 0
 INTEGER :: idt_Hg_a01      = 0
 INTEGER :: idt_HgO_a01     = 0

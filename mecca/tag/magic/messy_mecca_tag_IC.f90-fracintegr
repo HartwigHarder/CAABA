@@ -118,7 +118,7 @@ MODULE messy_mecca_tag_IC
   INTEGER, PARAMETER :: tag_IC_C2H5OOH = 13
   INTEGER, PARAMETER :: tag_IC_CH3CHO = 14
   INTEGER, PARAMETER :: tag_IC_CH3CO2H = 15
-  INTEGER, PARAMETER :: tag_IC_CH3CO3 = 16
+  INTEGER, PARAMETER :: tag_IC_PA = 16
   INTEGER, PARAMETER :: tag_IC_CH3CO3H = 17
   INTEGER, PARAMETER :: tag_IC_NACA = 18
   INTEGER, PARAMETER :: tag_IC_PAN = 19
@@ -181,7 +181,7 @@ MODULE messy_mecca_tag_IC
   INTEGER, PARAMETER :: RTCIND(NTCSPEC) = &
     (/ ind_CH4, ind_CH3OH, ind_CH3O2, ind_CH3OOH, ind_HCHO, ind_CO, ind_HCOOH, &
        ind_CO2, ind_C2H6, ind_C2H4, ind_C2H2, ind_C2H5O2, ind_C2H5OOH, &
-       ind_CH3CHO, ind_CH3CO2H, ind_CH3CO3, ind_CH3CO3H, ind_NACA, ind_PAN, &
+       ind_CH3CHO, ind_CH3CO2H, ind_PA, ind_CH3CO3H, ind_NACA, ind_PAN, &
        ind_C3H8, ind_C3H6, ind_IC3H7O2, ind_IC3H7OOH, ind_LHOC3H6O2, ind_LHOC3H6OOH, &
        ind_CH3COCH3, ind_CH3COCH2O2, ind_HYPERACET, ind_ACETOL, ind_MGLYOX, &
        ind_MPAN, ind_IC3H7NO3, ind_NC4H10, ind_LC4H9O2, ind_LC4H9OOH, ind_MVK, &
@@ -249,7 +249,7 @@ MODULE messy_mecca_tag_IC
   INTEGER, PARAMETER, PRIVATE :: &
     CH4_sink = 1, C3H6_CH4 = 2, CH3OH_sink = 3, CH3O2_CH3OH = 4, &
     C3H6_CH3OH = 5, ISO2_CH3OH = 6, CH3O2_sink = 7, CH4_CH3O2 = 8, &
-    CH3OOH_CH3O2 = 9, CH3CO2H_CH3O2 = 10, CH3CO3_CH3O2 = 11, C2H2_CH3O2 = 12, &
+    CH3OOH_CH3O2 = 9, CH3CO2H_CH3O2 = 10, PA_CH3O2 = 11, C2H2_CH3O2 = 12, &
     C3H6_CH3O2 = 13, C5H8_CH3O2 = 14, DMSO_CH3O2 = 15, CH3SO2_CH3O2 = 16, &
     CH3CHO_CH3O2 = 17, CH3CO3H_CH3O2 = 18, PAN_CH3O2 = 19, CH3COCH3_CH3O2 = 20, &
     CH3Cl_CH3O2 = 21, CH3Br_CH3O2 = 22, CH3OOH_sink = 23, &
@@ -263,7 +263,7 @@ MODULE messy_mecca_tag_IC
     MVK_CO = 52, MVKO2_CO = 53, C5H8_CO = 54, CO2_CO = 55, CH4_CO = 56, &
     CH3CHO_CO = 57, MVKOOH_CO = 58, HCOOH_sink = 59, C2H4_HCOOH = 60, &
     C3H6_HCOOH = 61, MVK_HCOOH = 62, C5H8_HCOOH = 63, CO2_sink = 64, &
-    CO_CO2 = 65, CH3CO2H_CO2 = 66, CH3CO3_CO2 = 67, PAN_CO2 = 68, &
+    CO_CO2 = 65, CH3CO2H_CO2 = 66, PA_CO2 = 67, PAN_CO2 = 68, &
     C2H6_sink = 69, C2H4_sink = 70, C2H2_sink = 71, C2H5O2_sink = 72, &
     C2H6_C2H5O2 = 73, C2H5OOH_C2H5O2 = 74, C3H8_C2H5O2 = 75, C3H6_C2H5O2 = 76, &
     LC4H9O2_C2H5O2 = 77, LC4H9OOH_C2H5O2 = 78, MEK_C2H5O2 = 79, LC4H9NO3_C2H5O2 = 80, &
@@ -271,13 +271,13 @@ MODULE messy_mecca_tag_IC
     C2H5OOH_CH3CHO = 85, C3H6_CH3CHO = 86, LHOC3H6O2_CH3CHO = 87, &
     LC4H9O2_CH3CHO = 88, LMEKO2_CH3CHO = 89, LC4H9OOH_CH3CHO = 90, &
     LMEKOOH_CH3CHO = 91, LC4H9NO3_CH3CHO = 92, CH3CO2H_sink = 93, &
-    CH3CO3_CH3CO2H = 94, CH3CO3_sink = 95, CH3CHO_CH3CO3 = 96, CH3CO3H_CH3CO3 = 97, &
-    PAN_CH3CO3 = 98, C3H6_CH3CO3 = 99, CH3COCH2O2_CH3CO3 = 100, MGLYOX_CH3CO3 = 101, &
-    MVK_CH3CO3 = 102, MVKO2_CH3CO3 = 103, LMEKO2_CH3CO3 = 104, C5H8_CH3CO3 = 105, &
-    CH3COCH3_CH3CO3 = 106, ACETOL_CH3CO3 = 107, HYPERACET_CH3CO3 = 108, MVKOOH_CH3CO3 = 109, &
-    MEK_CH3CO3 = 110, LMEKOOH_CH3CO3 = 111, BIACET_CH3CO3 = 112, CH3CO3H_sink = 113, &
-    CH3CO3_CH3CO3H = 114, NACA_sink = 115, ISON_NACA = 116, PAN_sink = 117, &
-    CH3CO3_PAN = 118, C3H8_sink = 119, C3H6_sink = 120, IC3H7O2_sink = 121, &
+    PA_CH3CO2H = 94, PA_sink = 95, CH3CHO_PA = 96, CH3CO3H_PA = 97, &
+    PAN_PA = 98, C3H6_PA = 99, CH3COCH2O2_PA = 100, MGLYOX_PA = 101, &
+    MVK_PA = 102, MVKO2_PA = 103, LMEKO2_PA = 104, C5H8_PA = 105, &
+    CH3COCH3_PA = 106, ACETOL_PA = 107, HYPERACET_PA = 108, MVKOOH_PA = 109, &
+    MEK_PA = 110, LMEKOOH_PA = 111, BIACET_PA = 112, CH3CO3H_sink = 113, &
+    PA_CH3CO3H = 114, NACA_sink = 115, ISON_NACA = 116, PAN_sink = 117, &
+    PA_PAN = 118, C3H8_sink = 119, C3H6_sink = 120, IC3H7O2_sink = 121, &
     C3H8_IC3H7O2 = 122, IC3H7OOH_IC3H7O2 = 123, IC3H7OOH_sink = 124, IC3H7O2_IC3H7OOH = 125, &
     LHOC3H6O2_sink = 126, C2H4_LHOC3H6O2 = 127, C3H6_LHOC3H6O2 = 128, &
     LHOC3H6OOH_LHOC3H6O2 = 129, LHOC3H6OOH_sink = 130, LHOC3H6O2_LHOC3H6OOH = 131, &
@@ -464,7 +464,7 @@ CONTAINS
       C(ind_PTG6400) )
     flow(CH3OOH_CH3O2) = ( 0.7 * C(ind_PTG4107) )
     flow(CH3CO2H_CH3O2) = ( C(ind_PTG4210) )
-    flow(CH3CO3_CH3O2) = ( C(ind_PTG4212) + &
+    flow(PA_CH3O2) = ( C(ind_PTG4212) + &
       C(ind_PTG4214) + C(ind_PTG4215a) + C(ind_PTG4216) + &
       2.0 * C(ind_PTG4217) )
     flow(C2H2_CH3O2) = ( C(ind_PTG4222) )
@@ -557,7 +557,7 @@ CONTAINS
     flow(CO2_sink) = ( C(ind_PTJ4102) )
     flow(CO_CO2) = ( C(ind_PTG4110) )
     flow(CH3CO2H_CO2) = ( C(ind_PTG4210) )
-    flow(CH3CO3_CO2) = ( C(ind_PTG4215a) + &
+    flow(PA_CO2) = ( C(ind_PTG4215a) + &
       C(ind_PTG4216) + &
       2.0 * C(ind_PTG4217) )
     flow(PAN_CO2) = ( 0.4 * C(ind_PTJ4204) )
@@ -611,43 +611,43 @@ CONTAINS
 
   ! ----- IC: CH3CO2H -----
     flow(CH3CO2H_sink) = ( C(ind_PTG4210) )
-    flow(CH3CO3_CH3CO2H) = ( C(ind_PTG4211b) + &
+    flow(PA_CH3CO2H) = ( C(ind_PTG4211b) + &
       C(ind_PTG4215b) + &
       C(ind_PTG4216) )
 
   ! ----- IC: CH3CO3 -----
-    flow(CH3CO3_sink) = ( C(ind_PTG4211a) + &
+    flow(PA_sink) = ( C(ind_PTG4211a) + &
       C(ind_PTG4211b) + C(ind_PTG4212) + C(ind_PTG4213) + C(ind_PTG4214) + &
       C(ind_PTG4215a) + C(ind_PTG4215b) + C(ind_PTG4216) + &
       2.00_dp * C(ind_PTG4217) )
-    flow(CH3CHO_CH3CO3) = ( C(ind_PTG4208) + &
+    flow(CH3CHO_PA) = ( C(ind_PTG4208) + &
       C(ind_PTG4209) )
-    flow(CH3CO3H_CH3CO3) = ( C(ind_PTG4218) )
-    flow(PAN_CH3CO3) = ( C(ind_PTG4221) + &
+    flow(CH3CO3H_PA) = ( C(ind_PTG4218) )
+    flow(PAN_PA) = ( C(ind_PTG4221) + &
       0.6 * C(ind_PTJ4204) )
-    flow(C3H6_CH3CO3) = ( 0.23 * C(ind_PTG4301) )
-    flow(CH3COCH2O2_CH3CO3) = ( C(ind_PTG4313) + &
+    flow(C3H6_PA) = ( 0.23 * C(ind_PTG4301) )
+    flow(CH3COCH2O2_PA) = ( C(ind_PTG4313) + &
       C(ind_PTG4314) )
-    flow(MGLYOX_CH3CO3) = ( C(ind_PTG4317) + &
+    flow(MGLYOX_PA) = ( C(ind_PTG4317) + &
       C(ind_PTJ4303) )
-    flow(MVK_CH3CO3) = ( 0.1 * C(ind_PTG4405) + &
+    flow(MVK_PA) = ( 0.1 * C(ind_PTG4405) + &
       C(ind_PTJ4401) )
-    flow(MVKO2_CH3CO3) = ( 0.25 * C(ind_PTG4408) + &
+    flow(MVKO2_PA) = ( 0.25 * C(ind_PTG4408) + &
       C(ind_PTG4410) )
-    flow(LMEKO2_CH3CO3) = ( 0.985 * C(ind_PTG4415) )
-    flow(C5H8_CH3CO3) = ( 0.1 * C(ind_PTG4500) )
-    flow(CH3COCH3_CH3CO3) = ( C(ind_PTJ4301) )
-    flow(ACETOL_CH3CO3) = ( C(ind_PTJ4302) )
-    flow(HYPERACET_CH3CO3) = ( C(ind_PTJ4304) )
-    flow(MVKOOH_CH3CO3) = ( 0.25 * C(ind_PTJ4402) )
-    flow(MEK_CH3CO3) = ( C(ind_PTJ4403) )
-    flow(LMEKOOH_CH3CO3) = ( C(ind_PTJ4404) )
-    flow(BIACET_CH3CO3) = ( 2.0 * C(ind_PTJ4405) )
+    flow(LMEKO2_PA) = ( 0.985 * C(ind_PTG4415) )
+    flow(C5H8_PA) = ( 0.1 * C(ind_PTG4500) )
+    flow(CH3COCH3_PA) = ( C(ind_PTJ4301) )
+    flow(ACETOL_PA) = ( C(ind_PTJ4302) )
+    flow(HYPERACET_PA) = ( C(ind_PTJ4304) )
+    flow(MVKOOH_PA) = ( 0.25 * C(ind_PTJ4402) )
+    flow(MEK_PA) = ( C(ind_PTJ4403) )
+    flow(LMEKOOH_PA) = ( C(ind_PTJ4404) )
+    flow(BIACET_PA) = ( 2.0 * C(ind_PTJ4405) )
 
   ! ----- IC: CH3CO3H -----
     flow(CH3CO3H_sink) = ( C(ind_PTG4218) + &
       C(ind_PTJ4202) )
-    flow(CH3CO3_CH3CO3H) = ( C(ind_PTG4211a) )
+    flow(PA_CH3CO3H) = ( C(ind_PTG4211a) )
 
   ! ----- IC: NACA -----
     flow(NACA_sink) = ( C(ind_PTG4219) + &
@@ -658,7 +658,7 @@ CONTAINS
     flow(PAN_sink) = ( C(ind_PTG4220) + &
       C(ind_PTG4221) + &
       C(ind_PTJ4204) )
-    flow(CH3CO3_PAN) = ( C(ind_PTG4213) )
+    flow(PA_PAN) = ( C(ind_PTG4213) )
 
   ! ----- IC: C3H8 -----
     flow(C3H8_sink) = ( C(ind_PTG4300) )
@@ -1349,7 +1349,7 @@ PRINT *,steps
         +   F12C(tag_IC_CH4) * ( flow(CH4_CH3O2) )  &
         + F12C(tag_IC_CH3OOH) * ( flow(CH3OOH_CH3O2) )  &
         + F12C(tag_IC_CH3CO2H) * ( flow(CH3CO2H_CH3O2) )  &
-        +    F12C(tag_IC_CH3CO3) * ( flow(CH3CO3_CH3O2) )  &
+        +    F12C(tag_IC_PA) * ( flow(PA_CH3O2) )  &
         +  F12C(tag_IC_C2H2) * ( flow(C2H2_CH3O2) )  &
         +  F12C(tag_IC_C3H6) * ( flow(C3H6_CH3O2) )  &
         +  F12C(tag_IC_C5H8) * ( flow(C5H8_CH3O2) )  &
@@ -1420,7 +1420,7 @@ PRINT *,steps
         -   F12C(tag_IC_CO2) * ( flow(CO2_sink) )  &
         +    F12C(tag_IC_CO) * ( flow(CO_CO2) )  &
         + F12C(tag_IC_CH3CO2H) * ( flow(CH3CO2H_CO2) )  &
-        +    F12C(tag_IC_CH3CO3) * ( flow(CH3CO3_CO2) )  &
+        +    F12C(tag_IC_PA) * ( flow(PA_CO2) )  &
         +   F12C(tag_IC_PAN) * ( flow(PAN_CO2) ) )
 
       ! ----- C2H6 -----
@@ -1468,33 +1468,33 @@ PRINT *,steps
       ! ----- CH3CO2H -----
       IDO(tag_IC_CH3CO2H,1) = ( &
         - F12C(tag_IC_CH3CO2H) * ( flow(CH3CO2H_sink) )  &
-        +    F12C(tag_IC_CH3CO3) * ( flow(CH3CO3_CH3CO2H) ) )
+        +    F12C(tag_IC_PA) * ( flow(PA_CH3CO2H) ) )
 
       ! ----- CH3CO3 -----
-      IDO(tag_IC_CH3CO3,1) = ( &
-        -    F12C(tag_IC_CH3CO3) * ( flow(CH3CO3_sink) )  &
-        + F12C(tag_IC_CH3CHO) * ( flow(CH3CHO_CH3CO3) )  &
-        +   F12C(tag_IC_CH3CO3H) * ( flow(CH3CO3H_CH3CO3) )  &
-        +   F12C(tag_IC_PAN) * ( flow(PAN_CH3CO3) )  &
-        +  F12C(tag_IC_C3H6) * ( flow(C3H6_CH3CO3) )  &
-        + F12C(tag_IC_CH3COCH2O2) * ( flow(CH3COCH2O2_CH3CO3) )  &
-        + F12C(tag_IC_MGLYOX) * ( flow(MGLYOX_CH3CO3) )  &
-        +   F12C(tag_IC_MVK) * ( flow(MVK_CH3CO3) )  &
-        + F12C(tag_IC_MVKO2) * ( flow(MVKO2_CH3CO3) )  &
-        + F12C(tag_IC_LMEKO2) * ( flow(LMEKO2_CH3CO3) )  &
-        +  F12C(tag_IC_C5H8) * ( flow(C5H8_CH3CO3) )  &
-        + F12C(tag_IC_CH3COCH3) * ( flow(CH3COCH3_CH3CO3) )  &
-        + F12C(tag_IC_ACETOL) * ( flow(ACETOL_CH3CO3) )  &
-        + F12C(tag_IC_HYPERACET) * ( flow(HYPERACET_CH3CO3) )  &
-        + F12C(tag_IC_MVKOOH) * ( flow(MVKOOH_CH3CO3) )  &
-        +   F12C(tag_IC_MEK) * ( flow(MEK_CH3CO3) )  &
-        + F12C(tag_IC_LMEKOOH) * ( flow(LMEKOOH_CH3CO3) )  &
-        + F12C(tag_IC_BIACET) * ( flow(BIACET_CH3CO3) ) )
+      IDO(tag_IC_PA,1) = ( &
+        -    F12C(tag_IC_PA) * ( flow(PA_sink) )  &
+        + F12C(tag_IC_CH3CHO) * ( flow(CH3CHO_PA) )  &
+        +   F12C(tag_IC_CH3CO3H) * ( flow(CH3CO3H_PA) )  &
+        +   F12C(tag_IC_PAN) * ( flow(PAN_PA) )  &
+        +  F12C(tag_IC_C3H6) * ( flow(C3H6_PA) )  &
+        + F12C(tag_IC_CH3COCH2O2) * ( flow(CH3COCH2O2_PA) )  &
+        + F12C(tag_IC_MGLYOX) * ( flow(MGLYOX_PA) )  &
+        +   F12C(tag_IC_MVK) * ( flow(MVK_PA) )  &
+        + F12C(tag_IC_MVKO2) * ( flow(MVKO2_PA) )  &
+        + F12C(tag_IC_LMEKO2) * ( flow(LMEKO2_PA) )  &
+        +  F12C(tag_IC_C5H8) * ( flow(C5H8_PA) )  &
+        + F12C(tag_IC_CH3COCH3) * ( flow(CH3COCH3_PA) )  &
+        + F12C(tag_IC_ACETOL) * ( flow(ACETOL_PA) )  &
+        + F12C(tag_IC_HYPERACET) * ( flow(HYPERACET_PA) )  &
+        + F12C(tag_IC_MVKOOH) * ( flow(MVKOOH_PA) )  &
+        +   F12C(tag_IC_MEK) * ( flow(MEK_PA) )  &
+        + F12C(tag_IC_LMEKOOH) * ( flow(LMEKOOH_PA) )  &
+        + F12C(tag_IC_BIACET) * ( flow(BIACET_PA) ) )
 
       ! ----- CH3CO3H -----
       IDO(tag_IC_CH3CO3H,1) = ( &
         -   F12C(tag_IC_CH3CO3H) * ( flow(CH3CO3H_sink) )  &
-        +    F12C(tag_IC_CH3CO3) * ( flow(CH3CO3_CH3CO3H) ) )
+        +    F12C(tag_IC_PA) * ( flow(PA_CH3CO3H) ) )
 
       ! ----- NACA -----
       IDO(tag_IC_NACA,1) = ( &
@@ -1504,7 +1504,7 @@ PRINT *,steps
       ! ----- PAN -----
       IDO(tag_IC_PAN,1) = ( &
         -   F12C(tag_IC_PAN) * ( flow(PAN_sink) )  &
-        +    F12C(tag_IC_CH3CO3) * ( flow(CH3CO3_PAN) ) )
+        +    F12C(tag_IC_PA) * ( flow(PA_PAN) ) )
 
       ! ----- C3H8 -----
       IDO(tag_IC_C3H8,1) = ( &
@@ -1754,7 +1754,7 @@ PRINT *,steps
         +   F13C(tag_IC_CH4) * ( flow(CH4_CH3O2) )  &
         + F13C(tag_IC_CH3OOH) * ( flow(CH3OOH_CH3O2) )  &
         + F13C(tag_IC_CH3CO2H) * ( flow(CH3CO2H_CH3O2) )  &
-        +    F13C(tag_IC_CH3CO3) * ( flow(CH3CO3_CH3O2) )  &
+        +    F13C(tag_IC_PA) * ( flow(PA_CH3O2) )  &
         +  F13C(tag_IC_C2H2) * ( flow(C2H2_CH3O2) )  &
         +  F13C(tag_IC_C3H6) * ( flow(C3H6_CH3O2) )  &
         +  F13C(tag_IC_C5H8) * ( flow(C5H8_CH3O2) )  &
@@ -1825,7 +1825,7 @@ PRINT *,steps
         -   F13C(tag_IC_CO2) * ( flow(CO2_sink) )  &
         +    F13C(tag_IC_CO) * ( flow(CO_CO2) )  &
         + F13C(tag_IC_CH3CO2H) * ( flow(CH3CO2H_CO2) )  &
-        +    F13C(tag_IC_CH3CO3) * ( flow(CH3CO3_CO2) )  &
+        +    F13C(tag_IC_PA) * ( flow(PA_CO2) )  &
         +   F13C(tag_IC_PAN) * ( flow(PAN_CO2) ) )
 
       ! ----- C2H6 -----
@@ -1873,33 +1873,33 @@ PRINT *,steps
       ! ----- CH3CO2H -----
       IDO(tag_IC_CH3CO2H,2) = ( &
         - F13C(tag_IC_CH3CO2H) * ( flow(CH3CO2H_sink) )  &
-        +    F13C(tag_IC_CH3CO3) * ( flow(CH3CO3_CH3CO2H) ) )
+        +    F13C(tag_IC_PA) * ( flow(PA_CH3CO2H) ) )
 
       ! ----- CH3CO3 -----
-      IDO(tag_IC_CH3CO3,2) = ( &
-        -    F13C(tag_IC_CH3CO3) * ( flow(CH3CO3_sink) )  &
-        + F13C(tag_IC_CH3CHO) * ( flow(CH3CHO_CH3CO3) )  &
-        +   F13C(tag_IC_CH3CO3H) * ( flow(CH3CO3H_CH3CO3) )  &
-        +   F13C(tag_IC_PAN) * ( flow(PAN_CH3CO3) )  &
-        +  F13C(tag_IC_C3H6) * ( flow(C3H6_CH3CO3) )  &
-        + F13C(tag_IC_CH3COCH2O2) * ( flow(CH3COCH2O2_CH3CO3) )  &
-        + F13C(tag_IC_MGLYOX) * ( flow(MGLYOX_CH3CO3) )  &
-        +   F13C(tag_IC_MVK) * ( flow(MVK_CH3CO3) )  &
-        + F13C(tag_IC_MVKO2) * ( flow(MVKO2_CH3CO3) )  &
-        + F13C(tag_IC_LMEKO2) * ( flow(LMEKO2_CH3CO3) )  &
-        +  F13C(tag_IC_C5H8) * ( flow(C5H8_CH3CO3) )  &
-        + F13C(tag_IC_CH3COCH3) * ( flow(CH3COCH3_CH3CO3) )  &
-        + F13C(tag_IC_ACETOL) * ( flow(ACETOL_CH3CO3) )  &
-        + F13C(tag_IC_HYPERACET) * ( flow(HYPERACET_CH3CO3) )  &
-        + F13C(tag_IC_MVKOOH) * ( flow(MVKOOH_CH3CO3) )  &
-        +   F13C(tag_IC_MEK) * ( flow(MEK_CH3CO3) )  &
-        + F13C(tag_IC_LMEKOOH) * ( flow(LMEKOOH_CH3CO3) )  &
-        + F13C(tag_IC_BIACET) * ( flow(BIACET_CH3CO3) ) )
+      IDO(tag_IC_PA,2) = ( &
+        -    F13C(tag_IC_PA) * ( flow(PA_sink) )  &
+        + F13C(tag_IC_CH3CHO) * ( flow(CH3CHO_PA) )  &
+        +   F13C(tag_IC_CH3CO3H) * ( flow(CH3CO3H_PA) )  &
+        +   F13C(tag_IC_PAN) * ( flow(PAN_PA) )  &
+        +  F13C(tag_IC_C3H6) * ( flow(C3H6_PA) )  &
+        + F13C(tag_IC_CH3COCH2O2) * ( flow(CH3COCH2O2_PA) )  &
+        + F13C(tag_IC_MGLYOX) * ( flow(MGLYOX_PA) )  &
+        +   F13C(tag_IC_MVK) * ( flow(MVK_PA) )  &
+        + F13C(tag_IC_MVKO2) * ( flow(MVKO2_PA) )  &
+        + F13C(tag_IC_LMEKO2) * ( flow(LMEKO2_PA) )  &
+        +  F13C(tag_IC_C5H8) * ( flow(C5H8_PA) )  &
+        + F13C(tag_IC_CH3COCH3) * ( flow(CH3COCH3_PA) )  &
+        + F13C(tag_IC_ACETOL) * ( flow(ACETOL_PA) )  &
+        + F13C(tag_IC_HYPERACET) * ( flow(HYPERACET_PA) )  &
+        + F13C(tag_IC_MVKOOH) * ( flow(MVKOOH_PA) )  &
+        +   F13C(tag_IC_MEK) * ( flow(MEK_PA) )  &
+        + F13C(tag_IC_LMEKOOH) * ( flow(LMEKOOH_PA) )  &
+        + F13C(tag_IC_BIACET) * ( flow(BIACET_PA) ) )
 
       ! ----- CH3CO3H -----
       IDO(tag_IC_CH3CO3H,2) = ( &
         -   F13C(tag_IC_CH3CO3H) * ( flow(CH3CO3H_sink) )  &
-        +    F13C(tag_IC_CH3CO3) * ( flow(CH3CO3_CH3CO3H) ) )
+        +    F13C(tag_IC_PA) * ( flow(PA_CH3CO3H) ) )
 
       ! ----- NACA -----
       IDO(tag_IC_NACA,2) = ( &
@@ -1909,7 +1909,7 @@ PRINT *,steps
       ! ----- PAN -----
       IDO(tag_IC_PAN,2) = ( &
         -   F13C(tag_IC_PAN) * ( flow(PAN_sink) )  &
-        +    F13C(tag_IC_CH3CO3) * ( flow(CH3CO3_PAN) ) )
+        +    F13C(tag_IC_PA) * ( flow(PA_PAN) ) )
 
       ! ----- C3H8 -----
       IDO(tag_IC_C3H8,2) = ( &
@@ -2230,18 +2230,18 @@ PRINT *,steps
       J(tag_IC_CH3O2,tag_IC_CH3CHO,1) = zerodiv(+flow(CH3CHO_CH3O2),Z(tag_IC_CH3CHO))
       J(tag_IC_CO,tag_IC_CH3CHO,1) = zerodiv(+flow(CH3CHO_CO),Z(tag_IC_CH3CHO))
       J(tag_IC_CH3CHO,tag_IC_CH3CHO,1) = zerodiv(-flow(CH3CHO_sink),Z(tag_IC_CH3CHO))
-      J(tag_IC_CH3CO3,tag_IC_CH3CHO,1) = zerodiv(+flow(CH3CHO_CH3CO3),Z(tag_IC_CH3CHO))
+      J(tag_IC_PA,tag_IC_CH3CHO,1) = zerodiv(+flow(CH3CHO_PA),Z(tag_IC_CH3CHO))
       J(tag_IC_CH3O2,tag_IC_CH3CO2H,1) = zerodiv(+flow(CH3CO2H_CH3O2),Z(tag_IC_CH3CO2H))
       J(tag_IC_CO2,tag_IC_CH3CO2H,1) = zerodiv(+flow(CH3CO2H_CO2),Z(tag_IC_CH3CO2H))
       J(tag_IC_CH3CO2H,tag_IC_CH3CO2H,1) = zerodiv(-flow(CH3CO2H_sink),Z(tag_IC_CH3CO2H))
-      J(tag_IC_CH3O2,tag_IC_CH3CO3,1) = zerodiv(+flow(CH3CO3_CH3O2),Z(tag_IC_CH3CO3))
-      J(tag_IC_CO2,tag_IC_CH3CO3,1) = zerodiv(+flow(CH3CO3_CO2),Z(tag_IC_CH3CO3))
-      J(tag_IC_CH3CO2H,tag_IC_CH3CO3,1) = zerodiv(+flow(CH3CO3_CH3CO2H),Z(tag_IC_CH3CO3))
-      J(tag_IC_CH3CO3,tag_IC_CH3CO3,1) = zerodiv(-flow(CH3CO3_sink),Z(tag_IC_CH3CO3))
-      J(tag_IC_CH3CO3H,tag_IC_CH3CO3,1) = zerodiv(+flow(CH3CO3_CH3CO3H),Z(tag_IC_CH3CO3))
-      J(tag_IC_PAN,tag_IC_CH3CO3,1) = zerodiv(+flow(CH3CO3_PAN),Z(tag_IC_CH3CO3))
+      J(tag_IC_CH3O2,tag_IC_PA,1) = zerodiv(+flow(PA_CH3O2),Z(tag_IC_PA))
+      J(tag_IC_CO2,tag_IC_PA,1) = zerodiv(+flow(PA_CO2),Z(tag_IC_PA))
+      J(tag_IC_CH3CO2H,tag_IC_PA,1) = zerodiv(+flow(PA_CH3CO2H),Z(tag_IC_PA))
+      J(tag_IC_PA,tag_IC_PA,1) = zerodiv(-flow(PA_sink),Z(tag_IC_PA))
+      J(tag_IC_CH3CO3H,tag_IC_PA,1) = zerodiv(+flow(PA_CH3CO3H),Z(tag_IC_PA))
+      J(tag_IC_PAN,tag_IC_PA,1) = zerodiv(+flow(PA_PAN),Z(tag_IC_PA))
       J(tag_IC_CH3O2,tag_IC_CH3CO3H,1) = zerodiv(+flow(CH3CO3H_CH3O2),Z(tag_IC_CH3CO3H))
-      J(tag_IC_CH3CO3,tag_IC_CH3CO3H,1) = zerodiv(+flow(CH3CO3H_CH3CO3),Z(tag_IC_CH3CO3H))
+      J(tag_IC_PA,tag_IC_CH3CO3H,1) = zerodiv(+flow(CH3CO3H_PA),Z(tag_IC_CH3CO3H))
       J(tag_IC_CH3CO3H,tag_IC_CH3CO3H,1) = zerodiv(-flow(CH3CO3H_sink),Z(tag_IC_CH3CO3H))
       J(tag_IC_HCHO,tag_IC_NACA,1) = zerodiv(+flow(NACA_HCHO),Z(tag_IC_NACA))
       J(tag_IC_CO,tag_IC_NACA,1) = zerodiv(+flow(NACA_CO),Z(tag_IC_NACA))
@@ -2249,7 +2249,7 @@ PRINT *,steps
       J(tag_IC_CH3O2,tag_IC_PAN,1) = zerodiv(+flow(PAN_CH3O2),Z(tag_IC_PAN))
       J(tag_IC_HCHO,tag_IC_PAN,1) = zerodiv(+flow(PAN_HCHO),Z(tag_IC_PAN))
       J(tag_IC_CO2,tag_IC_PAN,1) = zerodiv(+flow(PAN_CO2),Z(tag_IC_PAN))
-      J(tag_IC_CH3CO3,tag_IC_PAN,1) = zerodiv(+flow(PAN_CH3CO3),Z(tag_IC_PAN))
+      J(tag_IC_PA,tag_IC_PAN,1) = zerodiv(+flow(PAN_PA),Z(tag_IC_PAN))
       J(tag_IC_PAN,tag_IC_PAN,1) = zerodiv(-flow(PAN_sink),Z(tag_IC_PAN))
       J(tag_IC_C2H5O2,tag_IC_C3H8,1) = zerodiv(+flow(C3H8_C2H5O2),Z(tag_IC_C3H8))
       J(tag_IC_C3H8,tag_IC_C3H8,1) = zerodiv(-flow(C3H8_sink),Z(tag_IC_C3H8))
@@ -2262,7 +2262,7 @@ PRINT *,steps
       J(tag_IC_HCOOH,tag_IC_C3H6,1) = zerodiv(+flow(C3H6_HCOOH),Z(tag_IC_C3H6))
       J(tag_IC_C2H5O2,tag_IC_C3H6,1) = zerodiv(+flow(C3H6_C2H5O2),Z(tag_IC_C3H6))
       J(tag_IC_CH3CHO,tag_IC_C3H6,1) = zerodiv(+flow(C3H6_CH3CHO),Z(tag_IC_C3H6))
-      J(tag_IC_CH3CO3,tag_IC_C3H6,1) = zerodiv(+flow(C3H6_CH3CO3),Z(tag_IC_C3H6))
+      J(tag_IC_PA,tag_IC_C3H6,1) = zerodiv(+flow(C3H6_PA),Z(tag_IC_C3H6))
       J(tag_IC_C3H6,tag_IC_C3H6,1) = zerodiv(-flow(C3H6_sink),Z(tag_IC_C3H6))
       J(tag_IC_LHOC3H6O2,tag_IC_C3H6,1) = zerodiv(+flow(C3H6_LHOC3H6O2),Z(tag_IC_C3H6))
       J(tag_IC_MGLYOX,tag_IC_C3H6,1) = zerodiv(+flow(C3H6_MGLYOX),Z(tag_IC_C3H6))
@@ -2283,25 +2283,25 @@ PRINT *,steps
       J(tag_IC_LHOC3H6OOH,tag_IC_LHOC3H6OOH,1) = zerodiv(-flow(LHOC3H6OOH_sink),Z(tag_IC_LHOC3H6OOH))
       J(tag_IC_ACETOL,tag_IC_LHOC3H6OOH,1) = zerodiv(+flow(LHOC3H6OOH_ACETOL),Z(tag_IC_LHOC3H6OOH))
       J(tag_IC_CH3O2,tag_IC_CH3COCH3,1) = zerodiv(+flow(CH3COCH3_CH3O2),Z(tag_IC_CH3COCH3))
-      J(tag_IC_CH3CO3,tag_IC_CH3COCH3,1) = zerodiv(+flow(CH3COCH3_CH3CO3),Z(tag_IC_CH3COCH3))
+      J(tag_IC_PA,tag_IC_CH3COCH3,1) = zerodiv(+flow(CH3COCH3_PA),Z(tag_IC_CH3COCH3))
       J(tag_IC_CH3COCH3,tag_IC_CH3COCH3,1) = zerodiv(-flow(CH3COCH3_sink),Z(tag_IC_CH3COCH3))
       J(tag_IC_CH3COCH2O2,tag_IC_CH3COCH3,1) = zerodiv(+flow(CH3COCH3_CH3COCH2O2),Z(tag_IC_CH3COCH3))
       J(tag_IC_HCHO,tag_IC_CH3COCH2O2,1) = zerodiv(+flow(CH3COCH2O2_HCHO),Z(tag_IC_CH3COCH2O2))
-      J(tag_IC_CH3CO3,tag_IC_CH3COCH2O2,1) = zerodiv(+flow(CH3COCH2O2_CH3CO3),Z(tag_IC_CH3COCH2O2))
+      J(tag_IC_PA,tag_IC_CH3COCH2O2,1) = zerodiv(+flow(CH3COCH2O2_PA),Z(tag_IC_CH3COCH2O2))
       J(tag_IC_CH3COCH2O2,tag_IC_CH3COCH2O2,1) = zerodiv(-flow(CH3COCH2O2_sink),Z(tag_IC_CH3COCH2O2))
       J(tag_IC_HYPERACET,tag_IC_CH3COCH2O2,1) = zerodiv(+flow(CH3COCH2O2_HYPERACET),Z(tag_IC_CH3COCH2O2))
       J(tag_IC_ACETOL,tag_IC_CH3COCH2O2,1) = zerodiv(+flow(CH3COCH2O2_ACETOL),Z(tag_IC_CH3COCH2O2))
       J(tag_IC_MGLYOX,tag_IC_CH3COCH2O2,1) = zerodiv(+flow(CH3COCH2O2_MGLYOX),Z(tag_IC_CH3COCH2O2))
-      J(tag_IC_CH3CO3,tag_IC_HYPERACET,1) = zerodiv(+flow(HYPERACET_CH3CO3),Z(tag_IC_HYPERACET))
+      J(tag_IC_PA,tag_IC_HYPERACET,1) = zerodiv(+flow(HYPERACET_PA),Z(tag_IC_HYPERACET))
       J(tag_IC_CH3COCH2O2,tag_IC_HYPERACET,1) = zerodiv(+flow(HYPERACET_CH3COCH2O2),Z(tag_IC_HYPERACET))
       J(tag_IC_HYPERACET,tag_IC_HYPERACET,1) = zerodiv(-flow(HYPERACET_sink),Z(tag_IC_HYPERACET))
       J(tag_IC_MGLYOX,tag_IC_HYPERACET,1) = zerodiv(+flow(HYPERACET_MGLYOX),Z(tag_IC_HYPERACET))
       J(tag_IC_HCHO,tag_IC_ACETOL,1) = zerodiv(+flow(ACETOL_HCHO),Z(tag_IC_ACETOL))
-      J(tag_IC_CH3CO3,tag_IC_ACETOL,1) = zerodiv(+flow(ACETOL_CH3CO3),Z(tag_IC_ACETOL))
+      J(tag_IC_PA,tag_IC_ACETOL,1) = zerodiv(+flow(ACETOL_PA),Z(tag_IC_ACETOL))
       J(tag_IC_ACETOL,tag_IC_ACETOL,1) = zerodiv(-flow(ACETOL_sink),Z(tag_IC_ACETOL))
       J(tag_IC_MGLYOX,tag_IC_ACETOL,1) = zerodiv(+flow(ACETOL_MGLYOX),Z(tag_IC_ACETOL))
       J(tag_IC_CO,tag_IC_MGLYOX,1) = zerodiv(+flow(MGLYOX_CO),Z(tag_IC_MGLYOX))
-      J(tag_IC_CH3CO3,tag_IC_MGLYOX,1) = zerodiv(+flow(MGLYOX_CH3CO3),Z(tag_IC_MGLYOX))
+      J(tag_IC_PA,tag_IC_MGLYOX,1) = zerodiv(+flow(MGLYOX_PA),Z(tag_IC_MGLYOX))
       J(tag_IC_MGLYOX,tag_IC_MGLYOX,1) = zerodiv(-flow(MGLYOX_sink),Z(tag_IC_MGLYOX))
       J(tag_IC_ACETOL,tag_IC_MPAN,1) = zerodiv(+flow(MPAN_ACETOL),Z(tag_IC_MPAN))
       J(tag_IC_MPAN,tag_IC_MPAN,1) = zerodiv(-flow(MPAN_sink),Z(tag_IC_MPAN))
@@ -2324,13 +2324,13 @@ PRINT *,steps
       J(tag_IC_HCHO,tag_IC_MVK,1) = zerodiv(+flow(MVK_HCHO),Z(tag_IC_MVK))
       J(tag_IC_CO,tag_IC_MVK,1) = zerodiv(+flow(MVK_CO),Z(tag_IC_MVK))
       J(tag_IC_HCOOH,tag_IC_MVK,1) = zerodiv(+flow(MVK_HCOOH),Z(tag_IC_MVK))
-      J(tag_IC_CH3CO3,tag_IC_MVK,1) = zerodiv(+flow(MVK_CH3CO3),Z(tag_IC_MVK))
+      J(tag_IC_PA,tag_IC_MVK,1) = zerodiv(+flow(MVK_PA),Z(tag_IC_MVK))
       J(tag_IC_MGLYOX,tag_IC_MVK,1) = zerodiv(+flow(MVK_MGLYOX),Z(tag_IC_MVK))
       J(tag_IC_MVK,tag_IC_MVK,1) = zerodiv(-flow(MVK_sink),Z(tag_IC_MVK))
       J(tag_IC_MVKO2,tag_IC_MVK,1) = zerodiv(+flow(MVK_MVKO2),Z(tag_IC_MVK))
       J(tag_IC_HCHO,tag_IC_MVKO2,1) = zerodiv(+flow(MVKO2_HCHO),Z(tag_IC_MVKO2))
       J(tag_IC_CO,tag_IC_MVKO2,1) = zerodiv(+flow(MVKO2_CO),Z(tag_IC_MVKO2))
-      J(tag_IC_CH3CO3,tag_IC_MVKO2,1) = zerodiv(+flow(MVKO2_CH3CO3),Z(tag_IC_MVKO2))
+      J(tag_IC_PA,tag_IC_MVKO2,1) = zerodiv(+flow(MVKO2_PA),Z(tag_IC_MVKO2))
       J(tag_IC_ACETOL,tag_IC_MVKO2,1) = zerodiv(+flow(MVKO2_ACETOL),Z(tag_IC_MVKO2))
       J(tag_IC_MGLYOX,tag_IC_MVKO2,1) = zerodiv(+flow(MVKO2_MGLYOX),Z(tag_IC_MVKO2))
       J(tag_IC_MPAN,tag_IC_MVKO2,1) = zerodiv(+flow(MVKO2_MPAN),Z(tag_IC_MVKO2))
@@ -2338,26 +2338,26 @@ PRINT *,steps
       J(tag_IC_MVKOOH,tag_IC_MVKO2,1) = zerodiv(+flow(MVKO2_MVKOOH),Z(tag_IC_MVKO2))
       J(tag_IC_HCHO,tag_IC_MVKOOH,1) = zerodiv(+flow(MVKOOH_HCHO),Z(tag_IC_MVKOOH))
       J(tag_IC_CO,tag_IC_MVKOOH,1) = zerodiv(+flow(MVKOOH_CO),Z(tag_IC_MVKOOH))
-      J(tag_IC_CH3CO3,tag_IC_MVKOOH,1) = zerodiv(+flow(MVKOOH_CH3CO3),Z(tag_IC_MVKOOH))
+      J(tag_IC_PA,tag_IC_MVKOOH,1) = zerodiv(+flow(MVKOOH_PA),Z(tag_IC_MVKOOH))
       J(tag_IC_ACETOL,tag_IC_MVKOOH,1) = zerodiv(+flow(MVKOOH_ACETOL),Z(tag_IC_MVKOOH))
       J(tag_IC_MGLYOX,tag_IC_MVKOOH,1) = zerodiv(+flow(MVKOOH_MGLYOX),Z(tag_IC_MVKOOH))
       J(tag_IC_MVKO2,tag_IC_MVKOOH,1) = zerodiv(+flow(MVKOOH_MVKO2),Z(tag_IC_MVKOOH))
       J(tag_IC_MVKOOH,tag_IC_MVKOOH,1) = zerodiv(-flow(MVKOOH_sink),Z(tag_IC_MVKOOH))
       J(tag_IC_C2H5O2,tag_IC_MEK,1) = zerodiv(+flow(MEK_C2H5O2),Z(tag_IC_MEK))
-      J(tag_IC_CH3CO3,tag_IC_MEK,1) = zerodiv(+flow(MEK_CH3CO3),Z(tag_IC_MEK))
+      J(tag_IC_PA,tag_IC_MEK,1) = zerodiv(+flow(MEK_PA),Z(tag_IC_MEK))
       J(tag_IC_MEK,tag_IC_MEK,1) = zerodiv(-flow(MEK_sink),Z(tag_IC_MEK))
       J(tag_IC_LMEKO2,tag_IC_MEK,1) = zerodiv(+flow(MEK_LMEKO2),Z(tag_IC_MEK))
       J(tag_IC_CH3CHO,tag_IC_LMEKO2,1) = zerodiv(+flow(LMEKO2_CH3CHO),Z(tag_IC_LMEKO2))
-      J(tag_IC_CH3CO3,tag_IC_LMEKO2,1) = zerodiv(+flow(LMEKO2_CH3CO3),Z(tag_IC_LMEKO2))
+      J(tag_IC_PA,tag_IC_LMEKO2,1) = zerodiv(+flow(LMEKO2_PA),Z(tag_IC_LMEKO2))
       J(tag_IC_LMEKO2,tag_IC_LMEKO2,1) = zerodiv(-flow(LMEKO2_sink),Z(tag_IC_LMEKO2))
       J(tag_IC_LMEKOOH,tag_IC_LMEKO2,1) = zerodiv(+flow(LMEKO2_LMEKOOH),Z(tag_IC_LMEKO2))
       J(tag_IC_LC4H9NO3,tag_IC_LMEKO2,1) = zerodiv(+flow(LMEKO2_LC4H9NO3),Z(tag_IC_LMEKO2))
       J(tag_IC_CH3CHO,tag_IC_LMEKOOH,1) = zerodiv(+flow(LMEKOOH_CH3CHO),Z(tag_IC_LMEKOOH))
-      J(tag_IC_CH3CO3,tag_IC_LMEKOOH,1) = zerodiv(+flow(LMEKOOH_CH3CO3),Z(tag_IC_LMEKOOH))
+      J(tag_IC_PA,tag_IC_LMEKOOH,1) = zerodiv(+flow(LMEKOOH_PA),Z(tag_IC_LMEKOOH))
       J(tag_IC_LMEKO2,tag_IC_LMEKOOH,1) = zerodiv(+flow(LMEKOOH_LMEKO2),Z(tag_IC_LMEKOOH))
       J(tag_IC_LMEKOOH,tag_IC_LMEKOOH,1) = zerodiv(-flow(LMEKOOH_sink),Z(tag_IC_LMEKOOH))
       J(tag_IC_BIACET,tag_IC_LMEKOOH,1) = zerodiv(+flow(LMEKOOH_BIACET),Z(tag_IC_LMEKOOH))
-      J(tag_IC_CH3CO3,tag_IC_BIACET,1) = zerodiv(+flow(BIACET_CH3CO3),Z(tag_IC_BIACET))
+      J(tag_IC_PA,tag_IC_BIACET,1) = zerodiv(+flow(BIACET_PA),Z(tag_IC_BIACET))
       J(tag_IC_BIACET,tag_IC_BIACET,1) = zerodiv(-flow(BIACET_sink),Z(tag_IC_BIACET))
       J(tag_IC_C2H5O2,tag_IC_LC4H9NO3,1) = zerodiv(+flow(LC4H9NO3_C2H5O2),Z(tag_IC_LC4H9NO3))
       J(tag_IC_CH3CHO,tag_IC_LC4H9NO3,1) = zerodiv(+flow(LC4H9NO3_CH3CHO),Z(tag_IC_LC4H9NO3))
@@ -2367,7 +2367,7 @@ PRINT *,steps
       J(tag_IC_HCHO,tag_IC_C5H8,1) = zerodiv(+flow(C5H8_HCHO),Z(tag_IC_C5H8))
       J(tag_IC_CO,tag_IC_C5H8,1) = zerodiv(+flow(C5H8_CO),Z(tag_IC_C5H8))
       J(tag_IC_HCOOH,tag_IC_C5H8,1) = zerodiv(+flow(C5H8_HCOOH),Z(tag_IC_C5H8))
-      J(tag_IC_CH3CO3,tag_IC_C5H8,1) = zerodiv(+flow(C5H8_CH3CO3),Z(tag_IC_C5H8))
+      J(tag_IC_PA,tag_IC_C5H8,1) = zerodiv(+flow(C5H8_PA),Z(tag_IC_C5H8))
       J(tag_IC_MVK,tag_IC_C5H8,1) = zerodiv(+flow(C5H8_MVK),Z(tag_IC_C5H8))
       J(tag_IC_MVKO2,tag_IC_C5H8,1) = zerodiv(+flow(C5H8_MVKO2),Z(tag_IC_C5H8))
       J(tag_IC_C5H8,tag_IC_C5H8,1) = zerodiv(-flow(C5H8_sink),Z(tag_IC_C5H8))

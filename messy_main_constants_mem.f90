@@ -1,5 +1,5 @@
 !****************************************************************************
-!                Time-stamp: <2010-03-05 09:19:50 joec_pa>
+!                Time-stamp: <2010-06-14 13:07:11 sander>
 !****************************************************************************
 
 ! Definitions of machine precision constants as Fortran PARAMETERs for MESSy
@@ -18,7 +18,7 @@ MODULE messy_main_constants_mem
   ! PUBLIC is already default
 
   CHARACTER(LEN=*), PARAMETER :: modstr = 'MESSy'
-  CHARACTER(LEN=*), PARAMETER :: modver = '2.3zp'
+  CHARACTER(LEN=*), PARAMETER :: modver = '2.3zq'
 
   ! MACHINE PRECISION CONSTANTS
   INTEGER, PARAMETER :: sp = SELECTED_REAL_KIND(6,37)
@@ -26,7 +26,8 @@ MODULE messy_main_constants_mem
   INTEGER, PARAMETER :: i4 = SELECTED_INT_KIND(9)
   INTEGER, PARAMETER :: i8 = SELECTED_INT_KIND(14)
   INTEGER, PARAMETER :: wp = dp
-  REAL(dp), PARAMETER :: TINY_DP = TINY(0._dp) ! mz_rs_20060114
+  REAL(DP), PARAMETER :: TINY_DP = TINY(0._dp) ! mz_rs_20060114
+  REAL(DP), PARAMETER :: HUGE_DP = HUGE(0._dp) ! mz_rs_20100409
 
   ! FLAGS
   REAL(DP), PARAMETER :: FLAGGED_BAD = -1.0E+34_dp  ! FERRET
@@ -45,11 +46,17 @@ MODULE messy_main_constants_mem
   ! mz_rs_20070904-
 
   ! STRING LENGTHs
-  INTEGER, PARAMETER :: STRLEN_SHORT  = 8
-  INTEGER, PARAMETER :: STRLEN_MEDIUM = 24
-  INTEGER, PARAMETER :: STRLEN_LONG   = 64
-  INTEGER, PARAMETER :: STRLEN_VLONG  = 80
-  INTEGER, PARAMETER :: STRLEN_ULONG  = 256
+  INTEGER, PARAMETER :: STRLEN_SHORT      =   8
+  ! mz_rs_20100331+
+  ! I'm not sure if 15 is really the upper limit for the length of
+  ! KPP species. However, we currently don't have any species
+  ! with more than 15 characters, and that works fine...
+  INTEGER, PARAMETER :: STRLEN_KPPSPECIES =  15
+  ! mz_rs_20100331-
+  INTEGER, PARAMETER :: STRLEN_MEDIUM     =  24
+  INTEGER, PARAMETER :: STRLEN_LONG       =  64
+  INTEGER, PARAMETER :: STRLEN_VLONG      =  80
+  INTEGER, PARAMETER :: STRLEN_ULONG      = 256
 
   ! PHYSICAL CONSTANTS
   REAL(dp), PARAMETER :: pi      = 3.14159265358979323846_dp
@@ -59,6 +66,7 @@ MODULE messy_main_constants_mem
   REAL(dp), PARAMETER :: N_A     = 6.022045E23_dp ! Avogadro constant [1/mol]
   REAL(dp), PARAMETER :: g       = 9.80665_dp   ! gravity acceleration [m/s2]
   REAL(dp), PARAMETER :: T0      = 298.15_dp    ! standard temperature [K]
+  REAL(dp), PARAMETER :: T0_INV  = 1._DP / T0   ! 1/T0 [1/K]
   REAL(dp), PARAMETER :: atm2Pa  = 101325._dp   ! conversion from [atm] to [Pa]
   REAL(dp), PARAMETER :: cal2J   = 4.1868_dp    ! conversion from [cal] to [J]
   REAL(dp), PARAMETER :: k_B     = 1.380662E-23_dp ! Boltzmann constant [J/K]

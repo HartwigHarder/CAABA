@@ -2,35 +2,35 @@
 ! not smcl/messy_mecca_kpp.f90 !!!
 
 ! To survive the transport of variables from mecca to kpp via kp4, these
-! rules must be followed (using mcfct as an example):
+! rules must be followed (using mcexp as an example):
 ! - gas.eqn:
 !   - declare variable inside a KPPPP_DIRECTIVE block:
 !     !KPPPP_DIRECTIVE vector variable definition start
-!       REAL(dp) :: mcfct(NREACT) ! Monte-Carlo factor
+!       REAL(dp) :: mcexp(NREACT) ! Monte-Carlo factor
 !     !KPPPP_DIRECTIVE vector variable definition end
 ! - messy_mecca_box.f90:
 !   - declare the variable here:
-!     REAL(DP) :: mcfct(NREACT)
+!     REAL(DP) :: mcexp(NREACT)
 ! - template_messy_mecca_kpp.f90:
-!   - add mcfct to the list of PRIVATE variables
+!   - add mcexp to the list of PRIVATE variables
 !   - create a new fill subroutine:
-!     SUBROUTINE fill_mcfct(status,array)
+!     SUBROUTINE fill_mcexp(status,array)
 !     ...
-!     END SUBROUTINE fill_mcfct
+!     END SUBROUTINE fill_mcexp
 ! - messy_mecca.f90:
 !   - the new variable must not be used here! It can only be accessed
 !     here as a SUBROUTINE (or FUNCTION) parameter from the SMIL level,
 !     e.g.:
-!     SUBROUTINE define_mcfct(mcfct)
-!       REAL(DP), DIMENSION(:), INTENT(OUT) :: mcfct
+!     SUBROUTINE define_mcexp(mcexp)
+!       REAL(DP), DIMENSION(:), INTENT(OUT) :: mcexp
 !       ...
-!     END SUBROUTINE define_mcfct
+!     END SUBROUTINE define_mcexp
 
 MODULE messy_mecca_kpp
 
   USE messy_mecca_kpp_global      ! c, rconst, temp, press, dt, JX, khet_*,
                                   ! nsubsteps, logsteps, substep, method,
-                                  ! rtol, atol, ...
+                                  ! rtol, atol, mcexp, ...
   USE messy_mecca_kpp_initialize, ONLY: initialize
   USE messy_mecca_kpp_integrator, ONLY: integrate, IERR_NAMES
   USE messy_mecca_kpp_parameters  ! ind_*
@@ -43,7 +43,7 @@ MODULE messy_mecca_kpp
 
   ! the variables for which fill routines exist cannot be public:
   PRIVATE :: jx, cair, press, temp, C, cvfac, lwc, xaer, k_exf, k_exb, &
-    k_exf_N2O5, k_exf_ClNO3, k_exf_BrNO3, mcfct
+    k_exf_N2O5, k_exf_ClNO3, k_exf_BrNO3, mcexp
 
   ! start modified insertion from initialize_kpp_ctrl_template.f90
 
@@ -254,6 +254,10 @@ SUBROUTINE kpp_integrate (time_step_len,Conc,ierrf,xNacc,xNrej,istatus,&
 
     C(:) = Conc(is,:)
 
+    ! activate next line ONLY to check if all rate coefficients
+    ! contain an uncertainty factor for Monte-Carlo simulations:
+    ! CALL montecarlo_check
+
     CALL update_rconst
 
     dt = time_step_len
@@ -278,6 +282,50 @@ SUBROUTINE kpp_integrate (time_step_len,Conc,ierrf,xNacc,xNrej,istatus,&
     IF (PRESENT (istatus)) THEN
       istatus(1:8) = istatus(1:8) + istatus_u(1:8)
     END IF
+
+  CONTAINS
+
+    !-------------------------------------------------------------------------
+
+    SUBROUTINE montecarlo_check
+
+      USE messy_main_constants_mem,   ONLY: HLINE2, TINY_DP
+
+      INTEGER :: i
+      REAL(DP) :: RCONST0(NREACT)
+
+      ! jx(:), khet* and C(:) must be >0 to check reaction rate coefficients:
+      jx(:)      = 1e-5
+      khet_St(:) = 1e-5
+      khet_Tr(:) = 1e-5
+      C(:)       = 1e-12
+
+      ! calculate rate coefficients for Monte-Carlo factors -1 and 1, then
+      ! verify that the results are different:
+      mcexp(:) = -1.
+      CALL Update_RCONST()
+      RCONST0(:) = RCONST(:)
+      mcexp(:) = 1.
+      CALL Update_RCONST()
+      PRINT *, HLINE2
+      PRINT *, 'Monte-Carlo Check (search for "WRONG"):'
+      PRINT *, HLINE2
+      DO i=1, NREACT
+        WRITE(*,'(I4,A15)', ADVANCE='NO') i, TRIM(EQN_TAGS(i))
+        IF (ABS(RCONST0(i)-RCONST(i)) < TINY_DP) THEN
+          WRITE(*,'(1PE14.5,A)') RCONST(i), '  ***** WRONG *****'
+        ELSE
+          WRITE(*,'(A,2(1PE14.5))') '  OKAY       ', RCONST0(i), RCONST(i)
+        ENDIF
+      ENDDO
+      PRINT *, HLINE2
+      PRINT *, 'Finished montecarlo_check which is currently activated in'
+      PRINT *, 'mecca/template_messy_mecca_kpp.f90'
+      STOP
+
+    END SUBROUTINE montecarlo_check
+
+    !-------------------------------------------------------------------------
 
 END SUBROUTINE kpp_integrate
 
@@ -312,14 +360,14 @@ END SUBROUTINE kpp_integrate
     press = array(is)
   END SUBROUTINE fill_press
 
-  SUBROUTINE fill_mcfct(status,array)
+  SUBROUTINE fill_mcexp(status,array)
     INTEGER,INTENT(OUT)                 :: status
     REAL (dp),INTENT(IN),DIMENSION(:,:) :: array
     ! this subroutine only treats the first (is=1) element:
     INTEGER, PARAMETER :: is = 1
     status = 0
-    mcfct = array(is,:)
-  END SUBROUTINE fill_mcfct
+    mcexp = array(is,:)
+  END SUBROUTINE fill_mcexp
 
   SUBROUTINE fill_xaer(status,array)
     INTEGER,INTENT(OUT)                 :: status

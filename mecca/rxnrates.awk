@@ -3,7 +3,7 @@
 # Author:
 #   Rolf Sander, Max-Planck-Institute, Mainz, Germany, 2009
 #
-# Time-stamp: <2009-08-17 11:00:47 sander>
+# Time-stamp: <2009-05-20 19:04:17 sander>
 #
 # rxnrates.awk creates ferret jnl files to plot reaction rates
 #
@@ -13,13 +13,20 @@
 
 BEGIN {
   printf "working on %s...\n", ARGV[1]
-  logfile  = basename ".log"
+  logfile  = selSpecies ".log"
   dontedit = "DO NOT EDIT! This file was created automatically by rxnrates"
-  printf "%s\n",   dontedit > logfile
+  printf "%s %s\n", "%", dontedit > logfile
   printf "! %s\n", dontedit > jnlfile1
   printf "! %s\n", dontedit > jnlfile2
+  printf "" > fnBudget
+  #selSpecies = "OH"
   # initialize errorstring:
   errorstring = ""
+  getline headerline < fnHeader
+  numHeader=split(headerline,header)
+  #print headerline
+  #print numHeader
+  fnBudgetUnkown = "UnkownRXN.asc"
 }
 
 # ----------------------------------------------------------------------------
@@ -62,6 +69,19 @@ function analyze(prodloss, oneside, eqnid, equation){
           sign, factor, eqnid >> jnlfile2
         printf "GO _plot_rxnrates_scaled rate \"%s*%s: %s\" \"%s\"\n", 
           factor, eqnid, loss, species >> jnlfile2
+	print equation, "|", species, "|",selSpecies, "|", index(species,selSpecies) 
+		if (species==selSpecies) {
+			## search equation in model output (i.e. header array)
+			nHeader=1
+			while (index(header[nHeader],eqnid)==0 && nHeader<numHeader+1) nHeader=nHeader+1
+			if (nHeader<=numHeader) {
+				print nHeader,header[nHeader],eqnid, equation
+				printf "%s; %s%s; %s; %s; %s\n",nHeader,sign,factor,eqnid, oneside, equation >> fnBudget 
+			} else {
+			   ## no corresponding reaction number found in model output, i.e. not selected reaction
+			   printf "%s; %s%s; %s; %s\n",eqnid, sign,factor,oneside, equation >> fnBudgetUnkown
+			}
+		}
       }
   }
 }
@@ -113,7 +133,7 @@ function analyze(prodloss, oneside, eqnid, equation){
     prod = arr[2]
     analyze("loss", loss, eqnid, $0)
     analyze("prod", prod, eqnid, $0)
-    printf "go _plot_rxnrates RR%s \"%s: %s\"\n", eqnid, eqnid, loss >> jnlfile1
+    printf "go _plot_rxnrates RR%s \"%s %s\"\n", eqnid, eqnid, loss >> jnlfile1
   }
 }
 

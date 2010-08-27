@@ -12,7 +12,6 @@ node[shape=oval,
   style="filled"];
 ACETOL
 C3H6
-C3H7I
 C3H8
 CH3COCH2O2
 CH3COCH3
@@ -24,7 +23,6 @@ HYPROPO2H
 IC3H7NO3
 IC3H7O2
 IC3H7OOH
-LHOC3H6O2
 MGLYOX
 NOA
 PR2O2HNO3
@@ -33,8 +31,6 @@ PRONO3BO2
 ACETOL -> CH3CO3 [label = "hv (J4302)"];
 ACETOL -> HCHO [label = "hv (J4302)"];
 ACETOL -> MGLYOX [label = "OH (G4316)"];
-C2H4 -> LHOC3H6O2 [label = "Br (G7404)"];
-C2H4 -> LHOC3H6O2 [label = "Cl (G6409)"];
 C3H6 -> CH3CHO [label = "O3 (G4301)"];
 C3H6 -> CH3CO2H [label = "O3 (G4301)"];
 C3H6 -> CH3O2 [label = "O3 (G4301)"];
@@ -45,8 +41,6 @@ C3H6 -> HCHO [label = "O3 (G4301)"];
 C3H6 -> HCOOH [label = "O3 (G4301)"];
 C3H6 -> HYPROPO2 [label = "OH (G4302)"];
 C3H6 -> PRONO3BO2 [label = "NO3 (G4303)"];
-C3H7I -> CH3O2 [label = "OH (G8400)"];
-C3H7I -> CH3O2 [label = "hv (J8402)"];
 C3H8 -> C2H5O2 [label = "OH (G4300)"];
 C3H8 -> CO2 [label = "OH (G4300)"];
 C3H8 -> IC3H7O2 [label = "OH (G4300)"];
