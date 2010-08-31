@@ -1,0 +1,10 @@
+! -*- f90 -*- Time-stamp: <2010-07-20 15:12:10 sander>
+
+&CAABA
+USE_MECCA = T
+USE_READJ = T
+init_scenario     = 'MBL'
+photrat_channel = 'readj'
+init_j = 'multirun/input/example.nc'
+l_steady_state_stop = T
+/

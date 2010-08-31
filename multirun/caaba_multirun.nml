@@ -1,0 +1,11 @@
+! -*- f90 -*- (created by loopcaaba.tcsh, do not edit!)
+&CAABA
+USE_MECCA = T
+USE_READJ = T
+temp = 227.948
+press = 24731.06445
+photrat_channel = 'readj'
+init_spec = 'multirun/inputfile.nc'
+init_j = 'multirun/inputfile.nc'
+l_steady_state_stop = T
+/

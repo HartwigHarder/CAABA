@@ -1,0 +1,59 @@
+! -*- f90 -*- Time-stamp: <2009-08-10 11:34:37 sander>
+
+!*****************************************************************************
+!
+! coupling namelist for CAABA boxmodel
+!
+!*****************************************************************************
+
+&CAABA
+
+!USE_JVAL    = T
+ USE_MECCA   = T
+ USE_READJ   = T
+!USE_SAPPHO  = T
+!USE_SEMIDEP = T
+!USE_TRAJECT = T
+
+! see "list_of_scenarios" in caaba.f90 for possibilities:
+init_scenario     = 'FREE_TROP'
+photo_scenario    = 'FREE_TROP'
+!emission_scenario = ''
+!drydep_scenario   = ''
+
+! Choose a channel that contains J-values for photolysis reactions:
+!photrat_channel = 'jval'
+photrat_channel = 'readj'
+!photrat_channel = 'sappho'
+
+! Background
+! temp      = 222.87    ! temperature [K]
+! press     = 27334. ! pressure [Pa]
+!relhum    = 0.81    ! relative humidity [1]
+!zmbl      = 1000.   ! height of the mbl [m]
+! init_spec = 'H2Fl4_MC_BKG.nc'
+! init_j    = 'H2Fl4_MC_BKG.nc'
+
+! OutFlow
+ temp      = 228.03   ! temperature [K]
+ press     = 24744. ! pressure [Pa]
+ init_spec = 'H2Fl4_MC_OUT.nc'
+ init_j    = 'H2Fl4_MC_OUT.nc'
+
+! InFlow
+! temp      = 289.72    ! temperature [K]
+! press     = 85735. ! pressure [Pa]
+! init_spec = 'H2Fl4_MC_INF.nc'
+! init_j    = 'H2Fl4_MC_INF.nc'
+
+!startday    = 14.          ! 15th Jan
+!time_step   = '15 minutes' ! default: 20 minutes
+!ext_runtime = '40 days'    ! in days; default: 8
+
+l_steady_state_stop = T    ! stop caaba when steady state is reached?
+
+!l_skipkpp = T    ! skip call to kpp chemistry integration
+
+/
+
+!*****************************************************************************
