@@ -7,6 +7,7 @@ set outputdir = "/mnt/modeloutput/`date +'%Y_%m_%d_%H-%M-%S'`"
 mkdir $outputdir
 mkdir $outputdir/runs
 if (! -d $outputdir/montecarlo) mkdir $outputdir/montecarlo
+set basedir = `pwd`
 
 # delete output from old runs:
 rm caaba_*.nc
@@ -19,7 +20,7 @@ set logfile = "$outputdir/montecarlo.log"
 # be larger than the number of lines in mcexp_seed.txt.
 
 #set maxline=5
-set maxline=9999
+set maxline=5
 #set maxline=1000
 
 set line=0
@@ -84,7 +85,9 @@ foreach fullfilename ($fullfilenames)
     # convert lon into the UNLIMITED record dimension:
     ncpdq -a lon,time -O $oldnc $newnc >> $logfile
     # put Monte-Carlo run number into lon:
-    ../../../tools/ncclamp/ncclamp $newnc lon 0 $mcrun eq
+#    ../../../tools/ncclamp/ncclamp $newnc lon 0 $mcrun eq
+  
+    $basedir/tools/ncclamp/ncclamp $newnc lon 0 $mcrun eq
   end
   echo " done"
 
