@@ -56,6 +56,7 @@ end
 
 echo "Creating zip file of caaba model code. Please wait..."
 gmake zip >> $logfile
+echo "now moving the zip file"
 mv `basename $PWD`.zip $outputdir
 
 ##############################################################################
@@ -85,8 +86,6 @@ foreach fullfilename ($fullfilenames)
     # convert lon into the UNLIMITED record dimension:
     ncpdq -a lon,time -O $oldnc $newnc >> $logfile
     # put Monte-Carlo run number into lon:
-#    ../../../tools/ncclamp/ncclamp $newnc lon 0 $mcrun eq
-  
     $basedir/tools/ncclamp/ncclamp $newnc lon 0 $mcrun eq
   end
   echo " done"
@@ -100,12 +99,12 @@ foreach fullfilename ($fullfilenames)
 end
 
 # ferret jnl files for scatter plots:
-mv ../../../_scatterplot1.jnl tmp_scatterplot1.jnl
-mv ../../../_scatterplot2.jnl .
-mv ../../../_histogram_k.jnl .
+mv $basedir/_scatterplot1.jnl tmp_scatterplot1.jnl
+mv $basedir/_scatterplot2.jnl .
+mv $basedir/_histogram_k.jnl .
 sort tmp_scatterplot1.jnl > _scatterplot1.jnl
-ln -s ../../../jnl/montecarlo.jnl     .
-ln -s ../../../jnl/scatterplot_mc.jnl .
+ln -s $basedir/jnl/montecarlo.jnl     .
+ln -s $basedir/jnl/scatterplot_mc.jnl .
 
 rm tmp_*.nc tmp_*.jnl
 cd -
