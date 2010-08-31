@@ -1,0 +1,51 @@
+#! /bin/tcsh -f
+#
+# [Gromov, MPI-C Mainz, 2010]
+#
+# script to perform an extending budgeting of MECCA kinetic chemistry mechanism
+#
+
+# imported from xdbl, otherwise defaults
+if (! ${?xtagdir} ) set xtagdir      = "../tag"            # tagging directory (shared files !)
+if (! ${?bindir}  ) set bindir       = "../../../../../bin" # binaries location
+if (! ${?toolsdir}) set toolsdir     = "../../../../tools" # tools location
+if (! ${?fpc_call}) set fpc_call     = "fpc -l -viwnh -B"  # fpc compiler call
+
+echo ""
+echo "[ XEMBUD: script to budget selected MECCA kinetic chemistry mechanism ]"
+echo ""
+
+# linking emb* configuration files from tag
+set cfgfiles = ($xtagdir/emb*.cfg)
+foreach cfgfile ($cfgfiles)
+  ln -fs $cfgfile .
+end
+
+# checking if embudget tool is available
+source ${xtagdir}/xchecktool embudget
+if ("$?" != "0") exit 1
+
+# --------------------------------------------------------------------------
+# SELECTION OF DESIRED CONFIGURATION(S)
+# --------------------------------------------------------------------------
+
+# invoking configuration selection script
+source ${xtagdir}/xselectcfg emb\*.cfg
+if ("$?" != "0") exit 1
+
+# --------------------------------------------------------------------------
+# BUDGETING
+# --------------------------------------------------------------------------
+
+./embudget.exe mecca.spc mecca.eqn gas.tex $cfglist | tee embudget.log
+
+cp messy_mecca_dbl_embudget.eqn ../mecca.eqn
+cp messy_mecca_dbl_embudget.spc ../mecca.spc
+
+# --------------------------------------------------------------------------
+# ALL DONE
+# --------------------------------------------------------------------------
+
+unsetenv $cfglist
+exit 0
+

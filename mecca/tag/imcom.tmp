@@ -1,0 +1,102 @@
+[TAG]
+cmodel=messy_mecca
+configuration=FCIS
+classes=FM FI
+iatom=C
+imasses=
+kieproc=
+eqnproc=int/tag_kpp.link
+[CPARAMS]
+ISO=
+INIUNIT_DELTAPM=
+xINIUNIT_FRACMIN=
+xINT_KPP=
+xINT_KPP_AJD=
+xINT_SIMEULER=
+xINT_CG1=
+INT_LINMAX=
+xINT_USEJAC=
+xINT_RADER=
+xOPT_LOW_FILTER=
+xOPT_C2R_FILTER=
+xOPT_USE_KRSIND=
+xOPT_NEG_FILTER=
+xOPT_EXC_FILTER=
+OPT_NO_CORR=
+xOPT_CORR_2DBL=
+xOPT_FTOT_WRTDBL=
+[MECCA]
+sisyntax=ind_@
+ptsyntax=PT@
+drsyntax=D@
+eqn={%CMODEL}_{%CASE}.eqn
+spc={%CMODEL}_{%CASE}.spc
+tracdef={%CMODEL}_{%TAG}.tex
+cfgeqn={%CMODEL}_{%TAG}.eqn
+cfgspc={%CMODEL}_{%TAG}.spc
+[CODE:TAG]
+imtag_tag.f90={%CMODEL}_tag.f90
+imtag_tag_common.f90={%CMODEL}_tag_common.f90
+imtag_param.inc={%CMODEL}_tag_parameters.inc
+imtag_tag_box.f90={%CMODEL}_tag_box.f90
+[CODE:TAG=CONF]
+imtag_iso.f90={%CMODEL}_{%TAG}.f90
+imtag_iso_box.f90={%CMODEL}_{%TAG}_box.f90
+int/imtag.kpp={%CMODEL}_{%TAG}_kpp.kpp
+[CODE:DBL]
+imdouble_dbl_common.f90={%CMODEL}_dbl_common.f90
+imdouble_param.inc={%CMODEL}_dbl_parameters.inc
+imdouble_dbl_box.f90={%CMODEL}_dbl_box.f90
+imdouble_dbl_e5.f90={%CMODEL}_dbl_e5.f90
+[CODE:DBL=CONF]
+imdouble_cfg.f90={%CMODEL}_{%TAG}.f90
+imdouble_cfg_box.f90={%CMODEL}_{%TAG}_box.f90
+imdouble_cfg_e5.f90={%CMODEL}_{%TAG}_e5.f90
+[SPC]
+CH4       1 = 1 0     L
+CH3OH     1 = 0 0
+CH3O2     1 = 0 0
+CH3OOH    1 = 0 0
+HCHO      1 = 0 0
+CO        1 = 0 0     P
+HCOOH     1 = 0 0
+CO2       1 = 0 0
+CH3CO2H   1 = 0 0
+CH3CO3        1 = 0 0
+CH3CO3H       1 = 0 0
+NACA      1 = 0 0
+PAN       1 = 0 0
+ACETOL    1 = 0 0
+MGLYOX  1 = 0 0
+MPAN      1 = 0 0
+MVK       1 = 0 0
+MVKO2     1 = 0 0
+MVKOOH    1 = 0 0
+C5H8      1 = 0 1     L
+ISO2      1 = 0 1
+ISOOH     1 = 0 1
+ISON      1 = 0 1
+[-EQN]
+[-IEX]
+IEXC_TEST1 = CO2 CH4 : {%StTrG} 1.0E-22
+IEXC_TEST2 =  CO CH4 : {%StTrG} 1.0E-18
+[-KIE:RMA]
+include=IEX*
+[-KIE]
+[SRC]
+G4206  C2H5O2 = CH3CHO EtOH
+G4206 CH3O2 = HCHO CH3OH
+G4215a    CH3CO3 = CH3O2 CO2
+G4215a CH3O2 = HCHO
+G4215b    CH3CO3 = CH3CO2H
+G4215b CH3O2 = HCHO
+G4216   CH3CO3 = CH3CO2H CH3O2    CO2
+G4216 C2H5O2 = CH3CHO
+G4306  IC3H7O2 = CH3COCH3
+G4306 CH3O2 = HCHO CH3OH
+G4314 CH3COCH2O2 = MGLYOX CH3CO3 HCHO ACETOL
+G4314  CH3O2 = CH3OH
+G4401 LC4H9O2 = MEK CH3CHO C2H5O2
+G4401  CH3O2 = HCHO CH3OH
+G4410 MVKO2 = MGLYOX ACETOL CH3CO3 1.75 HCHO CO
+G4410 CH3O2 =                    0.5  HCHO    CH3OH

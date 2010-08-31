@@ -1,0 +1,24 @@
+! ****************************************************************************
+
+\CANCEL MODE verify ! like "unset echo" under unix
+CANCEL DATA/ALL
+CANCEL VARIABLE/ALL
+CANCEL SYMBOL/ALL
+
+!GO initviewport 1 2 noheader 0.71
+!GO initviewport 4 4 noheader 0.71
+GO initviewport 2 5 noheader
+DEFINE SYMBOL nopause = TRUE
+!DEFINE SYMBOL landscape = TRUE
+
+USE caaba_mecca_k_end.nc
+GO _histogram_k
+
+USE caaba_mecca_c_end.nc
+GO _scatterplot1
+
+! ****************************************************************************
+
+GO exitviewport
+
+! ****************************************************************************

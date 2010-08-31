@@ -1,0 +1,52 @@
+#! /bin/tcsh -f
+
+# --------------------------------------------------------------------------
+# CHECKING FOR COMPILED IMTAG/IMDOUBLE TOOLS
+# --------------------------------------------------------------------------
+
+echo "checking for $1 tool..."
+if (-e $bindir/$1.exe) then
+  ln -fs $bindir/$1.exe .
+  echo "ok"
+  echo
+  exit 0
+else
+  if (-e ./$1.exe) then
+    echo "ok, but found locally, not in bin. $1 might be of the older version"
+    echo
+    exit 0
+  endif
+
+  echo "error: could not find $1 binary (check if tools are compiled)"
+
+  if (! ${?batch}) then
+    echo "try to recompile [y/n/q]?:"
+    set inputstring = "$<"
+  else
+    echo "trying to recompile in the batch mode"
+    set inputstring = "y"
+  endif
+  
+  # processing answer
+  if ( "$inputstring" == "q" ) exit 1
+  if ( "$inputstring" == "" ) set inputstring = "y"
+
+  # recompilation (if possible, relying on 'make')
+  if ( "$inputstring" == "y" ) then
+    cd $toolsdir/tagdbl
+    make -f Makefile.m install
+    cd -
+  endif
+
+  # probing again
+  if (-e $bindir/$1.exe) then
+    ln -fs $bindir/$1.exe .
+    echo "...successful! continuing."
+    echo
+    exit 0
+  else
+    echo "...unsuccessful! stopping."
+    echo ""
+    exit 1
+  endif
+endif

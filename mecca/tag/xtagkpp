@@ -1,0 +1,90 @@
+#!/bin/tcsh -f
+
+# this script is called when KPP is selected as the integrator for tagging
+
+    echo ">>> tagging integrator is specified to be KPP\n"
+
+    # define path to KPP (via pwd command to resolve symbolic links):
+    setenv KPP_HOME "`cd ../kpp;pwd`"
+  
+    # - choosing integrator -- borrowed from xmecca ----------------------------
+    set defaultintegr = "rosenbrock_mz"
+    cd $KPP_HOME/int
+    echo "Available KPP integrators:"
+    set inn      = "0"
+    set allfiles = *.f90
+    set allfiles = `echo $allfiles | sed 's|\.f90||g'` # delete suffix .f90
+    foreach i ($allfiles) # list all possibilities
+      @ inn=$inn + 1
+      echo "$inn) $allfiles[$inn]"
+    end
+    echo "The Rosenbrock integrators with automatic time-step control are"
+    echo "strongly recommended for their ability to cope with stiff sets of"
+    echo "differential equations. If you choose another integrator, do so at"
+    echo "your own risk\!"
+    echo "Choose an integrator [q=quit, default=$defaultintegr]:"
+
+    # uncomment for BM!
+    if (! ${?batch}) then
+      set inputstring = "$<"
+    else
+      echo "selected default in the batch mode"
+      echo ""
+      set inputstring = ""
+    endif
+
+    if ( "$inputstring" == "q" ) exit 1
+    if (($inputstring <= $#allfiles) && ($inputstring >= 1)) then
+      set integr = "$allfiles[$inputstring]"
+      echo "You selected: $inputstring) $integr" | tee -a imtag-kpp.log
+    else
+      set integr = "$defaultintegr"
+      echo "Default selection: $integr" | tee -a imtag-kpp.log
+    endif
+    cd -
+
+    set integrfile = messy_mecca_tag_$cfg\_kpp_integr.kpp
+    echo "#INTEGRATOR $integr" >! $integrfile
+
+    echo "#INLINE F90_GLOBAL"                                    >> $integrfile
+    echo "  ! KPP info from xmecca:"                             >> $integrfile
+    echo "  CHARACTER(LEN=*), PUBLIC, PARAMETER :: &"            >> $integrfile
+    echo "    KPP_HOME           = '$KPP_HOME', &"               >> $integrfile
+    echo "    integr             = '$integr'"                    >> $integrfile
+    echo "#ENDINLINE {above lines go to messy_mecca_kpp_global}" >> $integrfile
+
+    # - running KPP ------------------------------------------------------------
+
+    echo "hold on, we're..."
+    # calling kpp to produce integration system
+    echo "\nRunning KPP. Please wait..."
+    $KPP_HOME/bin/kpp messy_mecca_tag_$cfg\_kpp.kpp | tee -a imtag-kpp.log
+    set exitstatus = "$status"
+    echo "exit status from KPP is: $exitstatus"
+    if ( "$exitstatus" != "0" ) exit 1
+  
+    echo "\npostprocessing kpp files..."
+  
+    # resolving precision definition issues
+    set precref = tag_$cfg\_kpp_Precision
+  # sed -i 's|'$precref'|kpp_Precision|1' messy_mecca_tag_$cfg\_kpp*
+    set deprecfiles = (messy_mecca_tag_$cfg\_kpp*)
+    foreach deprec ($deprecfiles)
+      sed 's|'$precref'|kpp_Precision|1' $deprec > xtag.tmp
+      mv xtag.tmp $deprec
+    end
+    rm messy_mecca_tag_$cfg\_kpp_Precision.f90
+
+  # TEMPORARY: ratio calculation
+  # sed -i 's|_RCONST|_RATIOS|1' messy_mecca_tag_$cfg\_kpp_Integrator*
+  # sed -i 's|_RATIOS()|_RATIOS(Y)|1' messy_mecca_tag_$cfg\_kpp_Integrator*
+
+    # de-capitating (i mean, ...lizing)
+    set decapitates = (messy_mecca_tag*kpp*.f90) #  messy_mecca_tag*.inc)
+    foreach decap ($decapitates)
+      set decapfile = `echo "$decap" | tr '[A-Z]' '[a-z]'`
+      mv $decap $decapfile
+    end
+
+  # TEMPORARY: addint unity species to the fixed list
+  # echo "#SETFIX AONE;\n" >> ../messy_mecca_kpp.kpp

@@ -1,0 +1,24 @@
+let q = ($1)
+let p = ($2)[d=1]
+!SET GRID q
+! use $FER_DIR/go/regressx.jnl:
+GO regressx
+say ($1) ($2)
+! original rsquare doesn't work because of numerical precision:
+let myrsquare = (PQVAR/PVAR) * (PQVAR/QVAR)
+LIST slope, intercep, rsquare, myrsquare
+DEFINE SYMBOL myrsquare = `myrsquare,prec=3`
+
+SET VARIABLE/TITLE="($2) (r2=($myrsquare))" p
+
+IF `(myrsquare GT 0.05)` THEN
+
+  GO nextviewport
+  PLOT/SET/VS p, q
+  GO ppl_mylayout
+  PPL PLOT
+
+  PLOT/NOLABEL/TITLE="r2=($myrsquare)"/LINE/VS/OVER p, qhat
+
+ENDIF
+

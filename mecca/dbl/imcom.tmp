@@ -1,0 +1,40 @@
+[MECCA]
+sisyntax=ind_@
+ptsyntax=PT@
+ptpsyntax=PTP@
+ptlsyntax=PTL@
+drsyntax=D@
+[SPC]
+OH  1 = P L
+HO2 1 = P L
+CO  1 = P L
+[OH]
+G1 = G1*
+G2 = G2*
+G3 = G3*
+G41 = G41*
+G4X = G42* G43* G44* G45*
+G = G*
+J = J*
+T = *
+PRI = G2111
+SEC = G2107   G3201 G3204
+RCH4 = G4101
+FI = D*FI
+FM = D*FM
+[HO2]
+G1 = G1*
+G2 = G2*
+G3 = G3*
+G4 = G4*
+G = G*
+J = J*
+T = *
+[CO]
+G41 = G41*
+G4X = G42* G43* G44* G45*
+J41 = J41
+J4X = J42* J43* J44* J45*
+G = G*
+J = J*
+T = *

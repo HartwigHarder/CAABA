@@ -1,0 +1,93 @@
+// [Gromov, MPIC, 2009]
+// replacement file for MCF tagging, adds PTs for CO from CH4 yielding
+//
+// gawk -f replace1.awk -v infile=gas.eqn.org -v outfile=gas.eqn gas.rpl
+//
+//{ mz_sg_20090901+}
+//{------------------------- CO yield from CH4 (via MCF tagging) ---------------}
+//LOSSFMCH4     = 1C               ; {@LCH4(mcf)}         {loss of methane carbon}
+//PRODFMCO      = 1C               ; {@PCO(mcf)}          {production of CO from CH4}
+//{ mz_sg_20090901-}
+
+/// CH4 loss
+//# FMCH4 + O1D = O1D + 0.75 FMCH3O2 + 0.25 FMHCHO : {%*} dbl_kG4100; {&&} 
+#REPLACE <>
+<DG4100LCH4> FMCH4 + O1D = O1D + FMCH4 + LOSSFMCH4 : {%StG} dbl_kG4100; {&&} 
+#ENDREPLACE
+//# FMCH4 + OH = OH + FMCH3O2 : {%*} dbl_kG4101; {&&} 
+#REPLACE <>
+<DG4101LCH4> FMCH4 + OH = OH + FMCH4 + LOSSFMCH4 : {%StTrG} dbl_kG4101; {&&} 
+#ENDREPLACE
+//# FMCH4 + Cl = Cl + FMCH3O2 : {%*} dbl_kG6400; {&&} 
+#REPLACE <>
+<DG6400LCH4> FMCH4 + Cl = Cl + FMCH4 + LOSSFMCH4 : {%StTrGCl} dbl_kG6400; {&&} 
+#ENDREPLACE
+
+/// CH4 loss + CO production
+//# FMCH4 + hv = hv + FMCO : {%*} dbl_kJ4103; {&&}
+#REPLACE <>
+<DJ4103LCH4PCO> FMCH4 + hv = hv + FMCH4 + LOSSFMCH4 + PRODFMCO : {%StGJ} dbl_kJ4103; {&&}
+#ENDREPLACE
+
+/// CO production
+//# FMHCHO + OH = OH + FMCO : {%*} dbl_kG4108; {&&} 
+#REPLACE <>
+<DG4108PCO> FMHCHO + OH = OH + FMHCHO + PRODFMCO : {%StTrG} dbl_kG4108; {&&} 
+#ENDREPLACE
+//# FMHCHO + NO3 = NO3 + FMCO : {%*} dbl_kG4109; {&&}
+#REPLACE <>
+<DG4109PCO> FMHCHO + NO3 = NO3 + FMHCHO + PRODFMCO : {%TrGN} dbl_kG4109; {&&}
+#ENDREPLACE
+//# FMMGLYOX + OH = OH + FMPA + FMCO : {%*} dbl_kG4317; {&&}
+#REPLACE <>
+<DG4317PCO> FMMGLYOX + OH = OH + FMCH3CHO + PRODFMCO : {%TrGC} dbl_kG4317; {&&}
+#ENDREPLACE
+
+//# FMMVK + O3 = O3 + 0.45 FMHCOOH + 0.9 FMMGLYOX + 0.1 FMPA + 0.22 FMCO : {%*} dbl_kG4405; {&&}
+#REPLACE <>
+<DG4405PCO> FMMVK + O3 = O3 + FMMVK + 0.22 PRODFMCO : {%TrGC} dbl_kG4405; {&&}
+#ENDREPLACE
+//# FMMVKO2 + NO = NO + 0.25 FMPA + 0.25 FMACETOL + 0.75 FMHCHO + 0.25 FMCO + 0.5 FMMGLYOX : {%*} dbl_kG4408; {&&}
+#REPLACE <>
+<DG4408PCO> FMMVKO2 + NO = NO + FMMVKO2 + 0.25 PRODFMCO : {%TrGNC} dbl_kG4408; {&&}
+#ENDREPLACE
+//# CH3O2 + FMMVKO2 = CH3O2 + 0.5 FMMGLYOX + 0.375 FMACETOL + 0.125 FMPA + 0.875 FMHCHO + 0.125 FMCO : {%*} dbl_kG4410; {&&}
+#REPLACE <>
+<DG4410PCO> CH3O2 + FMMVKO2 = CH3O2 + FMMVKO2 + 0.125 PRODFMCO : {%TrGC} dbl_kG4410; {&&}
+#ENDREPLACE
+//# FMMVKO2 + MVKO2 = MVKO2 + 0.5 FMACETOL + 0.5 FMMGLYOX + 0.25 FMCO + 0.25 FMHCHO : {%*} dbl_kG4411*(2.0); {&&}
+#REPLACE <>
+<DG4411PCO> FMMVKO2 + MVKO2 = MVKO2 + FMMVKO2 + 0.25 PRODFMCO : {%TrGC} dbl_kG4411*(2.0); {&&}
+#ENDREPLACE
+
+//# FMHCHO + Cl = Cl + FMCO : {%*} dbl_kG6401; {&&}
+#REPLACE <>
+<DG6401PCO> FMHCHO + Cl = Cl + FMHCHO + PRODFMCO : {%StTrGCl} dbl_kG6401; {&&}
+#ENDREPLACE
+//# FMHCHO + Br = Br + FMCO : {%*} dbl_kG7400; {&&}
+#REPLACE <>
+<DG7400PCO> FMHCHO + Br = Br + FMHCHO + PRODFMCO  : {%StTrGBr} dbl_kG7400; {&&}
+#ENDREPLACE
+
+//# FMHCHO + hv = hv + FMCO : {%*} dbl_kJ4101a; {&&}
+#REPLACE <>
+<DJ4101aPCO> FMHCHO + hv = hv + FMHCHO + PRODFMCO : {%StTrGJ} dbl_kJ4101a; {&&}
+#ENDREPLACE
+//# FMHCHO + hv = hv + FMCO + 1 Dummy: {%*} dbl_kJ4101b; {&&}
+#REPLACE <>
+<DJ4101bPCO> FMHCHO + hv = hv + FMHCHO + PRODFMCO + 1 Dummy: {%StTrGJ} dbl_kJ4101b; {&&}
+#ENDREPLACE
+
+//# FMMGLYOX + hv = hv + FMPA + FMCO : {%*} dbl_kJ4303; {&&}
+#REPLACE <>
+<DJ4303FMCM> FMMGLYOX + hv = hv + FMMGLYOX + PRODFMCO : {%TrGCJ} dbl_kJ4303; {&&}
+#ENDREPLACE
+//# FMMVK + hv = hv + FMPA + FMHCHO + FMCO : {%*} dbl_kJ4401; {&&}
+#REPLACE <>
+<DJ4401FMCM> FMMVK + hv = hv + FMMVK + PRODFMCO : {%TrGCJ} dbl_kJ4401; {&&}
+#ENDREPLACE
+//# FMMVKOOH + hv = hv + 0.5 FMMGLYOX + 0.25 FMACETOL + 0.75 FMHCHO + 0.25 FMPA + 0.25 FMCO : {%*} dbl_kJ4402; {&&}
+#REPLACE <>
+<DJ4402FMCM> FMMVKOOH + hv = hv + FMMVKOOH + 0.25 PRODFMCO : {%TrGCJ} dbl_kJ4402; {&&}
+#ENDREPLACE
+              
