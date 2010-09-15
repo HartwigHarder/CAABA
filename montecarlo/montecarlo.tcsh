@@ -20,7 +20,7 @@ set logfile = "$outputdir/montecarlo.log"
 # be larger than the number of lines in mcexp_seed.txt.
 
 #set maxline=5
-set maxline=5
+set maxline=9999
 #set maxline=1000
 
 set line=0
