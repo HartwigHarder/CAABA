@@ -208,8 +208,8 @@ CONTAINS
     ! must be consistent with mecca_physc!
     !mz_hr_20080226+
     ! using relhum = (mixing ratio H2O)/(sat. mixing ratio H2O): WMO def.
-    c(ind_H2O) = cair * relhum * psatf(temp) / &
-      (press + (relhum-1.) * psatf(temp))
+    !c(ind_H2O) = cair * relhum * psatf(temp) / &
+    !  (press + (relhum-1.) * psatf(temp))
     ! using relhum = p(H2O)/ps(H2O):
     !c(ind_H2O) = cair * relhum * psat(temp) / press
     !mz_hr_20080226-
@@ -1200,8 +1200,8 @@ CONTAINS
     !mz_hr_20080226+
     ! must be consistent with mecca_init!
     ! WMO relhum + function for psat
-    c(ind_H2O) = cair * relhum * psatf(temp) / &
-      (press + (relhum-1.) * psatf(temp))
+    !c(ind_H2O) = cair * relhum * psatf(temp) / &
+    !  (press + (relhum-1.) * psatf(temp))
     ! traditional relhum + series for psat
     !c(ind_H2O) = cair * relhum * psat(temp) / press
     !mz_hr_20080226-
