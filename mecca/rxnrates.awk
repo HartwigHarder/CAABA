@@ -13,7 +13,7 @@
 
 BEGIN {
   printf "working on %s...\n", ARGV[1]
-  logfile  = selSpecies ".log"
+  #logfile  = selSpecies ".log"
   dontedit = "DO NOT EDIT! This file was created automatically by rxnrates"
   printf "%s %s\n", "%", dontedit > logfile
   printf "! %s\n", dontedit > jnlfile1
@@ -26,7 +26,7 @@ BEGIN {
   numHeader=split(headerline,header)
   #print headerline
   #print numHeader
-  fnBudgetUnkown = "UnkownRXN.asc"
+  #fnBudgetUnkown = "UnkownRXN.asc"
 }
 
 # ----------------------------------------------------------------------------
@@ -69,13 +69,13 @@ function analyze(prodloss, oneside, eqnid, equation){
           sign, factor, eqnid >> jnlfile2
         printf "GO _plot_rxnrates_scaled rate \"%s*%s: %s\" \"%s\"\n", 
           factor, eqnid, loss, species >> jnlfile2
-	print equation, "|", species, "|",selSpecies, "|", index(species,selSpecies) 
+#	print equation, "|", species, "|",selSpecies, "|", index(species,selSpecies) 
 		if (species==selSpecies) {
 			## search equation in model output (i.e. header array)
 			nHeader=1
 			while (index(header[nHeader],eqnid)==0 && nHeader<numHeader+1) nHeader=nHeader+1
 			if (nHeader<=numHeader) {
-				print nHeader,header[nHeader],eqnid, equation
+#				print nHeader,header[nHeader],eqnid, equation
 				printf "%s; %s%s; %s; %s; %s\n",nHeader,sign,factor,eqnid, oneside, equation >> fnBudget 
 			} else {
 			   ## no corresponding reaction number found in model output, i.e. not selected reaction
