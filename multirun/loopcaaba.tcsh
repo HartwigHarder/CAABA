@@ -135,8 +135,8 @@ else
 endif
 
 echo "calculate budget"
-gawk -f $basedir/mecca/rxnrates.awk -v jnlfile1=$scratchdir/dummy1.jnl -vjnlfile2=$scratchdir/dummy2.jnl -v fnBudget=$dirname/budget.dat -v fnBudgetUnkown=$dirname/budgetUnKnwn.dat -vfnHeader=$dirname/header.dat -v selSpecies="OH" $basedir/mecca/gas.eqn
-gawk -f $basedir/mecca/rxnrates.awk -v jnlfile1=$scratchdir/dummy1.jnl -vjnlfile2=$scratchdir/dummy2.jnl -v fnBudget=$dirname/budgetHO2.dat -v fnBudgetUnkown=$dirname/budgetUnKnwn.dat -vfnHeader=$dirname/header.dat -v selSpecies="HO2" $basedir/mecca/gas.eqn
+gawk -f $basedir/mecca/rxnrates.awk -v logfile=$scratchdir/BudgetOH.log -v jnlfile1=$scratchdir/dummy1.jnl -vjnlfile2=$scratchdir/dummy2.jnl -v fnBudget=$dirname/budgetOH.dat -v fnBudgetUnkown=$dirname/budgetUnKnwnOH.dat -vfnHeader=$header_dat -v selSpecies="OH" -v $basedir/mecca/gas.eqn
+gawk -f $basedir/mecca/rxnrates.awk -v logfile=$scratchdir/BudgetHO2.log -v jnlfile1=$scratchdir/dummy1.jnl -vjnlfile2=$scratchdir/dummy2.jnl -v fnBudget=$dirname/budgetHO2.dat -v fnBudgetUnkown=$dirname/budgetUnKnwnHO2.dat -vfnHeader=$header_dat -v selSpecies="HO2" $basedir/mecca/gas.eqn
 echo "the output files are:"
 
 cp -p $basedir/caaba_*.nc $basedir/caaba.log $nmlfile $dirname
