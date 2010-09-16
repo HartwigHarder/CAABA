@@ -122,6 +122,7 @@ end
 
 ##############################################################################
 
+
 if (! -d $basedir/output/multirun) mkdir $basedir/output/multirun
 set dirname = $basedir/"output/multirun/$fname:t:r"
 
@@ -132,8 +133,13 @@ else
   echo "creating new output directory $dirname"
   mkdir $dirname
 endif
+
+echo "calculate budget"
+gawk -f $basedir/mecca/rxnrates.awk -v jnlfile1=$scratchdir/dummy1.jnl -vjnlfile2=$scratchdir/dummy2.jnl -v fnBudget=$dirname/budget.dat -v fnBudgetUnkown=$dirname/budgetUnKnwn.dat -vfnHeader=$dirname/header.dat -v selSpecies="OH" $basedir/mecca/gas.eqn
+gawk -f $basedir/mecca/rxnrates.awk -v jnlfile1=$scratchdir/dummy1.jnl -vjnlfile2=$scratchdir/dummy2.jnl -v fnBudget=$dirname/budgetHO2.dat -v fnBudgetUnkown=$dirname/budgetUnKnwn.dat -vfnHeader=$dirname/header.dat -v selSpecies="HO2" $basedir/mecca/gas.eqn
 echo "the output files are:"
-cp -p $basedir/caaba_*.nc $basedir/caaba.log $basedir/$nmlfile $dirname
+
+cp -p $basedir/caaba_*.nc $basedir/caaba.log $nmlfile $dirname
 cp -p $sum_dat $header_dat $dirname
 ls -l $dirname
 echo $hline
