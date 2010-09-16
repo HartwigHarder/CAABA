@@ -23,9 +23,12 @@ echo $hline
 echo "inputfile = $1"
 
 set fname      = "$1"
-set tmpFname   = "inputfile.nc"
-set sum_dat    = "sum.dat"
-set header_dat = "header.dat"
+set basedir = `pwd`
+set scratchdir = "/tmp"
+set outputdir = $scratchdir
+set tmpFname   = $scratchdir/"inputfile.nc"
+set sum_dat    = $outputdir/"sum.dat"
+set header_dat = $outputdir/"header.dat"
 
 set OneShot = 0
 # current line number in netcdf file 
@@ -72,9 +75,9 @@ while (${#ret} == 0)
 
   if ( $err == 0 ) then
 
-    cd ..
+    cd $basedir
     # create nml file:
-    set nmlfile = "multirun/input/caaba_multirun.nml"
+    set nmlfile = $basedir/"multirun/input/caaba_multirun.nml"
     echo "! -*- f90 -*- (created by loopcaaba.tcsh, do not edit\!)" > $nmlfile
     echo "&CAABA"                           >> $nmlfile
     echo "USE_MECCA = T"                    >> $nmlfile
@@ -88,19 +91,19 @@ while (${#ret} == 0)
     echo "/"                                >> $nmlfile
     ln -fs $nmlfile caaba.nml
     rm caaba_*.nc
-    ./caaba.exe > caaba.log
+    ./caaba.exe > $scratchdir/caaba.log
     cd -	
 
-    set MaxTime = (`ncks -M ../caaba_mecca.nc | awk '/name = time, size =/ {print $8}'`)
+    set MaxTime = (`ncks -M $outputdir/caaba_mecca.nc | awk '/name = time, size =/ {print $8}'`)
     @ MaxTime--
     printf "%4d) CAABA for %s finished (MaxTime=%d)\n" $line $fname:t $MaxTime
     if ( $MaxTime > 5 ) then
-      ncks -H -d time,$MaxTime ../caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "%g ",'$TimeGPS' }{if (NF>4) printf "%g ",$15} END {print}' >> $sum_dat
-      ncks -H -d time,$MaxTime ../caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "TimeGPS[99999] "}{if (NF>4) printf "%s ",$13} END {print}' >> $header_dat
-      # ncks -A -d time,$MaxTime ../caaba_mecca.nc caaba_mecca_all.nc
-      # ncks -A -d time,$MaxTime ../caaba_messy.nc caaba_messy_all.nc
+      ncks -H -d time,$MaxTime $outputdir/caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "%g ",'$TimeGPS' }{if (NF>4) printf "%g ",$15} END {print}' >> $sum_dat
+      ncks -H -d time,$MaxTime $outputdir/caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "TimeGPS[99999] "}{if (NF>4) printf "%s ",$13} END {print}' >> $header_dat
+      # ncks -A -d time,$MaxTime $outputdir/caaba_mecca.nc caaba_mecca_all.nc
+      # ncks -A -d time,$MaxTime $outputdir/caaba_messy.nc caaba_messy_all.nc
     else
-      echo "Problem: MaxTime <65"
+      echo "Problem: MaxTime <=5"
     endif
 
   else
@@ -116,8 +119,8 @@ end
 
 ##############################################################################
 
-if (! -d ../output/multirun) mkdir ../output/multirun
-set dirname = "../output/multirun/$fname:t:r"
+if (! -d $basedir/output/multirun) mkdir $basedir/output/multirun
+set dirname = $basedir/"output/multirun/$fname:t:r"
 
 if ( -d $dirname ) then
   echo "removing old data in output directory $dirname"
@@ -127,7 +130,7 @@ else
   mkdir $dirname
 endif
 echo "the output files are:"
-cp -p ../caaba_*.nc ../caaba.log ../$nmlfile $dirname
+cp -p $outputdir/caaba_*.nc $outputdir/caaba.log $outputdir/$nmlfile $dirname
 cp -p $sum_dat $header_dat $dirname
 ls -l $dirname
 echo $hline
