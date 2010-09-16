@@ -1,0 +1,44 @@
+OVERVIEW
+
+ncclamp is a command-line tool for NetCDF files that allows you to replace values in-place by specifying the variable, the old value to be replaced, the new value, and a comparison operator.  The change is applied across all of the variable's dimensions, including the record dimension if any.  
+
+=====================================================
+
+EXAMPLES
+
+The following example would mask a variable "topography" to be Not-a-Number every below sea level.
+
+	ncclamp foo.nc topography 0 nan lt
+
+This example would replace a value with -infinity.
+
+	ncclamp foo.nc var1 -1e9 -inf eq
+
+This would create a binary mask of a variable.
+
+	ncclamp foo.nc veg -9999 0 eq
+	ncclamp foo.nc veg 0 1 neq
+
+=====================================================
+
+INSTALLATION
+
+To build and install, do the following:
+
+	make
+	make test	
+	cp ncclamp /usr/local/bin
+	make clean
+
+=====================================================
+
+SUPPORT
+
+For comments or help, contact remik dot_ ziemlinski att_ noaa dot_ gov.
+
+=====================================================
+
+CHANGES
+
+20061208 rsz Created.
+
