@@ -18,6 +18,9 @@
 */Makefile.m
 *_e5.inc
 *e4chem*
+_*.jnl
+input/*
+caaba.nml
 mecca/dbl/gas.tex
 mecca/dbl/mecca.eqn
 mecca/dbl/mecca.spc
@@ -48,3 +51,4 @@ messy_mecca_dbl_parameters.inc
 messy_mecca_tag_parameters.inc
 nml/caaba_free_trop_MonteCarlo.nml
 nml/caaba_multirun.nml
+
