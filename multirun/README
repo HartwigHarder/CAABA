@@ -1,0 +1,4 @@
+If there are only *.txt files in this directory but no *.nc files, then
+you have to create them with asc2ferret4nc.tcsh:
+
+asc2ferret4nc.tcsh *.txt
