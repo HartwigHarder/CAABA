@@ -23,10 +23,13 @@ echo $hline
 echo "inputfile = $1"
 
 set fname      = "$1"
+pushd ..
 set basedir = `pwd`
+popd
+echo "basedir : " $basedir
 set scratchdir = "/tmp"
 set outputdir = $scratchdir
-set tmpFname   = $scratchdir/"inputfile.nc"
+set tmpFname   = $scratchdir/inputfile.nc
 set sum_dat    = $outputdir/"sum.dat"
 set header_dat = $outputdir/"header.dat"
 
@@ -69,15 +72,15 @@ while (${#ret} == 0)
   endif
   # --------------------------------------------------------------------------
   # GPS time:
-  set TimeGPS = (`ncks -s "%10.10g" -H -C -d T_AX,$line -v TGPS $fname`)
-  # set TimeGPS = (`ncks -s "%10.10g" -H -C -d T_AX,$line -v Tgps $fname`)
+  #set TimeGPS = (`ncks -s "%10.10g" -H -C -d T_AX,$line -v TGPS $fname`)
+  set TimeGPS = (`ncks -s "%10.10g" -H -C -d T_AX,$line -v Tgps $fname`)
   # --------------------------------------------------------------------------
 
   if ( $err == 0 ) then
 
     cd $basedir
     # create nml file:
-    set nmlfile = $basedir/"multirun/input/caaba_multirun.nml"
+    set nmlfile = $basedir/multirun/input/caaba_multirun.nml
     echo "! -*- f90 -*- (created by loopcaaba.tcsh, do not edit\!)" > $nmlfile
     echo "&CAABA"                           >> $nmlfile
     echo "USE_MECCA = T"                    >> $nmlfile
@@ -85,8 +88,8 @@ while (${#ret} == 0)
     echo "temp = $temp"                     >> $nmlfile
     echo "press = $press"                   >> $nmlfile
     echo "photrat_channel = 'readj'"        >> $nmlfile
-    echo "init_spec = 'multirun/$tmpFname'" >> $nmlfile
-    echo "init_j = 'multirun/$tmpFname'"    >> $nmlfile
+    echo "init_spec = '$tmpFname'" >> $nmlfile
+    echo "init_j = '$tmpFname'"    >> $nmlfile
     echo "l_steady_state_stop = T"          >> $nmlfile
     echo "/"                                >> $nmlfile
     ln -fs $nmlfile caaba.nml
@@ -94,14 +97,14 @@ while (${#ret} == 0)
     ./caaba.exe > $scratchdir/caaba.log
     cd -	
 
-    set MaxTime = (`ncks -M $outputdir/caaba_mecca.nc | awk '/name = time, size =/ {print $8}'`)
+    set MaxTime = (`ncks -M $basedir/caaba_mecca.nc | awk '/name = time, size =/ {print $8}'`)
     @ MaxTime--
     printf "%4d) CAABA for %s finished (MaxTime=%d)\n" $line $fname:t $MaxTime
     if ( $MaxTime > 5 ) then
-      ncks -H -d time,$MaxTime $outputdir/caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "%g ",'$TimeGPS' }{if (NF>4) printf "%g ",$15} END {print}' >> $sum_dat
-      ncks -H -d time,$MaxTime $outputdir/caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "TimeGPS[99999] "}{if (NF>4) printf "%s ",$13} END {print}' >> $header_dat
-      # ncks -A -d time,$MaxTime $outputdir/caaba_mecca.nc caaba_mecca_all.nc
-      # ncks -A -d time,$MaxTime $outputdir/caaba_messy.nc caaba_messy_all.nc
+      ncks -H -d time,$MaxTime $basedir/caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "%g ",'$TimeGPS' }{if (NF>4) printf "%g ",$15} END {print}' >> $sum_dat
+      ncks -H -d time,$MaxTime $basedir/caaba_mecca.nc | sed 's/=/ = /g' | awk 'BEGIN {printf "TimeGPS[99999] "}{if (NF>4) printf "%s ",$13} END {print}' >> $header_dat
+      # ncks -A -d time,$MaxTime $basedir/caaba_mecca.nc caaba_mecca_all.nc
+      # ncks -A -d time,$MaxTime $basedir/caaba_messy.nc caaba_messy_all.nc
     else
       echo "Problem: MaxTime <=5"
     endif
@@ -130,7 +133,7 @@ else
   mkdir $dirname
 endif
 echo "the output files are:"
-cp -p $outputdir/caaba_*.nc $outputdir/caaba.log $outputdir/$nmlfile $dirname
+cp -p $basedir/caaba_*.nc $basedir/caaba.log $basedir/$nmlfile $dirname
 cp -p $sum_dat $header_dat $dirname
 ls -l $dirname
 echo $hline
