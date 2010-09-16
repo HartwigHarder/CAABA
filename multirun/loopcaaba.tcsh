@@ -23,10 +23,10 @@ echo $hline
 echo "inputfile = $1"
 
 set fname      = "$1"
-pushd ..
+pushd .. > /dev/null
 set basedir = `pwd`
-popd
-echo "basedir : " $basedir
+popd > /dev/null
+# echo "basedir : " $basedir
 set scratchdir = "/tmp"
 set outputdir = $scratchdir
 set tmpFname   = $scratchdir/inputfile.nc
@@ -135,7 +135,7 @@ else
 endif
 
 echo "calculate budget"
-gawk -f $basedir/mecca/rxnrates.awk -v logfile=$scratchdir/BudgetOH.log -v jnlfile1=$scratchdir/dummy1.jnl -vjnlfile2=$scratchdir/dummy2.jnl -v fnBudget=$dirname/budgetOH.dat -v fnBudgetUnkown=$dirname/budgetUnKnwnOH.dat -vfnHeader=$header_dat -v selSpecies="OH" -v $basedir/mecca/gas.eqn
+gawk -f $basedir/mecca/rxnrates.awk -v logfile=$scratchdir/BudgetOH.log -v jnlfile1=$scratchdir/dummy1.jnl -vjnlfile2=$scratchdir/dummy2.jnl -v fnBudget=$dirname/budgetOH.dat -v fnBudgetUnkown=$dirname/budgetUnKnwnOH.dat -vfnHeader=$header_dat -v selSpecies="OH" $basedir/mecca/gas.eqn
 gawk -f $basedir/mecca/rxnrates.awk -v logfile=$scratchdir/BudgetHO2.log -v jnlfile1=$scratchdir/dummy1.jnl -vjnlfile2=$scratchdir/dummy2.jnl -v fnBudget=$dirname/budgetHO2.dat -v fnBudgetUnkown=$dirname/budgetUnKnwnHO2.dat -vfnHeader=$header_dat -v selSpecies="HO2" $basedir/mecca/gas.eqn
 echo "the output files are:"
 
