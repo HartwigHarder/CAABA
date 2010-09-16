@@ -20,6 +20,7 @@
 *e4chem*
 _*.jnl
 input/*
+multirun/input/*
 caaba.nml
 mecca/dbl/gas.tex
 mecca/dbl/mecca.eqn
